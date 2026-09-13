@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" fill="none">
+  <title>Beaver - 宽颊</title>
+  <path fill="#22c55e" fill-rule="evenodd" d="M24 47C14 34 27 20 38 26l9 10c11-4 23-4 34 0l9-10c11-6 24 8 14 21 9 12 14 32 7 46-7 15-25 23-47 23S24 108 17 93c-7-14-2-34 7-46ZM35 53v8h10v-8Zm48 0v8h10v-8ZM52 73h24l-5 10H57ZM36 86c8 10 19 12 28 6 9 6 20 4 28-6v9c-8 8-19 10-28 5-9 5-20 3-28-5Z"/>
+  <path fill="#d9ff38" d="M53 97h9v18h-9Zm13 0h9v18h-9Z"/>
+</svg>

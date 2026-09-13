@@ -1,0 +1,94 @@
+{
+  "contract": "npr-characters",
+  "version": "1.0.0",
+  "engine": {
+    "family": "RoleNPR custom Godot",
+    "verified_commit": "db1af1e99a5025bfbf8b05ef27dd4a5e739ec371",
+    "renderer": "forward_plus",
+    "stock_godot_supported": false,
+    "required_extensions": ["stencil_mode", "post_light", "UNJITTERED_PROJECTION_MATRIX", "TriangleMesh.update_from_indexed_surfaces", "RenderingServer.mesh_surface_get_geometry_arrays"]
+  },
+  "module_path": "res://addons/npr_characters",
+  "entry_script": "npr_character.gd",
+  "install_script": "install.gd",
+  "definition": {
+    "resource_class": "NPRCharacterDefinition",
+    "model_scene": {"type": "PackedScene", "required": true, "root_type": "Node3D"},
+    "body_path": {"type": "NodePath", "default": "Body"},
+    "face_path": {"type": "NodePath", "default": "Face"},
+    "hair_path": {"type": "NodePath", "default": "Hair"},
+    "material_set": {"type": "NPRCharacterMaterials", "required_when": "use_source_materials == false"},
+    "use_source_materials": {"type": "bool", "default": false},
+    "display_height": {"type": "float", "default": 3.0, "minimum": 0, "zero_means": "preserve authored pivot and dimensions"},
+    "material_profile": {
+      "type": "NPRMaterialProfile",
+      "specular_exponents": {"length": 8, "minimum": 0.01, "maximum": 4096, "default": [24,24,24,24,24,24,24,24]},
+      "capture_verified": false,
+      "source_note": "Artist-authored; not recovered capture constants."
+    }
+  },
+  "geometry": {
+    "roles": ["body", "face", "hair"],
+    "meshes_per_role": 1,
+    "surface_count_per_mesh": 1,
+    "mesh_type": "ArrayMesh",
+    "primitive": "triangles",
+    "required_attributes": ["POSITION", "NORMAL", "TEXCOORD_0"],
+    "conditional_attributes": {"TEXCOORD_1": "face when sdf_on_uv2 is true"},
+    "unbound_meshes": "reject",
+    "equipment": "merge disconnected islands into body surface and atlas",
+    "coordinates_after_import": {"up": [0,1,0], "forward": [0,0,1], "right": [1,0,0]},
+    "skin": {"weights_per_vertex": [4,8], "requires": ["Skin", "resolvable Skeleton3D NodePath"]},
+    "custom_vertex_displacement": "unsupported by depth, shadow and picking synchronization",
+    "vertex_color_neutral": [1,1,1,1],
+    "part_masking_default": "disabled"
+  },
+  "material_set": {
+    "sdf_on_uv2": {"type": "bool", "default": false},
+    "face_forward": {"type": "Vector3", "default": [0,0,1], "unit": true, "space": "imported face mesh local"},
+    "face_right": {"type": "Vector3", "default": [1,0,0], "unit": true, "orthogonal_to": "face_forward"},
+    "hair_sheen_axis": {"type": "Vector3", "default": [0,0,1], "unit": true, "space": "imported hair mesh local", "purpose": "eye-reveal alpha, not highlight ribbon"},
+    "textures": {
+      "body_base": {"required": true, "space": "sRGB RGB, raw A", "sampler": "u_texture_base_map"},
+      "body_ilm": {"required": true, "space": "raw", "sampler": "u_texture_light_map", "channels": {"R": "unused by current body ILM math", "G": "occlusion and shading", "B": "specular threshold input", "A": "8-slot index"}},
+      "body_lut": {"required": true, "size": [8,8], "space": "raw; RGB color rows explicitly decoded by shader", "sampler": "u_material_values_pack_lut", "filter": "nearest, no repeat, no mipmap sampling"},
+      "body_ramp": {"required": true, "min_width": 2, "height": 16, "space": "sRGB", "sampler": "u_texture_diffuse_ramp"},
+      "body_cool_ramp": {"required": true, "min_width": 2, "height": 16, "space": "sRGB", "sampler": "u_texture_diffuse_cool_ramp"},
+      "face_base": {"required": true, "space": "sRGB", "sampler": "u_texture_base_map"},
+      "face_ilm": {"required": true, "space": "raw", "sampler": "u_texture_ilm_map", "eye_sampler": "u_texture_ilm", "channels": {"R": "eye region when 0.1 < R < 0.8", "G": "eye stencil when G > 0.5", "B": "nose-line mask", "A": "angular SDF threshold"}},
+      "face_map": {"required": true, "space": "raw", "sampler": "u_texture_face", "neutral_rgb": [0,0,0], "channels": {"R": "makeup/blush", "G": "lip", "B": "gradient"}},
+      "face_ramp": {"required": true, "space": "sRGB", "sampler": "u_texture_diffuse_ramp", "purpose": "distance/plane grading LUT"},
+      "hair_base": {"required": true, "space": "sRGB RGB, raw A", "sampler": "u_texture_base_map", "alpha": "eye-area hair reveal blend"},
+      "hair_ilm": {"required": true, "space": "raw", "sampler": "u_texture_ilm_map", "channels": {"R": "ribbon mask", "G": "shading", "B": "highlight shape", "A": "8-slot index"}},
+      "hair_ramp": {"required": true, "min_width": 2, "height": 16, "space": "sRGB", "sampler": "u_texture_diffuse_ramp"},
+      "hair_cool_ramp": {"required": true, "min_width": 2, "height": 16, "space": "sRGB", "sampler": "u_texture_diffuse_cool_ramp"}
+    }
+  },
+  "atlas_rules": {
+    "slot_decode": "fract(floor(A * 8) / 8) * 8",
+    "slot_encode_recommended": "(slot + 0.5) / 8",
+    "alpha_one_decodes_to": 0,
+    "ramp_y": "(2 * slot + 1) / 16",
+    "ramp_rows_per_slot": 2,
+    "base_and_regular_mask_uv": "(UV.x, 1 - UV.y)",
+    "face_sdf_uv": "UV1 or UV2 without fragment Y flip; mirror X for negative local light angle",
+    "eye_stencil_uv": "UV1 with fragment Y flip, independent of SDF UV2",
+    "sdf_light_test": "A greater than normalized absolute horizontal light angle is lit",
+    "texture_compression": "lossless for ILM/LUT; preserve alpha"
+  },
+  "body_lut_rows": {
+    "0": "RGB specular color, manual sRGB decode",
+    "1": "R legacy exponent, G feather, B intensity; explicit float profile overrides exponent",
+    "2": "reserved zero",
+    "3": "reserved zero",
+    "4": "reserved zero",
+    "5": "RGB rim-shadow color, manual sRGB decode",
+    "6": "R rim width, G feather, B bloom intensity",
+    "7": "RGB bloom color, manual sRGB decode"
+  },
+  "scope": {
+    "generic_capture_fog": "disabled; host owns environment fog",
+    "example": "original procedural integration mannequin; diagnostic atlases, not finished character art",
+    "artist_acceptance": ["front, side and back", "left and right key lights", "face SDF", "eye-area hair", "contact shadow", "outline", "animation and expressions"]
+  }
+}

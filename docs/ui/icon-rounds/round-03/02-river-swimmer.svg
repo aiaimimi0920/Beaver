@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" fill="none">
+  <title>Beaver - 游弋</title>
+  <g transform="translate(4 4) scale(.94) rotate(-18 64 64)">
+    <path fill="#22c55e" fill-rule="evenodd" d="M42 70 27 48C20 37 8 39 6 49c-3 12 9 28 27 35Zm-22-21-5 4 13 18 5-4Z"/>
+    <path fill="#22c55e" fill-rule="evenodd" d="M35 73c1-21 18-35 37-33l7 2c2-9 16-10 18 1l1 5c9 3 17 10 22 19v12c-7 8-19 10-31 5L73 74c-8 11-21 13-35 10l-8 5H18v-9l17-7Zm67-13v7h7v-7Z"/>
+    <path fill="#22c55e" d="m69 84 13 5h13v9H79L61 91Z"/>
+    <path fill="#d9ff38" d="M109 83h10v14h-10Z"/>
+  </g>
+</svg>

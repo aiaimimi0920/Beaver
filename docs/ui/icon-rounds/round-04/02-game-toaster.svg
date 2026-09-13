@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" fill="none">
+  <title>Beaver - 游戏出炉</title>
+  <path fill="#d9ff38" fill-rule="evenodd" d="M45 14h35l9 9v31H36V23ZM50 24v7h-7v8h7v7h8v-7h7v-8h-7v-7ZM79 28a4 4 0 1 0-8 0 4 4 0 0 0 8 0Zm4 14a4 4 0 1 0-8 0 4 4 0 0 0 8 0Z"/>
+  <path fill="#22c55e" fill-rule="evenodd" d="M25 61h74c8 0 13 5 13 13v25c0 8-5 13-13 13H25c-8 0-13-5-13-13V74c0-8 5-13 13-13Zm4 11v7h65v-7Zm56 24a6 6 0 1 0 12 0 6 6 0 0 0-12 0Z"/>
+  <path fill="#22c55e" d="M115 72h7v18h-7ZM29 110h14v7H29Zm52 0h14v7H81Z"/>
+</svg>

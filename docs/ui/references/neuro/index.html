@@ -1,0 +1,237 @@
+<!doctype html>
+<html lang="zh-CN" data-design="neuro">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Neuro 设计方案</title>
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpath fill='%2322c55e' d='M5 4h22l-4 5H9zm7 8h8v8h-8zM8 23h16l3 5H5z'/%3E%3Cpath fill='%23d9ff38' d='M25 3h4v4h-4z'/%3E%3C/svg%3E" />
+    <link rel="stylesheet" href="./tokens.css" />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div class="lab-shell">
+      <header class="lab-topbar">
+        <div class="lab-brand">
+          <span class="lab-brand__mark" aria-hidden="true"><i></i><i></i><i></i></span>
+          <div>
+            <strong>Neuro 设计方案</strong>
+            <span>跨项目唯一 UI 基线</span>
+          </div>
+        </div>
+        <div class="lab-topbar__status">
+          <span class="lab-status-dot"></span>
+          <span>Canonical · v1</span>
+        </div>
+        <div class="lab-topbar__actions">
+          <button class="lab-button lab-button--quiet" id="toggle-grid" type="button" aria-pressed="true">结构网格</button>
+          <button class="lab-button lab-button--secondary" id="copy-css" type="button">复制令牌</button>
+          <button class="lab-button lab-button--primary" id="export-json" type="button">导出 JSON</button>
+        </div>
+      </header>
+
+      <aside class="palette-rail">
+        <div class="rail-heading">
+          <span>// DESIGN SYSTEM</span>
+          <strong>Neuro</strong>
+        </div>
+        <nav id="section-list" class="preset-list" aria-label="设计方案章节">
+          <button class="preset-option is-active" type="button" data-target="overview"><strong>总览</strong><span class="preset-code">00</span><small>设计目标与唯一基线</small></button>
+          <button class="preset-option" type="button" data-target="colors"><strong>颜色</strong><span class="preset-code">01</span><small>主色、语义色与对比度</small></button>
+          <button class="preset-option" type="button" data-target="shell"><strong>应用框架</strong><span class="preset-code">02</span><small>Rail、主板与结构图形</small></button>
+          <button class="preset-option" type="button" data-target="controls"><strong>控件</strong><span class="preset-code">03</span><small>按钮、表单、状态与数据行</small></button>
+          <button class="preset-option" type="button" data-target="tokens"><strong>令牌</strong><span class="preset-code">04</span><small>机器可读的精确色值</small></button>
+        </nav>
+        <div class="rail-note">
+          <span>唯一方案</span>
+          <p>黄色与绿色各保留一个主色；交互差异只通过透明度和混色派生。</p>
+        </div>
+      </aside>
+
+      <main class="lab-main">
+        <section class="lab-hero" id="overview">
+          <div>
+            <span class="lab-kicker">// NEURO CANONICAL UI</span>
+            <h1>紧凑的个人 AI 操作中台</h1>
+            <p>以 Loom 深色框架为基础，融合白色重点信息面、切角三角、斜线与同心圆；结构服务于业务，装饰不遮挡内容。</p>
+          </div>
+          <div class="hero-readout">
+            <span>方案名称</span>
+            <strong>NEURO</strong>
+            <small>跨项目统一设计基线</small>
+          </div>
+        </section>
+
+        <section class="source-board" id="colors" aria-labelledby="source-title">
+          <header class="section-head">
+            <div><span>01 / COLOR ROLES</span><h2 id="source-title">两个主色</h2></div>
+            <p>悬浮、按下、弱背景和边框只从主色派生。</p>
+          </header>
+          <div class="color-family-grid">
+            <article class="color-family" style="--family:#d9ff38;--family-ink:#111800">
+              <button class="color-family__source" type="button" data-copy-color="#D9FF38">
+                <i></i><span><b>信号黄 · Signal</b><small>主要操作、焦点、选中和关键信号</small></span><code>#D9FF38</code>
+              </button>
+              <div class="color-family__states" aria-label="信号黄派生状态">
+                <span class="is-base"><b>主色</b><small>100%</small></span>
+                <span class="is-hover"><b>悬浮</b><small>86% + white</small></span>
+                <span class="is-pressed"><b>按下</b><small>82% + black</small></span>
+                <span class="is-soft"><b>弱背景</b><small>14% mix</small></span>
+              </div>
+            </article>
+            <article class="color-family" style="--family:#22c55e;--family-ink:#041208">
+              <button class="color-family__source" type="button" data-copy-color="#22C55E">
+                <i></i><span><b>信号绿 · Brand / Success</b><small>品牌、在线、完成和正向状态</small></span><code>#22C55E</code>
+              </button>
+              <div class="color-family__states" aria-label="信号绿派生状态">
+                <span class="is-base"><b>主色</b><small>100%</small></span>
+                <span class="is-hover"><b>悬浮</b><small>86% + white</small></span>
+                <span class="is-pressed"><b>按下</b><small>82% + black</small></span>
+                <span class="is-soft"><b>弱背景</b><small>14% mix</small></span>
+              </div>
+            </article>
+          </div>
+          <p class="source-note"><b>收敛规则：</b><code>#D9FF38</code> 是唯一信号黄，<code>#22C55E</code> 是唯一信号绿。产品中的透明黄、深绿和渐变端只能是状态派生，不注册为新主色。</p>
+          <div class="support-colors" aria-label="辅助角色色与中性色">
+            <span class="support-colors__label">辅助角色色与中性色</span>
+            <button type="button" data-copy-color="#06B6D4" style="--role:#06b6d4"><i></i><b>信息蓝</b><code>#06B6D4</code></button>
+            <button type="button" data-copy-color="#F43F5E" style="--role:#f43f5e"><i></i><b>危险红</b><code>#F43F5E</code></button>
+            <button type="button" data-copy-color="#06080D" style="--role:#06080d"><i></i><b>背景黑</b><code>#06080D</code></button>
+            <button type="button" data-copy-color="#F3F5F1" style="--role:#f3f5f1"><i></i><b>焦点白</b><code>#F3F5F1</code></button>
+            <button type="button" data-copy-color="#929A9F" style="--role:#929a9f"><i></i><b>次级灰</b><code>#929A9F</code></button>
+          </div>
+        </section>
+
+        <section class="contrast-board" aria-labelledby="contrast-title">
+          <header class="section-head">
+            <div><span>01.1 / ACCESSIBILITY</span><h2 id="contrast-title">关键对比度</h2></div>
+            <p>正文目标 4.5+；大字、图标与边界目标 3.0+。</p>
+          </header>
+          <div id="contrast-grid" class="contrast-grid"></div>
+        </section>
+
+        <section class="preview-board" id="shell" aria-labelledby="shell-preview-title">
+          <header class="section-head">
+            <div><span>02 / PRODUCT SHELL</span><h2 id="shell-preview-title">应用框架</h2></div>
+            <p>同屏观察侧栏、顶栏、白色焦点面、搜索、卡片与语义状态。</p>
+          </header>
+          <div class="product-shell-preview">
+            <aside class="product-rail">
+              <div class="product-logo"><span class="mini-loom" aria-hidden="true"><i></i></span><strong>Neuro</strong></div>
+              <button class="product-nav product-nav--active" type="button"><span>▰</span>MCP</button>
+              <button class="product-nav" type="button"><span>◇</span>Art</button>
+              <button class="product-nav" type="button"><span>⇄</span>Hook 同步</button>
+              <div class="product-rail__spacer"></div>
+              <button class="product-nav" type="button"><span>▣</span>设备管理</button>
+              <button class="product-nav" type="button"><span>⚙</span>设置</button>
+            </aside>
+            <div class="product-stage">
+              <div class="product-titlebar"><span>个人 AI 操作中台</span><div aria-hidden="true"><i></i><i></i><i></i></div></div>
+              <div class="product-content">
+                <header class="product-header">
+                  <div><span>// SERVICE MATRIX</span><h3>MCP</h3></div>
+                  <div class="product-header__meta"><b>08</b><span>精选服务</span></div>
+                </header>
+                <div class="product-tabs" role="tablist" aria-label="示例分页">
+                  <button type="button">服务</button><button class="is-active" type="button">商店</button>
+                </div>
+                <div class="product-toolbar">
+                  <button class="sample-button sample-button--outline" type="button">链接添加</button>
+                  <input aria-label="示例搜索" value="搜索商店" readonly />
+                  <select aria-label="示例分类"><option>全部</option><option>开发</option></select>
+                </div>
+                <div class="mcp-card-grid">
+                  <article class="mcp-card is-selected">
+                    <header><h4>文件系统</h4><span>NEURO 精选</span></header>
+                    <p>在明确授权的目录内读取、编辑、搜索和管理文件。</p><small>本地 · Node.js</small>
+                    <footer><button class="icon-control" type="button" aria-label="查看详情">↗</button><button class="sample-button sample-button--primary" type="button">安装</button></footer>
+                  </article>
+                  <article class="mcp-card">
+                    <header><h4>网页读取</h4><span class="tag-info">低权限</span></header>
+                    <p>获取网页内容，并转换为适合模型阅读的结构化文本。</p><small>网页 · Python</small>
+                    <footer><button class="icon-control" type="button" aria-label="查看详情">↗</button><button class="sample-button sample-button--primary" type="button">安装</button></footer>
+                  </article>
+                  <article class="mcp-card">
+                    <header><h4>Playwright</h4><span class="tag-danger">高权限</span></header>
+                    <p>使用页面结构控制浏览器，适合自动化验证和网页交互。</p><small>浏览器 · Node.js</small>
+                    <footer><button class="icon-control" type="button" aria-label="查看详情">↗</button><button class="sample-button sample-button--warning" type="button">需确认</button></footer>
+                  </article>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="component-board" id="controls" aria-labelledby="component-title">
+          <header class="section-head">
+            <div><span>03 / CONTROL INVENTORY</span><h2 id="component-title">控件与语义状态</h2></div>
+            <p>默认、悬浮、焦点、禁用、信息、警告与危险必须直接可辨。</p>
+          </header>
+          <div class="component-grid">
+            <article class="component-panel">
+              <header><span>BUTTONS</span><h3>按钮</h3></header>
+              <div class="button-row">
+                <button class="sample-button sample-button--primary" type="button">主要操作</button>
+                <button class="sample-button sample-button--secondary" type="button">次级操作</button>
+                <button class="sample-button sample-button--outline" type="button">普通操作</button>
+                <button class="sample-button sample-button--danger" id="open-dialog" type="button">危险操作</button>
+                <button class="sample-button" type="button" disabled>不可使用</button>
+              </div>
+            </article>
+            <article class="component-panel">
+              <header><span>FORM</span><h3>表单</h3></header>
+              <div class="form-grid">
+                <label><span>名称</span><input value="远程 MCP" /></label>
+                <label><span>类型</span><select><option>Streamable HTTP</option><option>stdio</option></select></label>
+                <label class="form-grid__wide"><span>MCP 地址</span><input value="https://example.invalid/mcp" /></label>
+                <label><span>并发上限</span><input type="number" value="4" /></label>
+                <label class="toggle-row"><input type="checkbox" checked /><i></i><span>自动连接</span></label>
+                <label class="form-grid__wide"><span>强度</span><input type="range" value="68" /></label>
+              </div>
+            </article>
+            <article class="component-panel">
+              <header><span>STATUS</span><h3>状态与提示</h3></header>
+              <div class="status-row">
+                <span class="status-chip status-chip--success"><i></i>在线</span>
+                <span class="status-chip status-chip--info"><i></i>同步中</span>
+                <span class="status-chip status-chip--warning"><i></i>需要配置</span>
+                <span class="status-chip status-chip--danger"><i></i>连接失败</span>
+                <span class="status-chip"><i></i>已禁用</span>
+              </div>
+              <div class="notice-list">
+                <button class="notice notice--info" type="button"><b>信息</b><span>服务配置已经保存。</span><i>×</i></button>
+                <button class="notice notice--warning" type="button"><b>警告</b><span>该服务需要访问本地目录。</span><i>×</i></button>
+                <button class="notice notice--danger" type="button"><b>错误</b><span>无法连接远程服务。</span><i>×</i></button>
+              </div>
+            </article>
+            <article class="component-panel">
+              <header><span>DATA ROWS</span><h3>高密度信息</h3></header>
+              <div class="data-list">
+                <button class="data-row is-active" type="button"><span class="data-row__icon">▣</span><span><b>本机</b><small>192.168.15.100</small></span><em>在线</em></button>
+                <button class="data-row" type="button"><span class="data-row__icon">▱</span><span><b>移动设备</b><small>最后连接 2 小时前</small></span><em>离线</em></button>
+                <button class="data-row" type="button"><span class="data-row__icon">◇</span><span><b>Hook</b><small>桌面客户端</small></span><em>已连接</em></button>
+              </div>
+            </article>
+          </div>
+        </section>
+
+        <section class="token-board" id="tokens" aria-labelledby="token-title">
+          <header class="section-head">
+            <div><span>04 / CANONICAL TOKENS</span><h2 id="token-title">精确颜色令牌</h2></div>
+            <p>点击任意令牌复制；产品应按语义映射，不按相似色批量替换。</p>
+          </header>
+          <div id="token-editor" class="token-editor"></div>
+        </section>
+      </main>
+    </div>
+
+    <div class="dialog-layer" id="dialog-layer" hidden>
+      <section class="sample-dialog" role="dialog" aria-modal="true" aria-labelledby="dialog-title">
+        <header><div><span>// CONFIRM</span><h2 id="dialog-title">删除设备？</h2></div><button id="close-dialog" class="icon-control" type="button" aria-label="关闭">×</button></header>
+        <p>删除后需要重新批准该设备才能再次连接。此操作不会删除设备上的本地数据。</p>
+        <footer><button class="sample-button sample-button--outline" id="cancel-dialog" type="button">取消</button><button class="sample-button sample-button--danger" type="button">确认删除</button></footer>
+      </section>
+    </div>
+    <div class="lab-toast" id="lab-toast" role="status" aria-live="polite"></div>
+    <script src="./app.js"></script>
+  </body>
+</html>

@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" fill="none">
+  <title>Beaver — 负木者</title>
+  <path fill="#22c55e" fill-rule="evenodd" d="M44 85 29 74C19 68 9 76 10 86c1 11 17 19 36 18l5-7Zm-25-3 5 4-4 5-5-4Zm10 7 5 4-4 5-5-4Z"/>
+  <path fill="#22c55e" fill-rule="evenodd" d="M40 93c-5-13-3-30 9-41 5-5 11-8 18-9l-1-8c-1-7 5-12 11-10 6 1 8 6 7 12 10 1 18 8 22 18l9 4v12c-3 7-10 10-21 10h-4v12l11 6v9H49l-9-15Zm47-42v7h7v-7Z"/>
+  <path fill="#d9ff38" d="m74 88 32-19 10 16-32 19Z"/>
+  <path fill="#22c55e" d="m67 70 11-3 11 16-10 6Z"/>
+  <path fill="#d9ff38" d="M100 77h7v9h-7Z"/>
+</svg>

@@ -1,0 +1,66 @@
+:root {
+  color-scheme: dark;
+
+  /* Canonical primary colors. Do not add competing yellow/green primaries. */
+  --neuro-signal-yellow: #d9ff38;
+  --neuro-signal-green: #22c55e;
+  --neuro-info-blue: #06b6d4;
+  --neuro-danger-red: #f43f5e;
+
+  /* Canonical neutral surfaces. */
+  --neuro-bg: #06080d;
+  --neuro-surface: #090c11;
+  --neuro-panel: #0e1218;
+  --neuro-rail: #070a0f;
+  --neuro-control: #111720;
+  --neuro-control-hover: #18222c;
+  --neuro-text: #f7f8ef;
+  --neuro-text-muted: #929a9f;
+  --neuro-line: rgba(255, 255, 255, 0.12);
+  --neuro-focus-surface: #f3f5f1;
+  --neuro-focus-ink: #20252b;
+  --neuro-focus-muted: #656b72;
+
+  /* Interaction states are derived from the canonical colors. */
+  --neuro-yellow-hover: color-mix(in srgb, var(--neuro-signal-yellow) 86%, white);
+  --neuro-yellow-pressed: color-mix(in srgb, var(--neuro-signal-yellow) 82%, black);
+  --neuro-yellow-soft: color-mix(in srgb, var(--neuro-signal-yellow) 14%, var(--neuro-panel));
+  --neuro-yellow-line: color-mix(in srgb, var(--neuro-signal-yellow) 42%, var(--neuro-line));
+  --neuro-green-hover: color-mix(in srgb, var(--neuro-signal-green) 86%, white);
+  --neuro-green-pressed: color-mix(in srgb, var(--neuro-signal-green) 82%, black);
+  --neuro-green-soft: color-mix(in srgb, var(--neuro-signal-green) 14%, var(--neuro-panel));
+  --neuro-green-line: color-mix(in srgb, var(--neuro-signal-green) 42%, var(--neuro-line));
+  --neuro-info-soft: color-mix(in srgb, var(--neuro-info-blue) 12%, var(--neuro-panel));
+  --neuro-danger-soft: color-mix(in srgb, var(--neuro-danger-red) 12%, var(--neuro-panel));
+  --neuro-on-yellow: color-mix(in srgb, var(--neuro-signal-yellow) 14%, black);
+  --neuro-green-text: color-mix(in srgb, var(--neuro-signal-green) 76%, white);
+  --neuro-info-text: color-mix(in srgb, var(--neuro-info-blue) 76%, white);
+  --neuro-danger-text: color-mix(in srgb, var(--neuro-danger-red) 78%, white);
+
+  /* Reference-page aliases. Product code should map these roles to its own theme API. */
+  --p-bg: var(--neuro-bg);
+  --p-surface: var(--neuro-surface);
+  --p-panel: var(--neuro-panel);
+  --p-rail: var(--neuro-rail);
+  --p-control: var(--neuro-control);
+  --p-control-hover: var(--neuro-control-hover);
+  --p-text: var(--neuro-text);
+  --p-muted: var(--neuro-text-muted);
+  --p-line: var(--neuro-line);
+  --p-hover: color-mix(in srgb, var(--neuro-signal-yellow) 6%, transparent);
+  --p-accent: var(--neuro-signal-yellow);
+  --p-accent-text: var(--neuro-signal-yellow);
+  --p-on-accent: var(--neuro-on-yellow);
+  --p-secondary: var(--neuro-signal-green);
+  --p-secondary-text: var(--neuro-green-text);
+  --p-info: var(--neuro-info-blue);
+  --p-info-text: var(--neuro-info-text);
+  --p-brand-primary: var(--neuro-signal-green);
+  --p-brand-secondary: var(--neuro-signal-yellow);
+  --p-success: var(--neuro-signal-green);
+  --p-warning: var(--neuro-signal-yellow);
+  --p-danger: var(--neuro-danger-red);
+  --p-danger-text: var(--neuro-danger-text);
+  --p-grid: rgba(255, 255, 255, 0.028);
+  --p-shadow: rgba(0, 0, 0, 0.38);
+}

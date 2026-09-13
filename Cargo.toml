@@ -1,0 +1,9 @@
+[workspace]
+resolver = "2"
+members = ["native/core", "native/desktop"]
+
+[profile.release]
+lto = true
+codegen-units = 1
+opt-level = "s"
+strip = true

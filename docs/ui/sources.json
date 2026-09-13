@@ -1,0 +1,121 @@
+{
+    "schemaVersion":  1,
+    "copiedOn":  "2026-09-06",
+    "purpose":  "UI design reference snapshot only; no runtime implementation",
+    "sourceState":  "Current working-tree files, including uncommitted content; hashes are authoritative",
+    "destinationBase":  ".",
+    "files":  [
+                  {
+                      "source":  "C:\\Users\\Public\\nas_home\\AI\\GameEditor\\Neuro\\docs\\UI设计与颜色方案\\README.md",
+                      "destination":  "references/neuro/README.md",
+                      "bytes":  2681,
+                      "sha256":  "998f9b1515b5c56092755c86d626a556e3b892dbe3f3fee3e38d880c31770969",
+                      "mode":  "byte-for-byte"
+                  },
+                  {
+                      "source":  "C:\\Users\\Public\\nas_home\\AI\\GameEditor\\Neuro\\docs\\UI设计与颜色方案\\AI_PROMPT.md",
+                      "destination":  "references/neuro/AI_PROMPT.md",
+                      "bytes":  3944,
+                      "sha256":  "e149c129e43b3c16595055155d7cfab91c35d20c61875db8cce5da7b6468a51f",
+                      "mode":  "byte-for-byte"
+                  },
+                  {
+                      "source":  "C:\\Users\\Public\\nas_home\\AI\\GameEditor\\Neuro\\docs\\UI设计与颜色方案\\DESIGN_SYSTEM.md",
+                      "destination":  "references/neuro/DESIGN_SYSTEM.md",
+                      "bytes":  7382,
+                      "sha256":  "ad905ad9a1546193dff3c2ec2039a4e543ece8da0669dd79c3749301bc79255b",
+                      "mode":  "byte-for-byte"
+                  },
+                  {
+                      "source":  "C:\\Users\\Public\\nas_home\\AI\\GameEditor\\Neuro\\docs\\UI设计与颜色方案\\tokens.json",
+                      "destination":  "references/neuro/tokens.json",
+                      "bytes":  2226,
+                      "sha256":  "429ec802b45b095ad081f8995edacb5cb96daf49ac3761da7eb78c9ab34ef42f",
+                      "mode":  "byte-for-byte"
+                  },
+                  {
+                      "source":  "C:\\Users\\Public\\nas_home\\AI\\GameEditor\\Neuro\\docs\\UI设计与颜色方案\\tokens.css",
+                      "destination":  "references/neuro/tokens.css",
+                      "bytes":  3028,
+                      "sha256":  "7877d0140684ec6cdc39be2732f26310381843aa4880671d3a885bc7ed99b43d",
+                      "mode":  "byte-for-byte"
+                  },
+                  {
+                      "source":  "C:\\Users\\Public\\nas_home\\AI\\GameEditor\\Neuro\\docs\\UI设计与颜色方案\\index.html",
+                      "destination":  "references/neuro/index.html",
+                      "bytes":  15961,
+                      "sha256":  "faeab76926d162d3ebd40b1024f7ad28132bea732e4491c1a543c6fc7a8b1305",
+                      "mode":  "byte-for-byte"
+                  },
+                  {
+                      "source":  "C:\\Users\\Public\\nas_home\\AI\\GameEditor\\Neuro\\docs\\UI设计与颜色方案\\styles.css",
+                      "destination":  "references/neuro/styles.css",
+                      "bytes":  29594,
+                      "sha256":  "5a482b54a78731176355880901b3e2e0a963764783276d9522f3a67b1473e8c0",
+                      "mode":  "byte-for-byte"
+                  },
+                  {
+                      "source":  "C:\\Users\\Public\\nas_home\\AI\\GameEditor\\Neuro\\docs\\UI设计与颜色方案\\app.js",
+                      "destination":  "references/neuro/app.js",
+                      "bytes":  7316,
+                      "sha256":  "bc644ea83f8aa2daba28554836a2b69ee5232dd02c5c6fce5434cf5801028e77",
+                      "mode":  "byte-for-byte"
+                  },
+                  {
+                      "source":  "C:\\Users\\Public\\nas_home\\AI\\GameEditor\\Neuro\\docs\\UI设计与颜色方案\\screenshots\\neuro-design-controls.png",
+                      "destination":  "references/neuro/screenshots/neuro-design-controls.png",
+                      "bytes":  123454,
+                      "sha256":  "920d4b73eb75b25877d142f99e222eab0d910f1ac36e4009fe00010f9256a188",
+                      "mode":  "byte-for-byte"
+                  },
+                  {
+                      "source":  "C:\\Users\\Public\\nas_home\\AI\\GameEditor\\Neuro\\docs\\UI设计与颜色方案\\screenshots\\neuro-design-dialog.png",
+                      "destination":  "references/neuro/screenshots/neuro-design-dialog.png",
+                      "bytes":  121678,
+                      "sha256":  "aeb209c77e42a0a687120ad52f674650af894dd8f2198991af7955d5b289eab3",
+                      "mode":  "byte-for-byte"
+                  },
+                  {
+                      "source":  "C:\\Users\\Public\\nas_home\\AI\\GameEditor\\Neuro\\docs\\UI设计与颜色方案\\screenshots\\neuro-design-overview.png",
+                      "destination":  "references/neuro/screenshots/neuro-design-overview.png",
+                      "bytes":  197406,
+                      "sha256":  "cc2c1016f0bb323e60e12b7e46ef61c288e71080ce7a40b9e157164bf25c97b7",
+                      "mode":  "byte-for-byte"
+                  },
+                  {
+                      "source":  "C:\\Users\\Public\\nas_home\\AI\\GameEditor\\Neuro\\docs\\UI设计与颜色方案\\screenshots\\neuro-design-shell.png",
+                      "destination":  "references/neuro/screenshots/neuro-design-shell.png",
+                      "bytes":  132033,
+                      "sha256":  "14e8888bf5609815bee044e3a8a35f02d6e66ebf150b0bc56ffead1696da31d9",
+                      "mode":  "byte-for-byte"
+                  },
+                  {
+                      "source":  "C:\\Users\\Public\\nas_home\\AI\\GameEditor\\Neuro\\docs\\UI设计与颜色方案\\screenshots\\neuro-design-tokens.png",
+                      "destination":  "references/neuro/screenshots/neuro-design-tokens.png",
+                      "bytes":  118730,
+                      "sha256":  "8a5b9c6db2a405b411983d61ff97921b3c9c60794c4ba3ed3c3c5849e8d1c72c",
+                      "mode":  "byte-for-byte"
+                  },
+                  {
+                      "source":  "C:\\Users\\Public\\nas_home\\AI\\GameEditor\\Neuro\\Loom\\docs\\analysis\\phase-27-workflow-graph-ui-audit.md",
+                      "destination":  "references/loom/analysis/phase-27-workflow-graph-ui-audit.md",
+                      "bytes":  7868,
+                      "sha256":  "d61f88807069194c87131d7d1845c702929859789c985a422f147b336adfcb58",
+                      "mode":  "byte-for-byte"
+                  },
+                  {
+                      "source":  "C:\\Users\\Public\\nas_home\\AI\\GameEditor\\Neuro\\Loom\\docs\\progress\\phase-27-workflow-graph-ui.md",
+                      "destination":  "references/loom/progress/phase-27-workflow-graph-ui.md",
+                      "bytes":  5607,
+                      "sha256":  "6364426c82ac564d3e5bccfa964db71a05c46507962fb35d8f4814736a6814ed",
+                      "mode":  "byte-for-byte"
+                  },
+                  {
+                      "source":  "C:\\Users\\Public\\nas_home\\AI\\GameEditor\\Neuro\\Loom\\docs\\progress\\phase-35-cn-ui-hook-sync.md",
+                      "destination":  "references/loom/progress/phase-35-cn-ui-hook-sync.md",
+                      "bytes":  6326,
+                      "sha256":  "ab8971b2e052e1ed9b97c71776967bb3230306dfbe283d29cd13d4ff620b2749",
+                      "mode":  "byte-for-byte"
+                  }
+              ]
+}

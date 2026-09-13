@@ -1,0 +1,253 @@
+/* Loom shell proportions, shared by every workspace including settings. */
+.app-shell {
+  --shell-rail-width: 186px;
+  --shell-titlebar-height: 50px;
+  display: grid;
+  grid-template-columns: var(--shell-rail-width) minmax(0, 1fr);
+  grid-template-rows: var(--shell-titlebar-height) minmax(0, 1fr);
+  height: 100vh;
+  overflow: hidden;
+}
+.app-shell.rail-collapsed {
+  --shell-rail-width: 52px;
+}
+.icon {
+  display: block;
+  width: 22px;
+  height: 22px;
+  flex: none;
+}
+.rail {
+  grid-column: 1;
+  grid-row: 1 / -1;
+  min-height: 0;
+  background: var(--rail);
+  border-right: 1px solid var(--line);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  height: var(--shell-titlebar-height);
+  flex: 0 0 var(--shell-titlebar-height);
+  padding: 0 8px;
+  overflow: hidden;
+  -webkit-app-region: drag;
+  user-select: none;
+}
+.brand strong {
+  font-size: 16px;
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+}
+.brand-mark {
+  display: block;
+  flex: 0 0 28px;
+  width: 28px;
+  height: 28px;
+  object-fit: contain;
+}
+.shell-icon-button,
+.window-control {
+  display: grid;
+  place-items: center;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--muted);
+  -webkit-app-region: no-drag;
+}
+.shell-icon-button {
+  width: 36px;
+  height: 36px;
+  flex: 0 0 36px;
+  border-radius: 8px;
+}
+.shell-icon-button:hover,
+.window-control:hover {
+  background: var(--hover);
+  color: var(--text);
+}
+.shell-icon-button:focus-visible,
+.window-control:focus-visible,
+.rail-item:focus-visible {
+  outline-offset: -2px;
+}
+.rail-nav,
+.rail-footer {
+  display: grid;
+  gap: 5px;
+}
+.rail-nav {
+  margin: 10px 8px 0;
+}
+.rail-footer {
+  margin: auto 8px 9px;
+  padding-top: 8px;
+  border-top: 1px solid var(--line);
+}
+.rail-item {
+  position: relative;
+  display: grid;
+  grid-template-columns: 28px minmax(0, 1fr);
+  align-items: center;
+  gap: 7px;
+  height: 36px;
+  min-height: 36px;
+  width: 100%;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  /* Keep the icon anchor fixed; collapse only removes the label column. */
+  padding: 3px;
+  background: transparent;
+  text-align: left;
+  color: var(--muted);
+  font-size: 14px;
+}
+.rail-item.active {
+  background: color-mix(in srgb, var(--yellow) 9%, var(--rail));
+  border-color: color-mix(in srgb, var(--yellow) 24%, transparent);
+  color: var(--yellow);
+}
+.rail-icon {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+}
+.rail-label {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.rail-item b {
+  position: absolute;
+  right: 8px;
+  font-size: 11px;
+}
+.rail-collapsed .brand {
+  gap: 0;
+}
+.rail-collapsed .brand strong,
+.rail-collapsed .brand-mark,
+.rail-collapsed .rail-label {
+  display: none;
+}
+.rail-collapsed .rail-item {
+  grid-template-columns: 28px;
+  gap: 0;
+}
+.rail-collapsed .rail-item b {
+  right: 0;
+  top: -3px;
+  font-size: 9px;
+  background: var(--rail);
+}
+.topbar {
+  grid-column: 2;
+  grid-row: 1;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  min-width: 0;
+  background: var(--rail);
+  border-bottom: 1px solid var(--line);
+  user-select: none;
+}
+.titlebar-context {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  -webkit-app-region: drag;
+}
+.project-tools {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  padding-left: 14px;
+}
+.project-select {
+  width: 190px;
+  height: 32px;
+  background: transparent;
+  border-color: transparent;
+  -webkit-app-region: no-drag;
+}
+.project-select:hover {
+  border-color: var(--line);
+}
+.window-controls {
+  display: flex;
+  align-items: stretch;
+  height: var(--shell-titlebar-height);
+}
+.window-control {
+  width: 48px;
+  height: 100%;
+  border-radius: 0;
+}
+.window-control .icon {
+  width: 18px;
+  height: 18px;
+}
+.window-control.window-refresh {
+  width: 54px;
+  margin-right: 4px;
+}
+.window-control.titlebar-back {
+  width: 44px;
+}
+.window-control.window-close:hover {
+  background: var(--red);
+  color: var(--white);
+}
+.main {
+  grid-column: 2;
+  grid-row: 2;
+  min-width: 0;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: var(--surface);
+}
+.page-header {
+  min-height: 86px;
+  padding: 17px 28px 15px;
+  border-bottom: 1px solid var(--line);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  flex: none;
+}
+.page-header h1 {
+  font-size: clamp(28px, 2.6vw, 37.6px);
+  line-height: 1.02;
+  letter-spacing: -0.045em;
+}
+.header-actions {
+  display: flex;
+  gap: 8px;
+}
+.header-actions button {
+  display: flex;
+  gap: 5px;
+  align-items: center;
+}
+.header-actions .icon {
+  width: 16px;
+  height: 16px;
+}
+.page-content {
+  flex: 1;
+  overflow: auto;
+  min-height: 0;
+  padding: 22px 26px 26px;
+  scrollbar-gutter: stable;
+}
+.main-settings .page-content {
+  padding: 0;
+}

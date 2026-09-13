@@ -1,0 +1,134 @@
+Beaver native Windows x64 - migration preview
+
+Start Beaver.exe on Windows x64 with Microsoft WebView2 Evergreen Runtime
+and Microsoft Visual C++ v14 Redistributable (x64).
+Alternatively run Start-Beaver.ps1 to check the registered WebView2 runtime
+and the required Visual C++ runtime DLL files first.
+If PowerShell script execution is restricted, install the runtime manually
+and launch Beaver.exe. Do not weaken your system execution policy.
+
+WebView2 is an external shared system dependency, not bundled here.
+Download the Evergreen Runtime from Microsoft:
+https://developer.microsoft.com/microsoft-edge/webview2/
+For offline systems, obtain Microsoft's x64 Evergreen Standalone Installer
+on a connected machine and install it before launching Beaver.
+Deployment reference:
+https://learn.microsoft.com/microsoft-edge/webview2/concepts/distribution
+The launcher only checks registration and does not download or install software.
+A registered but damaged runtime may still need repair by its installer.
+
+The current PE imports VCRUNTIME140.dll and VCRUNTIME140_1.dll. These are
+external prerequisites, not hidden files included in this application.
+Microsoft Visual C++ x64 installer: https://aka.ms/vc14/vc_redist.x64.exe
+Reference: https://learn.microsoft.com/cpp/windows/latest-supported-vc-redist
+Use Microsoft's installer; do not download individual DLLs from other sites.
+The launcher checks presence, not runtime integrity or version compatibility.
+
+This directory contains one application executable. UI, catalogs, templates,
+skills and media MCP are embedded; media mode uses Beaver.exe --media-mcp.
+No Electron, Node backend or separate beaver-media executable is included.
+Codex, Godot, Blender and optional Node/MCP tools are external development
+tools installed separately. They can occupy substantially more disk space
+than Beaver. Generated games, caches and user data are also separate.
+
+Code structure rules ship inside this executable and are supplied automatically
+to Codex for both new and resumed game tasks. Prefer 100-250 effective code lines
+per source file. Changed files above 500 need a split or a documented 501-700
+line exception; changed files above 700 must be split. Blank and comment-only
+lines do not count. Untouched historical code may remain as tracked debt.
+Codex can run the read-only beaver_check_code_structure tool before finishing.
+Beaver checks captured source changes again before merging, including retries.
+Rejected output remains in the task workspace; continue the task to correct it.
+No personal AGENTS.md, developer checkout or Hook installation is required.
+For an independent source audit, run:
+Beaver.exe --check-code-structure --root "GAME_DIRECTORY" --json "REPORT.json"
+This standalone audit has no task baseline and reports all oversized sources.
+
+Keep README.txt, THIRD-PARTY.json and licenses with this distribution.
+RELEASE.json lists payload hashes; the 50,000,000 byte limit includes the
+manifest, notices and launcher. Hash verification does not prove runtime
+behavior or authenticity. This preview is unsigned and is not an installer.
+No automatic update, uninstall, signature or clean-machine acceptance is claimed.
+
+The native preview uses its own application data directory. Do not point it
+at an Electron data directory or run both hosts on the same user data.
+Complete data migration and rollback acceptance is still pending.
+Closing the window hides Beaver; use the tray menu to exit.
+
+Optional local business API (native integration preview):
+Set BEAVER_API_TOKEN to a random 32..256 character secret using ASCII letters,
+digits, '_' or '-'. Set BEAVER_API_PORT if the default 4319 is unavailable.
+The desktop then binds 127.0.0.1 only. Without a token no listener is opened.
+GET /v1/capabilities discovers 44 operations and input schemas.
+POST /v1/call accepts {"method":"state","input":{}}.
+Both endpoints require Authorization: Bearer <token>; browser origins are denied.
+The token grants full local-owner business access, not project-scoped permissions.
+Use Beaver.exe --business-mcp with the same token/port environment for stdio MCP.
+Start the desktop first. The bridge operates on that host's existing live state.
+Do not automatically retry writes after timeouts: accepted calls may continue.
+No remote API, OAuth, durable deduplication or generic job subscription is claimed.
+Asset import takes explicit paths; template import takes an explicit archive path.
+
+Offline full recovery archive (Windows):
+Beaver.exe --migration-bundle create "OLD_APP_DATA" "NEW_BACKUP_DIRECTORY"
+Beaver.exe --migration-bundle verify "BACKUP_DIRECTORY"
+Beaver.exe --migration-bundle restore "BACKUP_DIRECTORY" "NEW_RECOVERY_DIRECTORY"
+Beaver.exe --migration-bundle prepare-import "BACKUP_DIRECTORY" "NEW_IMPORT_DIRECTORY"
+Beaver.exe --migration-bundle activate-import "BACKUP_DIRECTORY" "PREPARED_DIRECTORY" ["TOOL_PATHS_JSON"]
+
+Exit Beaver and stop all project/workspace writers before creating a backup.
+The archive includes the application data and every registered Godot project,
+including .git, .godot and empty directories. Missing projects, overlapping
+roots, links and changed files are rejected. Destination parents must exist;
+destinations must be new and outside all source directories. Failed candidates
+are retained for inspection and are never silently overwritten.
+
+Restore creates raw data/project copies and RESTORE.json with a relocation map.
+It DOES NOT rewrite absolute paths, convert credentials, recover tasks or activate
+the new host. The .beaver-migration-pending marker blocks accidental desktop
+startup on the recovery directory or its descendants. Do not remove it manually.
+This recovery stage is available from the single EXE without initializing the UI.
+The original directories and encrypted values remain unchanged. File hashes are
+integrity checks, not signatures, permission backups or power-loss guarantees.
+
+prepare-import restores into a NEW directory, locks the copied data, and converts
+known project/workspace/managed-tool paths and Windows credentials in one database
+transaction. It then recovers file journals against the copied projects before
+interrupting old running/queued tasks. Electron credentials require the matching
+Local State inside the archived application data and the original Windows user.
+Original ciphertext is retained in secret_backup. Unreadable credentials or
+unmanaged task workspaces fail without committing path or credential changes.
+External tools are not executed; old detection results must be checked again.
+
+IMPORT.json records successful preparation, but ready_to_activate remains false.
+The pending marker remains until explicit activate-import succeeds.
+Opaque session files and thread IDs are preserved, not rewritten or discarded.
+If journal recovery fails after conversion, the copied directory may contain
+partial recovery work; no IMPORT.json is emitted and the original archive remains
+untouched. Retry from the archive into another NEW directory after investigation.
+
+Preparation also rebases verified path columns in copied Codex state_N.sqlite
+indexes. Unknown schemas or missing indexed history fail closed. JSONL history
+is not rewritten. This is tested with real Codex 0.153.4 and a local fixture
+Responses API; it is not a claim about live model quality or all Codex versions.
+Codex index transactions are separate from the Beaver entity transaction.
+
+activate-import requires the same intact backup and an unmoved prepared copy.
+It rechecks project/workspace ownership, Codex history paths, credentials and
+unfinished journals, then runs actual destination tool version probes. Codex
+and Godot are required; enabled Godot MCP also requires Node. Optional tool
+failures remain visible. TOOL_PATHS_JSON, if supplied, is a JSON object containing
+codex, godot, blender and node string paths. No tools are downloaded or installed.
+Success writes ACTIVATION.json and removes pending. It does not change the default
+data directory or start a task. To open the activated copy in PowerShell:
+$env:BEAVER_DATA_DIR = "PREPARED_DIRECTORY\data"
+.\Beaver.exe
+Keep the original backup. Import UI and full rollback acceptance remain pending.
+
+THIRD-PARTY.json includes a conservative superset of Windows Cargo packages
+(including build dependencies) plus bundled JavaScript dependencies. It records
+versions, declared licenses and corresponding upstream license texts. Missing
+crate license files are obtained from the package's pinned upstream commit;
+selectors uses Mozilla's official MPL 2.0 text and links its exact source.
+Rust standard-library copyright and license files are also included.
+This inventory is not a claim that all listed packages run as separate programs.

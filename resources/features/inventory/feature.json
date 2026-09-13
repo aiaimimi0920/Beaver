@@ -1,0 +1,1 @@
+{"id":"inventory","name":"物品与背包","version":"1.0.0","description":"数量管理、消耗和原子物品交换；提供独立逻辑模块，由 Codex 接入游戏界面。","category":"systems","kind":"module"}

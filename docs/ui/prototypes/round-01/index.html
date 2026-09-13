@@ -1,0 +1,198 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="color-scheme" content="dark" />
+    <title>Beaver · 创作布局草案 01</title>
+    <link
+      rel="icon"
+      href="../../../../resources/branding/beaver.svg"
+      type="image/svg+xml"
+    />
+    <link rel="stylesheet" href="./styles.css" />
+    <script defer src="./prototype.js"></script>
+  </head>
+  <body>
+    <header class="review-bar">
+      <strong>布局草案 01</strong>
+      <span>示例数据 · 不安装、不生成、不修改项目</span>
+      <div class="spacer"></div>
+      <button data-action="onboarding">首次使用</button>
+      <button data-action="workspace">创作工作区</button>
+      <button data-action="guide" aria-expanded="false">布局说明</button>
+    </header>
+    <div class="app" id="app">
+      <aside class="rail">
+        <div class="brand">
+          <button
+            class="icon-button"
+            id="collapse"
+            data-action="collapse"
+            aria-label="收起侧栏"
+            aria-expanded="true"
+          >
+            <span data-icon="sidebar"></span>
+          </button>
+          <img
+            src="../../../../resources/branding/beaver.svg"
+            alt=""
+            width="28"
+            height="28"
+          />
+          <strong>Beaver</strong>
+        </div>
+        <nav class="rail-nav" aria-label="创作工作区">
+          <button class="rail-item" data-page="create" aria-label="创作">
+            <span data-icon="chat"></span><span class="rail-label">创作</span
+            ><span class="count">2</span>
+          </button>
+          <button class="rail-item" data-page="docs" aria-label="资料">
+            <span data-icon="book"></span><span class="rail-label">资料</span>
+          </button>
+          <button class="rail-item" data-page="assets" aria-label="素材">
+            <span data-icon="image"></span><span class="rail-label">素材</span>
+          </button>
+          <button class="rail-item" data-page="game" aria-label="游戏">
+            <span data-icon="game"></span><span class="rail-label">游戏</span>
+          </button>
+        </nav>
+        <div class="rail-footer">
+          <button
+            class="rail-item"
+            data-action="environment"
+            aria-label="创作环境"
+          >
+            <span data-icon="box"></span
+            ><span class="rail-label">创作环境</span>
+          </button>
+          <button class="rail-item" data-page="settings" aria-label="设置">
+            <span data-icon="settings"></span
+            ><span class="rail-label">设置</span>
+          </button>
+        </div>
+      </aside>
+      <header class="topbar">
+        <button class="project-picker" data-action="projects">
+          <span id="project-name">夜航调饮室</span
+          ><span aria-hidden="true">⌄</span>
+        </button>
+        <button
+          class="icon-button"
+          data-action="new-project"
+          aria-label="创建项目"
+        >
+          <span data-icon="plus"></span>
+        </button>
+        <button
+          class="icon-button"
+          data-action="import-project"
+          aria-label="接管已有项目"
+        >
+          <span data-icon="folder"></span>
+        </button>
+        <div class="spacer"></div>
+        <button class="quiet" data-action="play">试玩</button>
+        <button class="quiet" data-action="export">导出</button>
+        <div class="window-marks" aria-hidden="true">
+          <span>—</span><span>□</span><span>×</span>
+        </div>
+      </header>
+      <main id="view" aria-label="布局预览"></main>
+      <div
+        id="notice"
+        class="notice"
+        role="status"
+        aria-live="polite"
+        hidden
+      ></div>
+    </div>
+    <section class="layout-guide" id="guide" hidden>
+      <h1>这轮确认入口、分区和内容，不确认视觉细节</h1>
+      <table>
+        <thead>
+          <tr>
+            <th>入口</th>
+            <th>放什么</th>
+            <th>不放什么</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th>创作</th>
+            <td>
+              人发出的任务、结果、对话、反馈、变更和任务回退。选择任务后，在同一主区切换结果与对话。
+            </td>
+            <td>不展示默认展开的 Codex 内部计划、节点或工种编排。</td>
+          </tr>
+          <tr>
+            <th>资料</th>
+            <td>
+              按游戏内容组织的文档：方向、世界、人物、玩法、关卡、视听、技术、发行。支持人工阅读和修改原文。
+            </td>
+            <td>不是一组“AI 员工”，也不要求用户给每次任务挑选上下文。</td>
+          </tr>
+          <tr>
+            <th>素材</th>
+            <td>
+              图片、音频、模型、场景、视频和翻译。预览、多选、问题反馈、参考创作。
+            </td>
+            <td>不把功能代码与世界观文档混进图片瀑布流。</td>
+          </tr>
+          <tr>
+            <th>游戏</th>
+            <td>
+              总览与锁定的基础设定、三个阶段的创作重点、功能包、试玩、可运行程序导出和版本记录。
+            </td>
+            <td>不放应用 API Key 或工具安装配置。</td>
+          </tr>
+          <tr>
+            <th>左下角</th>
+            <td>
+              创作环境、AI
+              服务、后台运行与回退设置。首次使用单独引导自动准备环境。
+            </td>
+            <td>不把 skills、MCP 和向量数据库当作普通用户的一级创作入口。</td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="guide-columns">
+        <div>
+          <h2>贯穿所有页面的动作</h2>
+          <p>
+            对资料、素材或游戏提出修改 →
+            带上用户选中的对象，进入新的创作任务。Codex
+            自己决定还需要搜索和读取哪些资料。
+          </p>
+          <p>
+            “待验收”只表示结果等待人看，不代表 Codex
+            每一步都要审批。执行与认可分开。
+          </p>
+        </div>
+        <div>
+          <h2>旧入口去向</h2>
+          <p>
+            任务 → 创作；总览 → 游戏 / 总览；功能块 → 游戏 / 功能；项目设置 →
+            游戏 / 创作重点；素材保留；新增资料。
+          </p>
+          <p>
+            游戏模板只在创建时选择；接管项目不覆盖模板。功能包后期可添加和更新。
+          </p>
+        </div>
+        <div>
+          <h2>暂不进入首版导航</h2>
+          <p>
+            自有游戏 /
+            素材集市、支付奖励、外部渠道发行和云端执行。平台额度与自配 API
+            是服务来源，首版执行位置仍在本机。
+          </p>
+          <p>
+            全部交互仅为本页演示，刷新还原。支持切换页面、示例筛选、文档编辑、设定锁和弹窗；不会调用真实工具。
+          </p>
+        </div>
+      </div>
+    </section>
+    <dialog id="dialog" aria-labelledby="dialog-title"></dialog>
+    <noscript>请允许此本地网页运行 JavaScript，以切换布局页面。</noscript>
+  </body>
+</html>

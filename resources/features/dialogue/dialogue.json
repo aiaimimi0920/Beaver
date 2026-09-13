@@ -1,0 +1,1 @@
+{"start":"welcome","nodes":{"welcome":{"speaker":"值班员","text":"欢迎来到夜航。今晚想聊些什么？","choices":[{"text":"聊聊这座城","next":"city"},{"text":"来一杯饮品","next":"drink"}]},"city":{"speaker":"值班员","text":"每一盏灯后面，都有一个还没讲完的故事。","next":"drink"},"drink":{"speaker":"值班员","text":"告诉我你想要的味道吧。","next":null}}}

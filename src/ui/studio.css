@@ -1,0 +1,667 @@
+.main.main-studio {
+  padding: 0;
+  overflow: hidden;
+}
+.main-studio .page-content {
+  padding: 0;
+  overflow: hidden;
+  scrollbar-gutter: auto;
+  height: 100%;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+.studio-preview {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.studio-preview-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 5px 12px;
+  min-height: 32px;
+  border-bottom: 1px solid var(--line);
+  color: var(--muted);
+  font-size: 11px;
+}
+.studio-preview-bar button {
+  background: transparent;
+  padding: 2px 6px;
+  font-size: 11px;
+}
+.studio-docs,
+.studio-assets,
+.studio-tasks {
+  display: grid;
+  min-height: 0;
+  flex: 1;
+  overflow: hidden;
+}
+.studio-docs {
+  grid-template-columns: 176px minmax(0, 1fr) 198px;
+}
+.studio-docs.side-closed {
+  grid-template-columns: 176px minmax(0, 1fr);
+}
+.studio-assets {
+  grid-template-columns: 148px minmax(0, 1fr) 208px;
+}
+.studio-tasks {
+  grid-template-columns: 232px minmax(0, 1fr);
+}
+.studio-directory,
+.studio-inspector {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  min-width: 0;
+  overflow: hidden;
+  background: var(--surface);
+}
+.studio-directory {
+  border-right: 1px solid var(--line);
+}
+.studio-inspector {
+  border-left: 1px solid var(--line);
+}
+.studio-directory > input,
+.studio-directory > select {
+  margin: 6px 8px;
+}
+.studio-toolbar {
+  min-height: 40px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 10px;
+  flex-shrink: 0;
+  border-bottom: 1px solid var(--line);
+  min-width: 0;
+}
+.studio-toolbar > strong {
+  flex: 1;
+}
+.studio-toolbar button {
+  padding: 4px 7px;
+  white-space: nowrap;
+}
+.studio-toolbar .icon,
+.studio-entry .icon {
+  width: 16px;
+  height: 16px;
+}
+.studio-toolbar input:not([type="range"]) {
+  flex: 1;
+  width: 0;
+}
+.studio-toolbar input[type="range"] {
+  width: 72px;
+  padding: 0;
+  accent-color: var(--yellow);
+}
+.studio-toolbar h1 {
+  flex: 1;
+  min-width: 0;
+  font-size: 16px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.studio-spacer {
+  flex: 1;
+}
+.studio-scroll {
+  overflow: auto;
+  min-height: 0;
+  flex: 1;
+  scrollbar-gutter: stable;
+}
+.studio-directory details {
+  margin: 3px 0;
+  padding: 0;
+  border: 0;
+}
+.studio-directory summary {
+  color: var(--muted);
+  padding: 5px 10px;
+  font-size: 12px;
+  cursor: pointer;
+}
+.studio-entry {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  width: calc(100% - 12px);
+  margin: 3px 6px;
+  min-height: 31px;
+  text-align: left;
+  background: transparent;
+  border-color: transparent;
+  padding: 5px 7px;
+}
+.studio-entry span:first-of-type {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.studio-entry.nested {
+  padding-left: 20px;
+}
+.studio-preview .active {
+  color: var(--yellow);
+}
+.studio-entry.active,
+.studio-task-entry.active {
+  background: var(--control);
+  border-left-color: var(--yellow);
+}
+.studio-note {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  min-width: 0;
+}
+.studio-document-tabs {
+  min-height: 39px;
+  display: flex;
+  overflow-x: auto;
+  flex-shrink: 0;
+  border-bottom: 1px solid var(--line);
+}
+.studio-document-tabs > div {
+  display: flex;
+  max-width: 215px;
+  flex-shrink: 0;
+  border-right: 1px solid var(--line);
+  border-top: 2px solid transparent;
+}
+.studio-document-tabs > .active {
+  border-top-color: var(--yellow);
+}
+.studio-document-tabs button {
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+  font-size: 12px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.studio-note-body {
+  padding: 28px;
+  line-height: 1.9;
+}
+.studio-note-body h1 {
+  font-size: 24px;
+  margin-bottom: 25px;
+}
+.studio-note-body h2 {
+  font-size: 15px;
+  margin: 24px 0 8px;
+}
+.studio-note-body p {
+  min-height: 8px;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+button.studio-link {
+  border: 0;
+  padding: 0;
+  color: var(--blue);
+  background: transparent;
+  text-align: left;
+}
+.studio-source {
+  flex: 1;
+  min-height: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  resize: none;
+  padding: 22px;
+  font-family: Consolas, "Microsoft YaHei", monospace;
+}
+.studio-status {
+  display: flex;
+  justify-content: space-between;
+  padding: 6px 10px;
+  color: var(--muted);
+  font-size: 11px;
+  border-top: 1px solid var(--line);
+}
+.studio-outline {
+  padding: 10px;
+}
+.studio-outline button {
+  display: block;
+  width: 100%;
+  text-align: left;
+  background: transparent;
+  border: 0;
+  padding: 7px 4px;
+}
+.studio-outline details {
+  margin-top: 25px;
+}
+.studio-ai {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+  padding: 12px;
+  flex: 1;
+  min-height: 0;
+}
+.studio-ai textarea {
+  height: 155px;
+  resize: vertical;
+  max-height: 50%;
+}
+.studio-chip {
+  display: inline-block;
+  padding: 5px 8px;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  font-size: 12px;
+  overflow-wrap: anywhere;
+}
+.studio-chips {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin: 10px 0;
+}
+.studio-chips button {
+  padding: 3px 6px;
+  font-size: 11px;
+}
+.studio-gallery {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  min-width: 0;
+}
+.studio-gallery-grid {
+  display: grid;
+  gap: 10px;
+  align-content: start;
+  padding: 12px;
+}
+.studio-asset-card {
+  position: relative;
+  min-width: 0;
+  padding: 3px;
+  border: 1px solid transparent;
+  border-radius: 4px;
+}
+.studio-asset-card.active {
+  border-color: var(--yellow);
+  background: color-mix(in srgb, var(--yellow) 5%, transparent);
+}
+.studio-asset-card > button {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  padding: 0;
+  width: 100%;
+  border: 0;
+  background: transparent;
+  text-align: left;
+}
+.studio-asset-card > button > span {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  width: 100%;
+}
+.studio-asset-card small {
+  color: var(--muted);
+  font-size: 11px;
+}
+.studio-asset-card > input {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  margin: 0;
+}
+.studio-thumbnail {
+  width: 100%;
+  aspect-ratio: 1.2;
+  display: grid;
+  place-items: center;
+  border: 1px solid var(--line);
+  background: var(--panel);
+  position: relative;
+  overflow: hidden;
+}
+.studio-thumbnail .icon {
+  width: 46px;
+  height: 46px;
+  color: var(--muted);
+}
+.studio-thumbnail.portrait i {
+  width: 23%;
+  height: 31%;
+  border: 1px solid var(--muted);
+  border-radius: 50%;
+  position: absolute;
+  top: 16%;
+}
+.studio-thumbnail.portrait b {
+  width: 50%;
+  height: 55%;
+  border: 1px solid var(--muted);
+  border-radius: 50% 50% 0 0;
+  position: absolute;
+  bottom: -9%;
+}
+.studio-properties {
+  padding: 12px;
+}
+.studio-properties > input {
+  width: 100%;
+  margin: 12px 0;
+}
+.studio-properties section {
+  border-top: 1px solid var(--line);
+  padding-top: 15px;
+  margin: 18px 0;
+}
+.studio-properties section > small {
+  color: var(--muted);
+}
+.studio-properties p {
+  margin-top: 8px;
+}
+.studio-properties label {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+.studio-properties label.field {
+  align-items: stretch;
+}
+.studio-property-actions {
+  display: grid;
+  gap: 7px;
+  padding: 10px;
+  border-top: 1px solid var(--line);
+}
+.studio-mini-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+.studio-form-grid,
+.studio-comparison {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+.studio-comparison {
+  margin: 15px 0;
+}
+.studio-comparison section {
+  min-width: 0;
+  padding: 16px;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 5px;
+}
+.studio-comparison pre {
+  max-height: 280px;
+  overflow: auto;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  font: inherit;
+}
+.studio-comparison h3 {
+  margin: 12px 0;
+}
+.studio-comparison p {
+  line-height: 1.8;
+  color: var(--muted);
+}
+.studio-task-entry {
+  display: block;
+  width: calc(100% - 12px);
+  text-align: left;
+  margin: 5px 6px;
+  padding: 12px 9px;
+  border-color: transparent;
+  background: transparent;
+}
+.studio-task-entry strong {
+  display: block;
+  font-size: 13px;
+  line-height: 1.5;
+  font-weight: 500;
+  overflow-wrap: anywhere;
+}
+.studio-task-entry small {
+  display: block;
+  margin-top: 7px;
+  color: var(--muted);
+}
+.studio-task-detail {
+  min-width: 0;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+.studio-task-body {
+  padding: 22px;
+}
+.studio-task-body .attention,
+.studio-preview .attention {
+  color: var(--yellow);
+}
+.studio-preview .positive {
+  color: var(--green);
+}
+.studio-tabs button {
+  background: transparent;
+  border-color: transparent;
+}
+.studio-tabs button.active {
+  border-bottom-color: var(--yellow);
+  border-radius: 0;
+}
+.studio-choice-list {
+  display: grid;
+  gap: 14px;
+  margin: 22px 0;
+}
+.studio-choice-list label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.studio-choice-list input {
+  accent-color: var(--yellow);
+}
+.studio-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  justify-content: flex-end;
+  margin-top: 20px;
+}
+.studio-composer {
+  padding: 12px;
+  display: flex;
+  align-items: flex-end;
+  gap: 10px;
+  border-top: 1px solid var(--line);
+}
+.studio-composer textarea {
+  flex: 1;
+  min-height: 76px;
+  max-height: 160px;
+}
+.studio-composer button {
+  flex-shrink: 0;
+}
+.studio-message {
+  padding: 15px;
+  margin-bottom: 12px;
+  border-left: 2px solid var(--line);
+  background: var(--panel);
+}
+.studio-message small {
+  color: var(--muted);
+}
+.studio-message p {
+  margin-top: 10px;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+.studio-file-change {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 15px 0;
+  border-bottom: 1px solid var(--line);
+}
+.studio-file-change code {
+  overflow-wrap: anywhere;
+}
+.studio-task-body > .muted {
+  margin: 18px 0;
+}
+.studio-progress ol {
+  list-style: none;
+  padding: 0;
+  margin-top: 25px;
+}
+.studio-progress li {
+  border-left: 2px solid var(--line);
+  padding: 14px;
+  color: var(--muted);
+}
+.studio-progress li.active {
+  border-left-color: var(--yellow);
+}
+.studio-result-placeholder {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  justify-content: center;
+  align-items: center;
+  min-height: 235px;
+  border: 1px dashed var(--line);
+  background: var(--panel);
+  text-align: center;
+}
+.studio-result-placeholder small {
+  color: var(--muted);
+}
+.studio-empty {
+  padding: 24px 12px;
+  color: var(--muted);
+}
+.studio-existing {
+  margin: 8px;
+}
+.game-section-tabs {
+  display: flex;
+  gap: 8px;
+  padding: 8px 20px;
+  border-bottom: 1px solid var(--line);
+}
+.game-section-tabs .active {
+  color: var(--yellow);
+}
+@media (max-width: 1050px) {
+  .studio-docs {
+    grid-template-columns: 150px minmax(0, 1fr) 168px;
+  }
+  .studio-docs.side-closed {
+    grid-template-columns: 150px minmax(0, 1fr);
+  }
+  .studio-assets {
+    grid-template-columns: 132px minmax(0, 1fr) 185px;
+  }
+  .studio-tasks {
+    grid-template-columns: 205px minmax(0, 1fr);
+  }
+  .studio-note > .studio-toolbar {
+    flex-wrap: wrap;
+  }
+  .studio-task-body {
+    padding: 15px;
+  }
+  .studio-note-body {
+    padding: 20px;
+  }
+}
+.real-documents {
+  display: grid;
+  grid-template-columns: 230px minmax(300px, 1fr) 170px;
+  height: 100%;
+  min-height: 500px;
+}
+.real-documents > aside {
+  padding: 12px;
+  border-right: 1px solid var(--line);
+  overflow: auto;
+}
+.real-documents > aside > button {
+  display: block;
+  width: 100%;
+  text-align: left;
+  overflow-wrap: anywhere;
+  margin: 4px 0;
+}
+.real-documents > section {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  padding: 12px;
+}
+.real-documents header {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  margin-bottom: 12px;
+}
+.real-documents header strong {
+  flex: 1;
+  overflow-wrap: anywhere;
+}
+.real-documents header input {
+  min-width: 0;
+}
+.real-documents .document-source {
+  flex: 1;
+  width: 100%;
+  min-height: 400px;
+  resize: none;
+  font-family: Consolas, monospace;
+  line-height: 1.7;
+}
+.real-documents .document-outline {
+  border-left: 1px solid var(--line);
+  color: var(--muted);
+  line-height: 2;
+}
+.status-dot.awaitingInput {
+  background: var(--yellow);
+}
+.badge.awaitingInput {
+  color: var(--yellow);
+}
+@media (max-width: 1050px) {
+  .real-documents {
+    grid-template-columns: 190px minmax(250px, 1fr);
+  }
+  .real-documents .document-outline {
+    display: none;
+  }
+}

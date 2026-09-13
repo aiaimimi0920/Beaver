@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" fill="none">
+  <title>Beaver — 尾印</title>
+  <g transform="rotate(35 64 64)">
+    <path fill="#22c55e" fill-rule="evenodd" d="M44 18h40c9 0 15 6 15 15v30c0 11-9 24-23 28H52C38 87 29 74 29 63V33c0-9 6-15 15-15Zm7 14-9 9 9 9 9-9Zm26 0-9 9 9 9 9-9ZM51 56l-9 9 9 9 9-9Zm26 0-9 9 9 9 9-9Z"/>
+    <path fill="#d9ff38" d="M52 98h24v13H52Z"/>
+  </g>
+</svg>

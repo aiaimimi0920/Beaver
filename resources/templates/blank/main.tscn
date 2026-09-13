@@ -1,0 +1,13 @@
+[gd_scene format=3]
+
+[node name="Game" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+
+[node name="Welcome" type="Label" parent="."]
+offset_left = 48.0
+offset_top = 48.0
+theme_override_font_sizes/font_size = 32
+text = "Beaver Game\n通过对话，把这里变成你的游戏。"

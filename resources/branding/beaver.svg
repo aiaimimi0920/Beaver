@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" fill="none">
+  <title>Beaver - 一句成游</title>
+  <path fill="#22c55e" fill-rule="evenodd" d="M36 27h56c14 0 23 10 23 24v22c0 13-9 22-23 22H59l-29 19 5-19C21 95 12 86 12 73V51c0-14 10-24 24-24Zm-1 21v10h-10v10h10v10h10V68h10V58H45V48Zm59 3a9 9 0 1 0-18 0 9 9 0 0 0 18 0Zm13 21a9 9 0 1 0-18 0 9 9 0 0 0 18 0Z"/>
+  <path fill="#d9ff38" d="M91 51a6 6 0 1 1-12 0 6 6 0 0 1 12 0Zm13 21a6 6 0 1 1-12 0 6 6 0 0 1 12 0Z"/>
+</svg>

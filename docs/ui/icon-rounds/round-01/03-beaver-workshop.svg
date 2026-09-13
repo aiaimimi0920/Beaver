@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-labelledby="title">
+  <title id="title">Beaver / 河狸工坊</title>
+  <path fill="#22c55e" fill-rule="evenodd" d="M64 10l48 28v58l-48 28-48-28V38L64 10z M29 46v43l35 20 35-20V46L64 26 29 46z"/>
+  <path fill="#22c55e" fill-rule="evenodd" d="M40 54V42h13v9h22v-9h13v37L76 91H52L40 79V54z M49 62v7h7v-7h-7z M72 62v7h7v-7h-7z M52 78v7h24v-7H52z"/>
+  <path fill="#d9ff38" d="M55 80h7v16h-7z M66 80h7v16h-7z M93 11h20v20H93z"/>
+</svg>

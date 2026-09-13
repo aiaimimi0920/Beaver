@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" fill="none">
+  <title>Beaver - 线刻</title>
+  <path stroke="#22c55e" stroke-width="9" stroke-linecap="round" stroke-linejoin="round" d="M45 99C30 99 15 90 12 80c-3-9 4-16 13-13l18 8m-3 24h47c0-7-6-13-17-13 3-7 3-15-1-21m-27 31C31 79 36 53 59 46l-2-10c-2-9 11-13 15-5l6 12c14 1 27 11 34 21v12c-9 6-23 6-33-1M19 79l12 9"/>
+  <path fill="#22c55e" d="M91 56h7v7h-7Z"/>
+  <path fill="#d9ff38" d="M98 77h11v18H98Z"/>
+</svg>

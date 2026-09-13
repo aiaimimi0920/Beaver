@@ -1,0 +1,243 @@
+.page-controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-size: 11px;
+  color: var(--muted);
+  flex-shrink: 0;
+}
+.page-controls button {
+  padding: 2px 8px;
+  min-height: 24px;
+}
+.child-tasks {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-height: 0;
+  max-height: 100%;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-gutter: stable;
+  scrollbar-width: thin;
+}
+.child-tasks button {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex: 0 0 auto;
+  min-height: 42px;
+  text-align: left;
+}
+.child-tasks strong {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.child-tasks span {
+  color: var(--muted);
+  font-size: 11px;
+  white-space: nowrap;
+}
+.task-conversation {
+  height: 100%;
+  min-height: 0;
+  display: grid;
+  grid-template-rows: auto auto auto minmax(0, 1fr) auto;
+  gap: 10px;
+  padding: 14px 18px;
+}
+.conversation-heading,
+.conversation-tabs {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  min-width: 0;
+}
+.conversation-heading h1 {
+  margin: 0;
+  font-size: 16px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  flex: 1;
+  min-width: 0;
+}
+.conversation-heading select {
+  width: 140px;
+}
+.conversation-tabs {
+  gap: 6px;
+}
+.conversation-tabs span {
+  flex: 1;
+}
+.conversation-tabs button {
+  padding: 5px 9px;
+  font-size: 12px;
+}
+.conversation-tabs button[aria-pressed="true"] {
+  color: var(--yellow);
+  border-color: var(--yellow);
+}
+.conversation-content {
+  min-height: 0;
+  min-width: 0;
+  border: 1px solid var(--line);
+  padding: 14px;
+  background: var(--surface);
+  border-radius: 6px;
+}
+.paged-text {
+  display: grid;
+  grid-template-rows: minmax(0, 1fr) 30px;
+  gap: 8px;
+  height: 100%;
+  min-height: 0;
+}
+.paged-text pre {
+  margin: 0;
+  padding: 0;
+  min-height: 0;
+  min-width: 0;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  font:
+    13px/20px Consolas,
+    monospace;
+  tab-size: 1;
+}
+.conversation-composer {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.conversation-composer > input {
+  width: 100%;
+  min-height: 42px;
+}
+.conversation-composer footer {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.conversation-composer footer > span {
+  flex: 1;
+  color: var(--muted);
+  font-size: 11px;
+}
+.conversation-composer select {
+  width: 120px;
+}
+.question-navigation {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  flex-wrap: wrap;
+  font-size: 12px;
+}
+.question-navigation button {
+  padding: 2px 8px;
+}
+.question-navigation button[aria-pressed="true"] {
+  color: var(--yellow);
+}
+.conversation-files {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+  gap: 6px;
+}
+.conversation-files label {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  min-width: 0;
+  height: 32px;
+}
+.conversation-files label span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  flex: 1;
+}
+.conversation-files footer {
+  margin-top: auto;
+}
+.new-task-screen {
+  height: 100%;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 18px;
+}
+.new-task-screen header,
+.new-task-screen footer {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.new-task-screen h1 {
+  margin: 0;
+  font-size: 18px;
+}
+.new-task-screen footer {
+  margin-top: auto;
+}
+.new-task-screen footer span {
+  flex: 1;
+  color: var(--muted);
+}
+.new-task-settings {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+@media (max-width: 900px) {
+  .conversation-heading {
+    flex-wrap: wrap;
+  }
+  .conversation-heading h1 {
+    flex-basis: 50%;
+  }
+  .conversation-tabs {
+    flex-wrap: wrap;
+  }
+  .board-toolbar {
+    padding: 10px 12px;
+  }
+  .board-toolbar input {
+    width: 160px;
+  }
+  .board-column h2 {
+    font-size: 11px;
+  }
+}
+.paged-editor {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 8px;
+  align-items: center;
+}
+.paged-editor textarea {
+  width: 100%;
+  height: 84px;
+  min-height: 84px;
+  resize: none;
+  padding: 10px;
+  font:
+    13px/20px Consolas,
+    monospace;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  tab-size: 1;
+}
+.paged-editor .page-controls {
+  flex-direction: column;
+  gap: 2px;
+}

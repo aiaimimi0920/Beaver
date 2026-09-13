@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" fill="none">
+  <title>Beaver - 回环</title>
+  <path fill="#22c55e" d="M77 12C38 5 8 29 8 65c0 32 24 53 56 53 21 0 39-10 49-27-16 10-32 13-46 8-20-6-33-23-33-42 0-22 18-38 43-45Z"/>
+  <path fill="#22c55e" fill-rule="evenodd" d="M47 75c-5-12-3-29 8-38l-2-5c-3-10 12-17 17-7l3 7c16 0 28 14 31 23l9 4v16c-5 7-14 9-26 4L71 97C60 93 53 86 47 75Zm37-26v7h8v-7Z"/>
+  <path fill="#d9ff38" d="M101 78h11v18h-11Z"/>
+</svg>

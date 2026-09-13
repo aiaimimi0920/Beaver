@@ -1,0 +1,219 @@
+.creation-board {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  flex: 1;
+  height: 100%;
+  min-width: 0;
+}
+.board-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 18px;
+}
+.board-toolbar input {
+  width: 220px;
+}
+.board-toolbar select {
+  width: 150px;
+}
+.board-total {
+  color: var(--muted);
+  flex: 1;
+}
+.board-toolbar button {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.board-columns {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 8px;
+  padding: 0 12px 10px;
+  flex: 1;
+  min-height: 0;
+  align-items: stretch;
+}
+.board-column {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  min-width: 0;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 7px;
+}
+.board-column > header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 8px;
+}
+.board-column h2 {
+  font-size: 13px;
+  font-weight: 600;
+  margin: 0;
+  flex: 1;
+}
+.board-column > header > span:last-child {
+  color: var(--muted);
+  font-size: 12px;
+}
+.column-mark {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--muted);
+}
+.column-running .column-mark {
+  background: var(--blue);
+}
+.column-attention .column-mark,
+.column-review .column-mark {
+  background: var(--yellow);
+}
+.column-done .column-mark {
+  background: var(--green);
+}
+.board-cards {
+  padding: 0 6px;
+  min-height: 0;
+  flex: 1;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-gutter: stable;
+  scrollbar-width: thin;
+}
+.board-card {
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  gap: 5px;
+  padding: 8px;
+  height: 136px;
+  margin-bottom: 6px;
+  min-width: 0;
+  text-align: left;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-top: 3px solid var(--direction-color);
+  border-radius: 6px;
+  color: var(--text);
+}
+.board-card:hover {
+  background: var(--hover);
+  border-color: var(--direction-color);
+}
+.board-card strong {
+  font-size: 13px;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.direction-tag {
+  display: inline-flex;
+  gap: 6px;
+  align-items: center;
+  font-size: 11px;
+  color: var(--direction-color);
+  white-space: nowrap;
+  font-size: 10px;
+}
+.direction-tag .icon {
+  width: 16px;
+  height: 16px;
+}
+.direction-general {
+  --direction-color: #929a9f;
+}
+.direction-story {
+  --direction-color: #b7a6d9;
+}
+.direction-gameplay {
+  --direction-color: #8abbd3;
+}
+.direction-visual {
+  --direction-color: #d2a7bd;
+}
+.direction-audio {
+  --direction-color: #9ec7be;
+}
+.direction-engineering {
+  --direction-color: #a8b8de;
+}
+.direction-review {
+  --direction-color: #c3b8a3;
+}
+.direction-release {
+  --direction-color: #a5b9c6;
+}
+.board-question {
+  color: var(--text);
+  font-size: 12px;
+  line-height: 1.5;
+  border-left: 2px solid var(--yellow);
+  padding-left: 8px;
+  overflow-wrap: anywhere;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.board-card footer {
+  display: flex;
+  justify-content: space-between;
+  gap: 6px;
+  color: var(--muted);
+  font-size: 11px;
+  flex-wrap: wrap;
+  margin-top: auto;
+  font-size: 10px;
+}
+.card-status.awaitingInput {
+  color: var(--yellow);
+}
+.card-status.failed,
+.card-status.conflict {
+  color: var(--red);
+}
+.board-empty {
+  color: var(--muted);
+  font-size: 12px;
+  text-align: center;
+  padding: 28px 6px;
+}
+.task-page.task-board-page {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+  overflow: hidden;
+  gap: 0;
+}
+.task-board-page > .composer {
+  margin: 12px 18px 0;
+  flex-shrink: 0;
+}
+.task-board-page > .composer > textarea {
+  min-height: 70px;
+}
+.task-detail-dialog {
+  width: min(900px, 90vw);
+}
+.task-detail-dialog .task-detail {
+  border: 0;
+  background: transparent;
+  padding: 0;
+}
+@media (max-width: 760px) {
+  .board-toolbar {
+    flex-wrap: wrap;
+  }
+  .board-toolbar input {
+    width: 160px;
+  }
+}
