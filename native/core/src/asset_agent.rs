@@ -113,7 +113,7 @@ impl Context {
             Some((
                 input["revision"]
                     .as_u64()
-                    .context("Missing plan revision")?,
+                    .context("Missing plan revision: call state, then submit stages with its current top-level revision")?,
                 serde_json::from_value::<Vec<asset_task::Stage>>(input["stages"].clone())?,
             ))
         } else {

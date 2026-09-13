@@ -14,8 +14,8 @@ pub fn definition() -> Value {
             "type":"object","additionalProperties":false,"required":["operation"],
             "properties":{
                 "operation":{"type":"string","enum":["state","stages","poll","checkpoint","finishRound","acknowledge","deciding","execute","check","complete","verifyApplied","verifyNotApplied","fail","retryFailed"]},
-                "revision":{"type":"integer","minimum":0},
-                "stages":{"type":"array","maxItems":100,"items":{
+                "revision":{"type":"integer","minimum":0,"description":"Required for operation stages. Copy the current revision from state or the latest successful response; each stages update increments it."},
+                "stages":{"type":"array","maxItems":100,"description":"For operation stages, submit the full stage plan together with its current top-level revision.","items":{
                     "type":"object","additionalProperties":false,
                     "required":["id","name","status","dependencies","objects","evidence","round"],
                     "properties":{
@@ -47,6 +47,11 @@ pub fn projection(state: &State) -> Value {
 
 pub fn text_result(value: Value) -> Value {
     json!({"success":true,"contentItems":[{"type":"inputText","text":value.to_string()}]})
+}
+
+pub fn error_result(message: &str) -> Value {
+    // RPC rejection hides business errors from the model behind a generic failure.
+    json!({"success":false,"contentItems":[{"type":"inputText","text":message}]})
 }
 
 pub fn image_result(feedback: &Feedback, png: &[u8]) -> Value {

@@ -11,6 +11,12 @@ task planning. Preserve IDs when inserting, suspending, adapting or rechecking a
 stage. Each accepted stages update saves a checkpoint at that boundary. Also call
 checkpoint before major scene changes that do not change the stage plan.
 
+Every operation="stages" call must include the current top-level revision returned
+by state or your latest successful response, together with the full stages array.
+For example, the initial state has revision=0. An accepted update increments it;
+use the returned revision next time. On a revision conflict, read state again and
+reconcile the plan before retrying. Do not omit revision or blindly reuse an old one.
+
 At safe serial boundaries between Blender commands, poll feedback. A notice only
 means feedback is pending; poll returns its actual reference image as image input.
 Inspect the image, its camera, annotations and local geometric hit. A hit identifies

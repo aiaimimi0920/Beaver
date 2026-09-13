@@ -2,6 +2,10 @@ use crate::{asset_agent, clarifications, executor::Outcome, rpc::Rpc, store::Sto
 use serde_json::{json, Value};
 use std::sync::{Arc, Mutex};
 
+#[cfg(test)]
+#[path = "executor_tools_tests.rs"]
+mod tests;
+
 pub async fn dispatch(
     store: &Arc<Mutex<Store>>,
     task_id: &str,
@@ -20,11 +24,17 @@ pub async fn dispatch(
                         asset.delivered(&id).map_err(|e| e.to_string())?;
                     }
                 }
-                Err(error) => rpc.reject(id, &error.to_string()).await?,
+                Err(error) => {
+                    rpc.respond(id, crate::asset_tool::error_result(&error.to_string()))
+                        .await?;
+                }
             }
         } else {
-            rpc.reject(id, "This task has no managed asset session")
-                .await?;
+            rpc.respond(
+                id,
+                crate::asset_tool::error_result("This task has no managed asset session"),
+            )
+            .await?;
         }
         return Ok(None);
     }
