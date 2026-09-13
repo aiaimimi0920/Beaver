@@ -90,8 +90,10 @@ PNG 与视频都保存作者指定及运行时取得的代码/场景/资源引�
 
 ## 已有验证证据
 
-所有下列命令从独立目录执行，未使用原 Beaver 的运行数据。日志和媒体保存在该目录的 `output/`，
-这些运行产物不提交到源代码历史。
+所有下列命令当时从独立目录执行，未使用原 Beaver 的运行数据。2026-09-13 清理开发副本前，
+日志、媒体和编译产物已归档至 `C:\Users\Public\nas_home\Beaver\output\game-validation-delivery-20260913`。
+下表保留运行时的相对路径；归档中按同名文件查找证据。这些运行产物不提交到源代码历史，
+现存位置与清理记录见[归档说明](../output/game-validation-delivery-20260913/README.md)。
 
 | 检查                                     | 结果与证据                                                                                    |
 | ---------------------------------------- | --------------------------------------------------------------------------------------------- |
@@ -113,7 +115,8 @@ PNG 与视频都保存作者指定及运行时取得的代码/场景/资源引�
 FFprobe 确认视频为 VP9、320 x 180、30 FPS、49 帧、1.641 秒、6722 字节。
 隔离存档路径位于本轮运行目录内。
 
-当前集成构建产物为 15,823,872 字节，生成时间为 2026-09-13 14:29:52，Asia/Shanghai。
+集成构建产物现归档在 `C:\Users\Public\nas_home\Beaver\output\game-validation-delivery-20260913\Beaver.exe`，
+大小为 15,823,872 字节，生成时间为 2026-09-13 14:29:52，Asia/Shanghai。
 SHA-256 为 `36fbfdb31386bf2b84e23c12480d262864738c88b1f0428d4df251c6cddb53fa`。
 
 该合同位于 [validation_contract.rs](../native/core/examples/validation_contract.rs)，使用专用 fixture，
@@ -127,14 +130,15 @@ SHA-256 为 `36fbfdb31386bf2b84e23c12480d262864738c88b1f0428d4df251c6cddb53fa`�
 ## 集成及剩余验证
 
 开发副本最初为独立快照仓库，和原 `main` 的根历史不同。实现提交为
-`f3f34bc531da948b44f68c7876fd7e89665d52f4`，保留在 `feature/game-validation`。
+`f3f34bc531da948b44f68c7876fd7e89665d52f4`，开发时位于 `feature/game-validation`。
 在同一独立目录创建 `integration/game-validation-main`，基于原 `main` 的
 `393e2aa1c345312d1f6df85c9d1abe71c59d8f81` 承接为
 `98fbf2ed82d9682ebc6a241d0dec5732dd9accfc`，避免合并无关根历史。
 
 承接后的功能提交与原实现提交只在原主分支已更新的两个人物 skill 文件上存在差异，功能内容完全保留。
 集成构建通过；主分支合入使用快进方式。合入前后提交、工作区状态及并发 skill 文件摘要记录在
-`C:\Users\Public\nas_home\beaver1\output\validation-main-merge-proof.json`，运行证据不进入源代码历史。
+`C:\Users\Public\nas_home\Beaver\output\game-validation-delivery-20260913\validation-main-merge-proof.json`，
+运行证据不进入源代码历史。
 
 原生验收启动前的保护检查发现另一条开发任务正在运行
 `C:\Users\Public\nas_home\beaver2\target\release\Beaver.exe`，因此停止启动，未关闭该实例。
