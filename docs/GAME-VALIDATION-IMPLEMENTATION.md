@@ -6,6 +6,8 @@
 `C:\Users\Public\nas_home\beaver1` 的 `feature/game-validation` 分支独立开发，
 功能完成后合入原 Beaver 主分支。本文分别记录实现、验证及集成，避免用某一项通过代替其他结果。
 
+功能实现、核心回归、真实引擎适配器验证及原生构建已完成；完整桌面/API 操作验收尚未执行，见末节。
+
 ## 实现与使用
 
 打开游戏项目，在 Beaver 导航中选择“测试与画面”。页面包含 GUT 结果、漫游、功能、
@@ -101,6 +103,7 @@ PNG 与视频都保存作者指定及运行时取得的代码/场景/资源引�
 | `npm run check:effective-lines`          | 404 个源文件，18 个未修改历史超限文件，0 项违规；`output/validation-effective-lines.log`      |
 | 真实 Godot 适配器合同                    | 通过；`output/validation-adapter-sources.log` 及 `output/validation-adapter-20260913-135950/` |
 | `npm run build:native`                   | 通过，退出码 0；`output/validation-native-build.log`，生成 `target/release/Beaver.exe`        |
+| 集成分支 `npm run build:native`          | 通过，退出码 0；`output/validation-integration-build.log`，包含结构检查、UI 打包及原生编译    |
 
 最新适配器合同使用引擎
 `Z:\project\godot-4-4-1\bin\godot.windows.editor.x86_64.exe`，其实际版本输出为
@@ -110,8 +113,8 @@ PNG 与视频都保存作者指定及运行时取得的代码/场景/资源引�
 FFprobe 确认视频为 VP9、320 x 180、30 FPS、49 帧、1.641 秒、6722 字节。
 隔离存档路径位于本轮运行目录内。
 
-原生构建产物为 15,820,288 字节，生成时间为 2026-09-13 14:10:32，Asia/Shanghai。
-SHA-256 为 `fe8215412c2445f8a36cb6f43c95b5532791f2a48c026e0c792652d463f9d838`。
+当前集成构建产物为 15,823,872 字节，生成时间为 2026-09-13 14:29:52，Asia/Shanghai。
+SHA-256 为 `36fbfdb31386bf2b84e23c12480d262864738c88b1f0428d4df251c6cddb53fa`。
 
 该合同位于 [validation_contract.rs](../native/core/examples/validation_contract.rs)，使用专用 fixture，
 直接验证引擎适配器。它不构成经 Beaver API 创建游戏的原生应用验收。
@@ -123,9 +126,15 @@ SHA-256 为 `fe8215412c2445f8a36cb6f43c95b5532791f2a48c026e0c792652d463f9d838`�
 
 ## 集成及剩余验证
 
-开发副本最初为独立快照仓库，和原 `main` 的根历史不同。合入使用基于原 `main` 的集成分支承接
-本功能提交，避免合并无关根历史。主目录中的人物 skill 改动与本功能分开核对，不覆盖并发工作。
-集成提交及最终检查结果在完成合入时补录。
+开发副本最初为独立快照仓库，和原 `main` 的根历史不同。实现提交为
+`f3f34bc531da948b44f68c7876fd7e89665d52f4`，保留在 `feature/game-validation`。
+在同一独立目录创建 `integration/game-validation-main`，基于原 `main` 的
+`393e2aa1c345312d1f6df85c9d1abe71c59d8f81` 承接为
+`98fbf2ed82d9682ebc6a241d0dec5732dd9accfc`，避免合并无关根历史。
+
+承接后的功能提交与原实现提交只在原主分支已更新的两个人物 skill 文件上存在差异，功能内容完全保留。
+集成构建通过；主分支合入使用快进方式。合入前后提交、工作区状态及并发 skill 文件摘要记录在
+`C:\Users\Public\nas_home\beaver1\output\validation-main-merge-proof.json`，运行证据不进入源代码历史。
 
 原生验收启动前的保护检查发现另一条开发任务正在运行
 `C:\Users\Public\nas_home\beaver2\target\release\Beaver.exe`，因此停止启动，未关闭该实例。
