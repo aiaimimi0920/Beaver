@@ -1,0 +1,3 @@
+# Preserve the exact upstream bytes pinned by the bundled package manifest.
+# Recognize upstream CRLF in whitespace checks without rewriting those bytes.
+resources/packages/npr-characters/addons/npr_characters/** -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
