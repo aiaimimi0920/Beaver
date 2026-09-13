@@ -19,13 +19,14 @@ use tokio::{
 };
 
 pub struct Launch {
-    pub command: Command,
+    pub command: Option<Command>,
     pub model: String,
     pub prompt: String,
     pub ask_user_tool: Value,
     pub secrets: Vec<String>,
     pub max_minutes: u64,
     pub blender: Option<crate::blender_session::Request>,
+    pub godot: Option<std::path::PathBuf>,
 }
 pub type Factory = Arc<dyn Fn(&Value) -> Result<Launch, String> + Send + Sync>;
 type Reply = oneshot::Sender<Result<(), String>>;
@@ -257,14 +258,15 @@ async fn run(
                         let factory = factory.clone();
                         let store = store.clone();
                         let active_id = id.clone();
-                        let worker = jobs.spawn(crate::scheduler_asset_worker::run(
+                        let worker = jobs.spawn(crate::scheduler_worker::execute(
                             task,
-                            store,
-                            files.root().to_owned(),
                             factory,
+                            store,
+                            files.clone(),
                             sessions.clone(),
                             cancelled,
                             input,
+                            changed.clone(),
                         ));
                         active.get_mut(&active_id).unwrap().worker = Some(worker.id());
                         changed();

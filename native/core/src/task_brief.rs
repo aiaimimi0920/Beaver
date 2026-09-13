@@ -7,6 +7,10 @@ pub fn prompt(task: &Value, catalog: &Value) -> String {
         "资料使用可人工阅读和编辑的 Markdown，按需归档到 docs/world（世界观）、docs/characters（人物）、docs/mechanics（玩法）、docs/art（美术规范）、docs/audio（声音规范）、docs/production（制作计划）、docs/decisions（用户确认）。沿用已有项目的有效分类，不为凑目录生成空文档。由你自行检索并选择上下文。".to_owned(),
         "先阅读项目资料。缺少必须由用户决定的创作意图或知识时，调用 beaver_ask_user 提问；任务会等待回答，不要自行假设用户决定。收到回答后，将确认的设定归档到项目 docs/decisions 下的 Markdown 文档（仅审查任务不得写入）。".to_owned(),
         format(task, catalog),
+        if task["validationVersion"] == 1 && task["capability"] != "review" {
+            format!("{}\n当前任务 ID：{}", include_str!("../../../resources/instructions/game-validation.md"), text(&task["id"]))
+        } else { String::new() },
+        task.get("validationRepair").map(|context| format!("本次代码验收失败，请定位并修复后保留回归检查。读取 .beaver-context/validation/repairs/{} 中的 repair.json、run.json、run.log 和 source，查看失败集成候选；原始用户反馈仍保存在 .beaver-context/validation/feedback.json。历史源码仅作对照，不覆盖当前项目。以下是真实 GUT 结果；不要删除断言、跳过失败用例或缩小必需套件来消除红色：\n{context}", text(&context["runId"]))).unwrap_or_default(),
         task.get("restartContext").map(|context| format!("这是同一任务的新 AI 会话。工作副本包含此前未完成的修改，原基线与回退边界仍有效。先核实下列线索和已有文件、docs/decisions 及运行结果，从未完成处继续；不要重新初始化项目或重放已成功操作。旧汇报仅是线索，不是验收证据：\n{context}")).unwrap_or_default(),
         "Beaver 标准工作流由 beaver_workflow_list / beaver_workflow_run 提供。你负责选择、创作和修复决策，AI 可参与任何环节。先发现已启用的工作流；涉及 NPR 人物时读取 beaver.runtime.json 及 inspect 返回的制作规范，使用 Blender MCP 建模，并调用 validate / preview 检查真实产物。涉及人物外观时，先读取 blender-production 的参考对照和分阶段视觉检查要求；计划与子任务验收应包含实际近景和造型质量，不只列文件、贴图数量或技术检查。不要把规划功能意向当成已安装插件。".to_owned(),
         if task["decompose"] == true { include_str!("../../../dist-native/planning-instruction.txt").to_owned() } else { "本任务是独立执行单元，完成自己的目标及验收验证，不再拆分。".to_owned() },

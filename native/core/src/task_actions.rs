@@ -81,6 +81,12 @@ pub fn continue_task(store: &mut Store, id: &str, text: &str, fresh_context: boo
         }
     ));
     task["status"] = json!("queued");
+    task["validationRepairAttempts"] = json!(0);
+    task["validationRechecks"] = json!(0);
+    if task["integrationValidation"] != true {
+        task["validationOnly"] = json!(false);
+        task["validationPrepared"] = json!(false);
+    }
     task.as_object_mut()
         .context("任务格式无效")?
         .remove("turnId");

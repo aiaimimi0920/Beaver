@@ -109,7 +109,7 @@ pub fn expand(store: &mut Store, root: &Path, parent: &mut Value) -> Result<()> 
           "direction":step.direction,"capability":"code","decompose":false,"autoAccept":parent["autoAccept"].as_bool().unwrap_or(true),
           "workspace":root.join("workspaces").join(&ids[i]),"workspacePrepared":false,"baseline":{},"changes":[],"conflicts":[],
           "status":"queued","createdAt":now,"updatedAt":now,"dependsOn":if i == 0 { vec![] } else { vec![ids[i-1].clone()] }});
-        for key in ["askRatio","references","stopConditions","maxMinutes","projectContext","design"] { if let Some(v) = parent.get(key) { child[key] = v.clone(); } }
+        for key in ["askRatio","references","stopConditions","maxMinutes","projectContext","design","validationVersion"] { if let Some(v) = parent.get(key) { child[key] = v.clone(); } }
         child
     }).collect();
     parent["subtaskIds"] = json!(ids);
@@ -215,7 +215,13 @@ pub fn reconcile(store: &mut Store, files: &Files) -> Result<()> {
                     .any(|t| t["id"] == *id && t["status"] == "completed" && t["accepted"] == true)
             })
         {
-            parent["status"] = json!("completed");
+            if parent["validationVersion"] == 1 {
+                parent["status"] = json!("queued");
+                parent["integrationValidation"] = json!(true);
+                parent["validationOnly"] = json!(true);
+            } else {
+                parent["status"] = json!("completed");
+            }
             parent["report"] = json!(format!("{}\n\n{} 个子任务已完成合入并通过审批。请检查各子任务的验证报告；这不替代实际试玩。",parent["plan"]["summary"].as_str().unwrap_or(""),ids.len()));
             let id = parent["id"].as_str().context("任务标识无效")?.to_owned();
             parent["updatedAt"] =

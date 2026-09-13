@@ -69,6 +69,8 @@ struct Manifest {
     entry: String,
     platform: String,
     files: Vec<Record>,
+    #[serde(default)]
+    validation: Value,
 }
 
 pub fn verify(directory: &Path) -> Result<Value> {
@@ -142,7 +144,7 @@ pub fn verify(directory: &Path) -> Result<Value> {
         bail!("入口文件不是有效的目标平台程序或归档");
     }
     Ok(
-        json!({"path":root,"entry":manifest.entry,"files":actual.len(),"bytes":actual.iter().map(|f|f.bytes).sum::<u64>()}),
+        json!({"path":root,"entry":manifest.entry,"files":actual.len(),"bytes":actual.iter().map(|f|f.bytes).sum::<u64>(),"reportedValidation":manifest.validation}),
     )
 }
 

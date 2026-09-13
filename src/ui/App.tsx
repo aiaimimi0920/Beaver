@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import type { Project, Reference, ToolStatus } from "../shared/types";
 import { call, type Run, type State } from "./api";
-import { Dialog, Field } from "./components";
+import { Dialog } from "./components";
 import { TasksView } from "./TasksView";
 import { AssetsView } from "./AssetsView";
 import { SettingsView } from "./SettingsView";
@@ -18,6 +18,8 @@ import { ProjectOverviewView } from "./ProjectOverviewView";
 import { StudioPreview } from "./StudioPreview";
 import { DocumentsView } from "./DocumentsView";
 import { TaskBoard } from "./TaskBoard";
+import { ExportGameDialog } from "./ExportGameDialog";
+import { ValidationView } from "./validation/ValidationView";
 
 export function App() {
   const notify = useNotify();
@@ -37,11 +39,12 @@ export function App() {
     name: string;
     fields: string[];
   }>();
-  const [exporting, setExporting] = useState(false);
-  const [preparingTemplates, setPreparingTemplates] = useState(false);
-  const [presets, setPresets] = useState<string[]>([]);
-  const [preset, setPreset] = useState("");
-  const [destination, setDestination] = useState("");
+  const [exporting, setExporting] = useState<{ releaseId?: string }>();
+  const [taskFocus, setTaskFocus] = useState("");
+  const [validationFocus, setValidationFocus] = useState<{
+    taskId?: string;
+    runId?: string;
+  }>({});
   const [missingTools, setMissingTools] = useState<ToolStatus[]>([]);
   const [setup, setSetup] = useState(false);
   const refresh = useCallback(async () => {
@@ -74,7 +77,12 @@ export function App() {
     void refresh().catch(onError);
     return window.beaver.subscribe(() => void refresh().catch(onError));
   }, [refresh, notify]);
-  useEffect(() => setRefs([]), [projectId]);
+  useEffect(() => {
+    setRefs([]);
+    setTaskFocus("");
+    setValidationFocus({});
+    setExporting(undefined);
+  }, [projectId]);
   useEffect(() => {
     let active = true;
     void call<ToolStatus[]>("tools.detect")
@@ -96,20 +104,9 @@ export function App() {
   const running =
     state?.tasks.filter((t) => t.status === "running").length ?? 0;
   const closeCreate = useCallback(() => setCreate(false), []);
-  const closeExport = useCallback(() => setExporting(false), []);
-  function prepareTemplates(importArchive: boolean) {
-    setPreparingTemplates(true);
-    void run(async () => {
-      try {
-        const result = await call(
-          importArchive ? "game.importTemplates" : "game.prepareTemplates",
-        );
-        if (result)
-          notify({ tone: "success", text: "Windows x86_64 导出模板已就绪" });
-      } finally {
-        setPreparingTemplates(false);
-      }
-    });
+  function openValidation(focus: { taskId?: string; runId?: string }) {
+    setValidationFocus(focus);
+    setPage("validation");
   }
   return (
     <>
@@ -148,20 +145,7 @@ export function App() {
               >
                 <Icon name="play" /> 试玩
               </button>
-              <button
-                onClick={() =>
-                  void run(async () => {
-                    const list = await call<string[]>("game.presets", {
-                      id: projectId,
-                    });
-                    setPresets(list);
-                    setPreset(list[0] ?? "");
-                    setExporting(true);
-                  })
-                }
-              >
-                导出
-              </button>
+              <button onClick={() => setExporting({})}>导出</button>
               <button
                 aria-label="打开项目文件夹"
                 title="打开项目文件夹"
@@ -248,16 +232,7 @@ export function App() {
               project={project}
               busy={busy > 0}
               play={() => void run(() => call("game.play", { id: projectId }))}
-              exportGame={() =>
-                void run(async () => {
-                  const list = await call<string[]>("game.presets", {
-                    id: projectId,
-                  });
-                  setPresets(list);
-                  setPreset(list[0] ?? "");
-                  setExporting(true);
-                })
-              }
+              exportGame={() => setExporting({})}
               draft={overviewDrafts[project.id]}
               changeDraft={(draft) =>
                 setOverviewDrafts((old) => ({ ...old, [project.id]: draft }))
@@ -291,10 +266,25 @@ export function App() {
               openOverview={() => setPage("overview")}
               run={run}
             />
+          ) : page === "validation" ? (
+            <ValidationView
+              key={`${projectId}:${validationFocus.taskId ?? ""}:${validationFocus.runId ?? ""}`}
+              projectId={projectId}
+              tasks={tasks}
+              initialTaskId={validationFocus.taskId}
+              initialRunId={validationFocus.runId}
+              openTask={(id) => {
+                setTaskFocus(id);
+                setPage("create");
+              }}
+              exportGame={(releaseId) => setExporting({ releaseId })}
+            />
           ) : page === "tasks" || page === "create" ? (
             <TasksView
-              key={projectId}
+              key={`${projectId}:${taskFocus}`}
               projectId={projectId}
+              initialTaskId={taskFocus}
+              openValidation={(taskId) => openValidation({ taskId })}
               tasks={tasks}
               refs={refs}
               clearRefs={() => setRefs([])}
@@ -372,103 +362,16 @@ export function App() {
           </footer>
         </Dialog>
       )}
-      {exporting && (
-        <Dialog title="导出可运行游戏" close={closeExport}>
-          <div className="tools-toolbar">
-            <button
-              disabled={busy > 0}
-              title="从 Godot 官方下载并校验当前稳定版的模板包（可能超过 1 GB），安装 Windows x86_64 模板"
-              onClick={() => prepareTemplates(false)}
-            >
-              {preparingTemplates ? "准备模板中…" : "下载 Windows 模板"}
-            </button>
-            <button
-              disabled={busy > 0}
-              title="仅导入你信任的、与当前引擎版本匹配的 TPZ；不会覆盖已有模板"
-              onClick={() => prepareTemplates(true)}
-            >
-              导入模板包
-            </button>
-            {preparingTemplates && (
-              <button
-                onClick={() => void run(() => call("game.cancelTemplates"))}
-              >
-                停止准备模板
-              </button>
-            )}
-          </div>
-          {!presets.length && (
-            <div className="warning-box">
-              项目没有导出预设。请给 Codex 发出“配置当前系统的导出预设”任务。
-            </div>
-          )}
-          <Field label="导出预设">
-            <select value={preset} onChange={(e) => setPreset(e.target.value)}>
-              {presets.map((p) => (
-                <option key={p}>{p}</option>
-              ))}
-            </select>
-          </Field>
-          <Field label="输出父目录（项目外）">
-            <div className="input-action">
-              <input
-                value={destination}
-                onChange={(e) => setDestination(e.target.value)}
-              />
-              <button
-                onClick={() =>
-                  void run(async () => {
-                    const p = await call<string | null>("chooseDirectory");
-                    if (p) setDestination(p);
-                  })
-                }
-              >
-                选择
-              </button>
-            </div>
-          </Field>
-          <footer>
-            <button onClick={closeExport}>取消</button>
-            <button
-              disabled={busy > 0}
-              onClick={() =>
-                void run(async () => {
-                  const directory = await call<string | null>(
-                    "chooseDirectory",
-                  );
-                  if (!directory) return;
-                  const result = await call<{ files: number }>(
-                    "game.verifyExport",
-                    { path: directory },
-                  );
-                  notify({
-                    tone: "success",
-                    text: `导出包完整性校验通过：${result.files} 个文件；不代表运行或玩法验收。`,
-                  });
-                })
-              }
-            >
-              校验已有导出
-            </button>
-            <button
-              className="primary"
-              disabled={!preset || !destination || busy > 0}
-              onClick={() =>
-                void run(async () => {
-                  const result = await call<{ path: string }>("game.export", {
-                    id: projectId,
-                    preset,
-                    destination,
-                  });
-                  notify({ tone: "success", text: `导出完成：${result.path}` });
-                  setExporting(false);
-                })
-              }
-            >
-              生成游戏程序
-            </button>
-          </footer>
-        </Dialog>
+      {exporting && project && (
+        <ExportGameDialog
+          key={`${projectId}:${exporting.releaseId ?? "new"}`}
+          projectId={projectId}
+          initialReleaseId={exporting.releaseId}
+          busy={busy > 0}
+          run={run}
+          close={() => setExporting(undefined)}
+          openRun={(runId) => openValidation({ runId })}
+        />
       )}
       {setup && (
         <Dialog title="未找到必要工具" close={() => setSetup(false)}>

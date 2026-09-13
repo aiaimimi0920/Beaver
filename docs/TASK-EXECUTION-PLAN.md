@@ -23,16 +23,21 @@ Children execute sequentially. A child can run only after the preceding child is
 completed and approved. Its first workspace snapshot is taken at execution time
 from the latest integrated project, so it sees its predecessors' files. A retry
 of an already-started child retains that child's original workspace and baseline.
-The parent completes only after every planned child is completed and approved.
-No game-quality or export-success claim follows from this status alone.
+For new tasks (`validationVersion: 1`), the parent queues an integration-only
+GUT run after every planned child is completed and approved. It completes only
+when that integrated candidate passes, the children remain approved, and the
+normal safe-merge checks hold. Persisted legacy tasks retain their prior policy.
+No visual-quality or export-success claim follows from this status alone.
 
 ## Approval and recovery
 
-`task.create.autoAccept` defaults to true for planned children. Successful child
-completion means its process has stopped and its changes have merged without
-conflict; automatic approval then records `approvalSource: automatic`. Failed,
-interrupted, questioning, and conflicting tasks do not receive automatic approval.
-The parent's final acceptance remains manual.
+`task.create.autoAccept` defaults to true for new ordinary tasks, including plan
+parents and their children. Tasks with runtime changes must pass GUT on the
+candidate that will actually merge. Successful completion means execution has
+stopped, required code checks passed, and changes merged without conflict;
+automatic approval then records `approvalSource: automatic`. Failed, interrupted,
+questioning, and conflicting tasks do not receive automatic approval. An explicit
+manual policy remains available for both parents and children.
 
 Use `task.approval` with `{ id, autoAccept: false }` to select manual approval.
 For a parent this updates unfinished planned children; a child's setting can be
@@ -40,6 +45,18 @@ changed separately. A completed unapproved child is accepted explicitly through
 `task.accept`, which records `approvalSource: user` and releases its successor.
 Changing a policy does not rewrite prior approval history or silently accept a
 completed task. The UI exposes the same operations.
+
+Code failures retain the frozen run and failure context. Automatic repair is
+bounded to two attempts and stops on repeated failure fingerprints or unavailable
+engines. User instructions arriving during validation are retained and applied
+before a fresh candidate is tested. Concurrent project edits also require a fresh
+code receipt; a passing old workspace cannot approve a different merged tree.
+
+Delivery records durable visual coverage work for the project validation queue.
+Screenshot/video capture, comparison, and human review proceed independently and
+never hold ordinary task completion or approval. Feedback on a completed task
+creates related work with its own rollback boundary. See
+[game validation implementation](GAME-VALIDATION-IMPLEMENTATION.md).
 
 Interrupting a parent pauses its plan and interrupts its children. Continuing the
 parent with empty text resumes interrupted children; questions and failures still

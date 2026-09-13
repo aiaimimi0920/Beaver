@@ -105,7 +105,9 @@ async fn main() -> Result<()> {
         secrets: launch.secrets,
     };
     let (_sender, receiver) = tokio::sync::mpsc::channel(8);
-    let outcome = execution.run(launch.command, receiver).await;
+    let outcome = execution
+        .run(launch.command.context("Missing Codex command")?, receiver)
+        .await;
     ensure!(
         outcome == Outcome::Completed,
         "real relocated session failed: {outcome:?}"

@@ -31,6 +31,21 @@ pub fn prepare(
     tools: &BTreeMap<String, String>,
     inherited: BTreeMap<OsString, OsString>,
 ) -> Result<Launch> {
+    if crate::validation::task_gate::validation_only(task) {
+        return Ok(Launch {
+            command: None,
+            model: String::new(),
+            prompt: String::new(),
+            ask_user_tool: Value::Null,
+            secrets: vec![],
+            max_minutes: 0,
+            blender: None,
+            godot: tools
+                .get("godot")
+                .map(PathBuf::from)
+                .filter(|p| p.is_file()),
+        });
+    }
     let codex = Path::new(tools.get("codex").context("请先安装或配置 Codex")?);
     if !codex.is_file() {
         anyhow::bail!("Codex 程序不存在，请重新配置路径");
@@ -40,6 +55,7 @@ pub fn prepare(
     let provider = preferences::resolve(store, vault, settings, capability)?;
     let workspace = Path::new(task["workspace"].as_str().context("任务工作副本无效")?);
     let baseline = serde_json::from_value(task["baseline"].clone()).context("任务基线无效")?;
+    crate::validation::task_completion::freeze_repair(store, root, workspace, task)?;
     let environment = codex_home::prepare(
         root,
         store,
@@ -82,12 +98,16 @@ pub fn prepare(
         command.arg("-c").arg(value);
     }
     Ok(Launch {
-        command,
+        command: Some(command),
         model: provider.model,
         prompt: task_brief::prompt(task, &resources.catalog),
         ask_user_tool: resources.ask_user_tool.clone(),
         secrets,
         max_minutes: task["maxMinutes"].as_u64().unwrap_or(0),
         blender: environment.blender,
+        godot: tools
+            .get("godot")
+            .map(PathBuf::from)
+            .filter(|p| p.is_file()),
     })
 }

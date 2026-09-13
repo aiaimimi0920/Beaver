@@ -1,6 +1,6 @@
 use crate::{
     export_bundle,
-    files::{safe_path, Files},
+    files::{safe_path, Files, Snapshot},
     process,
 };
 use anyhow::{bail, Context, Result};
@@ -90,6 +90,14 @@ pub struct Prepared {
     target: Target,
     project: String,
     template_directory: Option<PathBuf>,
+    provenance: Value,
+}
+
+impl Prepared {
+    pub fn with_provenance(mut self, provenance: Value) -> Self {
+        self.provenance = provenance;
+        self
+    }
 }
 
 fn custom_template(config: &str, preset: &str) -> Result<Option<String>> {
@@ -119,6 +127,42 @@ fn custom_template(config: &str, preset: &str) -> Result<Option<String>> {
 
 /// Caller holds the project write lock only while freezing this export snapshot.
 pub fn prepare(data: &Path, project: &Value, destination: &Path, preset: &str) -> Result<Prepared> {
+    let root = Path::new(project["path"].as_str().context("项目路径无效")?);
+    let snapshot = Files::new(data.into()).capture(root)?;
+    prepare_snapshot(data, project, destination, preset, &snapshot)
+}
+
+pub fn snapshot_preset(data: &Path, snapshot: &Snapshot, preset: &str) -> Result<()> {
+    let hash = snapshot
+        .get("export_presets.cfg")
+        .context("发布候选缺少导出预设")?;
+    let blob = Files::new(data.into()).blob(hash)?;
+    anyhow::ensure!(
+        crate::files::file_hash(&blob)?.as_ref() == Some(hash),
+        "导出预设快照损坏"
+    );
+    anyhow::ensure!(
+        fs::metadata(&blob)?.len() <= 4 * 1024 * 1024,
+        "导出预设文件过大"
+    );
+    let config = fs::read_to_string(blob)?;
+    anyhow::ensure!(
+        targets(&config)
+            .iter()
+            .any(|target| target.name == preset && !target.entry.is_empty()),
+        "发布候选中没有对应的桌面导出预设"
+    );
+    Ok(())
+}
+
+/// Formal export supplies the already-validated candidate, never the live project.
+pub fn prepare_snapshot(
+    data: &Path,
+    project: &Value,
+    destination: &Path,
+    preset: &str,
+    snapshot: &Snapshot,
+) -> Result<Prepared> {
     if preset.trim().is_empty() || preset.encode_utf16().count() > 200 {
         bail!("请选择有效的 Godot 导出预设");
     }
@@ -128,11 +172,10 @@ pub fn prepare(data: &Path, project: &Value, destination: &Path, preset: &str) -
         bail!("导出目录必须位于项目外，避免把构建产物重新导入资源");
     }
     let files = Files::new(data.into());
-    let baseline = files.capture(&root)?;
     let workspace = tempfile::Builder::new()
         .prefix("export-workspace-")
         .tempdir_in(data)?;
-    files.restore_copy(&baseline, workspace.path())?;
+    files.restore_copy(snapshot, workspace.path())?;
     let export_config = config(workspace.path())?;
     let target = targets(&export_config)
         .into_iter()
@@ -163,6 +206,7 @@ pub fn prepare(data: &Path, project: &Value, destination: &Path, preset: &str) -
         target,
         project: project["name"].as_str().unwrap_or("Game").to_owned(),
         template_directory,
+        provenance: json!({"purpose":"internal"}),
     })
 }
 pub fn execute(job: Prepared, godot: &Path, cancelled: &AtomicBool) -> Result<Value> {
@@ -228,7 +272,7 @@ pub fn execute(job: Prepared, godot: &Path, cancelled: &AtomicBool) -> Result<Va
         .iter()
         .find(|file| file.path == job.target.entry)
         .context("导出产物缺少入口程序")?;
-    let manifest = json!({"version":2,"project":job.project,"preset":job.target.name,"platform":job.target.platform,"entry":job.target.entry,"sha256":file.sha256,"files":files,"exportedAt":chrono::Utc::now().to_rfc3339_opts(chrono::SecondsFormat::Millis,true),"runtimeVerified":false});
+    let manifest = json!({"version":2,"project":job.project,"preset":job.target.name,"platform":job.target.platform,"entry":job.target.entry,"sha256":file.sha256,"files":files,"exportedAt":chrono::Utc::now().to_rfc3339_opts(chrono::SecondsFormat::Millis,true),"runtimeVerified":false,"validation":job.provenance});
     fs::write(
         folder.join("export-manifest.json"),
         serde_json::to_vec_pretty(&manifest)?,
@@ -237,7 +281,9 @@ pub fn execute(job: Prepared, godot: &Path, cancelled: &AtomicBool) -> Result<Va
         fs::remove_file(folder.join("export-manifest.json"))?;
         return Err(error);
     }
-    Ok(json!({"path":folder,"log":result.text,"bundleVerified":true,"runtimeVerified":false}))
+    Ok(
+        json!({"path":folder,"log":result.text,"bundleVerified":true,"runtimeVerified":false,"validation":job.provenance}),
+    )
 }
 
 pub fn import_project(godot: &Path, root: &Path, log: &Path, cancelled: &AtomicBool) -> Result<()> {

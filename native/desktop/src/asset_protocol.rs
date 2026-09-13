@@ -92,7 +92,9 @@ async fn read(
         .and_then(|s| s.to_str().ok())
         .map(str::to_owned);
     tauri::async_runtime::spawn_blocking(move || {
-        let path = {
+        let path = if uri.starts_with("/validation/") {
+            crate::validation_runtime::media(&backend, &uri)?
+        } else {
             let store = backend
                 .store
                 .lock()

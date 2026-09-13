@@ -124,6 +124,12 @@ pub struct State {
     pub recovery: Option<String>,
 }
 
+impl State {
+    pub fn ready(&self) -> bool {
+        self.phase == "ready" && self.feedback.iter().all(Feedback::terminal)
+    }
+}
+
 pub fn get(store: &Store, id: &str) -> Result<State> {
     store
         .get("asset-task", id)?
@@ -137,6 +143,16 @@ pub fn enable(store: &Store, task: &Value) -> Result<State> {
     if let Some(state) = store.get("asset-task", id)? {
         return Ok(state);
     }
+    let state = initial(task)?;
+    let mut task = task.clone();
+    task["assetTask"] = json!(true);
+    store.put("task", id, &task)?;
+    save(store, &state)?;
+    Ok(state)
+}
+
+pub(crate) fn initial(task: &Value) -> Result<State> {
+    let id = task["id"].as_str().context("Missing task ID")?;
     let mut state = State {
         protocol_version: PROTOCOL,
         task_id: id.into(),
@@ -163,10 +179,6 @@ pub fn enable(store: &Store, task: &Value) -> Result<State> {
         state.feedback.push(feedback);
     }
     state.checkpoint = task["assetRestore"].as_str().map(str::to_owned);
-    let mut task = task.clone();
-    task["assetTask"] = json!(true);
-    store.put("task", id, &task)?;
-    save(store, &state)?;
     Ok(state)
 }
 
@@ -222,9 +234,12 @@ pub fn finish_barrier(store: &Store, task: &mut Value) -> Result<bool> {
     let Some(mut state) = store.get::<State>("asset-task", &id)? else {
         return Ok(false);
     };
-    if state.phase == "ready" && state.feedback.iter().all(Feedback::terminal) {
+    if state.ready() {
         return Ok(false);
     }
+    // Resumed asset work must recapture output instead of reusing a GUT candidate.
+    task["validationOnly"] = json!(false);
+    task["validationPrepared"] = json!(false);
     if state.phase == "adjusting" && eligible(&state).is_some_and(|f| f.delivered_at.is_none()) {
         task["status"] = json!("queued");
         task["assetResume"] = json!(true);

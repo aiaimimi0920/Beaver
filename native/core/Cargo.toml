@@ -24,6 +24,8 @@ toml = "0.9"
 regex = "1"
 object = { version = "0.39.1", default-features = false, features = ["read_core", "pe", "std"] }
 image = { version = "=0.25.10", default-features = false, features = ["png"] }
+quick-xml = "0.41"
+zip = { version = "2.4", default-features = false, features = ["deflate"] }
 
 [target.'cfg(unix)'.dependencies]
 libc = "0.2"

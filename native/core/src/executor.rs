@@ -100,26 +100,17 @@ impl Execution {
     pub async fn run_with_limits(
         self,
         command: Command,
-        controls: mpsc::Receiver<Control>,
+        mut controls: mpsc::Receiver<Control>,
         limits: IdleLimits,
     ) -> Outcome {
-        self.run_configured(command, controls, limits, None).await
-    }
-
-    pub async fn run_asset(
-        self,
-        command: Command,
-        controls: mpsc::Receiver<Control>,
-        asset: asset_agent::Context,
-    ) -> Outcome {
-        self.run_configured(command, controls, IdleLimits::default(), Some(asset))
+        self.run_controlled(command, &mut controls, limits, None)
             .await
     }
 
-    async fn run_configured(
+    pub(crate) async fn run_controlled(
         self,
         command: Command,
-        mut controls: mpsc::Receiver<Control>,
+        controls: &mut mpsc::Receiver<Control>,
         limits: IdleLimits,
         asset: Option<asset_agent::Context>,
     ) -> Outcome {
@@ -138,7 +129,7 @@ impl Execution {
             })
         });
         let outcome = self
-            .run_inner(command, &mut controls, limits, asset.as_ref())
+            .run_inner(command, controls, limits, asset.as_ref())
             .await;
         if matches!(outcome, Outcome::Failed(_) | Outcome::Interrupted) {
             if let Some(asset) = &asset {

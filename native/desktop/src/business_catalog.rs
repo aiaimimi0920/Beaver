@@ -48,7 +48,7 @@ pub fn tools() -> Vec<Value> {
         ("tools.cancelSetup", "Cancel tool preparation.", "", "", false),
         ("game.play", "Launch a registered project in Godot on the host desktop.", "id:s", "", false),
         ("game.presets", "List export presets for a project.", "id:s", "", true),
-        ("game.export", "Export a project using an installed Godot template; may take minutes.", "id:s,destination:s,preset:s", "", false),
+        ("game.export", "Export a project; formal exports require an exact green release candidate. Internal exports remain available for development.", "id:s,destination:s,preset:s", "purpose:s,releaseCheckId:s,snapshotId:s,scopeId:s", false),
         ("game.verifyExport", "Verify an exported bundle and record the matching project's delivery status.", "path:s", "", false),
         ("game.prepareTemplates", "Download official Godot export templates.", "", "", false),
         ("game.importTemplates", "Import a trusted local Godot template archive without a file picker.", "path:s", "", false),
@@ -81,6 +81,7 @@ pub fn tools() -> Vec<Value> {
                 "template" => schema["enum"] = json!(["blank", "nightbar"]),
                 "capability" => schema["enum"] = json!(["code", "review"]),
                 "timing" => schema["enum"] = json!(["now", "afterRound"]),
+                "purpose" => schema["enum"] = json!(["internal", "formal"]),
                 "name" if name == "tools.install" => schema["enum"] = json!(["codex", "godot", "blender", "node"]),
                 "keep" | "paths" | "automatic" => schema["items"] = json!({"type":"string"}),
                 "answers" | "keys" => schema["additionalProperties"] = json!({"type":"string"}),
@@ -97,7 +98,7 @@ pub fn tools() -> Vec<Value> {
         }
         let required: Vec<_> = required.split(',').filter(|v| !v.is_empty()).map(|v| v.split(':').next().unwrap()).collect();
         json!({"name":name,"description":description,"inputSchema":{"type":"object","properties":properties,"required":required,"additionalProperties":false},"annotations":{"readOnlyHint":read,"destructiveHint":!read,"openWorldHint":true}})
-    }).collect()
+    }).chain(crate::validation_catalog::tools()).collect()
 }
 
 pub fn validate(method: &str, input: &Value) -> Result<(), (&'static str, String)> {

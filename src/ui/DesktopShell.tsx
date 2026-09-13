@@ -15,7 +15,8 @@ export type Page =
   | "environment"
   | "create"
   | "docs"
-  | "library";
+  | "library"
+  | "validation";
 const titles = {
   overview: "游戏",
   create: "创作",
@@ -27,6 +28,7 @@ const titles = {
   project: "项目设置",
   settings: "设置",
   environment: "创作环境",
+  validation: "测试与画面",
 };
 
 export function DesktopShell({
@@ -127,7 +129,9 @@ export function DesktopShell({
                   ? "assets"
                   : id === "environment"
                     ? "tools"
-                    : id
+                    : id === "validation"
+                      ? "review"
+                      : id
           }
         />
       </span>
@@ -162,9 +166,9 @@ export function DesktopShell({
           <strong>Beaver</strong>
         </div>
         <nav className="rail-nav" aria-label="工作区">
-          {(["create", "docs", "library", "overview"] as const).map(
-            navigationItem,
-          )}
+          {(
+            ["create", "docs", "library", "validation", "overview"] as const
+          ).map(navigationItem)}
         </nav>
         <nav className="rail-footer" aria-label="应用">
           <button

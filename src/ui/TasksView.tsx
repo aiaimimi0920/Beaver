@@ -46,14 +46,18 @@ export function TasksView({
   refs,
   clearRefs,
   run,
+  initialTaskId = "",
+  openValidation,
 }: {
   projectId: string;
   tasks: Task[];
   refs: Reference[];
   clearRefs: () => void;
   run: Run;
+  initialTaskId?: string;
+  openValidation?: (taskId: string) => void;
 }) {
-  const [selected, setSelected] = useState("");
+  const [selected, setSelected] = useState(initialTaskId);
   const [composing, setComposing] = useState(false);
   const [dismissedRefs, setDismissedRefs] = useState(false);
   useEffect(() => setDismissedRefs(false), [refs]);
@@ -70,14 +74,23 @@ export function TasksView({
   const task = tasks.find((t) => t.id === selected);
   if (task) {
     const conversation = (
-      <TaskConversation
-        key={task.id}
-        task={task}
-        tasks={tasks}
-        run={run}
-        back={() => setSelected("")}
-        open={setSelected}
-      />
+      <div className="task-validation-conversation">
+        {openValidation && (
+          <div className="task-validation-link">
+            <button onClick={() => openValidation(task.id)}>
+              查看代码验收与画面
+            </button>
+          </div>
+        )}
+        <TaskConversation
+          key={task.id}
+          task={task}
+          tasks={tasks}
+          run={run}
+          back={() => setSelected("")}
+          open={setSelected}
+        />
+      </div>
     );
     return task.assetTask && "__TAURI__" in window ? (
       <div className="asset-task-detail">
@@ -201,14 +214,14 @@ export function TasksView({
           />
           先追问并拆分为多个子任务
         </label>
-        {decompose && !review && !assetTask && (
+        {!review && (
           <label className="check">
             <input
               type="checkbox"
               checked={autoAccept}
               onChange={(e) => setAutoAccept(e.target.checked)}
             />
-            子任务成功合入后自动审批（取消后逐项手动认可）
+            代码验收通过并安全合入后自动认可任务（取消后手动认可）
           </label>
         )}
         <label className="check">

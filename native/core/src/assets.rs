@@ -188,6 +188,7 @@ pub fn read_asset(path: &Path, range: Option<&str>, head: bool) -> Result<AssetR
         "mp3" => "audio/mpeg",
         "flac" => "audio/flac",
         "m4a" => "audio/mp4",
+        "webm" => "video/webm",
         "glb" => "model/gltf-binary",
         "gltf" => "model/gltf+json",
         "json" => "application/json",
