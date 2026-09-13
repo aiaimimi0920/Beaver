@@ -30,7 +30,11 @@ fn beaver_window(window: tauri::WebviewWindow, command: String) -> Result<Value,
                 window.maximize()
             }
         }),
-        "close" => window.hide(),
+        "close" if window.label() == "main" => window.hide(),
+        "close" => {
+            window.close().map_err(|e| e.to_string())?;
+            return Ok(Value::Null);
+        }
         _ => return Err("未知窗口操作".into()),
     };
     action.map_err(|e| e.to_string())?;
@@ -41,7 +45,12 @@ pub(crate) fn run() {
     tauri::Builder::default()
         .register_asynchronous_uri_scheme_protocol("beaver-asset", |context, request, responder| {
             let backend = context.app_handle().state::<Arc<Backend>>().inner().clone();
-            asset_protocol::serve(backend, request, responder);
+            asset_protocol::serve(
+                backend,
+                context.webview_label().to_owned(),
+                request,
+                responder,
+            );
         })
         .setup(|app| {
             // Native preview never opens the Electron data root implicitly.
@@ -134,9 +143,12 @@ pub(crate) fn run() {
         })
         .invoke_handler(tauri::generate_handler![crate::beaver_call, beaver_window])
         .on_window_event(|window, event| match event {
-            tauri::WindowEvent::CloseRequested { api, .. } => {
+            tauri::WindowEvent::CloseRequested { api, .. } if window.label() == "main" => {
                 api.prevent_close();
                 let _ = window.hide();
+            }
+            tauri::WindowEvent::Destroyed => {
+                crate::asset_task_windows::release(window.app_handle(), window.label());
             }
             tauri::WindowEvent::Resized(_) => {
                 let _ = window.emit(

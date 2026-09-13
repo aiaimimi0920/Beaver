@@ -54,7 +54,7 @@ pub(crate) async fn call(
         })
         .await
         .map_err(|error| error.to_string())??;
-        state.scheduler.interrupt(id.clone()).await?;
+        state.scheduler.synchronize(id.clone()).await?;
         let backend = state.clone();
         tauri::async_runtime::spawn_blocking(move || -> Result<(), String> {
             let mut store = backend.store.lock().map_err(|_| "数据库锁不可用")?;

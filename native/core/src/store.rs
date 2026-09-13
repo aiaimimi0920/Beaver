@@ -122,6 +122,7 @@ impl Store {
     /// Call only after filesystem-journal recovery and exclusive application ownership.
     pub fn recover_tasks(&mut self) -> Result<usize> {
         crate::call_log::recover(self)?;
+        crate::asset_task::recover_all(self)?;
         self.transaction(|connection| {
             let mut statement =
                 connection.prepare("SELECT id,value FROM entities WHERE kind='task'")?;

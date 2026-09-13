@@ -1,1 +1,1 @@
-{"main":{"identifier":"main","description":"","local":true,"windows":["main"],"permissions":["core:event:default"]}}
+{"asset-task":{"identifier":"asset-task","description":"","local":true,"windows":["asset-task-*"],"permissions":["core:event:default"]},"main":{"identifier":"main","description":"","local":true,"windows":["main"],"permissions":["core:event:default"]}}

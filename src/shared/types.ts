@@ -46,6 +46,7 @@ export interface Change {
   after?: string;
 }
 export interface Task {
+  assetTask?: boolean;
   delivery?: Delivery;
   askRatio?: import("./autonomy").AskRatio | null;
   effectiveAskRatio?: import("./autonomy").AskRatio;

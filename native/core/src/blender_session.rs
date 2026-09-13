@@ -18,6 +18,7 @@ pub struct Request {
     executable: PathBuf,
     workspace: PathBuf,
     directory: PathBuf,
+    checkpoints: PathBuf,
     reservation: TcpListener,
     pub port: u16,
 }
@@ -67,12 +68,18 @@ impl Request {
             executable: executable.to_owned(),
             workspace: workspace.to_owned(),
             directory,
+            checkpoints: home.join("asset-checkpoints"),
             reservation,
             port,
         })
     }
 
-    fn start(self, cancelled: &AtomicBool) -> Result<OwnedChild> {
+    fn start(
+        self,
+        cancelled: &AtomicBool,
+        observer: &Value,
+        restore: Option<&str>,
+    ) -> Result<(OwnedChild, u16)> {
         if cancelled.load(Ordering::SeqCst) {
             bail!("Blender preparation interrupted");
         }
@@ -80,13 +87,32 @@ impl Request {
         let request = self.directory.join("request.json");
         fs::write(
             &request,
-            serde_json::to_vec(&json!({"addon":addon()?,"port":self.port,"ready":ready}))?,
+            serde_json::to_vec(
+                &json!({"addon":addon()?,"port":self.port,"ready":ready,"observer":observer,"restore":restore}),
+            )?,
         )?;
         let script = self.directory.join("start.py");
         fs::write(
             &script,
             include_bytes!("../../../resources/workflows/blender_session.py"),
         )?;
+        for (name, bytes) in [
+            (
+                "asset_observer.py",
+                include_bytes!("../../../resources/workflows/asset_observer.py").as_slice(),
+            ),
+            (
+                "asset_observer_view.py",
+                include_bytes!("../../../resources/workflows/asset_observer_view.py").as_slice(),
+            ),
+            (
+                "asset_observer_transport.py",
+                include_bytes!("../../../resources/workflows/asset_observer_transport.py")
+                    .as_slice(),
+            ),
+        ] {
+            fs::write(self.directory.join(name), bytes)?;
+        }
         let output = fs::File::create(self.directory.join("blender.log"))?;
         for folder in ["config", "scripts", "temp"] {
             fs::create_dir_all(self.directory.join(folder))?;
@@ -146,7 +172,11 @@ impl Request {
                     bail!("Blender session identity mismatch");
                 }
                 if ping(self.port).is_ok() {
-                    return Ok(child);
+                    let observer_port = status["observerPort"]
+                        .as_u64()
+                        .filter(|port| *port > 0 && *port <= 65535)
+                        .context("Missing observer port")?;
+                    return Ok((child, observer_port as u16));
                 }
             }
             if Instant::now() >= deadline {
@@ -169,6 +199,20 @@ impl Request {
         let task_id = task["id"].as_str().context("Missing task id")?.to_owned();
         let project = task["projectId"].as_str().map(str::to_owned);
         let port = self.port;
+        let session_id = uuid::Uuid::new_v4().to_string();
+        let token = format!(
+            "{}{}",
+            uuid::Uuid::new_v4().simple(),
+            uuid::Uuid::new_v4().simple()
+        );
+        let checkpoints = self.checkpoints.clone();
+        let observer = json!({"taskId":task_id,"projectId":project,"sessionId":session_id,"token":token,"checkpoints":checkpoints});
+        let restore = {
+            let db = store
+                .lock()
+                .map_err(|_| anyhow::anyhow!("Database lock unavailable"))?;
+            crate::asset_task::enable(&db, task)?.checkpoint
+        };
         let log = self.directory.join("blender.log");
         let id = {
             let db = store
@@ -183,9 +227,11 @@ impl Request {
                 &json!({"port":port}),
             )?
         };
-        let result = self.start(cancelled);
+        let result = self.start(cancelled, &observer, restore.as_deref());
         let output = match &result {
-            Ok(child) => json!({"pid":child.0.id(),"port":port,"log":log}),
+            Ok((child, _)) => {
+                json!({"pid":child.0.id(),"port":port,"log":log,"sessionId":session_id,"restore":restore})
+            }
             Err(error) => json!({"error":error.to_string()}),
         };
         if let Ok(db) = store.lock() {
@@ -209,8 +255,27 @@ impl Request {
                 &json!({"method":"blender.session.start","result":output}).to_string(),
             );
         }
+        let (child, observer_port) = result?;
+        let client = crate::asset_preview::Client::new(
+            observer_port,
+            token,
+            task_id.clone(),
+            project.clone().context("Missing project")?,
+            session_id.clone(),
+            checkpoints,
+        )?;
+        {
+            let db = store
+                .lock()
+                .map_err(|_| anyhow::anyhow!("Database lock unavailable"))?;
+            let mut state = crate::asset_task::get(&db, &task_id)?;
+            state.session_id = Some(session_id);
+            crate::asset_task::save(&db, &state)?;
+        }
         Ok(Session {
-            child: Some(result?),
+            child: Some(child),
+            pub_port: port,
+            client,
             store,
             task: task_id,
             project,
@@ -246,6 +311,20 @@ pub struct Session {
     store: Arc<Mutex<Store>>,
     task: String,
     project: Option<String>,
+    pub pub_port: u16,
+    pub client: crate::asset_preview::Client,
+}
+
+impl Session {
+    pub fn alive(&mut self) -> bool {
+        self.child.as_mut().is_some_and(|child| {
+            child
+                .0
+                .try_wait()
+                .ok()
+                .is_some_and(|status| status.is_none())
+        })
+    }
 }
 
 impl Drop for Session {

@@ -17,6 +17,16 @@ pub(crate) async fn call(
     if state.closing.load(Ordering::SeqCst) {
         return Err("应用正在退出".into());
     }
+    if method.starts_with("assetTask.") {
+        return crate::asset_task_runtime::call(
+            app,
+            state,
+            &method,
+            input.unwrap_or_else(|| json!({})),
+        )
+        .await
+        .map_err(|error| error.to_string());
+    }
     if method == "project.create"
         || method == "project.npr.install"
         || method.starts_with("workflow.")

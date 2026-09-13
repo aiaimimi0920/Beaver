@@ -2,6 +2,10 @@
 
 mod asset_protocol;
 mod asset_runtime;
+mod asset_task_catalog;
+mod asset_task_preview;
+mod asset_task_runtime;
+mod asset_task_windows;
 mod backend;
 mod business_api;
 mod business_catalog;
@@ -25,10 +29,17 @@ use backend::{business_call, Backend};
 #[tauri::command]
 async fn beaver_call(
     app: tauri::AppHandle,
+    window: tauri::WebviewWindow,
     state: tauri::State<'_, Arc<Backend>>,
     method: String,
     input: Option<Value>,
 ) -> Result<Value, String> {
+    asset_task_windows::authorize(
+        &state,
+        window.label(),
+        &method,
+        input.as_ref().unwrap_or(&Value::Null),
+    )?;
     business_call(app, state.inner().clone(), method, input, "ui").await
 }
 

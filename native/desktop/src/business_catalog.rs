@@ -15,7 +15,7 @@ pub fn tools() -> Vec<Value> {
         ("project.import", "Register an existing Godot project by absolute directory.", "path:s", "", false),
         ("project.blueprint.save", "Save planning with optimistic revision checking.", "id:s,blueprint:o,expectedRevision:i", "", false),
         ("project.overview.save", "Change basic project planning with explicit risk acceptance.", "id:s,overview:o,expectedRevision:i,allowRiskyChanges:b", "", false),
-        ("task.create", "Queue a creation or review task. Returns a task; poll state and task.events.", "projectId:s,prompt:s", "title:s,direction:s,stopConditions:s,references:a,maxMinutes:i,capability:s,askRatio:r,decompose:b,autoAccept:b", false),
+        ("task.create", "Queue a creation or review task. assetTask enables the managed Blender production workflow; do not combine with review or decomposition. Returns a task; poll state and task.events.", "projectId:s,prompt:s", "title:s,direction:s,stopConditions:s,references:a,maxMinutes:i,capability:s,askRatio:r,decompose:b,autoAccept:b,assetTask:b", false),
         ("task.autonomy", "Set task ask ratio (0,10,30,70,100) or null to follow global settings. Pending answers are not silently submitted.", "id:s,askRatio:r", "", false),
         ("task.followup", "Create a followup task using the original task context.", "id:s,text:s", "", false),
         ("task.delegate", "Create a delegated task using the original task context.", "id:s,text:s", "", false),
@@ -59,7 +59,7 @@ pub fn tools() -> Vec<Value> {
         ("task.reveal", "Reveal task workspace in the host file manager.", "id:s", "", false),
         ("asset.reveal", "Reveal a project-relative asset in the host file manager.", "id:s,path:s", "", false),
     ];
-    definitions.into_iter().map(|(name, description, required, optional, read)| {
+    definitions.into_iter().chain(crate::asset_task_catalog::definitions()).map(|(name, description, required, optional, read)| {
         let mut properties = serde_json::Map::new();
         for field in required.split(',').chain(optional.split(',')).filter(|v| !v.is_empty()) {
             let (key, kind) = field.split_once(':').expect("static schema field");
@@ -80,6 +80,7 @@ pub fn tools() -> Vec<Value> {
                 "camera" => schema = beaver_core::workflows::camera_schema(),
                 "template" => schema["enum"] = json!(["blank", "nightbar"]),
                 "capability" => schema["enum"] = json!(["code", "review"]),
+                "timing" => schema["enum"] = json!(["now", "afterRound"]),
                 "name" if name == "tools.install" => schema["enum"] = json!(["codex", "godot", "blender", "node"]),
                 "keep" | "paths" | "automatic" => schema["items"] = json!({"type":"string"}),
                 "answers" | "keys" => schema["additionalProperties"] = json!({"type":"string"}),

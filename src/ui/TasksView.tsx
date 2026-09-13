@@ -62,13 +62,14 @@ export function TasksView({
   const [limits, setLimits] = useState("");
   const [minutes, setMinutes] = useState(0);
   const [review, setReview] = useState(false);
+  const [assetTask, setAssetTask] = useState(false);
   const [decompose, setDecompose] = useState(true);
   const [autoAccept, setAutoAccept] = useState(true);
   const [askRatio, setAskRatio] = useState<AskRatio | null>(null);
   const [busy, setBusy] = useState(false);
   const task = tasks.find((t) => t.id === selected);
-  if (task)
-    return (
+  if (task) {
+    const conversation = (
       <TaskConversation
         key={task.id}
         task={task}
@@ -78,6 +79,24 @@ export function TasksView({
         open={setSelected}
       />
     );
+    return task.assetTask && "__TAURI__" in window ? (
+      <div className="asset-task-detail">
+        <div className="asset-task-entry">
+          <button
+            onClick={() =>
+              void run(() => call("assetTask.open", { id: task.id }))
+            }
+          >
+            打开制作窗口
+          </button>
+          <span>实时观察、标注与制作反馈</span>
+        </div>
+        {conversation}
+      </div>
+    ) : (
+      conversation
+    );
+  }
   if (composing || (refs.length > 0 && !dismissedRefs))
     return (
       <section className="new-task-screen">
@@ -119,7 +138,7 @@ export function TasksView({
                 if (preset) {
                   setPrompt(preset.text);
                   setDirection(preset.direction);
-                  setReview(preset.direction === "review");
+                  setReview(!assetTask && preset.direction === "review");
                 }
               }}
             >
@@ -160,16 +179,29 @@ export function TasksView({
             />
           </Field>
         </div>
+        {"__TAURI__" in window && (
+          <label className="check">
+            <input
+              type="checkbox"
+              checked={assetTask}
+              onChange={(event) => {
+                setAssetTask(event.target.checked);
+                if (event.target.checked) setReview(false);
+              }}
+            />
+            资产制作任务 · 独立 Blender 观察窗口与修改队列
+          </label>
+        )}
         <label className="check">
           <input
             type="checkbox"
-            checked={decompose && !review}
-            disabled={review}
+            checked={decompose && !review && !assetTask}
+            disabled={review || assetTask}
             onChange={(e) => setDecompose(e.target.checked)}
           />
           先追问并拆分为多个子任务
         </label>
-        {decompose && !review && (
+        {decompose && !review && !assetTask && (
           <label className="check">
             <input
               type="checkbox"
@@ -183,6 +215,7 @@ export function TasksView({
           <input
             type="checkbox"
             checked={review}
+            disabled={assetTask}
             onChange={(e) => setReview(e.target.checked)}
           />
           仅审查
@@ -203,8 +236,9 @@ export function TasksView({
                   references: refs,
                   stopConditions: limits,
                   maxMinutes: minutes,
-                  capability: review ? "review" : "code",
-                  decompose: decompose && !review,
+                  capability: review && !assetTask ? "review" : "code",
+                  decompose: decompose && !review && !assetTask,
+                  ...(assetTask ? { assetTask: true } : {}),
                   autoAccept,
                 });
                 setSelected(next.id);

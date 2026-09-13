@@ -221,6 +221,7 @@ version = "0.1.19"
 dependencies = [
  "anyhow",
  "axum",
+ "base64 0.22.1",
  "beaver-core",
  "fs2",
  "reqwest",

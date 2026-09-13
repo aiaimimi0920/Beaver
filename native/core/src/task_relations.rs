@@ -200,6 +200,18 @@ pub fn create(
     designs: &Value,
     blueprints: &Value,
 ) -> Result<Value> {
+    create_seeded(store, root, method, input, designs, blueprints, None)
+}
+
+pub(crate) fn create_seeded(
+    store: &mut Store,
+    root: &Path,
+    method: &str,
+    input: Value,
+    designs: &Value,
+    blueprints: &Value,
+    asset_seed: Option<(&crate::asset_task::Feedback, Option<&str>)>,
+) -> Result<Value> {
     let id = input["id"].as_str().context("任务标识无效")?;
     let text = input["text"].as_str().context("补充要求无效")?;
     let text = if method == "task.dialogueRollback" {
@@ -207,12 +219,13 @@ pub fn create(
     } else {
         text.trim()
     };
-    if text.is_empty() || text.encode_utf16().count() > 10000 {
+    let limit = if asset_seed.is_some() { 12000 } else { 10000 };
+    if text.is_empty() || text.encode_utf16().count() > limit {
         bail!("补充要求长度无效");
     }
     let source: Value = store.get("task", id)?.context("任务不存在")?;
     let title = source["title"].as_str().context("原任务标题无效")?;
-    let (new_title,prompt,folder,relation) = match method {
+    let (new_title,mut prompt,folder,relation) = match method {
         "task.followup" => {
             if source["status"] != "completed" && source["status"] != "rolledBack" { bail!("当前任务尚未交付，请在原任务中补充"); }
             (format!("继续创作 · {}",prefix(title,80)), format!("基于项目当前版本继续任务「{title}」。原任务 ID：{id}。原目标、汇报与已确认回答保存在 .beaver-context/followup/task.json。阅读相关记录并检查现有文件，保留其他任务成果，不重复已完成的工作。\n用户新要求：{text}"),"followup",Some("followup"))
@@ -221,7 +234,14 @@ pub fn create(
         "task.dialogueRollback" => (format!("对话回退 · {title}"),format!("请处理任务「{title}」的选择性回退/冲突整合。\n用户要求：{text}\n原任务变更记录与前后文件保存在 .beaver-context/rollback。保留其他任务的成果，不能直接覆盖整个项目。"),"rollback",None),
         _ => bail!("未知任务关系"),
     };
+    if asset_seed.is_some() {
+        prompt = format!("检查资产任务「{title}」的当前项目成果和 .beaver-context/followup/task.json。通过 beaver_asset_task 的 poll 读取本后续任务仍有效的反馈和实际图像，再按协议修改、核验和交付。反馈可能已被用户撤回；不要从历史任务要求推断仍需执行的修改。保留其他任务的新成果。");
+    }
     let mut request = json!({"projectId":source["projectId"],"title":prefix(&new_title,120),"prompt":prompt,"decompose":false});
+    if asset_seed.is_some() {
+        request["assetTask"] = json!(true);
+        request["askRatio"] = source["askRatio"].clone();
+    }
     if relation.is_some() {
         for key in [
             "references",
@@ -265,6 +285,10 @@ pub fn create(
         blueprints,
         |files, workspace, task| {
             task["title"] = json!(new_title);
+            if let Some((seed, restore)) = asset_seed {
+                task["assetFeedbackSeed"] = serde_json::to_value(seed)?;
+                task["assetRestore"] = json!(restore);
+            }
             let directory = safe_path(workspace, &format!(".beaver-context/{folder}"))?;
             fs::create_dir_all(&directory)?;
             if let Some(relation) = relation {

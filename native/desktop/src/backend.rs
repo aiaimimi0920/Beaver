@@ -30,11 +30,14 @@ pub(crate) async fn business_call(
     source: &str,
 ) -> Result<Value, String> {
     use beaver_core::call_log;
+    if crate::asset_task_runtime::transient(&method) {
+        return business_routing::call(app, state, method, input).await;
+    }
     let started = std::time::Instant::now();
     let raw = input.clone().unwrap_or_else(|| json!({}));
     let id = {
         let store = state.store.lock().map_err(|_| "数据库锁不可用")?;
-        let task_id = if method.starts_with("task.") {
+        let task_id = if method.starts_with("task.") || method.starts_with("assetTask.") {
             raw["id"].as_str()
         } else {
             raw["taskId"].as_str()

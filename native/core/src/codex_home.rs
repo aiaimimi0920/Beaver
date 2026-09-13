@@ -37,6 +37,8 @@ pub struct HomeRequest<'a> {
     pub media_executable: &'a Path,
     pub media_args: &'a [String],
     pub resolved_tools: &'a BTreeMap<String, String>,
+    pub asset_task: bool,
+    pub retained_blender_port: Option<u16>,
 }
 
 pub struct PreparedHome {
@@ -187,25 +189,48 @@ pub fn prepare(
         }
     }
     let mut blender = None;
+    if request.asset_task && settings["mcp"]["blender"] != true {
+        bail!("请在设置中启用 Blender MCP 后创建资产制作任务");
+    }
     if settings["mcp"]["blender"] == true {
         config["mcp_servers"]["blender"] = json!({"command":"uvx","args":["blender-mcp==1.9.1"],"env":{"DISABLE_TELEMETRY":"true"}});
-        if crate::workflows::runtime(&workspace)?.is_some() {
-            let executable = request
-                .resolved_tools
-                .get("blender")
-                .context("Configure Blender for NPR production")?;
-            let session =
-                crate::blender_session::Request::prepare(&home, &workspace, Path::new(executable))?;
+        if request.asset_task
+            || request.retained_blender_port.is_some()
+            || crate::workflows::runtime(&workspace)?.is_some()
+        {
+            let port = if let Some(port) = request.retained_blender_port {
+                port
+            } else {
+                let executable = request
+                    .resolved_tools
+                    .get("blender")
+                    .context("Configure Blender for asset production")?;
+                let session = crate::blender_session::Request::prepare(
+                    &home,
+                    &workspace,
+                    Path::new(executable),
+                )?;
+                let port = session.port;
+                blender = Some(session);
+                port
+            };
             config["mcp_servers"]["blender"]["env"]["BLENDER_HOST"] = json!("127.0.0.1");
-            config["mcp_servers"]["blender"]["env"]["BLENDER_PORT"] =
-                json!(session.port.to_string());
+            config["mcp_servers"]["blender"]["env"]["BLENDER_PORT"] = json!(port.to_string());
             config["mcp_servers"]["blender"]["tool_timeout_sec"] = json!(600);
-            blender = Some(session);
         }
     }
     let config_text = toml::to_string(&config)?;
     let agents = format!("# Beaver execution environment\nWork only in the supplied project copy. Do not edit the original project or application state. Complete the user's game goal autonomously and verify the result. Do not claim unavailable tools or failed exports succeeded. Use the supplied game-production skills. Detected executable paths: {}.\n", serde_json::to_string(request.resolved_tools)?);
-    let agents = format!("{agents}\n{}", crate::code_structure::INSTRUCTIONS);
+    let asset_instructions =
+        if request.asset_task || blender.is_some() || request.retained_blender_port.is_some() {
+            crate::asset_tool::INSTRUCTIONS
+        } else {
+            ""
+        };
+    let agents = format!(
+        "{agents}\n{asset_instructions}\n{}",
+        crate::code_structure::INSTRUCTIONS
+    );
     let skills = safe_path(&home, "skills")?;
     copy_skills(request.skills, &skills)?;
     atomic_write(&safe_path(&home, "config.toml")?, config_text.as_bytes())?;
@@ -261,6 +286,8 @@ mod tests {
             &settings,
             HomeRequest {
                 task_id: "task-1",
+                asset_task: false,
+                retained_blender_port: None,
                 workspace: &workspace,
                 baseline: &Snapshot::new(),
                 capability: "code",
@@ -345,6 +372,8 @@ mod tests {
             &settings,
             HomeRequest {
                 task_id: "task-1",
+                asset_task: false,
+                retained_blender_port: None,
                 workspace: &workspace,
                 baseline: &Snapshot::new(),
                 capability: "code",
@@ -373,6 +402,8 @@ mod tests {
             &settings,
             HomeRequest {
                 task_id: "../escape",
+                asset_task: false,
+                retained_blender_port: None,
                 workspace: &workspace,
                 baseline: &Snapshot::new(),
                 capability: "code",
@@ -397,6 +428,8 @@ mod tests {
             &settings,
             HomeRequest {
                 task_id: "managed-task",
+                asset_task: false,
+                retained_blender_port: None,
                 workspace: &workspace,
                 baseline: &Snapshot::new(),
                 capability: "code",

@@ -47,6 +47,11 @@ pub fn prepare(
         settings,
         HomeRequest {
             task_id: task["id"].as_str().context("任务标识无效")?,
+            asset_task: task["assetTask"] == true,
+            retained_blender_port: task["retainedBlenderPort"]
+                .as_u64()
+                .and_then(|port| u16::try_from(port).ok())
+                .filter(|port| *port != 0),
             workspace,
             baseline: &baseline,
             capability,

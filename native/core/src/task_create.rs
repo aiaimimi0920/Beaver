@@ -40,6 +40,8 @@ struct Input {
     direction: Option<String>,
     decompose: Option<bool>,
     auto_accept: Option<bool>,
+    #[serde(default)]
+    asset_task: bool,
 }
 fn length(text: &str, min: usize, max: usize) -> bool {
     (min..=max).contains(&text.encode_utf16().count())
@@ -89,6 +91,9 @@ pub(crate) fn create_with_context(
     let capability = input.capability.as_deref().unwrap_or("code");
     if !["code", "review"].contains(&capability) {
         bail!("任务能力无效");
+    }
+    if input.asset_task && capability != "code" {
+        bail!("Asset production requires a code task");
     }
     if input.direction.as_ref().is_some_and(|s| {
         ![
@@ -177,8 +182,12 @@ pub(crate) fn create_with_context(
         task["direction"] = json!(direction);
     }
     task["askRatio"] = json!(input.ask_ratio);
+    if input.asset_task {
+        task["assetTask"] = json!(true);
+    }
     task["decompose"] = json!(
         capability == "code"
+            && !input.asset_task
             && input
                 .decompose
                 .unwrap_or(input.direction.as_deref().is_none_or(|s| s == "general"))

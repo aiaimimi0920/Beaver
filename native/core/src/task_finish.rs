@@ -82,6 +82,13 @@ fn finish_task(
     if let Outcome::Failed(error) = &outcome {
         task["error"] = json!(error);
     }
+    if outcome == Outcome::Completed
+        && !awaiting(&task)
+        && !closing.load(Ordering::SeqCst)
+        && crate::asset_task::finish_barrier(store, &mut task)?
+    {
+        return Ok(task);
+    }
     let result = (|| -> Result<()> {
         let changes: Vec<Change> = if retry {
             store.event(
