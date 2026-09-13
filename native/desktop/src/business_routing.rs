@@ -13,9 +13,30 @@ pub(crate) async fn call(
     state: Arc<Backend>,
     method: String,
     input: Option<Value>,
+    source: &str,
 ) -> Result<Value, String> {
     if state.closing.load(Ordering::SeqCst) {
         return Err("应用正在退出".into());
+    }
+    if method.starts_with("validation.") {
+        let backend = state.clone();
+        let source = source.to_owned();
+        let changed = !crate::validation_runtime::is_query(&method);
+        let result = tauri::async_runtime::spawn_blocking(move || {
+            crate::validation_runtime::call(
+                &backend,
+                &method,
+                input.unwrap_or_else(|| json!({})),
+                &source,
+            )
+        })
+        .await
+        .map_err(|error| error.to_string())?;
+        if changed && result.is_ok() {
+            state.scheduler.wake()?;
+            let _ = app.emit("beaver:changed", ());
+        }
+        return result;
     }
     if method == "project.create"
         || method == "project.npr.install"

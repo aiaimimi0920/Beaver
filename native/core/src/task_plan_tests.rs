@@ -119,10 +119,11 @@ fn plan_creates_real_children_once_and_uses_latest_approved_files() -> Result<()
         Outcome::Completed,
         &AtomicBool::new(false),
     )?;
-    assert_eq!(
-        store.get::<Value>("task", id)?.unwrap()["status"],
-        "completed"
-    );
+    let parent: Value = store.get("task", id)?.unwrap();
+    assert_eq!(parent["status"], "queued");
+    assert_eq!(parent["integrationValidation"], true);
+    assert_eq!(parent["validationOnly"], true);
+    assert_ne!(parent["accepted"], true);
     Ok(())
 }
 #[test]

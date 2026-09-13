@@ -61,14 +61,22 @@ pub(crate) fn run() {
             let mut store = Store::open(&root)?;
             Journal::new(&mut store, &Files::new(root.clone())).recover()?;
             store.recover_tasks()?;
+            beaver_core::validation::repository::recover(&store)?;
             setup_runtime::recover(&store)?;
             let store = Arc::new(Mutex::new(store));
             let scheduler = tauri::async_runtime::block_on(async {
                 task_runtime::start(app.handle().clone(), &root, store.clone())
             })?;
+            let validation = crate::validation_runtime::start(
+                app.handle().clone(),
+                &root,
+                store.clone(),
+                scheduler.clone(),
+            )?;
             let backend = Arc::new(Backend {
                 store,
                 scheduler,
+                validation,
                 players: beaver_core::game_play::Players::default(),
                 root,
                 closing: AtomicBool::new(false),
@@ -115,6 +123,10 @@ pub(crate) fn run() {
                                     .acquire_many_owned(business_api::MAX_CALLS)
                                     .await;
                                 tauri::async_runtime::spawn_blocking(move || {
+                                    if let Err(error) = backend.validation.shutdown() {
+                                        let _ =
+                                            app.emit("beaver:shutdown-error", error.to_string());
+                                    }
                                     let _setup = backend.setup_gate.lock();
                                     let _templates = backend.template_gate.lock();
                                     let _captures = backend.captures.lock();

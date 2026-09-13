@@ -80,7 +80,12 @@ pub fn start(
             }
             drop(store);
             let mut resolved = BTreeMap::new();
-            for name in ["codex", "godot", "blender", "node"] {
+            let required: &[&str] = if beaver_core::validation::task_gate::validation_only(task) {
+                &["godot"]
+            } else {
+                &["codex", "godot", "blender", "node"]
+            };
+            for &name in required {
                 match tools::find(name, settings["tools"][name].as_str().unwrap_or("")) {
                     Ok(path) => {
                         resolved.insert(name.to_owned(), path.to_string_lossy().into_owned());

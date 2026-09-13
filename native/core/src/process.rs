@@ -76,6 +76,24 @@ pub fn run_cancellable(
     timeout: Duration,
     cancelled: &std::sync::atomic::AtomicBool,
 ) -> Result<Output> {
+    run_cancellable_env(
+        executable,
+        args,
+        cwd,
+        timeout,
+        cancelled,
+        &Default::default(),
+    )
+}
+
+pub fn run_cancellable_env(
+    executable: &Path,
+    args: &[&str],
+    cwd: Option<&Path>,
+    timeout: Duration,
+    cancelled: &std::sync::atomic::AtomicBool,
+    environment: &std::collections::BTreeMap<String, String>,
+) -> Result<Output> {
     if cancelled.load(std::sync::atomic::Ordering::SeqCst) {
         bail!("工具操作已取消");
     }
@@ -83,6 +101,7 @@ pub fn run_cancellable(
     let mut command = Command::new(executable);
     command
         .args(args)
+        .envs(environment)
         .stdin(Stdio::null())
         .stdout(output.try_clone()?)
         .stderr(output.try_clone()?);

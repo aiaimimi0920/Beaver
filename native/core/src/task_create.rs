@@ -71,6 +71,28 @@ pub(crate) fn create_with_context(
     blueprint_catalog: &Value,
     prepare: impl FnOnce(&Files, &Path, &mut Value) -> Result<()>,
 ) -> Result<Value> {
+    create_recorded(
+        store,
+        root,
+        input,
+        design_catalog,
+        blueprint_catalog,
+        |files, path, task| {
+            prepare(files, path, task)?;
+            Ok(Vec::new())
+        },
+    )
+}
+
+/// Context and related receipts commit with the queue item, so a retry cannot duplicate work.
+pub(crate) fn create_recorded(
+    store: &mut Store,
+    root: &Path,
+    input: Value,
+    design_catalog: &Value,
+    blueprint_catalog: &Value,
+    prepare: impl FnOnce(&Files, &Path, &mut Value) -> Result<Vec<(&'static str, String, Value)>>,
+) -> Result<Value> {
     let input: Input = serde_json::from_value(input).context("任务输入格式无效")?;
     if input
         .ask_ratio
@@ -184,6 +206,7 @@ pub(crate) fn create_with_context(
                 .unwrap_or(input.direction.as_deref().is_none_or(|s| s == "general"))
     );
     task["autoAccept"] = json!(input.auto_accept.unwrap_or(true));
+    task["validationVersion"] = json!(1);
     if let Some(design) = design {
         task["design"] = design;
     }
@@ -200,7 +223,7 @@ pub(crate) fn create_with_context(
             crate::task_brief::format(&task, blueprint_catalog),
         )?;
     }
-    prepare(&files, &workspace, &mut task)?;
+    let records = prepare(&files, &workspace, &mut task)?;
     // Snapshot/context must be complete before a scheduler can see the task.
     store.transaction(|db| {
         db.execute(
@@ -217,9 +240,15 @@ pub(crate) fn create_with_context(
             })
             .collect();
         db.execute(
-            "INSERT INTO events(task,time,kind,text) VALUES(?,?,'user',?)",
-            rusqlite::params![id, now, event],
+            "INSERT INTO events(task,time,kind,text) VALUES(?,?,?,?)",
+            rusqlite::params![id, now, task["origin"].as_str().unwrap_or("user"), event],
         )?;
+        for (kind, key, value) in records {
+            db.execute(
+                "INSERT INTO entities(kind,id,value) VALUES(?,?,?)",
+                rusqlite::params![kind, key, value.to_string()],
+            )?;
+        }
         Ok(())
     })?;
     Ok(task)

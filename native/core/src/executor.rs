@@ -103,6 +103,15 @@ impl Execution {
         mut controls: mpsc::Receiver<Control>,
         limits: IdleLimits,
     ) -> Outcome {
+        self.run_controlled(command, &mut controls, limits).await
+    }
+
+    pub(crate) async fn run_controlled(
+        self,
+        command: Command,
+        controls: &mut mpsc::Receiver<Control>,
+        limits: IdleLimits,
+    ) -> Outcome {
         let started = std::time::Instant::now();
         let span = self.task().ok().and_then(|task| {
             self.store.lock().ok().and_then(|store| {
@@ -117,7 +126,7 @@ impl Execution {
                 .ok()
             })
         });
-        let outcome = self.run_inner(command, &mut controls, limits).await;
+        let outcome = self.run_inner(command, controls, limits).await;
         if let Some(id) = span {
             if let Ok(store) = self.store.lock() {
                 let status = match &outcome {

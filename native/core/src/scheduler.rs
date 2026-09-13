@@ -1,5 +1,5 @@
 use crate::{
-    executor::{Control, Execution, Outcome},
+    executor::{Control, Outcome},
     files::Files,
     store::Store,
     task_finish,
@@ -19,13 +19,14 @@ use tokio::{
 };
 
 pub struct Launch {
-    pub command: Command,
+    pub command: Option<Command>,
     pub model: String,
     pub prompt: String,
     pub ask_user_tool: Value,
     pub secrets: Vec<String>,
     pub max_minutes: u64,
     pub blender: Option<crate::blender_session::Request>,
+    pub godot: Option<std::path::PathBuf>,
 }
 pub type Factory = Arc<dyn Fn(&Value) -> Result<Launch, String> + Send + Sync>;
 type Reply = oneshot::Sender<Result<(), String>>;
@@ -236,78 +237,15 @@ async fn run(
                         let factory = factory.clone();
                         let store = store.clone();
                         let active_id = id.clone();
-                        let worker = jobs.spawn(async move {
-                            if task["decompose"] == true && task["plan"].is_object() {
-                                return (id, Outcome::Completed);
-                            }
-                            let factory_task = task.clone();
-                            let prepared =
-                                tokio::task::spawn_blocking(move || factory(&factory_task)).await;
-                            let outcome = match prepared {
-                                Ok(Ok(launch)) if !cancelled.load(Ordering::SeqCst) => {
-                                    let session = if let Some(request) = launch.blender {
-                                        let session_store = store.clone();
-                                        let session_task = task.clone();
-                                        let session_cancelled = cancelled.clone();
-                                        match tokio::task::spawn_blocking(move || {
-                                            request.start_logged(
-                                                session_store,
-                                                &session_task,
-                                                &session_cancelled,
-                                            )
-                                        })
-                                        .await
-                                        {
-                                            Ok(Ok(session)) => Some(session),
-                                            Ok(Err(error)) => {
-                                                return (
-                                                    id,
-                                                    if cancelled.load(Ordering::SeqCst) {
-                                                        Outcome::Interrupted
-                                                    } else {
-                                                        Outcome::Failed(error.to_string())
-                                                    },
-                                                )
-                                            }
-                                            Err(_) => {
-                                                return (
-                                                    id,
-                                                    Outcome::Failed(
-                                                        "Blender preparation worker failed".into(),
-                                                    ),
-                                                )
-                                            }
-                                        }
-                                    } else {
-                                        None
-                                    };
-                                    let outcome = if cancelled.load(Ordering::SeqCst) {
-                                        Outcome::Interrupted
-                                    } else {
-                                        Execution {
-                                            store,
-                                            task_id: id.clone(),
-                                            model: launch.model,
-                                            prompt: launch.prompt,
-                                            ask_user_tool: launch.ask_user_tool,
-                                            max_minutes: launch.max_minutes,
-                                            secrets: launch.secrets,
-                                        }
-                                        .run(launch.command, input)
-                                        .await
-                                    };
-                                    if let Some(session) = session {
-                                        let _ = tokio::task::spawn_blocking(move || drop(session))
-                                            .await;
-                                    }
-                                    outcome
-                                }
-                                Ok(Ok(_)) => Outcome::Interrupted,
-                                Ok(Err(error)) => Outcome::Failed(error),
-                                Err(_) => Outcome::Failed("任务环境准备异常".into()),
-                            };
-                            (id, outcome)
-                        });
+                        let worker = jobs.spawn(crate::scheduler_worker::execute(
+                            task,
+                            factory,
+                            store,
+                            files.clone(),
+                            cancelled,
+                            input,
+                            changed.clone(),
+                        ));
                         active.get_mut(&active_id).unwrap().worker = Some(worker.id());
                         changed();
                     }

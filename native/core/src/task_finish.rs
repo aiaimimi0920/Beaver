@@ -83,13 +83,18 @@ fn finish_task(
         task["error"] = json!(error);
     }
     let result = (|| -> Result<()> {
-        let changes: Vec<Change> = if retry {
+        let integration = task["integrationValidation"] == true;
+        let changes: Vec<Change> = if integration {
+            vec![]
+        } else if retry {
             store.event(
                 id,
                 &now,
                 "mergeRetry",
                 "重试已记录的任务合入，未重新运行 AI",
             )?;
+            serde_json::from_value(task["changes"].clone()).context("任务变更记录无效")?
+        } else if task["validationPrepared"] == true || task["validationOnly"] == true {
             serde_json::from_value(task["changes"].clone()).context("任务变更记录无效")?
         } else {
             let baseline: Snapshot =
@@ -113,10 +118,16 @@ fn finish_task(
             let after = files.capture(Path::new(workspace))?;
             Files::changes(&baseline, &after)
         };
-        task["changes"] = json!(changes);
+        if !integration {
+            task["changes"] = json!(changes);
+        }
         if awaiting(&task) {
             task["status"] = json!("awaitingInput");
         } else if outcome == Outcome::Completed && !closing.load(Ordering::SeqCst) {
+            if let Some(text) = crate::validation::task_control::take(&mut task)? {
+                crate::validation::task_completion::steered(store, files, &mut task, &text)?;
+                return Ok(());
+            }
             if task["decompose"] == true {
                 crate::task_plan::validate(task["plan"].clone())
                     .context("规划任务未提交可执行子任务，请继续并调用 beaver_submit_plan")?;
@@ -149,6 +160,7 @@ fn finish_task(
                 let project = project_path(store, &project_id)?;
                 let mut pending = Vec::new();
                 let mut already_applied = Vec::new();
+                let validated_changes = changes.clone();
                 for change in changes {
                     if file_hash(&safe_path(&project, &change.path)?)? == change.after {
                         already_applied.push(change.path);
@@ -158,7 +170,9 @@ fn finish_task(
                 }
                 // Matching external edits must not become owned by this task's rollback.
                 let changes = pending;
-                task["changes"] = json!(changes);
+                if !integration {
+                    task["changes"] = json!(changes);
+                }
                 if !already_applied.is_empty() {
                     store.event(
                         id,
@@ -173,6 +187,15 @@ fn finish_task(
                     task["status"] = json!("conflict");
                 } else if closing.load(Ordering::SeqCst) {
                     task["status"] = json!("interrupted");
+                } else if !crate::validation::task_gate::ready(
+                    store,
+                    files,
+                    &mut task,
+                    &validated_changes,
+                )? {
+                    crate::validation::task_completion::repair(store, files, &mut task)?;
+                } else if integration {
+                    crate::validation::task_completion::integrated(store, &mut task)?;
                 } else {
                     task["status"] = json!(if task["decompose"] == true {
                         "waitingChildren"
@@ -230,7 +253,13 @@ fn finish_task(
         )?;
         Ok(())
     })?;
-    if task["status"] == "completed" && task["autoAccept"] == true && task["relation"] == "child" {
+    if task["status"] == "completed" {
+        crate::validation::task_completion::delivered(store, &task)?;
+    }
+    if task["status"] == "completed"
+        && task["autoAccept"] == true
+        && (task["relation"] == "child" || task["validationVersion"] == 1)
+    {
         crate::task_actions::accept_with_source(store, id, "automatic")?;
     }
     crate::task_plan::reconcile(store, files)?;

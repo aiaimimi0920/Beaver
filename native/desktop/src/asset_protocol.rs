@@ -33,7 +33,9 @@ pub(crate) fn serve(
                     .status(405)
                     .body(Vec::new())?);
             }
-            let path = {
+            let path = if request.uri().path().starts_with("/validation/") {
+                crate::validation_runtime::media(&backend, request.uri().path())?
+            } else {
                 let store = backend.store.lock().map_err(|_| "数据库锁不可用")?;
                 beaver_core::assets::resolve_asset(&store, request.uri().path())?
             };

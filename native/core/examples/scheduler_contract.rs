@@ -64,13 +64,14 @@ async fn main() -> Result<()> {
                 .current_dir(workspace)
                 .env("BEAVER_EXECUTOR_FIXTURE", workspace);
             Ok(Launch {
-                command,
+                command: Some(command),
                 model: "fixture".into(),
                 prompt: "wait".into(),
                 ask_user_tool: json!({"name":"beaver_ask_user"}),
                 secrets: vec![],
                 max_minutes: 0,
                 blender: None,
+                godot: None,
             })
         }),
         Arc::new(move || {

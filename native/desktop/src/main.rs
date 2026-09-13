@@ -15,6 +15,8 @@ mod shell;
 mod task_control;
 mod task_runtime;
 mod template_runtime;
+mod validation_catalog;
+mod validation_runtime;
 mod workflow_runtime;
 
 use serde_json::Value;
