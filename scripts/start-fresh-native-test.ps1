@@ -33,8 +33,14 @@ if (@(Get-Process -Name Beaver -ErrorAction SilentlyContinue).Count) {
 Push-Location $workspace
 try {
     if ($Build) {
-        & rtk proxy npm run build:native
-        if ($LASTEXITCODE -ne 0) { throw 'Native build failed' }
+        $buildErrorPreference = $ErrorActionPreference
+        try {
+            # Windows PowerShell treats redirected Cargo progress on stderr as errors.
+            $ErrorActionPreference = 'Continue'
+            & rtk proxy npm run build:native
+            $buildExitCode = $LASTEXITCODE
+        } finally { $ErrorActionPreference = $buildErrorPreference }
+        if ($buildExitCode -ne 0) { throw "Native build failed (exit $buildExitCode)" }
     }
     $exe = (Resolve-Path -LiteralPath $Executable).Path
     if ([IO.Path]::GetFileName($exe) -ine 'Beaver.exe') { throw 'Expected Beaver.exe' }

@@ -7,6 +7,7 @@ pub const INSTRUCTIONS: &str = include_str!("../../../resources/instructions/ass
 pub fn definition() -> Value {
     let text = json!({"type":"string","maxLength":12000});
     json!({
+        "type":"function",
         "name":"beaver_asset_task",
         "description":"Manage this asset's durable production stages, safe checkpoints and serialized visual feedback. Poll at safe Blender boundaries. finishRound closes an asset round, not a Codex turn. Inspect the actual returned image before acknowledge; existing beaver_ask_user handles creative decisions.",
         "inputSchema":{
