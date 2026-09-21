@@ -22,6 +22,9 @@ fn registration_diagnosis_is_read_only_and_independent_of_runtime() -> Result<()
     fs::write(&manifest, bytes)?;
     let diagnosis = registration_status(&store, "p")?;
     assert_eq!(diagnosis["state"], "detected");
+    assert_eq!(diagnosis["action"], "none");
+    assert_eq!(diagnosis["registeredPath"], root.to_string_lossy().as_ref());
+    assert!(diagnosis["conflictProjectId"].is_null());
     assert!(diagnosis["message"]
         .as_str()
         .unwrap()
@@ -31,8 +34,32 @@ fn registration_diagnosis_is_read_only_and_independent_of_runtime() -> Result<()
     fs::write(&manifest, b"invalid")?;
     assert_eq!(registration_status(&store, "p")?["state"], "invalid");
     assert_eq!(fs::read(&manifest)?, b"invalid");
+    assert_eq!(
+        registration_status(&store, "p")?["action"],
+        "repair_storage"
+    );
     assert_eq!(store.get::<Value>("project", "p")?, Some(record));
     assert!(registration_status(&store, "missing").is_err());
+    Ok(())
+}
+
+#[test]
+fn registration_diagnosis_reports_same_path_conflict_without_opening_projects() -> Result<()> {
+    use beaver_core::object_framework_status::registration_status;
+    let temp = tempfile::tempdir()?;
+    let store = Store::open(&temp.path().join("host"))?;
+    let project = temp.path().join("moved");
+    store.put("project", "first", &json!({"id":"first","path":project}))?;
+    store.put(
+        "project",
+        "second",
+        &json!({"id":"second","path":project.to_string_lossy().to_uppercase()}),
+    )?;
+    let diagnosis = registration_status(&store, "first")?;
+    assert_eq!(diagnosis["state"], "offline");
+    assert_eq!(diagnosis["action"], "resolve_registration_conflict");
+    assert_eq!(diagnosis["conflictProjectId"], "second");
+    assert!(!project.exists());
     Ok(())
 }
 

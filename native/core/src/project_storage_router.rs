@@ -12,12 +12,12 @@ use std::{
     sync::{Arc, Mutex},
 };
 
+#[path = "project_derivation_registration.rs"]
+mod derivation_registration;
 #[path = "project_reassociation.rs"]
 mod reassociation;
 #[path = "project_unregistration.rs"]
 mod unregistration;
-#[path = "project_derivation_registration.rs"]
-mod derivation_registration;
 
 pub struct ProjectStorageRouter {
     host: Arc<Mutex<Store>>,

@@ -16,10 +16,8 @@ pub(super) fn inventory(destination: &Path) -> Result<Vec<Entry>> {
     layout::ordinary(&lock, false)?;
     ensure!(fs::metadata(lock)?.len() == 0, "assembly lock file changed");
     // Windows prohibits reading an exclusively locked file, including from this process.
-    let mut entries = data_backup::inventory_without(
-        destination,
-        &[PENDING, RECEIPT, ACTIVATION, LOCK_PATH],
-    )?;
+    let mut entries =
+        data_backup::inventory_without(destination, &[PENDING, RECEIPT, ACTIVATION, LOCK_PATH])?;
     entries.push(Entry {
         path: LOCK_PATH.into(),
         bytes: 0,
@@ -39,7 +37,10 @@ fn read_receipt(preparation: &Path, destination: &Path, pending: bool) -> Result
             "assembly pending changed"
         );
     } else {
-        ensure!(layout::absent(&destination.join(PENDING))?, "assembly remains pending");
+        ensure!(
+            layout::absent(&destination.join(PENDING))?,
+            "assembly remains pending"
+        );
     }
     let receipt: Receipt = serde_json::from_slice(&fs::read(destination.join(RECEIPT))?)?;
     ensure!(
@@ -65,13 +66,28 @@ fn verify(preparation: &Path, destination: &Path, pending: bool) -> Result<Verif
     let directory = root.join(layout::CONTROL_DIR);
     let lock = project_storage::lock(&directory, false)?;
     let receipt = read_receipt(preparation, &destination, pending)?;
-    ensure!(inventory(&destination)? == receipt.entries, "assembly changed or incomplete");
+    ensure!(
+        inventory(&destination)? == receipt.entries,
+        "assembly changed or incomplete"
+    );
     let manifest = layout::manifest_in(&root, Some(&receipt.project_id))?;
     let snapshot = database::snapshot(&directory, &manifest)?;
-    let project = snapshot.project(&receipt.project_id)?.context("assembled project missing")?;
-    ensure!(project["id"] == receipt.project_id, "assembled project identity mismatch");
-    ensure!(project["path"].as_str() == root.to_str(), "assembled project binding mismatch");
-    Ok(Verified { receipt, snapshot, _lock: lock })
+    let project = snapshot
+        .project(&receipt.project_id)?
+        .context("assembled project missing")?;
+    ensure!(
+        project["id"] == receipt.project_id,
+        "assembled project identity mismatch"
+    );
+    ensure!(
+        project["path"].as_str() == root.to_str(),
+        "assembled project binding mismatch"
+    );
+    Ok(Verified {
+        receipt,
+        snapshot,
+        _lock: lock,
+    })
 }
 
 fn activation_value(receipt: &Receipt) -> Value {
@@ -87,7 +103,10 @@ fn check_activation(destination: &Path, receipt: &Receipt) -> Result<Value> {
     let path = destination.join(ACTIVATION);
     layout::ordinary(&path, false)?;
     let existing: Value = serde_json::from_slice(&fs::read(path)?)?;
-    ensure!(existing == activation_value(receipt), "assembly activation receipt differs");
+    ensure!(
+        existing == activation_value(receipt),
+        "assembly activation receipt differs"
+    );
     Ok(existing)
 }
 
@@ -134,5 +153,7 @@ pub fn activate(preparation: &Path, destination: &Path) -> Result<Value> {
 
 /// Full verification is for idle, unchanged assemblies, before ordinary project use.
 pub fn inspect_activated(preparation: &Path, destination: &Path) -> Result<Value> {
-    Ok(activation_value(&verified_activation(preparation, destination)?.receipt))
+    Ok(activation_value(
+        &verified_activation(preparation, destination)?.receipt,
+    ))
 }

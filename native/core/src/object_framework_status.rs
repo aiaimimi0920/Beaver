@@ -43,7 +43,47 @@ pub fn registration_status(store: &Store, project_id: &str) -> Result<Value> {
         Ok((state, message)) => (state, message.to_owned()),
         Err(error) => ("invalid", format!("无法读取项目存储：{error:#}")),
     };
-    Ok(json!({"projectId": project_id, "path": path, "state": state, "message": message}))
+    let normalized = normalize_path(path);
+    let conflict_project_id = store
+        .list_with_ids::<Value>("project")?
+        .into_iter()
+        .filter_map(|(id, value)| {
+            (id != project_id)
+                .then(|| {
+                    value["path"]
+                        .as_str()
+                        .map(|other| (id, normalize_path(other)))
+                })
+                .flatten()
+        })
+        .find_map(|(id, other)| (other == normalized).then_some(id));
+    let action = if conflict_project_id.is_some() {
+        "resolve_registration_conflict"
+    } else {
+        match state {
+            "offline" => "reassociate",
+            "legacy" => "migrate",
+            "invalid" => "repair_storage",
+            _ => "none",
+        }
+    };
+    Ok(json!({
+        "projectId": project_id,
+        "path": path,
+        "registeredPath": path,
+        "state": state,
+        "message": message,
+        "conflictProjectId": conflict_project_id,
+        "action": action,
+    }))
+}
+
+fn normalize_path(path: &str) -> String {
+    let mut value = path.replace('/', "\\");
+    while value.ends_with('\\') && value.len() > 3 {
+        value.pop();
+    }
+    value.to_ascii_lowercase()
 }
 
 /// Readiness for a store chosen by the caller. `routed` is true only when `store` is the

@@ -24,16 +24,30 @@ export function ProjectRegistrationDialog({
   useEffect(() => {
     let active = true;
     setDiagnostic("正在检查项目位置…");
-    void call<{ path: string; message: string }>("project.storage.status", {
+    void call<{
+      path: string;
+      message: string;
+      action?: string;
+      conflictProjectId?: string | null;
+    }>("project.storage.status", {
       id: project.id,
     })
       .then((result) => {
         if (active)
-          setDiagnostic(
-            result.path === project.path
-              ? result.message
-              : "项目登记路径已改变，请关闭此窗口并刷新后重试。",
-          );
+          if (result.path !== project.path) {
+            setDiagnostic("项目登记路径已改变，请关闭此窗口并刷新后重试。");
+            return;
+          }
+          const suffix = result.conflictProjectId
+            ? `（与项目 ${result.conflictProjectId} 冲突，请先解决登记冲突）`
+            : result.action === "reassociate"
+              ? "（可选择新的项目目录重新关联）"
+              : result.action === "migrate"
+                ? "（需要完成项目存储迁移）"
+                : result.action === "repair_storage"
+                  ? "（请修复项目存储后重试）"
+                  : "";
+          setDiagnostic(`${result.message}${suffix}`);
       })
       .catch((error: unknown) => {
         if (active) setDiagnostic(`检查失败：${errorMessage(error)}`);

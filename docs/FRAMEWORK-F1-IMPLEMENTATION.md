@@ -1,5 +1,11 @@
 # F1：项目存储与迁移实施记录
 
+## 2026-09-22：离线登记诊断与路径冲突提示
+
+扩展只读 `project.storage.status` 回执，返回 `registeredPath`、`action` 和 `conflictProjectId`，不打开项目数据库、不初始化目录，也不修改宿主登记。诊断会区分离线、旧存储、损坏存储和同路径登记冲突，并为 UI 提供重新关联、迁移、修复或先解决冲突的明确动作提示。路径比较按 Windows 不区分大小写并去除尾部分隔符，避免移动项目或重复登记时产生模糊结果。
+
+原生核心回归覆盖离线目录、损坏清单、同路径冲突及源文件保持；登记管理对话框显示动作提示并继续要求显式重新关联或注销。`cargo test --locked -p beaver-core --test object_framework_status` 4 项通过，`npm run check:effective-lines` 报告 723 个源文件、0 个结构违规。该批不生成派生身份、不自动解决冲突；F1.4 仍进行中，F2-F9 待实施。
+
 ## 2026-09-21：最终派生副本组装与目标恢复
 
 新增 `project_derivation_assembly::create/inspect`，从核验过的准备副本在全新外部目录组装 `project`。使用正式项目初始化器生成存储元数据、schema、身份及 WAL 配置；组合转换后的实体、事件和调用并保留调用自增水位。按新身份复制文件，合并转换后的 Codex SQLite 索引且排除旧 WAL/SHM；JSONL 和非声明式内容保持原文。验证请求保存在独立来源归档中。
