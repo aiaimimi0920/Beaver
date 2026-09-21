@@ -62,6 +62,7 @@ pub mod object_catalog;
 pub mod object_external_snapshot;
 pub mod object_framework;
 pub mod object_framework_status;
+pub mod object_import_preparation;
 pub mod preferences;
 pub mod process;
 pub mod project_derivation_assembly;
