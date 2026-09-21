@@ -15,6 +15,7 @@ pub fn tools() -> Vec<Value> {
         ("objectFramework.status", "Read project storage readiness and object framework blockers without opening or migrating project storage.", "projectId:s", "", true),
         ("object.list", "List project-owned registered objects, optionally filtered by object name, component kind or file path.", "projectId:s", "query:s", true),
         ("object.get", "Read one project-owned object registration and its immutable version manifest.", "projectId:s,objectId:s", "", true),
+        ("object.inspectExternal", "Read an unregistered Beaver project object catalog without registering, migrating or opening it in the host runtime.", "path:s,projectId:s", "query:s", true),
         ("project.storage.status", "Inspect the registered project location and manifest without opening or modifying project storage; detected does not imply database readiness.", "id:s", "", true),
         ("project.create", "Create a Godot project. Optional npr={godot: absolute editor path or directory} installs/enables the NPR package.", "parent:s,name:s,template:s", "design:o,blueprint:o,npr:o", false),
         ("project.npr.install", "Install/repair NPR on a project with no active tasks; never overwrites customized addon files.", "id:s,godot:s", "", false),

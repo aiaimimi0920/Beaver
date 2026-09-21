@@ -78,6 +78,28 @@ pub(crate) fn call(
             .reassociate(id, expected, std::path::Path::new(directory), &backend.root)
             .map_err(|error| error.to_string());
     }
+    if method == "object.inspectExternal" {
+        let input = input.as_ref().ok_or("缺少外部项目参数")?;
+        let project_id = input["projectId"]
+            .as_str()
+            .filter(|id| !id.is_empty())
+            .ok_or("项目 ID 无效")?;
+        let path = input["path"]
+            .as_str()
+            .filter(|path| !path.is_empty() && path.len() <= 2000)
+            .ok_or("项目路径无效")?;
+        let path = std::path::Path::new(path);
+        if !path.is_absolute() {
+            return Err("项目路径必须是绝对路径".into());
+        }
+        return beaver_core::object_external_snapshot::read(
+            path,
+            project_id,
+            input.get("query").and_then(Value::as_str),
+        )
+        .and_then(|value| serde_json::to_value(value).map_err(Into::into))
+        .map_err(|error| error.to_string());
+    }
     if matches!(method.as_str(), "object.list" | "object.get") {
         let input = input.as_ref().ok_or("缺少对象查询参数")?;
         let project_id = input["projectId"]

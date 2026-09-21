@@ -59,6 +59,7 @@ pub mod migration_activation;
 pub mod migration_bundle;
 pub mod migration_import;
 pub mod object_catalog;
+pub mod object_external_snapshot;
 pub mod object_framework;
 pub mod object_framework_status;
 pub mod preferences;
