@@ -1,44 +1,40 @@
 import { useRef, useState } from "react";
 import { Dialog } from "../components";
 import { Icon } from "../Icon";
+import { call } from "../api";
 
-const folders = [
-  {
-    name: "澪-NPR角色",
-    path: "D:\\创作素材\\澪-NPR角色",
-    contents: [
-      "角色模型.blend",
-      "基础色贴图.png",
-      "法线贴图.png",
-      "NPR材质.gdshader",
-    ],
-  },
-  {
-    name: "午后教室",
-    path: "D:\\创作素材\\午后教室",
-    contents: ["教室.tscn", "课桌.glb", "环境材质.tres"],
-  },
-  {
-    name: "木纹贴图",
-    path: "D:\\创作素材\\木纹贴图",
-    contents: ["木纹基础色.png", "表面法线.png"],
-  },
-];
+type ExternalObject = {
+  id: string;
+  name: string;
+  files?: Array<{ path: string }>;
+  versions?: Array<{ versionId: string }>;
+};
 
 export function ObjectImportDialog({
   close,
   notify,
+  projectId,
 }: {
   close: () => void;
   notify: (message: string) => void;
+  projectId?: string;
 }) {
-  const [path, setPath] = useState(folders[0]!.path);
-  const [name, setName] = useState(folders[0]!.name);
+  const [path, setPath] = useState("");
+  const [name, setName] = useState("");
   const [files, setFiles] = useState<string[]>([]);
+  const [sourceProjectId, setSourceProjectId] = useState("");
+  const [objectId, setObjectId] = useState("");
+  const [objects, setObjects] = useState<ExternalObject[]>([]);
+  const [baseline, setBaseline] = useState<"latestAccepted" | string>(
+    "latestAccepted",
+  );
+  const [preparationId, setPreparationId] = useState("");
+  const [error, setError] = useState("");
+  const [busy, setBusy] = useState(false);
   const filePicker = useRef<HTMLInputElement>(null);
   const folderPicker = useRef<HTMLInputElement>(null);
-  const selected = folders.find((folder) => folder.path === path);
-  const contents = selected?.contents ?? files;
+  const selected = objects.find((object) => object.id === objectId);
+  const contents = selected?.files?.map((file) => file.path) ?? files;
   const chooseResources = (resources: FileList | null) => {
     if (!resources?.length) return;
     const first = resources[0]!;
@@ -49,17 +45,67 @@ export function ObjectImportDialog({
     setPath(folder || `${resources.length} 个文件 · ${first.name}`);
     setName(folder || first.name.replace(/\.[^.]+$/, ""));
   };
+  const inspect = async () => {
+    if (!path.trim() || !sourceProjectId.trim()) return;
+    setBusy(true);
+    setError("");
+    try {
+      const result = await call<{ objects: ExternalObject[] }>(
+        "object.inspectExternal",
+        { path: path.trim(), projectId: sourceProjectId.trim() },
+      );
+      setObjects(result.objects);
+      const first = result.objects[0];
+      if (first) {
+        setObjectId(first.id);
+        setName(first.name);
+        setBaseline("latestAccepted");
+      }
+      if (!first) setObjectId("");
+    } catch (error) {
+      setObjects([]);
+      setObjectId("");
+      setError(error instanceof Error ? error.message : String(error));
+    } finally {
+      setBusy(false);
+    }
+  };
   return (
     <Dialog title="导入对象" close={close} className="op-object-import-dialog">
       <p className="op-muted">选择外部文件或文件夹，将关联资源组成一个对象。</p>
       <form
-        onSubmit={(event) => {
+        onSubmit={async (event) => {
           event.preventDefault();
-          if (!path.trim() || !name.trim()) return;
-          notify(
-            `已预览导入「${name.trim()}」 · 测试操作，未读取文件内容或创建真实对象`,
-          );
-          close();
+          if (!path.trim() || !name.trim() || !objectId.trim()) return;
+          if (!projectId) {
+            notify("请选择一个已登记项目后再准备对象导入");
+            return;
+          }
+          setBusy(true);
+          setError("");
+          try {
+            const result = await call<{ preparationId: string }>(
+              "object.prepareImport",
+              {
+                targetProjectId: projectId,
+                source: {
+                  path: path.trim(),
+                  projectId: sourceProjectId.trim(),
+                },
+                objectId: objectId.trim(),
+                baseline:
+                  baseline === "latestAccepted"
+                    ? { kind: "latestAccepted" }
+                    : { kind: "pinnedVersion", versionId: baseline },
+              },
+            );
+            setPreparationId(result.preparationId);
+            notify(`已准备对象「${name.trim()}」，等待正式提交`);
+          } catch (error) {
+            setError(error instanceof Error ? error.message : String(error));
+          } finally {
+            setBusy(false);
+          }
         }}
       >
         <label className="op-field">
@@ -74,6 +120,26 @@ export function ObjectImportDialog({
             placeholder="输入外部资源路径…"
           />
         </label>
+        <div className="op-object-form-row">
+          <label className="op-field">
+            源项目 ID
+            <input
+              aria-label="源项目 ID"
+              value={sourceProjectId}
+              onChange={(event) => setSourceProjectId(event.target.value)}
+              placeholder="已登记项目的 ID"
+            />
+          </label>
+          <label className="op-field">
+            对象 ID
+            <input
+              aria-label="源对象 ID"
+              value={objectId}
+              onChange={(event) => setObjectId(event.target.value)}
+              placeholder="要准备的对象 ID"
+            />
+          </label>
+        </div>
         <div className="op-resource-picker">
           <button type="button" onClick={() => filePicker.current?.click()}>
             <Icon name="project" />
@@ -107,25 +173,36 @@ export function ObjectImportDialog({
             }}
           />
         </div>
-        <fieldset className="op-import-folders">
-          <legend>示例资源</legend>
-          {folders.map((folder) => (
-            <label key={folder.path}>
-              <input
-                type="radio"
-                name="object-folder"
-                checked={path === folder.path}
-                onChange={() => {
-                  setPath(folder.path);
-                  setName(folder.name);
-                  setFiles([]);
-                }}
-              />
-              <Icon name="folder" />
-              <span>{folder.name}</span>
-            </label>
-          ))}
-        </fieldset>
+        <button
+          type="button"
+          onClick={inspect}
+          disabled={busy || !path.trim() || !sourceProjectId.trim()}
+        >
+          读取源对象
+        </button>
+        {objects.length > 0 && (
+          <fieldset className="op-import-folders">
+            <legend>源对象目录</legend>
+            {objects.map((object) => (
+              <label key={object.id}>
+                <input
+                  type="radio"
+                  name="source-object"
+                  checked={objectId === object.id}
+                  onChange={() => {
+                    setObjectId(object.id);
+                    setName(object.name);
+                    setBaseline("latestAccepted");
+                  }}
+                />
+                <Icon name="folder" />
+                <span>
+                  {object.name} ({object.id})
+                </span>
+              </label>
+            ))}
+          </fieldset>
+        )}
         <div className="op-import-contents">
           {contents.length ? (
             contents.map((name) => (
@@ -135,7 +212,7 @@ export function ObjectImportDialog({
               </span>
             ))
           ) : (
-            <p className="op-muted">自定义路径仅用于界面预览。</p>
+            <p className="op-muted">先读取源对象目录以显示真实文件清单。</p>
           )}
         </div>
         <div className="op-object-form-row">
@@ -146,6 +223,21 @@ export function ObjectImportDialog({
               onChange={(event) => setName(event.target.value)}
               required
             />
+          </label>
+          <label className="op-field">
+            接受版本
+            <select
+              value={baseline}
+              onChange={(event) => setBaseline(event.target.value)}
+              disabled={!selected}
+            >
+              <option value="latestAccepted">最新接受版本</option>
+              {selected?.versions?.map((version) => (
+                <option key={version.versionId} value={version.versionId}>
+                  固定版本 {version.versionId}
+                </option>
+              ))}
+            </select>
           </label>
           <label className="op-field">
             对象类型
@@ -172,7 +264,7 @@ export function ObjectImportDialog({
         <div className="op-dialog-note">
           <Icon name="review" />
           <span>
-            UI 预览：仅展示资源名称和填写信息，不读取文件内容、不导入项目。
+            只读准备会校验源项目对象引用和文件哈希，不修改目标对象目录；正式提交仍由后续流程负责。
           </span>
         </div>
         <footer>
@@ -182,12 +274,24 @@ export function ObjectImportDialog({
           <button
             type="submit"
             className="primary"
-            disabled={!path.trim() || !name.trim()}
+            disabled={
+              busy ||
+              !path.trim() ||
+              !name.trim() ||
+              !projectId ||
+              !sourceProjectId.trim() ||
+              !objectId.trim() ||
+              objects.length === 0
+            }
           >
             <Icon name="import" />
             导入对象
           </button>
         </footer>
+        {preparationId && (
+          <p role="status">只读准备完成：{preparationId}。正式导入尚未提交。</p>
+        )}
+        {error && <p role="alert">导入准备失败：{error}</p>}
       </form>
     </Dialog>
   );

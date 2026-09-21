@@ -2,6 +2,7 @@ import { useState } from "react";
 import type { Project } from "../../shared/types";
 import { Icon } from "../Icon";
 import { ObjectToolbarControls } from "./ObjectToolbarControls";
+import { ObjectImportDialog } from "./ObjectImportDialog";
 import type { ObjectType } from "./object-categories";
 import { FrameworkAvailability } from "./FrameworkAvailability";
 import { useObjectFrameworkStatus } from "./use-object-framework-status";
@@ -22,6 +23,8 @@ export function ObjectFrameworkWorkspace({
   const [search, setSearch] = useState("");
   const [tags, setTags] = useState<string[]>([]);
   const [thumbnailSize, setThumbnailSize] = useState(240);
+  const [notice, setNotice] = useState("");
+  const [importTarget, setImportTarget] = useState<string>();
   const message = loading ? (
     <section className="op-framework-message" role="status">
       正在打开本地工作室…
@@ -54,11 +57,17 @@ export function ObjectFrameworkWorkspace({
               setMode={() => {}}
               canAnnotate={false}
               unavailableReason="对象查询、导入及制作能力尚未接通"
+              importObjects={
+                !loading && project
+                  ? () => setImportTarget(project.id)
+                  : undefined
+              }
             />
           )}
           <div className="op-main-content op-framework-content">
             <div className="op-framework-body">
               {message}
+              {notice && <p role="status">{notice}</p>}
               {page === "objects" && (
                 <div className="op-framework-contents" aria-label="子对象内容">
                   <button disabled aria-label="展开子对象">
@@ -87,6 +96,13 @@ export function ObjectFrameworkWorkspace({
             </aside>
           </div>
           <footer className="op-statusbar" aria-label="提示区域" />
+          {importTarget && (
+            <ObjectImportDialog
+              projectId={importTarget}
+              close={() => setImportTarget(undefined)}
+              notify={setNotice}
+            />
+          )}
         </main>
       </div>
     </div>
