@@ -96,6 +96,12 @@ pub fn prepare(store: &mut crate::store::Store, request: &Request) -> Result<Pre
         request.target_project_id != request.source_project_id,
         "IMPORT_TARGET_EQUALS_SOURCE"
     );
+    ensure!(
+        store
+            .get::<Value>("project", &request.target_project_id)?
+            .is_some(),
+        "UNKNOWN_IMPORT_TARGET_PROJECT"
+    );
     let snapshot =
         object_external_snapshot::read(&request.source_path, &request.source_project_id, None)?;
     let root = request.source_path.canonicalize()?;
@@ -182,6 +188,8 @@ pub fn get(store: &crate::store::Store, id: &str) -> Result<Option<Preparation>>
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::{object_catalog, project_storage::ProjectStore};
+    use std::fs;
 
     #[test]
     fn baseline_wire_format_is_explicit_and_stable() {
@@ -200,5 +208,76 @@ mod tests {
         let root = tempfile::tempdir().unwrap();
         assert!(safe_path(root.path(), "../outside.txt").is_err());
         assert!(safe_path(root.path(), "C:/outside.txt").is_err());
+    }
+
+    #[test]
+    fn prepares_reference_closure_without_touching_target_catalog() -> Result<()> {
+        let temp = tempfile::tempdir()?;
+        let source_root = temp.path().join("source");
+        fs::create_dir_all(&source_root)?;
+        fs::write(
+            source_root.join("project.godot"),
+            "[application]\nconfig/name=Source\n",
+        )?;
+        fs::write(source_root.join("hero.txt"), "hero")?;
+        let mut source = ProjectStore::initialize(&source_root, "source-1")?;
+        source
+            .store_mut()
+            .put("project", "source-1", &serde_json::json!({"id":"source-1"}))?;
+        object_catalog::register(
+            source.store_mut(),
+            &ObjectRecord {
+                id: "dep".into(),
+                project_id: "source-1".into(),
+                name: "Dependency".into(),
+                components: vec![],
+                files: vec![],
+                references: vec![],
+                versions: vec![object_catalog::ObjectVersion {
+                    version_id: "v1".into(),
+                    manifest: serde_json::json!({}),
+                }],
+            },
+        )?;
+        object_catalog::register(
+            source.store_mut(),
+            &ObjectRecord {
+                id: "hero".into(),
+                project_id: "source-1".into(),
+                name: "Hero".into(),
+                components: vec![],
+                files: vec![object_catalog::ObjectFile {
+                    path: "hero.txt".into(),
+                    role: "source".into(),
+                }],
+                references: vec![ObjectReference {
+                    project_id: "source-1".into(),
+                    object_id: "dep".into(),
+                    version_id: Some("v1".into()),
+                }],
+                versions: vec![object_catalog::ObjectVersion {
+                    version_id: "v2".into(),
+                    manifest: serde_json::json!({}),
+                }],
+            },
+        )?;
+        drop(source);
+        let target_root = temp.path().join("target");
+        let mut target = crate::store::Store::open(&target_root)?;
+        target.put("project", "target-1", &serde_json::json!({"id":"target-1"}))?;
+        let request = Request {
+            target_project_id: "target-1".into(),
+            source_path: source_root,
+            source_project_id: "source-1".into(),
+            object_id: "hero".into(),
+            baseline: Baseline::LatestAccepted,
+        };
+        let prepared = prepare(&mut target, &request)?;
+        assert_eq!(prepared.objects, vec!["dep", "hero"]);
+        assert_eq!(prepared.accepted_version_id.as_deref(), Some("v2"));
+        assert!(!prepared.ready_to_commit);
+        assert!(target.get::<ObjectRecord>("object", "hero")?.is_none());
+        assert_eq!(get(&target, &prepared.preparation_id)?, Some(prepared));
+        Ok(())
     }
 }
