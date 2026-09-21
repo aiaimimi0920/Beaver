@@ -27,7 +27,7 @@ pub struct Manifest {
     pub entries: Vec<Entry>,
 }
 
-pub(crate) fn inventory(root: &Path) -> Result<Vec<Entry>> {
+pub fn inventory(root: &Path) -> Result<Vec<Entry>> {
     inventory_without(root, &[])
 }
 
