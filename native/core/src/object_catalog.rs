@@ -210,6 +210,35 @@ pub fn list(store: &crate::store::Store, project_id: &str) -> Result<Vec<ObjectR
         .collect())
 }
 
+/// Query the project-owned catalog without exposing objects from another
+/// project. An empty query is equivalent to `list`.
+pub fn search(
+    store: &crate::store::Store,
+    project_id: &str,
+    query: Option<&str>,
+) -> Result<Vec<ObjectRecord>> {
+    let objects = list(store, project_id)?;
+    let Some(query) = query.map(str::trim).filter(|value| !value.is_empty()) else {
+        return Ok(objects);
+    };
+    let query = query.to_ascii_lowercase();
+    Ok(objects
+        .into_iter()
+        .filter(|object| {
+            object.name.to_ascii_lowercase().contains(&query)
+                || object.id.to_ascii_lowercase().contains(&query)
+                || object.components.iter().any(|component| {
+                    component.name.to_ascii_lowercase().contains(&query)
+                        || component.kind.to_ascii_lowercase().contains(&query)
+                })
+                || object
+                    .files
+                    .iter()
+                    .any(|file| file.path.to_ascii_lowercase().contains(&query))
+        })
+        .collect())
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -291,6 +320,20 @@ mod tests {
                 .manifest,
             json!({"hash":"a"})
         );
+        Ok(())
+    }
+
+    #[test]
+    fn search_is_project_scoped_and_matches_catalog_metadata() -> Result<()> {
+        let (_temp, mut store, mut record) = fixture();
+        record.name = "Hero prop".into();
+        record.files.push(ObjectFile {
+            path: "art/hero.glb".into(),
+            role: "source".into(),
+        });
+        register(&mut store, &record)?;
+        assert_eq!(search(&store, "project-1", Some("hero"))?.len(), 1);
+        assert!(search(&store, "other", Some("hero"))?.is_empty());
         Ok(())
     }
 }

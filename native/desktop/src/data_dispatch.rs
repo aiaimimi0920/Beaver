@@ -78,6 +78,36 @@ pub(crate) fn call(
             .reassociate(id, expected, std::path::Path::new(directory), &backend.root)
             .map_err(|error| error.to_string());
     }
+    if matches!(method.as_str(), "object.list" | "object.get") {
+        let input = input.as_ref().ok_or("缺少对象查询参数")?;
+        let project_id = input["projectId"]
+            .as_str()
+            .filter(|id| !id.is_empty())
+            .ok_or("项目 ID 无效")?;
+        let handles = project_runtime_handles(
+            &backend.project_storage,
+            backend.store.clone(),
+            &backend.root,
+            project_id,
+        )?;
+        let store = handles.store.lock().map_err(|_| "数据库锁不可用")?;
+        if method == "object.get" {
+            let object_id = input["objectId"]
+                .as_str()
+                .filter(|id| !id.is_empty())
+                .ok_or("对象 ID 无效")?;
+            return beaver_core::object_catalog::get(&store, object_id)
+                .map(|value| serde_json::to_value(value).unwrap_or(Value::Null))
+                .map_err(|error| error.to_string());
+        }
+        return beaver_core::object_catalog::search(
+            &store,
+            project_id,
+            input.get("query").and_then(Value::as_str),
+        )
+        .and_then(|value| serde_json::to_value(value).map_err(Into::into))
+        .map_err(|error| error.to_string());
+    }
     if method == "task.create" {
         return create_project_task(&backend.project_storage, input)
             .map_err(|error| error.to_string());
