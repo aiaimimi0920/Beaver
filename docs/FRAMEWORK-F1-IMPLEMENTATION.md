@@ -586,3 +586,9 @@ Validation 的项目 Storage 现绑定同一 `ProjectWorkGate`。候选扫描、
 ## 2026-09-21：派生组装副本的可恢复显式启用
 
 新增 `project_derivation_assembly::activate/inspect_activated`。启用前重新执行组装回执、准备来源摘要、最终绝对路径、文件清单、项目清单及数据库完整性核验；随后以独立的 `ASSEMBLY-ACTIVATION.json` 记录 `beaver-project-derivation-activation-v1` 回执，先创建并同步回执，再删除 `.beaver-migration-pending`。因此 pending 删除是副本从不可见状态发布为普通项目的唯一边界，回执写入或删除标记失败均可重试，重复启用幂等且不覆盖既有回执。已启用副本仍要求准备来源未发生变化，移动后拒绝核验；启用不修改宿主登记，回执明确 `host_registration_changed: false`。5 项组装测试通过，覆盖成功启用、普通 `ProjectStore::open`、已启用核验、幂等调用及回执已写但 pending 尚存的恢复。宿主登记切换/冲突检查、独立 API/UI 和 F1 整体验收仍待完成。
+
+## 2026-09-22：迁移组装登记的桌面回归闭合
+
+补齐桌面侧 `migration.registerAssembly` 的回归覆盖。测试验证显式激活要求、登记提交与 Runtime 恢复分离、恢复失败后的可重试语义、重复登记幂等，以及源项目和准备副本的文件清单保持不变；非法相对路径、缺失激活回执和额外参数均在业务目录层拒绝。
+
+`cargo test --locked -p beaver-core --lib` 通过（274 项），`cargo check --locked -p beaver-desktop --tests` 通过；`cargo fmt --all -- --check` 通过。为支持桌面回归的只读清单比较，将 `data_backup::inventory` 暴露为只读公共诊断 API，备份写入与校验逻辑未改变。HTTP `/v1/call` 端到端、真实工具绑定和原生发布验收仍未完成，F1.3/F1.4 保持进行中。
