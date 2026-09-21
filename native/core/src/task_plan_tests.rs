@@ -27,7 +27,7 @@ fn setup() -> Result<(tempfile::TempDir, Store, Files, Value)> {
     )?;
     let mut parent = task_create::create(
         &mut store,
-        &root,
+        &files,
         json!({"projectId":"p","prompt":"综合目标","autoAccept":true}),
         &Value::Null,
         &Value::Null,

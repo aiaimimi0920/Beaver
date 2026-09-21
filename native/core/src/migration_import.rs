@@ -68,7 +68,7 @@ fn components(value: &str) -> Result<Vec<String>> {
     Ok(parts)
 }
 
-fn relative(old_root: &Path, value: &str) -> Result<Option<String>> {
+pub(crate) fn relative(old_root: &Path, value: &str) -> Result<Option<String>> {
     let root = components(old_root.to_str().context("non-UTF-8 data root")?)?;
     let value = components(value)?;
     if value.len() < root.len()
@@ -82,7 +82,11 @@ fn relative(old_root: &Path, value: &str) -> Result<Option<String>> {
     Ok(Some(value[root.len()..].join("/")))
 }
 
-fn task_path(task: &mut Value, id: &str, mapping: &migration_bundle::RestoreReceipt) -> Result<()> {
+pub(crate) fn task_path(
+    task: &mut Value,
+    id: &str,
+    mapping: &migration_bundle::RestoreReceipt,
+) -> Result<()> {
     ensure!(uuid::Uuid::parse_str(id).is_ok(), "invalid task identifier");
     ensure!(task["id"].as_str() == Some(id), "task identifier mismatch");
     ensure!(
@@ -104,7 +108,7 @@ fn task_path(task: &mut Value, id: &str, mapping: &migration_bundle::RestoreRece
     Ok(())
 }
 
-fn tool_path(
+pub(crate) fn tool_path(
     value: &mut Value,
     slot: &str,
     mapping: &migration_bundle::RestoreReceipt,
@@ -163,7 +167,7 @@ fn map_index_path(
     Ok(value.to_owned())
 }
 
-fn table_columns(connection: &Connection, table: &str) -> Result<Vec<String>> {
+pub(crate) fn table_columns(connection: &Connection, table: &str) -> Result<Vec<String>> {
     let mut statement = connection.prepare(&format!("PRAGMA table_info({table})"))?;
     let columns = statement
         .query_map([], |row| row.get::<_, String>(1))?

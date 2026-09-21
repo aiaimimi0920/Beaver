@@ -1,4 +1,4 @@
-use crate::Backend;
+use crate::{business_routing::task_runtime_handles, Backend};
 use anyhow::{bail, Context, Result};
 use beaver_core::{
     asset_preview::Client,
@@ -14,7 +14,14 @@ pub(crate) fn client(backend: &Backend, id: &str, session: Option<&str>) -> Resu
         .scheduler
         .asset_client(id)
         .map_err(anyhow::Error::msg)?;
-    let store = backend
+    let handles = task_runtime_handles(
+        &backend.project_storage,
+        backend.store.clone(),
+        &backend.root,
+        id,
+    )
+    .map_err(anyhow::Error::msg)?;
+    let store = handles
         .store
         .lock()
         .map_err(|_| anyhow::anyhow!("数据库锁不可用"))?;
@@ -30,7 +37,14 @@ pub(crate) fn client(backend: &Backend, id: &str, session: Option<&str>) -> Resu
 pub(crate) async fn status(backend: &Backend, id: &str, input: &Value) -> Result<Value> {
     // A disconnected task still has durable stages and feedback to display.
     {
-        let store = backend
+        let handles = task_runtime_handles(
+            &backend.project_storage,
+            backend.store.clone(),
+            &backend.root,
+            id,
+        )
+        .map_err(anyhow::Error::msg)?;
+        let store = handles
             .store
             .lock()
             .map_err(|_| anyhow::anyhow!("数据库锁不可用"))?;
@@ -60,15 +74,22 @@ pub(crate) async fn freeze(backend: Arc<Backend>, id: &str, input: &Value) -> Re
     )?;
     let frame_id = input["frameId"].as_str().context("缺少画面标识")?;
     let (frame, bytes) = client.capture(frame_id).await?;
+    let handles = task_runtime_handles(
+        &backend.project_storage,
+        backend.store.clone(),
+        &backend.root,
+        id,
+    )
+    .map_err(anyhow::Error::msg)?;
     let id = id.to_owned();
     tauri::async_runtime::spawn_blocking(move || {
-        let store = backend
+        let store = handles
             .store
             .lock()
             .map_err(|_| anyhow::anyhow!("数据库锁不可用"))?;
         Ok(json!(asset_reference::capture(
             &store,
-            &backend.root,
+            handles.files.as_ref(),
             &id,
             frame,
             &bytes
@@ -79,8 +100,15 @@ pub(crate) async fn freeze(backend: Arc<Backend>, id: &str, input: &Value) -> Re
 
 pub(crate) async fn pick(backend: &Backend, id: &str, input: &Value) -> Result<Value> {
     let reference_id = input["referenceId"].as_str().context("缺少参考画面")?;
+    let handles = task_runtime_handles(
+        &backend.project_storage,
+        backend.store.clone(),
+        &backend.root,
+        id,
+    )
+    .map_err(anyhow::Error::msg)?;
     let reference = {
-        let store = backend
+        let store = handles
             .store
             .lock()
             .map_err(|_| anyhow::anyhow!("数据库锁不可用"))?;
@@ -96,7 +124,14 @@ pub(crate) async fn pick(backend: &Backend, id: &str, input: &Value) -> Result<V
     if result.is_null() {
         bail!("未命中可见网格，请在模型表面重新点选");
     }
-    let store = backend
+    let handles = task_runtime_handles(
+        &backend.project_storage,
+        backend.store.clone(),
+        &backend.root,
+        id,
+    )
+    .map_err(anyhow::Error::msg)?;
+    let store = handles
         .store
         .lock()
         .map_err(|_| anyhow::anyhow!("数据库锁不可用"))?;
@@ -113,7 +148,14 @@ pub(crate) async fn pick(backend: &Backend, id: &str, input: &Value) -> Result<V
 }
 
 pub(crate) fn reference(backend: &Backend, id: &str, reference_id: &str) -> Result<Reference> {
-    let store = backend
+    let handles = task_runtime_handles(
+        &backend.project_storage,
+        backend.store.clone(),
+        &backend.root,
+        id,
+    )
+    .map_err(anyhow::Error::msg)?;
+    let store = handles
         .store
         .lock()
         .map_err(|_| anyhow::anyhow!("数据库锁不可用"))?;
@@ -135,7 +177,17 @@ pub(crate) async fn image(backend: Arc<Backend>, path: &str) -> Result<Vec<u8>> 
     match parts.as_slice() {
         ["asset-task", id, "references", reference_id] => {
             let reference = reference(&backend, id, reference_id)?;
-            tauri::async_runtime::spawn_blocking(move || asset_reference::read(&reference)).await?
+            let handles = task_runtime_handles(
+                &backend.project_storage,
+                backend.store.clone(),
+                &backend.root,
+                id,
+            )
+            .map_err(anyhow::Error::msg)?;
+            tauri::async_runtime::spawn_blocking(move || {
+                asset_reference::read(handles.files.as_ref(), &reference)
+            })
+            .await?
         }
         ["asset-task", id, session, "frames", frame] => {
             client(&backend, id, Some(session))?.frame(frame).await

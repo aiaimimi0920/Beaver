@@ -1,4 +1,4 @@
-use crate::{asset_agent, clarifications, executor::Outcome, rpc::Rpc, store::Store};
+use crate::{asset_agent, clarifications, executor::Outcome, files::Files, rpc::Rpc, store::Store};
 use serde_json::{json, Value};
 use std::sync::{Arc, Mutex};
 
@@ -6,8 +6,10 @@ use std::sync::{Arc, Mutex};
 #[path = "executor_tools_tests.rs"]
 mod tests;
 
+#[allow(clippy::too_many_arguments)]
 pub async fn dispatch(
     store: &Arc<Mutex<Store>>,
+    files: &Arc<Files>,
     task_id: &str,
     asset: Option<&asset_agent::Context>,
     rpc: &Rpc,
@@ -15,6 +17,23 @@ pub async fn dispatch(
     method: &str,
     params: &Value,
 ) -> Result<Option<Outcome>, String> {
+    if method == "item/tool/call"
+        && (params["tool"] == "beaver_task" || params["tool"] == "beaver_workflow")
+    {
+        let result = if params["tool"] == "beaver_workflow" {
+            crate::framework::dynamic(store.clone(), files.clone(), task_id, params).await
+        } else {
+            crate::task_callback_runtime::dynamic(store.clone(), files.clone(), task_id, params)
+                .await
+        };
+        let paused = result.as_ref().is_ok_and(|value| value["paused"] == true);
+        let reply = match result {
+            Ok(value) => crate::asset_tool::text_result(value),
+            Err(error) => crate::asset_tool::error_result(&error.to_string()),
+        };
+        rpc.respond(id, reply).await?;
+        return Ok(paused.then_some(Outcome::AwaitingInput));
+    }
     if method == "item/tool/call" && params["tool"] == "beaver_asset_task" {
         if let Some(asset) = asset {
             match asset.call(params).await {

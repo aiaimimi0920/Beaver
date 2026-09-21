@@ -15,7 +15,7 @@ use std::{
     path::Path,
 };
 
-fn read_json(path: &Path) -> Result<Value> {
+pub(crate) fn read_json(path: &Path) -> Result<Value> {
     ensure!(
         fs::metadata(path)?.len() <= 1024 * 1024,
         "migration receipt or tool configuration too large"
@@ -23,7 +23,7 @@ fn read_json(path: &Path) -> Result<Value> {
     Ok(serde_json::from_reader(File::open(path)?)?)
 }
 
-fn check_tree(root: &Path) -> Result<()> {
+pub(crate) fn check_tree(root: &Path) -> Result<()> {
     for entry in fs::read_dir(root)? {
         let name = entry?
             .file_name()
@@ -212,6 +212,31 @@ pub fn activate(backup: &Path, prepared: &Path, tool_paths: Option<&Path>) -> Re
         .context("prepared data directory is in use")?;
     let mut store = Store::open(&data)?;
     validate_state(&mut store, &root, &manifest)?;
+    let (detected, now) = bind_tools(&mut store, tool_paths)?;
+    drop(store);
+    migration_bundle::verify(backup)?;
+    let result = json!({"format":"beaver-migration-activation-v1","ready_to_activate":true,"activated_at":now,
+        "data_directory":data,"tools":detected,"source_archive":fs::canonicalize(backup)?,
+        "live_model_request_made":false,"default_data_directory_changed":false});
+    write_receipt(&activation, &marker, &result)?;
+    Ok(result)
+}
+
+/// The receipt is durable before the pending marker disappears.
+pub(crate) fn write_receipt(activation: &Path, marker: &Path, result: &Value) -> Result<()> {
+    let mut file = OpenOptions::new()
+        .write(true)
+        .create_new(true)
+        .open(activation)?;
+    file.write_all(&serde_json::to_vec_pretty(result)?)?;
+    file.sync_all()?;
+    fs::remove_file(marker)
+        .context("activation receipt saved but pending marker could not be removed")?;
+    Ok(())
+}
+
+/// Detect destination tools against the copied settings and record the outcome in the copy.
+pub(crate) fn bind_tools(store: &mut Store, tool_paths: Option<&Path>) -> Result<(Value, String)> {
     let secrets = preferences::CAPABILITIES
         .into_iter()
         .chain(["cloud"])
@@ -260,20 +285,7 @@ pub fn activate(backup: &Path, prepared: &Path, tool_paths: Option<&Path>) -> Re
         }
         Ok(())
     })?;
-    drop(store);
-    migration_bundle::verify(backup)?;
-    let result = json!({"format":"beaver-migration-activation-v1","ready_to_activate":true,"activated_at":now,
-        "data_directory":data,"tools":detected,"source_archive":fs::canonicalize(backup)?,
-        "live_model_request_made":false,"default_data_directory_changed":false});
-    let mut file = OpenOptions::new()
-        .write(true)
-        .create_new(true)
-        .open(&activation)?;
-    file.write_all(&serde_json::to_vec_pretty(&result)?)?;
-    file.sync_all()?;
-    fs::remove_file(marker)
-        .context("activation receipt saved but pending marker could not be removed")?;
-    Ok(result)
+    Ok((detected, now))
 }
 
 #[cfg(all(test, windows))]

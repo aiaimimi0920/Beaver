@@ -8,7 +8,7 @@ use super::{
 use crate::{files::Files, store::Store};
 use anyhow::{ensure, Context, Result};
 use serde_json::{json, Value};
-use std::{collections::BTreeSet, path::Path};
+use std::collections::BTreeSet;
 
 pub fn scope(release: &Release) -> Result<String> {
     repository::digest(&json!([
@@ -23,21 +23,20 @@ pub fn scope(release: &Release) -> Result<String> {
     ]))
 }
 
-pub fn start(store: &mut Store, data: &Path, input: &Value) -> Result<Value> {
+pub fn start(store: &mut Store, files: &Files, input: &Value) -> Result<Value> {
     let request = Request::new("validation.release.start", input)?;
     if let Some(result) = request.replay(store)? {
         return Ok(result);
     }
     let project = super::operations::string(input, "projectId")?;
     let preset = super::operations::string(input, "preset")?;
-    let files = Files::new(data.into());
     ensure!(
-        !crate::journal::Journal::new(store, &files).blocked(project)?,
+        !crate::journal::Journal::new(store, files).blocked(project)?,
         "Project has unfinished file recovery"
     );
-    let snapshot = repository::snapshot(store, &files, project)?;
-    crate::game_export::snapshot_preset(data, &snapshot, preset)?;
-    repository::import_manifest(store, &files, project, &snapshot)?;
+    let snapshot = repository::snapshot(store, files, project)?;
+    crate::game_export::snapshot_preset(files, &snapshot, preset)?;
+    repository::import_manifest(store, files, project, &snapshot)?;
     let settings = settings::read(store, project)?;
     let registered = repository::flows(store, project)?;
     let flows: Vec<Flow> = registered
@@ -199,7 +198,7 @@ pub fn engine_version(store: &Store, release: &Release) -> Result<String> {
 }
 
 /// All export entry points must use this check and the returned immutable snapshot.
-pub fn authorize(store: &Store, data: &Path, input: &Value) -> Result<Release> {
+pub fn authorize(store: &Store, files: &Files, input: &Value) -> Result<Release> {
     let id = super::operations::string(input, "releaseCheckId")?;
     let release: Release = repository::get(store, "validationRelease", id)?;
     ensure!(
@@ -216,14 +215,14 @@ pub fn authorize(store: &Store, data: &Path, input: &Value) -> Result<Release> {
     for id in &release.run_ids {
         let run: Run = repository::get(store, "validationRun", id)?;
         if run.kind == "visual" {
-            evidence::validate(data, &run)?;
+            evidence::validate(files, &run)?;
             if run.verdict == "autoPassed" {
                 let (_, baseline) = super::comparison::baseline_run(store, &run)?
                     .context("Comparison baseline missing")?;
-                evidence::validate(data, &baseline)?;
+                evidence::validate(files, &baseline)?;
             }
         } else {
-            super::code::validate(data, &run)?;
+            super::code::validate(files, &run)?;
         }
     }
     Ok(release)

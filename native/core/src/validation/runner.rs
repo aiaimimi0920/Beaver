@@ -1,4 +1,5 @@
 use super::{code, model::Run, repository, sandbox::Sandbox, visual};
+use crate::files::Files;
 use anyhow::Result;
 use std::{
     path::Path,
@@ -6,7 +7,7 @@ use std::{
 };
 
 pub fn execute(
-    data: &Path,
+    files: &Files,
     engine: &Path,
     ffmpeg: Option<&Path>,
     run: &mut Run,
@@ -17,7 +18,7 @@ pub fn execute(
     run.phase = "preparing".into();
     progress(run);
     let result = (|| -> Result<()> {
-        let sandbox = Sandbox::prepare(data, run)?;
+        let sandbox = Sandbox::prepare(files, run)?;
         let version = sandbox.execute(engine, &["--version"], 15, cancelled)?;
         run.engine_version = version.text.trim().into();
         let minor = run

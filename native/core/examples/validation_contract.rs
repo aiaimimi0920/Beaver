@@ -51,7 +51,7 @@ fn main() -> Result<()> {
     let snapshot = files.capture(&project)?;
     let cancelled = AtomicBool::new(false);
     let mut code = repository::new_run(&store, "contract", snapshot.clone(), None, None, None)?;
-    runner::execute(&data, &engine, None, &mut code, &cancelled, |run| {
+    runner::execute(&files, &engine, None, &mut code, &cancelled, |run| {
         let _ = store.put("validationRun", &run.id, run);
     });
     fs::write(output.join("code.json"), serde_json::to_vec_pretty(&code)?)?;
@@ -77,7 +77,7 @@ fn main() -> Result<()> {
     let flow = repository::save_flow(&mut store, "contract", definition, 0)?;
     let mut visual = repository::new_run(&store, "contract", snapshot, Some(flow), None, None)?;
     runner::execute(
-        &data,
+        &files,
         &engine,
         ffmpeg.as_deref(),
         &mut visual,
@@ -95,7 +95,7 @@ fn main() -> Result<()> {
         "Visual flow failed: {:?}",
         visual.error
     );
-    comparison::validate_evidence(&data, &visual)?;
+    comparison::validate_evidence(&files, &visual)?;
     let before = visual
         .evidence
         .iter()
@@ -119,7 +119,7 @@ fn main() -> Result<()> {
             evidence.point
         );
     }
-    let directory = repository::run_dir(&data, &visual.id)?;
+    let directory = repository::run_dir(&files, &visual.id)?;
     let record: serde_json::Value =
         serde_json::from_slice(&fs::read(directory.join("record.json"))?)?;
     let user = PathBuf::from(record["userData"].as_str().context("userData missing")?);
@@ -139,7 +139,7 @@ fn main() -> Result<()> {
         None,
         None,
     )?;
-    runner::execute(&data, &engine, None, &mut failed, &cancelled, |_| {});
+    runner::execute(&files, &engine, None, &mut failed, &cancelled, |_| {});
     fs::write(
         output.join("failure.json"),
         serde_json::to_vec_pretty(&failed)?,

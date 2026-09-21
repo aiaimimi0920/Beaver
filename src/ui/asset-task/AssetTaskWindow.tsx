@@ -12,6 +12,7 @@ import { AssetProgress } from "./AssetProgress";
 import { AssetTitlebar } from "./AssetTitlebar";
 import { FeedbackComposer } from "./FeedbackComposer";
 import { FeedbackHistory } from "./FeedbackHistory";
+import { DeliveryPanel } from "./DeliveryPanel";
 import { useAssetState } from "./use-asset-state";
 import { useObserver } from "./use-observer";
 import "./asset-task-window.css";
@@ -21,6 +22,7 @@ const tabs = {
   feedback: "制作与修改",
   conversation: "对话与决策",
   history: "处理记录",
+  delivery: "阶段交付",
 } as const;
 
 export function AssetTaskWindow({ id }: { id: string }) {
@@ -146,19 +148,28 @@ export function AssetTaskWindow({ id }: { id: string }) {
                 className="asset-task-panel asset-task-scroll"
               >
                 <AssetProgress asset={state.asset} />
-                <FeedbackComposer
-                  id={id}
-                  reference={reference}
-                  annotations={annotations}
-                  select={setReference}
-                  mark={setAnnotations}
-                  capture={capture}
-                  canCapture={canCapture}
-                  finished={finished}
-                  run={run}
-                  lock={lock}
-                  blocked={selecting}
-                />
+                {state.asset.delivery ? (
+                  <p className="asset-notice">
+                    本任务按阶段交付。请在“阶段交付”中查看候选文件、批准或提出修改意见。
+                    <button onClick={() => setTab("delivery")}>
+                      查看交付{state.asset.delivery.pending ? " · 待审批" : ""}
+                    </button>
+                  </p>
+                ) : (
+                  <FeedbackComposer
+                    id={id}
+                    reference={reference}
+                    annotations={annotations}
+                    select={setReference}
+                    mark={setAnnotations}
+                    capture={capture}
+                    canCapture={canCapture}
+                    finished={finished}
+                    run={run}
+                    lock={lock}
+                    blocked={selecting}
+                  />
+                )}
               </div>
               <div
                 hidden={tab !== "conversation"}
@@ -195,6 +206,17 @@ export function AssetTaskWindow({ id }: { id: string }) {
               >
                 <FeedbackHistory id={id} asset={state.asset} run={run} />
               </div>
+              {tab === "delivery" && (
+                <div className="asset-task-panel asset-task-scroll">
+                  <DeliveryPanel
+                    key={id}
+                    id={id}
+                    asset={state.asset}
+                    status={state.task.status}
+                    run={run}
+                  />
+                </div>
+              )}
             </aside>
           </div>
         </>

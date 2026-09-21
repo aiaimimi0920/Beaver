@@ -13,6 +13,15 @@ pub fn continue_task(store: &mut Store, id: &str, text: &str, fresh_context: boo
         bail!("补充要求过长");
     }
     let mut task: Value = store.get("task", id)?.context("任务不存在")?;
+    crate::object_framework::require_legacy(&task)?;
+    anyhow::ensure!(
+        task.get("migrationRetained").is_none(),
+        "任务保留自旧版数据且尚未转换，不能继续执行"
+    );
+    anyhow::ensure!(
+        !task["waitingDelivery"].is_string(),
+        "Review the pending delivery before continuing this task"
+    );
     if task["id"] != id {
         bail!("任务标识不匹配");
     }
@@ -45,6 +54,7 @@ pub fn continue_task(store: &mut Store, id: &str, text: &str, fresh_context: boo
             if child["parentTaskId"] == id
                 && child["status"] == "interrupted"
                 && child["workspacePrepared"].is_boolean()
+                && !crate::object_framework::marked(&child)
             {
                 child["status"] = json!("queued");
                 store.put(
@@ -147,6 +157,7 @@ pub fn continue_task(store: &mut Store, id: &str, text: &str, fresh_context: boo
 
 fn completed(store: &Store, id: &str) -> Result<Value> {
     let task: Value = store.get("task", id)?.context("任务不存在")?;
+    crate::object_framework::require_legacy(&task)?;
     if task["id"] != id || task["status"] != "completed" {
         bail!("仅已合入的任务可执行此操作");
     }

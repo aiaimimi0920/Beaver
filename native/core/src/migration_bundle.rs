@@ -33,7 +33,7 @@ pub fn ensure_activated(data: &Path) -> Result<()> {
 
 pub fn command(arguments: Vec<std::ffi::OsString>) -> Result<Value> {
     let usage =
-        "usage: --migration-bundle create|verify|restore|prepare-import SOURCE [NEW_DESTINATION]; activate-import BACKUP PREPARED_DIRECTORY [TOOL_PATHS_JSON]";
+        "usage: --migration-bundle create|verify|restore|prepare-import SOURCE [NEW_DESTINATION]; inspect-projects BACKUP; partition-projects BACKUP RESTORED_DIRECTORY; activate-import BACKUP PREPARED_DIRECTORY [TOOL_PATHS_JSON]";
     let mode = arguments
         .first()
         .and_then(|value| value.to_str())
@@ -48,6 +48,12 @@ pub fn command(arguments: Vec<std::ffi::OsString>) -> Result<Value> {
             let manifest = verify(source)?;
             Ok(serde_json::json!({"format":manifest.format,"projects":manifest.projects.len()}))
         }
+        ("inspect-projects", 2) => Ok(serde_json::to_value(
+            crate::project_migration_inventory::inspect(source)?,
+        )?),
+        ("partition-projects", 3) => Ok(serde_json::to_value(
+            crate::project_migration_partition::partition(source, Path::new(&arguments[2]))?,
+        )?),
         ("restore", 3) => Ok(serde_json::to_value(restore(
             source,
             Path::new(&arguments[2]),
@@ -56,7 +62,7 @@ pub fn command(arguments: Vec<std::ffi::OsString>) -> Result<Value> {
             source,
             Path::new(&arguments[2]),
         )?)?),
-        ("activate-import", 3 | 4) => crate::migration_activation::activate(
+        ("activate-import", 3 | 4) => crate::project_migration_activation::activate_copy(
             source,
             Path::new(&arguments[2]),
             arguments.get(3).map(Path::new),

@@ -1,11 +1,13 @@
 use crate::{
     asset_agent,
     execution_health::{Health, IdleLimits},
+    files::Files,
     rpc::{Event, Rpc},
     store::Store,
 };
 use serde_json::{json, Value};
 use std::{
+    path::{Path, PathBuf},
     sync::{Arc, Mutex},
     time::Duration,
 };
@@ -33,6 +35,7 @@ pub enum Outcome {
 
 pub struct Execution {
     pub store: Arc<Mutex<Store>>,
+    pub files: Arc<Files>,
     pub task_id: String,
     pub model: String,
     pub prompt: String,
@@ -63,6 +66,12 @@ impl Execution {
             .get("task", &self.task_id)
             .map_err(|e| e.to_string())?
             .ok_or("任务不存在".into())
+    }
+    fn workspace(&self, task: &Value) -> Result<PathBuf, String> {
+        let path = task["workspace"].as_str().ok_or("任务工作副本无效")?;
+        self.files
+            .resolve_workspace(&self.task_id, Path::new(path))
+            .map_err(|error| error.to_string())
     }
     fn update(&self, fields: &[(&str, Value)]) -> Result<(), String> {
         let store = self.store.lock().map_err(|_| "数据库锁不可用")?;
@@ -114,6 +123,11 @@ impl Execution {
         limits: IdleLimits,
         asset: Option<asset_agent::Context>,
     ) -> Outcome {
+        if let Err(error) = self.task().and_then(|task| {
+            crate::object_framework::require_legacy(&task).map_err(|e| e.to_string())
+        }) {
+            return Outcome::Failed(error);
+        }
         let started = std::time::Instant::now();
         let span = self.task().ok().and_then(|task| {
             self.store.lock().ok().and_then(|store| {
@@ -128,9 +142,12 @@ impl Execution {
                 .ok()
             })
         });
-        let outcome = self
+        let mut outcome = self
             .run_inner(command, controls, limits, asset.as_ref())
             .await;
+        if let Err(error) = self.end_work_turn() {
+            outcome = Outcome::Failed(error);
+        }
         if matches!(outcome, Outcome::Failed(_) | Outcome::Interrupted) {
             if let Some(asset) = &asset {
                 let _ = asset.uncertain("Execution stopped without a verified receipt. Inspect the retained scene before replaying edits.");
@@ -156,6 +173,13 @@ impl Execution {
         outcome
     }
 
+    fn end_work_turn(&self) -> Result<(), String> {
+        let store = self.store.lock().map_err(|_| "Database lock unavailable")?;
+        crate::framework_operations::cancel_task(&store, &self.task_id, true)
+            .map_err(|e| e.to_string())?;
+        crate::asset_work::end_turn(&store, &self.task_id).map_err(|e| e.to_string())
+    }
+
     async fn run_inner(
         &self,
         command: Command,
@@ -163,6 +187,9 @@ impl Execution {
         limits: IdleLimits,
         asset: Option<&asset_agent::Context>,
     ) -> Outcome {
+        if let Err(error) = self.task().and_then(|task| self.workspace(&task)) {
+            return Outcome::Failed(self.redact(&error));
+        }
         let (rpc, mut events) = match Rpc::spawn(command) {
             Ok(value) => value,
             Err(error) => return Outcome::Failed(self.redact(&error)),
@@ -190,11 +217,11 @@ impl Execution {
     ) -> Result<Outcome, String> {
         let task = self.task()?;
         let mut activity = crate::call_log::Activity::new(self.store.clone(), &task);
-        let workspace = task["workspace"].as_str().ok_or("任务工作副本无效")?;
+        let workspace = self.workspace(&task)?;
         if stage(rpc.initialize(), controls).await?.is_none() {
             return Ok(Outcome::Interrupted);
         }
-        let instructions = if asset.is_some() {
+        let mut instructions = if asset.is_some() {
             format!(
                 "{}\n{}",
                 crate::asset_tool::INSTRUCTIONS,
@@ -203,21 +230,34 @@ impl Execution {
         } else {
             crate::code_structure::INSTRUCTIONS.into()
         };
+        instructions.push('\n');
+        instructions.push_str(crate::task_callback_contract::INSTRUCTIONS);
         let fresh_asset_thread = asset.is_some() && task["assetToolVersion"] != 1;
-        if fresh_asset_thread && task["threadId"].is_string() {
-            self.update(&[("priorAssetThreadId", task["threadId"].clone())])?;
+        let fresh_callback_thread =
+            task["callbackToolVersion"] != crate::task_callback_contract::VERSION;
+        let fresh_thread = fresh_asset_thread || fresh_callback_thread;
+        if fresh_thread && task["threadId"].is_string() {
+            if fresh_asset_thread {
+                self.update(&[("priorAssetThreadId", task["threadId"].clone())])?;
+            }
+            if fresh_callback_thread {
+                self.update(&[("priorCallbackThreadId", task["threadId"].clone())])?;
+            }
             self.event(
                 "recovery",
-                "资产工具已启用，建立新会话并保留旧会话标识；先核对现场、阶段和已有结果。",
+                "任务工具已更新，建立新会话并保留旧会话标识；先核对现场、阶段和已有结果。",
             )?;
         }
         let mut params = json!({"cwd":workspace,"approvalPolicy":"never","sandbox":"danger-full-access","model":self.model,"developerInstructions":instructions});
-        let method = if let Some(thread) = task["threadId"].as_str().filter(|_| !fresh_asset_thread)
-        {
+        let method = if let Some(thread) = task["threadId"].as_str().filter(|_| !fresh_thread) {
             params["threadId"] = json!(thread);
             "thread/resume"
         } else {
-            let mut tools = vec![self.ask_user_tool.clone()];
+            let mut tools = vec![
+                self.ask_user_tool.clone(),
+                crate::task_callback_contract::definition(),
+                crate::framework_contract::definition(),
+            ];
             if task["decompose"] == true {
                 tools.push(crate::task_plan::tool());
             }
@@ -236,9 +276,14 @@ impl Execution {
             .ok_or("Codex 未返回会话标识")?
             .to_string();
         self.update(&[("threadId", json!(thread_id)), ("turnId", Value::Null)])?;
+        self.update(&[(
+            "callbackToolVersion",
+            json!(crate::task_callback_contract::VERSION),
+        )])?;
         if asset.is_some() {
             self.update(&[("assetToolVersion", json!(1))])?;
         }
+        self.end_work_turn()?;
         let Some(turn) = stage(rpc.request("turn/start", json!({"threadId":thread_id,"cwd":workspace,"input":[{"type":"text","text":self.prompt,"text_elements":[]}]})), controls).await? else { return Ok(Outcome::Interrupted); };
         let mut turn_id = turn["turn"]["id"]
             .as_str()
@@ -270,6 +315,10 @@ impl Execution {
             };
             tokio::select! {
                 _ = heartbeat.tick() => {
+                    if self.task()?["waitingDelivery"].is_string() {
+                        interrupt(rpc, &thread_id, &turn_id).await;
+                        return Ok(Outcome::AwaitingInput);
+                    }
                     if let Some(asset) = asset {
                         if let Some(id) = asset.pending_notice().map_err(|e|e.to_string())? {
                             if notices.insert(id.clone()) {
@@ -331,18 +380,18 @@ impl Execution {
                         Event::Log(text) => self.event("system", &text)?,
                         Event::Exit => return Err("Codex 进程意外退出；工作副本已保留。".into()),
                         Event::ServerRequest { id, method, params } => {
-                            if let Some(outcome) = crate::executor_tools::dispatch(&self.store, &self.task_id, asset, rpc, id, &method, &params).await? { return Ok(outcome); }
+                            if let Some(outcome) = crate::executor_tools::dispatch(&self.store, &self.files, &self.task_id, asset, rpc, id, &method, &params).await? { return Ok(outcome); }
                         }
                         Event::Notification { method, params } => {
                             if params["threadId"].as_str().is_some_and(|id| id != thread_id) { continue; }
                             if params["turnId"].as_str().is_some_and(|id| id != turn_id) { continue; }
                             health.observe(&method, &params);
                             match method.as_str() {
-                                "item/started" => activity.item(&params["item"],false).map_err(|e|e.to_string())?,
+                                "item/started" => activity.item_at(&params["item"],false,Some((&thread_id,&turn_id))).map_err(|e|e.to_string())?,
                                 "item/agentMessage/delta" => self.event("assistant", params["delta"].as_str().unwrap_or(""))?,
                                 "item/completed" => {
                                     let item = &params["item"];
-                                    activity.item(item,true).map_err(|e|e.to_string())?;
+                                    activity.item_at(item,true,Some((&thread_id,&turn_id))).map_err(|e|e.to_string())?;
                                     if item["type"] == "reasoning" { continue; }
                                     let text = item["text"].as_str().map(str::to_string).unwrap_or_else(|| item.to_string());
                                     self.event(item["type"].as_str().unwrap_or("item"), &text)?;
@@ -362,6 +411,7 @@ impl Execution {
                                     if params["turn"]["id"].as_str().is_some_and(|id| id != turn_id) { continue; }
                                     let error = params["turn"]["error"]["message"].as_str().unwrap_or("");
                                     if params["turn"]["status"] == "failed" && recovery_attempts == 0 && recoverable(error) {
+                                        self.end_work_turn()?;
                                         if let Some(asset) = asset { asset.uncertain("Connection failed after possible mutation; verify before replaying relative edits.").map_err(|e|e.to_string())?; }
                                         notices.clear();
                                         recovery_attempts += 1;

@@ -1,0 +1,82 @@
+{
+  "accepted": [
+    { "schemaVersion": 1, "layer": "coarse" },
+    {
+      "schemaVersion": 1,
+      "layer": "medium",
+      "objectId": "object-1",
+      "baseline": { "basePolicy": "latestAccepted" }
+    },
+    {
+      "schemaVersion": 1,
+      "layer": "medium",
+      "objectId": "object-1",
+      "baseline": {
+        "basePolicy": "pinnedVersion",
+        "selectedVersionId": "version:1"
+      }
+    },
+    {
+      "schemaVersion": 1,
+      "layer": "medium",
+      "objectId": "object-1",
+      "baseline": { "basePolicy": "empty" }
+    },
+    {
+      "schemaVersion": 1,
+      "layer": "fine",
+      "objectId": "object-1",
+      "mediumTaskId": "task-1",
+      "runId": "run-1",
+      "stageId": "stage-1"
+    }
+  ],
+  "rejected": [
+    null,
+    {},
+    { "schemaVersion": 2, "layer": "coarse" },
+    { "schemaVersion": 1, "layer": "unknown" },
+    { "schemaVersion": 1, "layer": "coarse", "objectId": "object-1" },
+    { "schemaVersion": 1, "layer": "medium", "objectId": "object-1" },
+    {
+      "schemaVersion": 1,
+      "layer": "medium",
+      "objectId": "",
+      "baseline": { "basePolicy": "empty" }
+    },
+    {
+      "schemaVersion": 1,
+      "layer": "medium",
+      "objectId": "../object",
+      "baseline": { "basePolicy": "empty" }
+    },
+    {
+      "schemaVersion": 1,
+      "layer": "medium",
+      "objectId": "对象",
+      "baseline": { "basePolicy": "empty" }
+    },
+    {
+      "schemaVersion": 1,
+      "layer": "medium",
+      "objectId": "object-1",
+      "baseline": {
+        "basePolicy": "latestAccepted",
+        "selectedVersionId": "version-1"
+      }
+    },
+    {
+      "schemaVersion": 1,
+      "layer": "medium",
+      "objectId": "object-1",
+      "baseline": { "basePolicy": "pinnedVersion" }
+    },
+    {
+      "schemaVersion": 1,
+      "layer": "fine",
+      "objectId": "object-1",
+      "mediumTaskId": "task-1",
+      "runId": "run-1"
+    }
+  ]
+}

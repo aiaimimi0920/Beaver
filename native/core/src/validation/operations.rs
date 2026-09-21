@@ -139,19 +139,18 @@ pub fn explore(store: &mut Store, input: &Value) -> Result<Value> {
     )
 }
 
-pub fn enqueue(store: &mut Store, data: &Path, method: &str, input: &Value) -> Result<Value> {
+pub fn enqueue(store: &mut Store, files: &Files, method: &str, input: &Value) -> Result<Value> {
     let request = Request::new(method, input)?;
     if let Some(result) = request.replay(store)? {
         return Ok(result);
     }
     let project = string(input, "projectId")?;
-    let files = Files::new(data.into());
     ensure!(
-        !crate::journal::Journal::new(store, &files).blocked(project)?,
+        !crate::journal::Journal::new(store, files).blocked(project)?,
         "Project has unfinished file recovery"
     );
-    let snapshot = repository::snapshot(store, &files, project)?;
-    repository::import_manifest(store, &files, project, &snapshot)?;
+    let snapshot = repository::snapshot(store, files, project)?;
+    repository::import_manifest(store, files, project, &snapshot)?;
     let flows = match method {
         "validation.code.run" => vec![None],
         "validation.run.rerun" => vec![owned_run(store, input)?.flow],
@@ -219,14 +218,14 @@ fn text_file(path: &Path) -> Result<String> {
     String::from_utf8(bytes).context("Source is binary or not UTF-8")
 }
 
-pub fn source(store: &Store, data: &Path, input: &Value) -> Result<Value> {
+pub fn source(store: &Store, files: &Files, input: &Value) -> Result<Value> {
     let run = owned_run(store, input)?;
     let relative = super::flow::relative(string(input, "path")?)?;
     let hash = run
         .snapshot
         .get(relative)
         .context("Path is absent from the recorded game snapshot")?;
-    let blob = Files::new(data.into()).blob(hash)?;
+    let blob = files.blob(hash)?;
     ensure!(
         crate::files::file_hash(&blob)?.as_ref() == Some(hash),
         "Historical source changed or is missing"

@@ -122,11 +122,17 @@ pub struct State {
     pub checkpoint: Option<String>,
     pub last_frame: Option<Reference>,
     pub recovery: Option<String>,
+    #[serde(default)]
+    pub delivery: Option<crate::asset_delivery::Workflow>,
+    #[serde(default)]
+    pub work: crate::asset_work::Work,
 }
 
 impl State {
     pub fn ready(&self) -> bool {
-        self.phase == "ready" && self.feedback.iter().all(Feedback::terminal)
+        self.phase == "ready"
+            && self.feedback.iter().all(Feedback::terminal)
+            && crate::asset_delivery::complete(self)
     }
 }
 
@@ -139,6 +145,7 @@ pub fn save(store: &Store, state: &State) -> Result<()> {
     store.put("asset-task", &state.task_id, state)
 }
 pub fn enable(store: &Store, task: &Value) -> Result<State> {
+    crate::object_framework::require_legacy(task)?;
     let id = task["id"].as_str().context("Missing task ID")?;
     if let Some(state) = store.get("asset-task", id)? {
         return Ok(state);
@@ -152,6 +159,7 @@ pub fn enable(store: &Store, task: &Value) -> Result<State> {
 }
 
 pub(crate) fn initial(task: &Value) -> Result<State> {
+    crate::object_framework::require_legacy(task)?;
     let id = task["id"].as_str().context("Missing task ID")?;
     let mut state = State {
         protocol_version: PROTOCOL,
@@ -170,6 +178,8 @@ pub(crate) fn initial(task: &Value) -> Result<State> {
         checkpoint: None,
         last_frame: None,
         recovery: None,
+        delivery: None,
+        work: Default::default(),
     };
     if !task["assetFeedbackSeed"].is_null() {
         let mut feedback: Feedback = serde_json::from_value(task["assetFeedbackSeed"].clone())?;
@@ -202,6 +212,7 @@ pub fn mark_uncertain(store: &Store, id: &str, reason: &str) -> Result<()> {
     let Some(mut state) = store.get::<State>("asset-task", id)? else {
         return Ok(());
     };
+    crate::framework_evidence::recovery(store, id, reason, None)?;
     for feedback in &mut state.feedback {
         if matches!(feedback.status.as_str(), "executing" | "checking") {
             feedback.status = "pendingVerification".into();
@@ -211,12 +222,14 @@ pub fn mark_uncertain(store: &Store, id: &str, reason: &str) -> Result<()> {
         }
     }
     state.recovery = Some(reason.into());
+    crate::asset_work::interrupt(&mut state, reason);
     save(store, &state)
 }
 
 pub fn recover_all(store: &Store) -> Result<()> {
     for state in store.list::<State>("asset-task")? {
         if state.session_id.is_some()
+            || state.work.attempts.iter().any(|a| a.status == "running")
             || state
                 .feedback
                 .iter()

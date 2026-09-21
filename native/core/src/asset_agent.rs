@@ -1,18 +1,15 @@
 use crate::{
     asset_checkpoint, asset_feedback, asset_preview::Client, asset_reference, asset_stages,
-    asset_task, asset_tool, store::Store,
+    asset_task, asset_tool, files::Files, store::Store,
 };
 use anyhow::{bail, Context as _, Result};
 use serde_json::{json, Value};
-use std::{
-    path::PathBuf,
-    sync::{Arc, Mutex},
-};
+use std::sync::{Arc, Mutex};
 
 #[derive(Clone)]
 pub struct Context {
     pub store: Arc<Mutex<Store>>,
-    pub root: PathBuf,
+    pub files: Arc<Files>,
     pub client: Client,
 }
 
@@ -51,7 +48,7 @@ impl Context {
     }
 
     pub async fn checkpoint(&self) -> Result<String> {
-        asset_checkpoint::save(&self.store, &self.client).await
+        asset_checkpoint::save(&self.store, &self.files, &self.client).await
     }
 
     fn active(&self, db: &Store, params: &Value) -> Result<asset_task::State> {
@@ -98,7 +95,11 @@ impl Context {
                 state
             };
             if let Some(feedback) = asset_task::eligible(&state) {
-                let png = asset_reference::annotated(&feedback.reference, &feedback.annotations)?;
+                let png = asset_reference::annotated(
+                    &self.files,
+                    &feedback.reference,
+                    &feedback.annotations,
+                )?;
                 return Ok(Reply {
                     value: asset_tool::image_result(feedback, &png),
                     delivered: Some(feedback.id.clone()),
@@ -152,7 +153,7 @@ impl Context {
             None
         };
         if operation == "finishRound" {
-            asset_checkpoint::final_frame(&self.store, &self.root, &self.client).await?;
+            asset_checkpoint::final_frame(&self.store, &self.files, &self.client).await?;
         }
         let db = self
             .store

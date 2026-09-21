@@ -2,29 +2,29 @@ use crate::{
     asset_agent,
     asset_sessions::Sessions,
     executor::{Control, Execution, Outcome},
-    files::Files,
-    scheduler::Factory,
-    store::Store,
+    scheduler::RuntimeFactory,
+    scheduler_runtime::TaskRuntime,
     validation::task_gate,
 };
 use serde_json::{json, Value};
 use std::sync::{
     atomic::{AtomicBool, Ordering},
-    Arc, Mutex,
+    Arc,
 };
 use tokio::sync::mpsc;
 
 pub(crate) async fn execute(
     task: Value,
-    factory: Factory,
-    store: Arc<Mutex<Store>>,
-    files: Arc<Files>,
+    runtime: TaskRuntime,
+    factory: RuntimeFactory,
     sessions: Sessions,
     cancelled: Arc<AtomicBool>,
     mut input: mpsc::Receiver<Control>,
     changed: Arc<dyn Fn() + Send + Sync>,
 ) -> (String, Outcome) {
     let id = task["id"].as_str().unwrap_or_default().to_owned();
+    let store = runtime.store();
+    let files = runtime.files();
     let result = async {
         let validate_only = task_gate::validation_only(&task);
         if !validate_only && task["decompose"] == true && task["plan"].is_object() {
@@ -38,7 +38,8 @@ pub(crate) async fn execute(
                 factory_task["assetTask"] = json!(true);
             }
         }
-        let launch = tokio::task::spawn_blocking(move || factory(&factory_task))
+        let factory_runtime = runtime.clone();
+        let launch = tokio::task::spawn_blocking(move || factory(&factory_task, &factory_runtime))
             .await
             .map_err(|_| "任务环境准备异常")??;
         if cancelled.load(Ordering::SeqCst) {
@@ -49,10 +50,16 @@ pub(crate) async fn execute(
                 return Err("Duplicate Blender launch refused".into());
             }
             let session_store = store.clone();
+            let session_files = files.clone();
             let session_task = task.clone();
             let session_cancelled = cancelled.clone();
             let session = tokio::task::spawn_blocking(move || {
-                request.start_logged(session_store, &session_task, &session_cancelled)
+                request.start_logged(
+                    session_store,
+                    session_files,
+                    &session_task,
+                    &session_cancelled,
+                )
             })
             .await
             .map_err(|_| "Blender preparation worker failed")?
@@ -64,7 +71,7 @@ pub(crate) async fn execute(
             .ok()
             .map(|client| asset_agent::Context {
                 store: store.clone(),
-                root: files.root().to_owned(),
+                files: files.clone(),
                 client,
             });
         let outcome = if cancelled.load(Ordering::SeqCst) {
@@ -74,6 +81,7 @@ pub(crate) async fn execute(
         } else if let Some(command) = launch.command {
             Execution {
                 store: store.clone(),
+                files: files.clone(),
                 task_id: id.clone(),
                 model: launch.model,
                 prompt: launch.prompt,

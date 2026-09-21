@@ -13,11 +13,12 @@ use std::{
 };
 
 fn awaiting(task: &Value) -> bool {
-    task["clarifications"].as_array().is_some_and(|items| {
-        items
-            .iter()
-            .any(|q| q.get("answers").is_none_or(Value::is_null))
-    })
+    task["waitingDelivery"].is_string()
+        || task["clarifications"].as_array().is_some_and(|items| {
+            items
+                .iter()
+                .any(|q| q.get("answers").is_none_or(Value::is_null))
+        })
 }
 
 /// The executor must already be stopped. Caller owns project merge and database locks.
@@ -51,6 +52,7 @@ fn finish_task(
     retry: bool,
 ) -> Result<Value> {
     let mut task: Value = store.get("task", id)?.context("任务不存在")?;
+    crate::object_framework::require_legacy(&task)?;
     if task["id"] != id {
         bail!("任务标识不匹配");
     }
@@ -106,10 +108,12 @@ fn finish_task(
         } else {
             let baseline: Snapshot =
                 serde_json::from_value(task["baseline"].clone()).context("任务基线无效")?;
-            let workspace = task["workspace"].as_str().context("任务工作副本无效")?;
-            if outcome == Outcome::Completed && task["capability"] != "review" {
-                let normalized =
-                    crate::source_encoding::normalize(Path::new(workspace), &baseline)?;
+            let workspace = files.resolve_workspace(
+                id,
+                Path::new(task["workspace"].as_str().context("任务工作副本无效")?),
+            )?;
+            if outcome == Outcome::Completed && !awaiting(&task) && task["capability"] != "review" {
+                let normalized = crate::source_encoding::normalize(&workspace, &baseline)?;
                 if !normalized.is_empty() {
                     store.event(
                         id,
@@ -122,7 +126,7 @@ fn finish_task(
                     )?;
                 }
             }
-            let after = files.capture(Path::new(workspace))?;
+            let after = files.capture(&workspace)?;
             Files::changes(&baseline, &after)
         };
         if !integration {
@@ -131,6 +135,7 @@ fn finish_task(
         if awaiting(&task) {
             task["status"] = json!("awaitingInput");
         } else if outcome == Outcome::Completed && !closing.load(Ordering::SeqCst) {
+            crate::asset_delivery_files::verify_final(store, files, &task, &changes)?;
             if let Some(text) = crate::validation::task_control::take(&mut task)? {
                 crate::validation::task_completion::steered(store, files, &mut task, &text)?;
                 return Ok(());

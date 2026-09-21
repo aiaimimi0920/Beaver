@@ -1,10 +1,9 @@
 use crate::{
+    execution_settings::ExecutionSettings,
     files::{safe_path, Files, Snapshot},
-    preferences::{resolve, Vault},
-    store::Store,
 };
 use anyhow::{bail, Context, Result};
-use serde_json::{json, Value};
+use serde_json::json;
 use std::{
     collections::BTreeMap,
     ffi::OsString,
@@ -30,9 +29,9 @@ pub fn latency_overrides() -> [String; 5] {
 
 pub struct HomeRequest<'a> {
     pub task_id: &'a str,
+    /// Recorded task location (project-relative in project storage).
     pub workspace: &'a Path,
     pub baseline: &'a Snapshot,
-    pub capability: &'a str,
     pub skills: &'a Path,
     pub media_executable: &'a Path,
     pub media_args: &'a [String],
@@ -81,33 +80,21 @@ fn copy_skills(source: &Path, target: &Path) -> Result<()> {
 /// Creates task-scoped Codex configuration without touching the user's CODEX_HOME.
 /// Tool discovery and installing the native media server are caller responsibilities.
 pub fn prepare(
-    root: &Path,
-    store: &Store,
-    vault: &impl Vault,
-    settings: &Value,
+    files: &Files,
+    settings: &ExecutionSettings,
     request: HomeRequest<'_>,
     inherited: BTreeMap<OsString, OsString>,
 ) -> Result<PreparedHome> {
-    if request.task_id.is_empty()
-        || !request
-            .task_id
-            .bytes()
-            .all(|b| b.is_ascii_alphanumeric() || b == b'-' || b == b'_')
-    {
-        bail!("任务标识无效");
-    }
-    let provider = resolve(store, vault, settings, request.capability)?;
-    let workspace = fs::canonicalize(request.workspace)?;
+    let home = files.codex_home(request.task_id)?;
+    let provider = settings.provider()?;
+    let workspace = files.resolve_workspace(request.task_id, request.workspace)?;
+    let workspace = fs::canonicalize(workspace)?;
     if !workspace.is_dir() {
         bail!("任务工作副本不存在");
     }
     if !request.media_executable.is_file() {
         bail!("原生媒体 MCP 程序不存在");
     }
-    fs::create_dir_all(root)?;
-    let codex = safe_path(root, "codex")?;
-    fs::create_dir_all(&codex)?;
-    let home = safe_path(&codex, request.task_id)?;
     fs::create_dir_all(&home)?;
     let home = fs::canonicalize(home)?;
     let mut env: BTreeMap<OsString, OsString> = inherited
@@ -121,10 +108,7 @@ pub fn prepare(
         })
         .collect();
     env.insert("CODEX_HOME".into(), home.clone().into_os_string());
-    let baseline = crate::code_structure::snapshot_baseline(
-        &Files::new(root.to_path_buf()),
-        request.baseline,
-    )?;
+    let baseline = crate::code_structure::snapshot_baseline(files, request.baseline)?;
     let baseline_path = safe_path(&home, "code-structure-baseline.json")?;
     atomic_write(&baseline_path, &serde_json::to_vec(&baseline)?)?;
     env.insert(
@@ -136,19 +120,9 @@ pub fn prepare(
         "BEAVER_PROJECT_ROOT".into(),
         workspace.clone().into_os_string(),
     );
-    let mut media = serde_json::Map::new();
-    for capability in ["image", "speech", "music", "translation"] {
-        media.insert(
-            capability.into(),
-            match resolve(store, vault, settings, capability) {
-                Ok(provider) => serde_json::to_value(provider)?,
-                Err(_) => Value::Null,
-            },
-        );
-    }
     env.insert(
         "BEAVER_MEDIA_PROVIDERS".into(),
-        Value::Object(media).to_string().into(),
+        settings.media_providers().to_string().into(),
     );
     if let Some(node) = request
         .resolved_tools
@@ -177,7 +151,7 @@ pub fn prepare(
     if !provider.key.is_empty() {
         config["model_providers"]["beaver"]["env_key"] = json!("BEAVER_CODEX_KEY");
     }
-    if settings["mcp"]["godot"] == true {
+    if settings.mcp["godot"] == true {
         config["mcp_servers"]["godot"] =
             json!({"command":"npx","args":["--yes","@coding-solo/godot-mcp@0.1.1"]});
         if let Some(godot) = request
@@ -189,10 +163,10 @@ pub fn prepare(
         }
     }
     let mut blender = None;
-    if request.asset_task && settings["mcp"]["blender"] != true {
+    if request.asset_task && settings.mcp["blender"] != true {
         bail!("请在设置中启用 Blender MCP 后创建资产制作任务");
     }
-    if settings["mcp"]["blender"] == true {
+    if settings.mcp["blender"] == true {
         config["mcp_servers"]["blender"] = json!({"command":"uvx","args":["blender-mcp==1.9.1"],"env":{"DISABLE_TELEMETRY":"true"}});
         if request.asset_task
             || request.retained_blender_port.is_some()
@@ -245,6 +219,8 @@ pub fn prepare(
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::{preferences::Vault, store::Store};
+    use serde_json::Value;
     struct TestVault;
     impl Vault for TestVault {
         fn encrypt(&self, _: &str) -> Result<String> {
@@ -259,6 +235,7 @@ mod tests {
         let temp = tempfile::tempdir()?;
         let root = temp.path().join("data");
         let store = Store::open(&root)?;
+        let files = Files::new(root.clone());
         store.put("secret", "code", &"test-cipher")?;
         let skills = temp.path().join("skills");
         fs::create_dir_all(skills.join("production"))?;
@@ -271,6 +248,7 @@ mod tests {
         settings["local"]["code"]["baseUrl"] = json!("https://example.com/v1");
         settings["local"]["code"]["model"] = json!("model\"quoted");
         settings["mcp"] = json!({"godot":true,"blender":true});
+        let settings = ExecutionSettings::read(&store, &TestVault, settings, Some("code"))?;
         let tools = BTreeMap::from([("godot".into(), "C:/Tools/Godot.exe".into())]);
         let executable = std::env::current_exe()?;
         let user_home = temp.path().join("user-codex");
@@ -280,9 +258,7 @@ mod tests {
             "# user config must remain unchanged\n",
         )?;
         let prepared = prepare(
-            &root,
-            &store,
-            &TestVault,
+            &files,
             &settings,
             HomeRequest {
                 task_id: "task-1",
@@ -290,7 +266,6 @@ mod tests {
                 retained_blender_port: None,
                 workspace: &workspace,
                 baseline: &Snapshot::new(),
-                capability: "code",
                 skills: &skills,
                 media_executable: &executable,
                 media_args: &["--media-mcp".into()],
@@ -366,9 +341,7 @@ mod tests {
             "session fixture",
         )?;
         let resumed = prepare(
-            &root,
-            &store,
-            &TestVault,
+            &files,
             &settings,
             HomeRequest {
                 task_id: "task-1",
@@ -376,7 +349,6 @@ mod tests {
                 retained_blender_port: None,
                 workspace: &workspace,
                 baseline: &Snapshot::new(),
-                capability: "code",
                 skills: &skills,
                 media_executable: &executable,
                 media_args: &[],
@@ -396,9 +368,7 @@ mod tests {
             "# user config must remain unchanged\n"
         );
         assert!(prepare(
-            &root,
-            &store,
-            &TestVault,
+            &files,
             &settings,
             HomeRequest {
                 task_id: "../escape",
@@ -406,7 +376,6 @@ mod tests {
                 retained_blender_port: None,
                 workspace: &workspace,
                 baseline: &Snapshot::new(),
-                capability: "code",
                 skills: &skills,
                 media_executable: &executable,
                 media_args: &[],
@@ -422,9 +391,7 @@ mod tests {
         let mut tools = tools;
         tools.insert("blender".into(), executable.to_string_lossy().into_owned());
         let managed = prepare(
-            &root,
-            &store,
-            &TestVault,
+            &files,
             &settings,
             HomeRequest {
                 task_id: "managed-task",
@@ -432,7 +399,6 @@ mod tests {
                 retained_blender_port: None,
                 workspace: &workspace,
                 baseline: &Snapshot::new(),
-                capability: "code",
                 skills: &skills,
                 media_executable: &executable,
                 media_args: &[],

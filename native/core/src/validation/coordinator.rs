@@ -2,21 +2,31 @@ use super::{model::Run, repository, requests};
 use crate::{files::Files, store::Store};
 use anyhow::{Context, Result};
 use serde_json::{json, Value};
-use std::path::Path;
 
 /// A broken record must not prevent other projects from advancing.
-pub fn refresh(store: &mut Store, data: &Path) -> Result<bool> {
+pub fn refresh(store: &mut Store, files: &Files) -> Result<bool> {
+    refresh_matching(store, files, |_| true)
+}
+
+pub(crate) fn refresh_matching(
+    store: &mut Store,
+    files: &Files,
+    owns: impl Fn(&str) -> bool,
+) -> Result<bool> {
     let mut changed = false;
     for kind in ["validationCoverage", "validationFeedback"] {
         for mut record in store.list::<Value>(kind)? {
+            if !owns(record["projectId"].as_str().unwrap_or("")) {
+                continue;
+            }
             let Some(id) = record["id"].as_str().map(str::to_owned) else {
                 continue;
             };
             let before = record.clone();
             let result = if kind == "validationCoverage" {
-                super::coverage::refresh(store, data, &mut record)
+                super::coverage::refresh(store, files, &mut record)
             } else {
-                refresh_feedback(store, data, &mut record)
+                refresh_feedback(store, files, &mut record)
             };
             if let Err(error) = result {
                 record["status"] = json!(if kind == "validationCoverage" {
@@ -32,10 +42,10 @@ pub fn refresh(store: &mut Store, data: &Path) -> Result<bool> {
             }
         }
     }
-    Ok(super::automatic_repair::refresh(store, data)? || changed)
+    Ok(super::automatic_repair::refresh_matching(store, files, owns)? || changed)
 }
 
-fn refresh_feedback(store: &mut Store, data: &Path, feedback: &mut Value) -> Result<()> {
+fn refresh_feedback(store: &mut Store, files: &Files, feedback: &mut Value) -> Result<()> {
     if ["taskQueued", "reviewQueued"].contains(&feedback["status"].as_str().unwrap_or("")) {
         let id = feedback["id"]
             .as_str()
@@ -66,7 +76,7 @@ fn refresh_feedback(store: &mut Store, data: &Path, feedback: &mut Value) -> Res
             "validationRun",
             feedback["runId"].as_str().context("Missing original run")?,
         )?;
-        let snapshot = repository::snapshot(store, &Files::new(data.into()), project)?;
+        let snapshot = repository::snapshot(store, files, project)?;
         let mut run = repository::build_run(
             store,
             project,

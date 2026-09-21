@@ -9,7 +9,7 @@ use std::fs;
 
 fn confirm(fixture: &mut Fixture, run: &Run, ids: &[String], request: &str) -> Result<Run> {
     confirmation::confirm(
-        fixture.files.root(),
+        &fixture.files,
         &mut fixture.store,
         &run.id,
         &run.snapshot_id,
@@ -43,7 +43,7 @@ fn partial_approval_and_automatic_pass_never_advance_the_human_baseline() -> Res
     )?;
     let mut next = fixture.visual(&flow)?;
     assert_ne!(next.snapshot_id, original.snapshot_id);
-    comparison::compare(fixture.files.root(), &fixture.store, &mut next)?;
+    comparison::compare(&fixture.files, &fixture.store, &mut next)?;
     fixture.save(&next)?;
     assert_eq!(next.verdict, "autoPassed");
     assert!(judgment::green(&fixture.store, &next)?);
@@ -59,7 +59,7 @@ fn partial_approval_and_automatic_pass_never_advance_the_human_baseline() -> Res
     // A small but substantial local change must not hide in a high whole-image score.
     let mut changed = fixture.visual(&flow)?;
     let image = &mut changed.evidence[0];
-    let path = repository::run_dir(fixture.files.root(), &changed.id)?.join(&image.file);
+    let path = repository::run_dir(&fixture.files, &changed.id)?.join(&image.file);
     let mut pixels = image::open(&path)?.to_rgb8();
     for y in 0..16 {
         for x in 0..16 {
@@ -68,7 +68,7 @@ fn partial_approval_and_automatic_pass_never_advance_the_human_baseline() -> Res
     }
     pixels.save(&path)?;
     image.sha256 = crate::files::file_hash(&path)?.unwrap();
-    comparison::compare(fixture.files.root(), &fixture.store, &mut changed)?;
+    comparison::compare(&fixture.files, &fixture.store, &mut changed)?;
     fixture.save(&changed)?;
     assert_eq!(changed.verdict, "needsReview");
     assert!(!judgment::green(&fixture.store, &changed)?);
@@ -102,7 +102,7 @@ fn incomplete_or_changed_evidence_cannot_be_confirmed() -> Result<()> {
         let mut fixture = Fixture::new()?;
         let flow = fixture.flow()?;
         let mut run = fixture.visual(&flow)?;
-        let path = repository::run_dir(fixture.files.root(), &run.id)?.join(&run.evidence[0].file);
+        let path = repository::run_dir(&fixture.files, &run.id)?.join(&run.evidence[0].file);
         match failure {
             "missing-point" => {
                 run.evidence.pop();
@@ -126,7 +126,7 @@ fn incomplete_or_changed_evidence_cannot_be_confirmed() -> Result<()> {
             .map(|e| e.id.clone())
             .collect::<Vec<_>>();
         assert!(
-            evidence::validate(fixture.files.root(), &run).is_err(),
+            evidence::validate(&fixture.files, &run).is_err(),
             "{failure}"
         );
         assert!(
@@ -157,7 +157,7 @@ fn confirmation_is_bound_to_user_run_snapshot_and_evidence() -> Result<()> {
         ("ui", "stale-snapshot"),
     ] {
         assert!(confirmation::confirm(
-            fixture.files.root(),
+            &fixture.files,
             &mut fixture.store,
             &run.id,
             snapshot,
@@ -192,7 +192,7 @@ fn restart_preserves_partial_evidence_and_does_not_resume_an_incomplete_run() ->
     );
     assert_eq!(interrupted.snapshot, run.snapshot);
     assert!(interrupted.error.is_some());
-    let media = evidence::media_path(fixture.files.root(), &interrupted, &run.evidence[0].id)?;
+    let media = evidence::media_path(&fixture.files, &interrupted, &run.evidence[0].id)?;
     assert!(media.is_file());
     repository::recover(&fixture.store)?;
     let again: Run = repository::get(&fixture.store, "validationRun", &run.id)?;

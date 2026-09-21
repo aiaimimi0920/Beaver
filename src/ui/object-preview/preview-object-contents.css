@@ -1,0 +1,126 @@
+.op-contents-drawer {
+  display: flex;
+  flex-direction: column;
+  flex: none;
+  height: 54px;
+  min-height: 54px;
+  overflow: hidden;
+  border-top: 1px solid var(--line);
+  background: var(--surface);
+}
+.op-contents-drawer.is-expanded {
+  height: 40%;
+}
+.op-contents-summary {
+  display: flex;
+  align-items: center;
+  flex: none;
+  gap: 10px;
+  height: 53px;
+  padding: 0 16px 0 10px;
+  min-width: 0;
+}
+.op-shell .op-contents-toggle {
+  width: 30px;
+  height: 30px;
+  min-height: 0;
+  flex: none;
+  padding: 0;
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--muted);
+}
+.op-shell .op-contents-toggle:hover {
+  background: var(--hover);
+  border-color: var(--line);
+  color: var(--text);
+}
+.op-contents-toggle[aria-expanded="false"] .icon {
+  transform: rotate(180deg);
+}
+.op-contents-summary > strong {
+  min-width: 0;
+  max-width: 32%;
+  flex-shrink: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 12px;
+  font-weight: 600;
+}
+.op-contents-type {
+  flex: none;
+  padding: 2px 6px;
+  border: 1px solid var(--line);
+  border-radius: 3px;
+  color: var(--muted);
+  font-size: 10px;
+}
+.op-contents-count {
+  flex: none;
+  color: var(--muted);
+  font-size: 10px;
+}
+.op-contents-overview {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--muted);
+  font-size: 10px;
+}
+.op-contents-body {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+  padding: 5px 16px 16px;
+}
+.op-contents-body[hidden] {
+  display: none;
+}
+.op-contents-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(132px, 1fr));
+  align-items: start;
+  gap: 12px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.op-content-item {
+  min-width: 0;
+}
+.op-content-thumbnail {
+  display: grid;
+  place-items: center;
+  aspect-ratio: 10 / 7;
+  overflow: hidden;
+  background: var(--control);
+  color: #a39ccd;
+}
+.op-content-thumbnail .op-art {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.op-shell .op-content-thumbnail > .icon {
+  width: 30px;
+  height: 30px;
+}
+.op-content-texture {
+  width: 100%;
+  height: 100%;
+  background:
+    linear-gradient(90deg, #69969e 50%, #e6d7c5 50%) top / 100% 52% no-repeat,
+    linear-gradient(90deg, #344b5b 42%, #b47f6c 42%, #b47f6c 68%, #dcded3 68%)
+      bottom / 100% 48% no-repeat;
+}
+.op-content-thumbnail.is-normal .op-content-texture {
+  background:
+    radial-gradient(ellipse at 28% 35%, #ba8dd8, #789ada 35%, transparent 36%),
+    linear-gradient(135deg, #8580e9 35%, #92badd 35%, #c896e5 67%, #7e7fed 67%);
+}
+.op-content-thumbnail.is-normal .op-art {
+  filter: grayscale(1) sepia(1) hue-rotate(185deg) saturate(3);
+}

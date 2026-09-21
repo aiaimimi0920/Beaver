@@ -81,18 +81,17 @@ pub fn assets(root: &Path) -> Result<Vec<Value>> {
 /// Caller must hold exclusive project-write ownership for this entire operation.
 pub fn save_document(
     store: &mut Store,
-    data: &Path,
+    files: &Files,
     project_id: &str,
     relative: &str,
     text: &str,
     revision: Option<&str>,
-) -> Result<()> {
+) -> Result<Value> {
     document_path(relative)?;
     if text.len() > 512000 {
         bail!("资料超过 500 KB");
     }
-    let files = Files::new(data.to_path_buf());
-    if Journal::new(store, &files).blocked(project_id)? {
+    if Journal::new(store, files).blocked(project_id)? {
         bail!("项目有尚未恢复的文件操作，禁止继续写入");
     }
     let root = project_path(store, project_id)?;
@@ -102,19 +101,19 @@ pub fn save_document(
         bail!("资料已被其他任务或编辑器修改；草稿已保留，请重新读取后整合");
     }
     let id = uuid::Uuid::new_v4().to_string();
-    let workspace = data.join("workspaces").join(&id);
+    let workspace = files.workspace(&id)?;
     files.restore_copy(&baseline, &workspace)?;
     let file = safe_path(&workspace, relative)?;
     fs::create_dir_all(file.parent().context("没有父目录")?)?;
     fs::write(file, text.strip_prefix('\u{feff}').unwrap_or(text))?;
     let changes = Files::changes(&baseline, &files.capture(&workspace)?);
     let now = chrono::Utc::now().to_rfc3339_opts(chrono::SecondsFormat::Millis, true);
-    let mut task = json!({"id":id,"projectId":project_id,"title":format!("编辑资料 · {relative}"),"prompt":"人工编辑资料","stopConditions":"","status":"interrupted","createdAt":now,"updatedAt":now,"workspace":workspace,"baseline":baseline,"references":[],"conflicts":[],"maxMinutes":0,"capability":"code","changes":changes,"report":"人工修改等待合入。"});
+    let mut task = json!({"id":id,"projectId":project_id,"title":format!("编辑资料 · {relative}"),"prompt":"人工编辑资料","stopConditions":"","status":"interrupted","createdAt":now,"updatedAt":now,"workspace":files.workspace_location(&id)?,"baseline":baseline,"references":[],"conflicts":[],"maxMinutes":0,"capability":"code","changes":changes,"report":"人工修改等待合入。"});
     store.put("task", &id, &task)?;
     task["status"] = json!("completed");
     task["report"] = json!("人工修改已保存。");
     if let Err(error) =
-        Journal::new(store, &files).apply(project_id, changes, task.clone(), OperationKind::Merge)
+        Journal::new(store, files).apply(project_id, changes, task.clone(), OperationKind::Merge)
     {
         task["status"] = json!("conflict");
         task["report"] = json!("人工修改未完成合入，工作副本已保留。");
@@ -122,7 +121,7 @@ pub fn save_document(
         store.put("task", &id, &task)?;
         return Err(error);
     }
-    Ok(())
+    Ok(task)
 }
 
 #[cfg(test)]
@@ -136,11 +135,12 @@ mod tests {
         fs::create_dir(&root)?;
         fs::write(root.join("world.md"), "before")?;
         let mut store = Store::open(&data)?;
+        let files = Files::new(data);
         store.put("project", "p", &json!({"path":root}))?;
         let original = read_document(&root, "world.md")?;
         save_document(
             &mut store,
-            &data,
+            &files,
             "p",
             "world.md",
             "\u{feff}after",
@@ -149,7 +149,7 @@ mod tests {
         assert_eq!(fs::read_to_string(root.join("world.md"))?, "after");
         assert!(save_document(
             &mut store,
-            &data,
+            &files,
             "p",
             "world.md",
             "stale",

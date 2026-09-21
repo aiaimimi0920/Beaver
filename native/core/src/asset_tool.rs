@@ -39,6 +39,7 @@ pub fn projection(state: &State) -> Value {
     json!({
         "taskId":state.task_id,"round":state.round,"phase":state.phase,"revision":state.revision,
         "stages":state.stages,"checkpoint":state.checkpoint,"recovery":state.recovery,
+        "delivery":state.delivery,"work":state.work,
         "currentFeedback":asset_task::eligible(state),
         "deferredCount":state.feedback.iter().filter(|f| !f.terminal() && f.round > state.round).count(),
         "completedFeedback":state.feedback.iter().filter(|f| f.terminal()).map(|f| json!({"id":f.id,"status":f.status})).collect::<Vec<_>>()

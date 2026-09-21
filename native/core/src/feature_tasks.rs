@@ -7,7 +7,7 @@ use anyhow::{bail, Context, Result};
 use base64::Engine;
 use serde::Deserialize;
 use serde_json::{json, Value};
-use std::{fs, path::Path};
+use std::fs;
 
 #[derive(Deserialize)]
 #[serde(deny_unknown_fields)]
@@ -24,12 +24,14 @@ struct Manifest {
 mod tests {
     use super::*;
     use crate::task_actions;
+    use std::path::Path;
 
     #[test]
     fn embedded_packages_and_updates_preserve_customization_and_adoption_boundary() -> Result<()> {
         let temp = tempfile::tempdir()?;
         let root = temp.path().join("data");
         let mut store = Store::open(&root)?;
+        let files = Files::new(root.clone());
         let project = temp.path().join("project");
         fs::create_dir(&project)?;
         fs::write(project.join("project.godot"), "[application]\n")?;
@@ -49,7 +51,7 @@ mod tests {
         for (id, package) in sources.as_object().unwrap() {
             let task = create(
                 &mut store,
-                &root,
+                &files,
                 json!({"projectId":"p","featureId":id}),
                 &sources,
                 &designs,
@@ -84,7 +86,7 @@ mod tests {
             json!(base64::engine::general_purpose::STANDARD.encode("new code"));
         let mut upgrade = create(
             &mut store,
-            &root,
+            &files,
             json!({"projectId":"p","featureId":"dialogue"}),
             &sources,
             &designs,
@@ -92,7 +94,7 @@ mod tests {
         )?;
         let mut stale = create(
             &mut store,
-            &root,
+            &files,
             json!({"projectId":"p","featureId":"dialogue"}),
             &sources,
             &designs,
@@ -137,7 +139,7 @@ mod tests {
         sources["dialogue"]["../escape.gd"] = json!("YQ==");
         assert!(create(
             &mut store,
-            &root,
+            &files,
             json!({"projectId":"p","featureId":"dialogue"}),
             &sources,
             &designs,
@@ -146,7 +148,7 @@ mod tests {
         .is_err());
         assert!(create(
             &mut store,
-            &root,
+            &files,
             json!({"projectId":"p","featureId":"../escape"}),
             &sources,
             &designs,
@@ -155,7 +157,7 @@ mod tests {
         .is_err());
         assert!(create(
             &mut store,
-            &root,
+            &files,
             json!({"projectId":"p","featureId":"engine-planning-only"}),
             &sources,
             &designs,
@@ -169,7 +171,7 @@ mod tests {
 
 pub fn create(
     store: &mut Store,
-    root: &Path,
+    files: &Files,
     input: Value,
     sources: &Value,
     designs: &Value,
@@ -190,7 +192,7 @@ pub fn create(
         .context("该功能块不存在或仅支持规划，尚未提供可接入源码")?;
     let staging = tempfile::Builder::new()
         .prefix("feature-source-")
-        .tempdir_in(root)?;
+        .tempdir()?;
     for (relative, value) in source {
         let target = safe_path(staging.path(), relative)?;
         fs::create_dir_all(target.parent().context("功能块目录无效")?)?;
@@ -213,7 +215,6 @@ pub fn create(
     {
         bail!("功能块清单与标识不匹配或字段无效");
     }
-    let files = Files::new(root.into());
     let snapshot = files.capture(staging.path())?;
     let old: Option<Value> = store.get("feature", &format!("{project}:{id}"))?;
     let previous: Snapshot = match &old {
@@ -235,7 +236,7 @@ pub fn create(
     let prompt = format!("为项目{action}功能块 {}。已采用版本：{version}；新版本：{}。读取 .beaver-context/feature 中的上游新旧源文件，理解差异后适配到游戏，保留项目定制，验证运行效果。汇报实际集成结果。不要直接覆盖现有定制代码。",manifest.name,manifest.version);
     task_create::create_with_context(
         store,
-        root,
+        files,
         json!({"projectId":project,"prompt":prompt,"decompose":false}),
         designs,
         blueprints,

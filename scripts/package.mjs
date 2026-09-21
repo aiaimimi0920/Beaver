@@ -12,10 +12,18 @@ import path from "node:path";
 import assert from "node:assert/strict";
 import { NtExecutable, NtExecutableResource } from "pe-library";
 import { Data, Resource } from "resedit";
+import { readProductVersion, verifyProductVersion } from "./product-version.ts";
+import { setWindowsVersion, verifyWindowsVersion } from "./windows-version.ts";
 if (process.platform !== "win32" || process.arch !== "x64")
   throw new Error("This preview packager is verified for Windows x64 only");
 const releaseRoot = path.resolve("release");
-const { version } = JSON.parse(await readFile("package.json", "utf8"));
+const product = await readProductVersion();
+const { version } = product;
+assert.deepEqual(
+  verifyProductVersion(JSON.parse(await readFile("dist/build.json", "utf8"))),
+  product,
+  "Rebuild Electron for the selected version and channel",
+);
 const target = path.resolve(
   process.env.BEAVER_RELEASE_DIR ||
     path.join(
@@ -64,7 +72,7 @@ await writeFile(
   JSON.stringify({
     name: "beaver-studio",
     productName: "Beaver",
-    version,
+    version: product.releaseVersion,
     main: "dist/main.cjs",
   }),
 );
@@ -87,9 +95,8 @@ for (const group of groups)
     icons,
   );
 for (const info of Resource.VersionInfo.fromEntries(resources.entries)) {
+  setWindowsVersion(info, product);
   for (const language of info.getAllLanguagesForStringValues()) {
-    info.setFileVersion(`${version}.0`, language.lang);
-    info.setProductVersion(`${version}.0`, language.lang);
     info.setStringValues(language, {
       FileDescription: "Beaver",
       ProductName: "Beaver",
@@ -103,6 +110,7 @@ for (const info of Resource.VersionInfo.fromEntries(resources.entries)) {
 resources.outputResource(executable);
 // Resource editing produces an unsigned preview binary, as recorded below.
 const branded = Buffer.from(executable.generate());
+verifyWindowsVersion(branded, product);
 const verifiedResources = NtExecutableResource.from(NtExecutable.from(branded));
 const verifiedGroups = Resource.IconGroupEntry.fromEntries(
   verifiedResources.entries,
@@ -139,7 +147,7 @@ await writeFile(
   JSON.stringify(
     {
       name: "Beaver",
-      version,
+      ...product,
       platform: process.platform,
       arch: process.arch,
       builtAt: new Date().toISOString(),

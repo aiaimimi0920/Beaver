@@ -9,6 +9,10 @@ use std::{
 };
 use tokio::io::{AsyncReadExt, AsyncWriteExt};
 
+#[cfg(test)]
+#[path = "business_mcp_tests.rs"]
+mod tests;
+
 struct Bridge {
     client: reqwest::Client,
     base: String,
@@ -29,7 +33,7 @@ pub fn run() -> Result<()> {
         token,
         initialized: AtomicBool::new(false),
     });
-    tauri::async_runtime::block_on(serve(bridge))
+    tauri::async_runtime::block_on(serve(bridge, tokio::io::stdin(), tokio::io::stdout()))
 }
 
 impl Bridge {
@@ -96,9 +100,11 @@ impl Bridge {
     }
 }
 
-async fn serve(bridge: Arc<Bridge>) -> Result<()> {
-    let mut reader = tokio::io::stdin();
-    let mut writer = tokio::io::stdout();
+async fn serve(
+    bridge: Arc<Bridge>,
+    mut reader: impl tokio::io::AsyncRead + Unpin,
+    mut writer: impl tokio::io::AsyncWrite + Unpin,
+) -> Result<()> {
     let mut pending = Vec::new();
     let mut chunk = [0u8; 8192];
     let mut tasks = tokio::task::JoinSet::new();

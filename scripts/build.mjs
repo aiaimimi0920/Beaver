@@ -1,5 +1,7 @@
 import { build } from "esbuild";
-import { mkdir, copyFile, writeFile, readFile } from "node:fs/promises";
+import { mkdir, copyFile, writeFile } from "node:fs/promises";
+import { readProductVersion } from "./product-version.ts";
+const product = await readProductVersion();
 await mkdir("dist", { recursive: true });
 await build({
   entryPoints: ["src/main/main.ts"],
@@ -37,9 +39,8 @@ await build({
 });
 await copyFile("src/ui/index.html", "dist/index.html");
 await copyFile("resources/branding/beaver.svg", "dist/beaver.svg");
-const { version } = JSON.parse(await readFile("package.json", "utf8"));
 await writeFile(
   "dist/build.json",
-  JSON.stringify({ version, builtAt: new Date().toISOString() }) + "\n",
+  JSON.stringify({ ...product, builtAt: new Date().toISOString() }) + "\n",
 );
 console.log("Beaver build complete");

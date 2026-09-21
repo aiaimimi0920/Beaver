@@ -1,6 +1,7 @@
 import { useRef, useState } from "react";
 import { assetUrl } from "../api";
 import { Field } from "../components";
+import { Icon } from "../Icon";
 import type { Evidence, Selection, ValidationRun } from "./types";
 import type { Region } from "./flow";
 
@@ -60,7 +61,7 @@ export function EvidenceViewer({
   const start = useRef<[number, number] | null>(null);
   const [cursor, setCursor] = useState(0);
   const [annotate, setAnnotate] = useState(false);
-  const [compare, setCompare] = useState(true);
+  const [compare, setCompare] = useState(false);
   const baseline = run.baseline;
   const previous = baseline?.run.evidence.find(
     (e) => e.point === item?.point && e.kind === item?.kind,
@@ -104,23 +105,26 @@ export function EvidenceViewer({
       {item && (
         <>
           <div className="validation-toolbar">
-            <label className="check">
-              <input
-                type="checkbox"
-                checked={compare}
-                onChange={(e) => setCompare(e.target.checked)}
-              />
-              对照用户认可基准
-            </label>
+            <button aria-pressed={compare} onClick={() => setCompare(!compare)}>
+              <Icon name="layers" />
+              基准对比
+            </button>
             {item.kind === "image" && (
-              <label className="check">
-                <input
-                  type="checkbox"
-                  checked={annotate}
-                  onChange={(e) => setAnnotate(e.target.checked)}
-                />
-                拖动框选反馈区域
-              </label>
+              <button
+                aria-pressed={annotate}
+                onClick={() => {
+                  setAnnotate(!annotate);
+                  start.current = null;
+                }}
+              >
+                <Icon name="maximize" />
+                框选
+              </button>
+            )}
+            {annotate && item.kind === "image" && (
+              <span className="muted">
+                拖动画面标记，再点击下方“反馈选中区域”
+              </span>
             )}
             {selection.region && (
               <button

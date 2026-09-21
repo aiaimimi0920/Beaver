@@ -1,11 +1,11 @@
 use crate::{
-    files::{safe_path, Change, Snapshot},
+    files::{safe_path, Change, Files, Snapshot},
     store::Store,
     task_create,
 };
 use anyhow::{bail, Context, Result};
 use serde_json::{json, Value};
-use std::{fs, path::Path};
+use std::fs;
 
 fn prefix(text: &str, limit: usize) -> String {
     let mut count = 0;
@@ -20,7 +20,7 @@ fn prefix(text: &str, limit: usize) -> String {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::files::Files;
+    use std::path::Path;
 
     #[test]
     fn relations_freeze_current_project_and_preserve_parent_and_context() -> Result<()> {
@@ -31,6 +31,7 @@ mod tests {
         fs::write(project.join("project.godot"), "[application]\n")?;
         fs::write(project.join("story.md"), "before")?;
         let mut store = Store::open(&root)?;
+        let files = Files::new(root.clone());
         let designs: Value =
             serde_json::from_str(include_str!("../../../dist-native/design-catalog.json"))?;
         let blueprints: Value =
@@ -38,7 +39,7 @@ mod tests {
         store.put("project","p",&json!({"id":"p","name":"游戏","path":project,"blueprint":blueprints["default"],"blueprintRevision":1}))?;
         let mut parent = task_create::create(
             &mut store,
-            &root,
+            &files,
             json!({"projectId":"p","prompt":"原目标","title":"长".repeat(120),"direction":"story","references":[{"path":"story.md","note":"参考"}]}),
             &designs,
             &blueprints,
@@ -46,7 +47,7 @@ mod tests {
         let id = parent["id"].as_str().unwrap().to_owned();
         assert!(create(
             &mut store,
-            &root,
+            &files,
             "task.followup",
             json!({"id":id,"text":"继续"}),
             &designs,
@@ -61,14 +62,13 @@ mod tests {
             Path::new(parent["workspace"].as_str().unwrap()).join("unfinished.md"),
             "not merged",
         )?;
-        let files = Files::new(root.clone());
         let before = files.capture(&project)?;
         fs::write(project.join("story.md"), "after and committed")?;
         let after = files.capture(&project)?;
         store.put("project","p",&json!({"id":"p","name":"新游戏","path":project,"blueprint":blueprints["default"],"blueprintRevision":2}))?;
         let child = create(
             &mut store,
-            &root,
+            &files,
             "task.delegate",
             json!({"id":id,"text":"  独立子目标  "}),
             &designs,
@@ -97,7 +97,7 @@ mod tests {
         store.put("task", &id, &parent)?;
         let followup = create(
             &mut store,
-            &root,
+            &files,
             "task.followup",
             json!({"id":id,"text":"继续原目标"}),
             &designs,
@@ -112,7 +112,7 @@ mod tests {
         assert_eq!(context["clarifications"], parent["clarifications"]);
         let rollback = create(
             &mut store,
-            &root,
+            &files,
             "task.dialogueRollback",
             json!({"id":id,"text":"只撤销故事"}),
             &designs,
@@ -145,7 +145,7 @@ mod tests {
         assert!(set_direction(&store, &json!({"id":id,"direction":"unknown"})).is_err());
         assert!(create(
             &mut store,
-            &root,
+            &files,
             "task.delegate",
             json!({"id":id,"text":"   "}),
             &designs,
@@ -155,7 +155,7 @@ mod tests {
         let count = store.list::<Value>("task")?.len();
         let failed = task_create::create_with_context(
             &mut store,
-            &root,
+            &files,
             json!({"projectId":"p","prompt":"bad context"}),
             &designs,
             &blueprints,
@@ -185,6 +185,7 @@ pub fn set_direction(store: &Store, input: &Value) -> Result<Value> {
     }
     let id = input["id"].as_str().context("任务标识无效")?;
     let mut task: Value = store.get("task", id)?.context("任务不存在")?;
+    crate::object_framework::require_legacy(&task)?;
     task["direction"] = json!(direction);
     task["updatedAt"] =
         json!(chrono::Utc::now().to_rfc3339_opts(chrono::SecondsFormat::Millis, true));
@@ -194,18 +195,18 @@ pub fn set_direction(store: &Store, input: &Value) -> Result<Value> {
 
 pub fn create(
     store: &mut Store,
-    root: &Path,
+    files: &Files,
     method: &str,
     input: Value,
     designs: &Value,
     blueprints: &Value,
 ) -> Result<Value> {
-    create_seeded(store, root, method, input, designs, blueprints, None)
+    create_seeded(store, files, method, input, designs, blueprints, None)
 }
 
 pub(crate) fn create_seeded(
     store: &mut Store,
-    root: &Path,
+    files: &Files,
     method: &str,
     input: Value,
     designs: &Value,
@@ -224,6 +225,7 @@ pub(crate) fn create_seeded(
         bail!("补充要求长度无效");
     }
     let source: Value = store.get("task", id)?.context("任务不存在")?;
+    crate::object_framework::require_legacy(&source)?;
     let title = source["title"].as_str().context("原任务标题无效")?;
     let (new_title,mut prompt,folder,relation) = match method {
         "task.followup" => {
@@ -279,7 +281,7 @@ pub(crate) fn create_seeded(
     };
     task_create::create_with_context(
         store,
-        root,
+        files,
         request,
         designs,
         blueprints,

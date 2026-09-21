@@ -1,0 +1,184 @@
+.op-manufacture-stage {
+  display: grid;
+  grid-template-rows: minmax(0, 3fr) minmax(0, 2fr);
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+}
+.op-manufacture-prompts {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-height: 0;
+  overflow: auto;
+  padding: 16px 20px;
+}
+.op-manufacture-prompts > header,
+.op-manufacture-data > section > header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex: none;
+  gap: 12px;
+}
+.op-manufacture-prompts h2 {
+  font-size: 18px;
+}
+.op-manufacture-prompts > header small {
+  font-size: 11px;
+}
+.op-manufacture-prompt {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  gap: 8px;
+  font-size: 12px;
+}
+.op-shell .op-manufacture-prompt textarea {
+  flex: 1;
+  width: 100%;
+  min-height: 0;
+  padding: 10px 12px;
+  font-size: 12px;
+  line-height: 1.7;
+  resize: none;
+}
+.op-manufacture-data {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  min-height: 0;
+  border-top: 1px solid var(--line);
+}
+.op-manufacture-data > section {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  min-height: 0;
+  padding: 14px 20px;
+  gap: 12px;
+}
+.op-manufacture-data > section + section {
+  border-left: 1px solid var(--line);
+}
+.op-manufacture-data h2 {
+  font-size: 13px;
+}
+.op-manufacture-evidence-grid,
+.op-manufacture-output-grid {
+  display: grid;
+  align-content: start;
+  gap: 10px;
+  min-height: 0;
+  overflow-y: auto;
+}
+.op-manufacture-evidence-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  overflow: visible;
+}
+.op-manufacture-evidence-body {
+  min-height: 0;
+  overflow-y: auto;
+}
+.op-manufacture-output-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+.op-manufacture-data-card {
+  margin: 0;
+  min-width: 0;
+  border: 1px solid var(--data-color, var(--line));
+  background: var(--surface);
+}
+.op-shell .op-manufacture-preview {
+  display: block;
+  width: 100%;
+  min-height: 0;
+  padding: 0;
+  overflow: hidden;
+  border: 0;
+  border-radius: 0;
+  background: var(--control);
+}
+.op-manufacture-preview .op-selection-surface > .op-content-thumbnail,
+.op-manufacture-preview .op-selection-surface > svg,
+.op-manufacture-evidence-view,
+.op-manufacture-evidence-view .op-art {
+  display: block;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  object-fit: contain;
+  overflow: hidden;
+}
+.op-manufacture-preview .op-selection-surface > .op-content-thumbnail {
+  display: grid;
+  aspect-ratio: auto;
+}
+.op-manufacture-data-card:has(.is-selected) {
+  outline: 1px solid var(--data-color, var(--text));
+  outline-offset: -3px;
+}
+.op-manufacture-data-card:hover {
+  background: var(--hover);
+}
+.op-manufacture-data-card figcaption {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+  padding: 8px 10px;
+}
+.op-manufacture-data-card figcaption > span {
+  display: grid;
+  min-width: 0;
+  gap: 2px;
+}
+.op-shell .op-manufacture-data-card figcaption button {
+  flex: none;
+  width: 26px;
+  min-height: 26px;
+  padding: 0;
+  border-color: transparent;
+  background: transparent;
+}
+.op-manufacture-data-card strong {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 11px;
+  font-weight: 500;
+}
+.op-manufacture-data-card small {
+  font-size: 10px;
+}
+.op-manufacture-data-empty {
+  display: grid;
+  place-items: center;
+  flex: 1;
+  color: var(--muted);
+  font-size: 12px;
+}
+.op-manufacture-report {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--line);
+  font-size: 11px;
+}
+.op-manufacture-report > span {
+  display: grid;
+  flex: 1;
+  min-width: 0;
+  gap: 2px;
+}
+.op-manufacture-report > .icon {
+  color: var(--muted);
+}
+.op-manufacture-evidence-view.is-view-1 .op-art {
+  transform: scale(1.6);
+  transform-origin: 35% 60%;
+}
+.op-manufacture-evidence-view.is-view-2 .op-art {
+  transform: scale(1.25);
+  transform-origin: 75% 35%;
+}

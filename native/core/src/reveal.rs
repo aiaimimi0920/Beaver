@@ -1,4 +1,7 @@
-use crate::{files::safe_path, store::Store};
+use crate::{
+    files::{safe_path, Files},
+    store::Store,
+};
 use anyhow::{bail, Context, Result};
 use serde_json::Value;
 use std::path::{Path, PathBuf};
@@ -8,7 +11,7 @@ pub struct Target {
     pub select: bool,
 }
 
-pub fn resolve(store: &Store, method: &str, input: &Value) -> Result<Target> {
+pub fn resolve(store: &Store, files: &Files, method: &str, input: &Value) -> Result<Target> {
     let id = input["id"].as_str().context("缺少项目或任务标识")?;
     uuid::Uuid::parse_str(id).context("项目或任务标识无效")?;
     let (kind, field, select) = match method {
@@ -18,13 +21,18 @@ pub fn resolve(store: &Store, method: &str, input: &Value) -> Result<Target> {
         _ => bail!("未知文件显示操作"),
     };
     let record: Value = store.get(kind, id)?.context("项目或任务不存在")?;
-    let root = Path::new(record[field].as_str().context("目录记录无效")?);
+    let recorded = Path::new(record[field].as_str().context("目录记录无效")?);
+    let root = if kind == "task" {
+        files.resolve_workspace(id, recorded)?
+    } else {
+        recorded.to_owned()
+    };
     let path = if select {
         let relative = input["path"]
             .as_str()
             .filter(|path| !path.is_empty() && path.encode_utf16().count() <= 2000)
             .context("素材路径无效")?;
-        safe_path(root, relative)?
+        safe_path(&root, relative)?
     } else {
         std::fs::canonicalize(root)?
     };
@@ -113,6 +121,7 @@ mod tests {
     fn only_registered_project_and_task_targets_are_revealed() -> Result<()> {
         let temp = tempfile::tempdir()?;
         let store = Store::open(&temp.path().join("data"))?;
+        let files = Files::new(temp.path().join("data"));
         let project = temp.path().join("project");
         let workspace = temp.path().join("workspace");
         std::fs::create_dir(&project)?;
@@ -122,23 +131,34 @@ mod tests {
         store.put("project", &id, &json!({"path":project}))?;
         store.put("task", &id, &json!({"workspace":workspace}))?;
         assert_eq!(
-            resolve(&store, "project.reveal", &json!({"id":id}))?.path,
+            resolve(&store, &files, "project.reveal", &json!({"id":id}))?.path,
             std::fs::canonicalize(&project)?
         );
         assert_eq!(
-            resolve(&store, "task.reveal", &json!({"id":id}))?.path,
+            resolve(&store, &files, "task.reveal", &json!({"id":id}))?.path,
             std::fs::canonicalize(&workspace)?
         );
-        let asset = resolve(&store, "asset.reveal", &json!({"id":id,"path":"角色.txt"}))?;
+        let asset = resolve(
+            &store,
+            &files,
+            "asset.reveal",
+            &json!({"id":id,"path":"角色.txt"}),
+        )?;
         assert!(asset.select);
         assert_eq!(
             asset.path,
             std::fs::canonicalize(&project)?.join("角色.txt")
         );
         for relative in ["../outside", "C:/Windows", "a\\b", "missing", ""] {
-            assert!(resolve(&store, "asset.reveal", &json!({"id":id,"path":relative})).is_err());
+            assert!(resolve(
+                &store,
+                &files,
+                "asset.reveal",
+                &json!({"id":id,"path":relative})
+            )
+            .is_err());
         }
-        assert!(resolve(&store, "project.reveal", &json!({"id":"invalid"})).is_err());
+        assert!(resolve(&store, &files, "project.reveal", &json!({"id":"invalid"})).is_err());
         assert_eq!(
             windows_path(Path::new(r"\\?\C:\game\角色.txt"))?,
             r"C:\game\角色.txt"

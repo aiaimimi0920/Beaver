@@ -24,6 +24,7 @@ test("native payload gate rejects drift, injected runtimes and total size includ
         path.join(root, "RELEASE.json"),
         JSON.stringify({
           format: "beaver-native-release-v1",
+          channel: "migration-preview",
           entry: "Beaver.exe",
           maxPayloadBytes: MAX_PAYLOAD_BYTES,
           runtimeVerified: false,

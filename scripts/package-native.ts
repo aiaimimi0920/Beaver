@@ -3,6 +3,8 @@ import path from "node:path";
 import { execFileSync } from "node:child_process";
 import { createHash } from "node:crypto";
 import assert from "node:assert/strict";
+import { readProductVersion } from "./product-version";
+import { verifyWindowsVersion } from "./windows-version";
 import {
   inventory,
   MAX_PAYLOAD_BYTES,
@@ -30,12 +32,19 @@ async function main() {
     path.join(await fs.realpath(root), "release").toLowerCase(),
     "Release root must not be redirected",
   );
-  const { version } = JSON.parse(
-    await fs.readFile(path.join(root, "package.json"), "utf8"),
-  ) as { version: string };
-  const name =
-    process.argv[2] ??
-    `Beaver-native-${version}-preview-${Date.now()}-win32-x64`;
+  const product = await readProductVersion(root);
+  assert.deepEqual(
+    JSON.parse(
+      await fs.readFile(path.join(root, "dist-native/build.json"), "utf8"),
+    ),
+    product,
+    "Rebuild native frontend for the selected version and channel",
+  );
+  const binary = await fs.readFile(
+    path.join(root, "target/release/Beaver.exe"),
+  );
+  verifyWindowsVersion(binary, product);
+  const name = process.argv[2] ?? `Beaver-native-${product.version}-win32-x64`;
   assert.match(
     name,
     /^[A-Za-z0-9][A-Za-z0-9._-]+$/,
@@ -238,11 +247,7 @@ async function main() {
       "npm",
     );
   }
-  await fs.copyFile(
-    path.join(root, "target/release/Beaver.exe"),
-    path.join(output, "Beaver.exe"),
-    fs.constants.COPYFILE_EXCL,
-  );
+  await fs.writeFile(path.join(output, "Beaver.exe"), binary, { flag: "wx" });
   const sysroot = execFileSync(
     "rtk",
     ["proxy", "rustc", "--print", "sysroot"],
@@ -289,9 +294,9 @@ async function main() {
     JSON.stringify(
       {
         format: "beaver-native-release-v1",
+        ...product,
         entry: "Beaver.exe",
         platform: "win32-x64",
-        channel: "migration-preview",
         createdAt: new Date().toISOString(),
         signed: false,
         runtimeVerified: false,

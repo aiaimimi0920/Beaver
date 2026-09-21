@@ -90,12 +90,13 @@ async fn main() -> Result<()> {
         );
         fs::write(root.join("export_presets.cfg"), presets)?;
     }
-    let frozen = beaver_core::files::Files::new(data.clone()).capture(root)?;
+    let files = beaver_core::files::Files::new(data.clone());
+    let frozen = files.capture(root)?;
     ensure!(
-        game_export::prepare(&data, &project, root, "Windows Desktop").is_err(),
+        game_export::prepare(&files, &data, &project, root, "Windows Desktop").is_err(),
         "nested export accepted"
     );
-    let job = game_export::prepare(&data, &project, &output, "Windows Desktop")?;
+    let job = game_export::prepare(&files, &data, &project, &output, "Windows Desktop")?;
     let result = game_export::execute(job, &godot, &AtomicBool::new(false))?;
     let folder = Path::new(result["path"].as_str().context("export folder")?);
     let verified = export_bundle::verify(folder)?;
@@ -112,7 +113,7 @@ async fn main() -> Result<()> {
         run.text
     );
     ensure!(
-        beaver_core::files::Files::new(data).capture(root)? == frozen,
+        files.capture(root)? == frozen,
         "export modified source project"
     );
     fs::write(

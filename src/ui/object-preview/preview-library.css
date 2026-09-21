@@ -1,0 +1,197 @@
+.op-library-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto 52px;
+  min-height: 0;
+  flex: 1;
+  border-top: 1px solid var(--line);
+}
+.op-library-layout[data-inspector-expanded="true"] {
+  /* Keep the inspector sized against expanded navigation. */
+  grid-template-columns:
+    minmax(0, 1fr)
+    calc(
+      (
+          100% - 52px - var(--shell-rail-expanded-width, 0px) +
+            var(--shell-rail-width, 0px)
+        ) *
+        0.4
+    )
+    52px;
+}
+.op-library-main {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  min-height: 0;
+}
+.op-object-inspector {
+  grid-column: 2;
+  min-width: 0;
+}
+.op-object-inspector[hidden] {
+  display: none;
+}
+.op-library-scroll {
+  overflow: auto;
+  min-height: 0;
+  padding: 20px;
+  flex: 1;
+}
+.op-object-grid {
+  display: grid;
+  gap: 17px;
+}
+.op-shell .op-object-card,
+.op-shell .op-content-card {
+  display: block;
+  width: 100%;
+  min-width: 0;
+  padding: 0;
+  text-align: left;
+  background: var(--panel);
+  border: 1px solid var(--object-type-color);
+  border-radius: 0;
+  overflow: hidden;
+}
+.op-shell .op-object-card:hover,
+.op-shell .op-content-card:hover {
+  border-color: var(--object-type-color);
+  background: var(--panel);
+  box-shadow: 0 0 0 1px
+    color-mix(in srgb, var(--object-type-color) 45%, transparent);
+}
+.op-shell .op-object-card.is-selected,
+.op-shell .op-content-card.is-selected {
+  border-color: var(--object-type-color);
+  box-shadow: 0 0 0 2px var(--object-type-color);
+}
+.op-shell .op-object-card:focus-visible,
+.op-shell .op-content-card:focus-visible {
+  outline: 1px solid var(--text);
+  outline-offset: 4px;
+}
+.op-object-cover {
+  background: #19232b;
+  overflow: hidden;
+}
+.op-object-cover svg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+.op-object-inspector {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  border-left: 1px solid var(--line);
+  background: var(--surface);
+}
+.op-object-inspector > header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 19px 18px 9px;
+}
+.op-inspector-tabs {
+  display: flex;
+  gap: 13px;
+  padding: 0 18px;
+  border-bottom: 1px solid var(--line);
+  flex: none;
+}
+.op-inspector-tabs button {
+  padding: 10px 0;
+  background: transparent;
+  border: 0;
+  border-bottom: 2px solid transparent;
+  border-radius: 0;
+  color: var(--muted);
+  font-size: 12px;
+}
+.op-inspector-tabs button[aria-pressed="true"] {
+  border-bottom-color: var(--yellow);
+  color: var(--text);
+}
+.op-inspector-tabs button:hover {
+  background: transparent;
+  color: var(--text);
+}
+.op-inspector-scroll {
+  flex: 1;
+  overflow: auto;
+  min-height: 0;
+  padding: 20px 18px;
+}
+.op-shell .op-reference-row {
+  justify-content: flex-start;
+  width: 100%;
+  padding: 10px;
+  background: var(--panel);
+  margin-bottom: 7px;
+  text-align: left;
+}
+.op-reference-row > span:nth-child(2) {
+  flex: 1;
+  font-size: 11px;
+}
+.op-reference-row > .icon {
+  color: var(--muted);
+  width: 14px;
+  height: 14px;
+}
+.op-reference-row small {
+  display: block;
+  font-size: 9px;
+  margin-top: 3px;
+}
+.op-shell .op-task-link {
+  justify-content: space-between;
+  width: 100%;
+  text-align: left;
+  background: var(--panel);
+  font-size: 10px;
+  padding: 11px;
+}
+.op-task-link > span:first-child {
+  color: var(--muted);
+}
+.op-task-link strong {
+  display: block;
+  color: var(--text);
+  font-size: 11px;
+  font-weight: 500;
+  margin-top: 4px;
+}
+.op-versions > div {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border-bottom: 1px solid var(--line);
+  padding: 15px 0;
+}
+.op-versions > div > span {
+  flex: 1;
+}
+.op-versions small {
+  display: block;
+  font-size: 10px;
+}
+.op-versions button {
+  font-size: 10px;
+}
+@media (max-width: 1440px) {
+  .op-object-grid {
+    gap: 14px;
+  }
+  .op-library-scroll {
+    padding: 16px;
+  }
+}
+@media (max-width: 1150px) {
+  .op-inspector-scroll {
+    padding: 16px 14px;
+  }
+  .op-filters button {
+    padding: 5px 7px;
+  }
+}

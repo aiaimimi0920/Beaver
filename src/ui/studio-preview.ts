@@ -43,9 +43,8 @@ export const studioSchema = z.object({
 });
 export type StudioState = z.infer<typeof studioSchema>;
 export type StudioNote = z.infer<typeof noteSchema>;
-export type StudioAsset = z.infer<typeof assetSchema>;
 export type StudioTask = z.infer<typeof taskSchema>;
-export type StudioPage = "create" | "docs" | "library";
+export type StudioPage = "create" | "docs";
 export function pausePreviewTask(task: StudioTask): StudioTask {
   return { ...task, pausedFrom: task.status, status: "已暂停" };
 }

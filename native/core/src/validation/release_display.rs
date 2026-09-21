@@ -2,10 +2,9 @@ use super::{
     model::{Release, Run},
     repository,
 };
-use crate::store::Store;
+use crate::{files::Files, store::Store};
 use anyhow::{Context, Result};
 use serde_json::{json, Value};
-use std::path::Path;
 
 /// Clone durable records under the store lock, then hash their files outside it.
 pub struct Prepared {
@@ -53,16 +52,16 @@ pub fn list(store: &Store, project: &str) -> Result<Vec<Prepared>> {
 }
 
 impl Prepared {
-    pub fn finish(mut self, data: &Path) -> Value {
+    pub fn finish(mut self, files: &Files) -> Value {
         for (id, check) in self.checks {
             let integrity = check.and_then(|(run, baseline)| {
                 if run.kind == "code" {
-                    super::code::validate(data, &run)?;
+                    super::code::validate(files, &run)?;
                 } else {
-                    super::evidence::validate(data, &run)?;
+                    super::evidence::validate(files, &run)?;
                 }
                 if let Some(previous) = baseline {
-                    super::evidence::validate(data, &previous)?;
+                    super::evidence::validate(files, &previous)?;
                 }
                 Ok(())
             });

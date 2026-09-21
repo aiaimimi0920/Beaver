@@ -1,5 +1,6 @@
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
+mod asset_delivery_runtime;
 mod asset_protocol;
 mod asset_runtime;
 mod asset_task_catalog;
@@ -13,7 +14,10 @@ mod business_mcp;
 mod business_routing;
 mod data_dispatch;
 mod game_runtime;
+mod game_storage;
 mod instance;
+mod migration_runtime;
+mod project_runtime_lifecycle;
 mod setup_runtime;
 mod shell;
 mod task_control;

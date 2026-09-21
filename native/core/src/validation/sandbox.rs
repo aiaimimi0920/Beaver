@@ -36,14 +36,14 @@ pub fn engine_path(path: &Path) -> String {
 }
 
 impl Sandbox {
-    pub fn prepare(data: &Path, run: &Run) -> Result<Self> {
-        let output = run_dir(data, &run.id)?;
+    pub fn prepare(files: &Files, run: &Run) -> Result<Self> {
+        let output = run_dir(files, &run.id)?;
         fs::create_dir_all(&output)?;
         let temporary = tempfile::Builder::new()
             .prefix("workspace-")
             .tempdir_in(&output)?;
         let project = temporary.path().join("project");
-        Files::new(data.to_path_buf()).restore_copy(&run.snapshot, &project)?;
+        files.restore_copy(&run.snapshot, &project)?;
         if !project.join("project.godot").is_file() {
             bail!("Godot project.godot is missing");
         }

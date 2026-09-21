@@ -7,15 +7,24 @@ pub fn tools() -> Vec<Value> {
             .expect("embedded business schemas");
     let definitions = [
         ("state", "Read projects, tasks, redacted settings and feature packages.", "", "", true),
+        ("migration.inspect", "Inspect a complete offline migration archive without modifying it. Does not grant activation readiness.", "backup:s", "", true),
+        ("migration.prepareProjects", "Restore an offline archive to a NEW directory and partition project storage. Failures preserve the partial copy; retry with a new destination. Remains pending explicit activation.", "backup:s,destination:s", "", false),
+        ("migration.activate", "Explicitly validate and activate a partitioned recovery copy, probing configured tools. Does not change the current/default data directory or start tasks. Optional toolPaths is an absolute JSON file path.", "backup:s,prepared:s", "toolPaths:s", false),
+        ("migration.activateAssembly", "Explicitly publish a prepared project derivation assembly. The durable assembly receipt is written before its pending marker is removed; host registration is unchanged.", "preparation:s,destination:s", "", false),
+        ("migration.registerAssembly", "Register an explicitly activated derivation assembly, then recover its runtime. Returns registrationCommitted and runtimeReady separately. A recovery failure preserves registration and is retryable with the same paths; never overwrites another project or activates a pending assembly.", "preparation:s,destination:s", "", false),
+        ("objectFramework.status", "Read project storage readiness and object framework blockers without opening or migrating project storage.", "projectId:s", "", true),
+        ("project.storage.status", "Inspect the registered project location and manifest without opening or modifying project storage; detected does not imply database readiness.", "id:s", "", true),
         ("project.create", "Create a Godot project. Optional npr={godot: absolute editor path or directory} installs/enables the NPR package.", "parent:s,name:s,template:s", "design:o,blueprint:o,npr:o", false),
         ("project.npr.install", "Install/repair NPR on a project with no active tasks; never overwrites customized addon files.", "id:s,godot:s", "", false),
         ("workflow.list", "Discover standard workflows and their project enablement.", "id:s", "", true),
         ("workflow.run", "Use a standard workflow in the project: inspect contract, validate actual assets or render previews. Preview supports fixed camera and grayscale for matched close-ups.", "id:s,workflow:s,action:s", "definition:s,camera:o,grayscale:b", false),
         ("logs.query", "Read persisted business/Codex/tool call metadata by cursor. Payloads are summarized without raw credentials or assets.", "", "after:i,limit:i,taskId:s,projectId:s,method:s", true),
         ("project.import", "Register an existing Godot project by absolute directory.", "path:s", "", false),
+        ("project.unregister", "Remove host registration only, preserving all project files and history. Requires the current registered path. Admitted work drains on its original storage; returns id, path and draining.", "id:s,expectedPath:s", "", false),
+        ("project.reassociate", "Explicitly bind a registered project ID to a different local .beaver directory. Requires the current registered path and no active runtime references; preserves all project files.", "id:s,expectedPath:s,path:s", "", false),
         ("project.blueprint.save", "Save planning with optimistic revision checking.", "id:s,blueprint:o,expectedRevision:i", "", false),
         ("project.overview.save", "Change basic project planning with explicit risk acceptance.", "id:s,overview:o,expectedRevision:i,allowRiskyChanges:b", "", false),
-        ("task.create", "Queue a creation or review task. assetTask enables the managed Blender production workflow; do not combine with review or decomposition. Returns a task; poll state and task.events.", "projectId:s,prompt:s", "title:s,direction:s,stopConditions:s,references:a,maxMinutes:i,capability:s,askRatio:r,decompose:b,autoAccept:b,assetTask:b", false),
+        ("task.create", "Queue a legacy creation or review task. assetTask enables the managed Blender workflow. objectFramework identities are reserved and rejected until object scheduling is enabled. Returns a task; poll state and task.events.", "projectId:s,prompt:s", "title:s,direction:s,stopConditions:s,references:a,maxMinutes:i,capability:s,askRatio:r,decompose:b,autoAccept:b,assetTask:b,objectFramework:o", false),
         ("task.autonomy", "Set task ask ratio (0,10,30,70,100) or null to follow global settings. Pending answers are not silently submitted.", "id:s,askRatio:r", "", false),
         ("task.followup", "Create a followup task using the original task context.", "id:s,text:s", "", false),
         ("task.delegate", "Create a delegated task using the original task context.", "id:s,text:s", "", false),
@@ -98,7 +107,7 @@ pub fn tools() -> Vec<Value> {
         }
         let required: Vec<_> = required.split(',').filter(|v| !v.is_empty()).map(|v| v.split(':').next().unwrap()).collect();
         json!({"name":name,"description":description,"inputSchema":{"type":"object","properties":properties,"required":required,"additionalProperties":false},"annotations":{"readOnlyHint":read,"destructiveHint":!read,"openWorldHint":true}})
-    }).chain(crate::validation_catalog::tools()).collect()
+    }).chain(crate::validation_catalog::tools()).chain(beaver_core::task_callback_contract::business_tools()).chain(beaver_core::framework_contract::business_tools()).collect()
 }
 
 pub fn validate(method: &str, input: &Value) -> Result<(), (&'static str, String)> {
@@ -164,6 +173,27 @@ pub fn validate(method: &str, input: &Value) -> Result<(), (&'static str, String
 mod tests {
     use super::*;
     #[test]
+    fn delivery_approval_requires_integer_cas_and_has_no_force_override() {
+        let input = json!({"id":"task","requestId":"decision","expectedRevision":2,"candidateId":"candidate","decision":"approve","note":""});
+        assert!(validate("assetTask.deliveryDecide", &input).is_ok());
+        let tool = tools()
+            .into_iter()
+            .find(|tool| tool["name"] == "assetTask.deliveryDecide")
+            .unwrap();
+        assert_eq!(
+            tool["inputSchema"]["properties"]["expectedRevision"]["type"],
+            "integer"
+        );
+        for invalid in [json!("2"), Value::Null, json!(-1), json!(2.5)] {
+            let mut wrong = input.clone();
+            wrong["expectedRevision"] = invalid;
+            assert!(validate("assetTask.deliveryDecide", &wrong).is_err());
+        }
+        let mut wrong = input;
+        wrong["force"] = json!(true);
+        assert!(validate("assetTask.deliveryDecide", &wrong).is_err());
+    }
+    #[test]
     fn external_imports_cannot_fall_back_to_dialogs() {
         assert!(validate("asset.import", &json!({"id":"x"})).is_err());
         assert!(validate("asset.import", &json!({"id":"x","paths":[]})).is_err());
@@ -195,5 +225,44 @@ mod tests {
             &json!({"id":"t","text":"","freshContext":"true"})
         )
         .is_err());
+    }
+
+    #[test]
+    fn object_framework_exposes_readiness_and_transports_reserved_identity() {
+        assert!(validate("objectFramework.status", &json!({"projectId":"project"})).is_ok());
+        assert!(validate("objectFramework.status", &json!({})).is_err());
+        assert!(validate(
+            "objectFramework.status",
+            &json!({"projectId":"project","initialize":true})
+        )
+        .is_err());
+        let tools = tools();
+        let status = tools
+            .iter()
+            .find(|tool| tool["name"] == "objectFramework.status")
+            .unwrap();
+        assert_eq!(status["annotations"]["readOnlyHint"], true);
+        let create = tools
+            .iter()
+            .find(|tool| tool["name"] == "task.create")
+            .unwrap();
+        let identity = &create["inputSchema"]["properties"]["objectFramework"];
+        assert_eq!(identity["type"], "object");
+        let layers: Vec<_> = identity["oneOf"]
+            .as_array()
+            .expect("discriminated task identity variants")
+            .iter()
+            .map(|variant| variant["properties"]["layer"]["const"].as_str().unwrap())
+            .collect();
+        assert_eq!(layers, ["coarse", "medium", "fine"]);
+        let request = json!({"projectId":"project","prompt":"Create","objectFramework":{
+            "schemaVersion":1,"layer":"medium","objectId":"object-1","baseline":{"basePolicy":"empty"}}});
+        assert!(validate("task.create", &request).is_ok());
+        assert!(beaver_core::object_framework::require_legacy(&request).is_err());
+        assert!(validate(
+            "task.create",
+            &json!({"projectId":"project","prompt":"Legacy","assetTask":true})
+        )
+        .is_ok());
     }
 }

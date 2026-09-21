@@ -67,7 +67,7 @@ fn code_delivery_does_not_wait_for_visuals_and_preserves_manual_approval() -> Re
         assert_eq!(coverage["status"], "pending");
         assert_eq!(fixture.store.list::<Run>("validationRun")?.len(), 1);
         if !automatic {
-            coverage::refresh(&mut fixture.store, fixture.files.root(), &mut coverage)?;
+            coverage::refresh(&mut fixture.store, &fixture.files, &mut coverage)?;
             assert_eq!(coverage["status"], "pending");
             task_actions::accept(&mut fixture.store, "t")?;
         }
@@ -76,7 +76,7 @@ fn code_delivery_does_not_wait_for_visuals_and_preserves_manual_approval() -> Re
             task["approvalSource"],
             if automatic { "automatic" } else { "user" }
         );
-        coverage::refresh(&mut fixture.store, fixture.files.root(), &mut coverage)?;
+        coverage::refresh(&mut fixture.store, &fixture.files, &mut coverage)?;
         assert_eq!(coverage["status"], "queued");
         let id = coverage["runIds"][0].as_str().unwrap();
         let mut visual: Run = repository::get(&fixture.store, "validationRun", id)?;
@@ -84,7 +84,7 @@ fn code_delivery_does_not_wait_for_visuals_and_preserves_manual_approval() -> Re
         visual.status = "failed".into();
         visual.error = Some("Capture unavailable".into());
         fixture.save(&visual)?;
-        coverage::refresh(&mut fixture.store, fixture.files.root(), &mut coverage)?;
+        coverage::refresh(&mut fixture.store, &fixture.files, &mut coverage)?;
         assert_eq!(coverage["status"], "failed");
         assert_eq!(repository::get::<Value>(&fixture.store, "task", "t")?, task);
     }
@@ -215,7 +215,7 @@ fn parent_auto_completion_requires_integrated_code_and_accepted_children() -> Re
             ]}
         });
         fixture.store.put("task", "t", &parent)?;
-        crate::task_plan::expand(&mut fixture.store, fixture.files.root(), &mut parent)?;
+        crate::task_plan::expand(&mut fixture.store, &fixture.files, &mut parent)?;
         for id in parent["subtaskIds"].as_array().unwrap() {
             let id = id.as_str().unwrap();
             let mut child: Value = repository::get(&fixture.store, "task", id)?;

@@ -20,6 +20,7 @@ pub fn commit(store: &mut Store, records: Vec<Record>) -> Result<()> {
 pub struct Request {
     key: String,
     hash: String,
+    project_id: String,
 }
 
 impl Request {
@@ -30,15 +31,26 @@ impl Request {
         if id.is_empty() || id.len() > 100 {
             bail!("Invalid requestId");
         }
+        let project_id = input["projectId"]
+            .as_str()
+            .filter(|id| !id.is_empty())
+            .context("A projectId is required for mutations")?;
         Ok(Self {
             key: repository::digest(&json!([input["projectId"], id]))?,
             hash: repository::digest(&json!([method, input]))?,
+            project_id: project_id.into(),
         })
     }
 
     pub fn replay(&self, store: &Store) -> Result<Option<Value>> {
         let record = store.get::<Value>("validationRequest", &self.key)?;
         if let Some(record) = record {
+            if record
+                .get("projectId")
+                .is_some_and(|id| id != &self.project_id)
+            {
+                bail!("Validation request belongs to another project");
+            }
             if record["hash"] != self.hash {
                 bail!("requestId was already used with different parameters");
             }
@@ -51,7 +63,7 @@ impl Request {
         (
             "validationRequest",
             self.key.clone(),
-            json!({"hash":self.hash,"result":result}),
+            json!({"projectId":self.project_id,"hash":self.hash,"result":result}),
         )
     }
 
@@ -66,3 +78,7 @@ impl Request {
         Ok(result)
     }
 }
+
+#[cfg(test)]
+#[path = "requests_tests.rs"]
+mod tests;

@@ -13,7 +13,7 @@ fn png_integrity_and_frame_dimensions_are_checked_before_acceptance() -> Result<
     wrong_size.width += 1;
     assert!(asset_reference::capture(
         &fixture.store,
-        &fixture.root,
+        &fixture.files,
         &fixture.id,
         wrong_size,
         &png()?
@@ -21,7 +21,7 @@ fn png_integrity_and_frame_dimensions_are_checked_before_acceptance() -> Result<
     .is_err());
     assert!(asset_reference::capture(
         &fixture.store,
-        &fixture.root,
+        &fixture.files,
         &fixture.id,
         frame(),
         b"not an image"
@@ -36,7 +36,7 @@ fn png_integrity_and_frame_dimensions_are_checked_before_acceptance() -> Result<
     let receipt = fixture.submit(accepted.clone())?;
     fs::write(&receipt.reference.image_path, b"later corruption")?;
     assert_eq!(fixture.submit(accepted)?.id, receipt.id);
-    assert!(asset_reference::read(&receipt.reference).is_err());
+    assert!(asset_reference::read(&fixture.files, &receipt.reference).is_err());
     Ok(())
 }
 
@@ -44,17 +44,17 @@ fn png_integrity_and_frame_dimensions_are_checked_before_acceptance() -> Result<
 fn annotations_render_normalized_regions_without_mutating_the_frozen_original() -> Result<()> {
     let fixture = Fixture::new()?;
     let reference = fixture.reference()?;
-    let before = asset_reference::read(&reference)?;
+    let before = asset_reference::read(&fixture.files, &reference)?;
     let annotations = vec![Annotation {
         kind: "box".into(),
         points: vec![[0.25, 0.25], [0.75, 0.75]],
     }];
-    let annotated = asset_reference::annotated(&reference, &annotations)?;
+    let annotated = asset_reference::annotated(&fixture.files, &reference, &annotations)?;
     let pixels = image::load_from_memory(&annotated)?.to_rgba8();
     assert_eq!(pixels.get_pixel(15, 11).0, [255, 195, 50, 255]);
     assert_eq!(pixels.get_pixel(32, 24).0, [255, 255, 255, 255]);
     assert_eq!(pixels.get_pixel(0, 0).0, [255, 255, 255, 255]);
-    assert_eq!(asset_reference::read(&reference)?, before);
+    assert_eq!(asset_reference::read(&fixture.files, &reference)?, before);
     for invalid in [
         Annotation {
             kind: "box".into(),
@@ -69,7 +69,7 @@ fn annotations_render_normalized_regions_without_mutating_the_frozen_original() 
             points: vec![[0.0, 0.0]; 4097],
         },
     ] {
-        assert!(asset_reference::annotated(&reference, &[invalid]).is_err());
+        assert!(asset_reference::annotated(&fixture.files, &reference, &[invalid]).is_err());
     }
     Ok(())
 }
@@ -136,13 +136,13 @@ fn unused_frames_are_bounded_while_accepted_references_remain_readable() -> Resu
         let mut next = frame();
         next.id = format!("frame-{index}");
         next.captured_at += index;
-        asset_reference::capture(&fixture.store, &fixture.root, &fixture.id, next, &png()?)?;
+        asset_reference::capture(&fixture.store, &fixture.files, &fixture.id, next, &png()?)?;
     }
     let references = fixture.store.list::<Reference>("asset-reference")?;
     assert_eq!(references.iter().filter(|r| !r.used).count(), 8);
     assert_eq!(references.iter().filter(|r| r.used).count(), 1);
     assert!(asset_reference::get(&fixture.store, &fixture.id, &old_unused.id).is_err());
     assert!(!std::path::Path::new(&old_unused.image_path).exists());
-    assert_eq!(asset_reference::read(&pinned)?, png()?);
+    assert_eq!(asset_reference::read(&fixture.files, &pinned)?, png()?);
     Ok(())
 }

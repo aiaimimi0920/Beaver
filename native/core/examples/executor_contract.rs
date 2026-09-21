@@ -19,6 +19,9 @@ use tokio::{
     time::timeout,
 };
 
+#[path = "support/executor_callbacks.rs"]
+mod callbacks;
+
 fn fixture() -> Result<()> {
     let owned = PathBuf::from(
         std::env::var_os("BEAVER_EXECUTOR_FIXTURE")
@@ -41,11 +44,17 @@ fn fixture() -> Result<()> {
             "initialize" => json!({}),
             "initialized" => continue,
             "thread/start" | "thread/resume" => {
+                let instructions = request["params"]["developerInstructions"]
+                    .as_str()
+                    .unwrap_or("");
                 ensure!(
-                    request["params"]["developerInstructions"].as_str()
-                        == Some(beaver_core::code_structure::INSTRUCTIONS),
+                    instructions.contains(beaver_core::code_structure::INSTRUCTIONS),
                     "built-in code-structure instructions missing from thread start/resume"
                 );
+                ensure!(instructions.contains(beaver_core::task_callback_contract::INSTRUCTIONS));
+                if method == "thread/start" {
+                    callbacks::validate_tools(&request)?;
+                }
                 if let Some(old) = request["params"]["threadId"].as_str() {
                     thread = old.into();
                 }
@@ -81,7 +90,9 @@ fn fixture() -> Result<()> {
                 } else {
                     prompt
                 };
-                if prompt == "ask" {
+                if prompt.starts_with("callback-") {
+                    notifications.push(callbacks::report_request(prompt, &thread)?);
+                } else if prompt == "ask" {
                     notifications.push(json!({"id":"question","method":"item/tool/call","params":{"threadId":thread,"turnId":"turn","tool":"beaver_ask_user","arguments":{"questions":[{"id":"tone","question":"氛围？"}]}}}));
                 } else if prompt == "complete" {
                     std::fs::write("result.txt", "native executor output")?;
@@ -110,6 +121,15 @@ fn fixture() -> Result<()> {
             "turn/interrupt" => {
                 std::fs::write("interrupted.txt", "interrupt acknowledged")?;
                 json!({})
+            }
+            "" if matches!(
+                id.as_str(),
+                Some("callback-report" | "callback-state" | "callback-work-begin")
+            ) =>
+            {
+                writeln!(output, "{}", callbacks::after_reply(&request, &thread)?)?;
+                output.flush()?;
+                continue;
             }
             _ => continue,
         };
@@ -174,6 +194,7 @@ async fn main() -> Result<()> {
     }
     let output = PathBuf::from(std::env::args_os().nth(1).context("output root required")?);
     std::fs::create_dir_all(&output)?;
+    let callbacks_only = std::env::args().nth(2).as_deref() == Some("--callbacks");
     for (index, mode) in [
         "complete",
         "ask",
@@ -184,8 +205,12 @@ async fn main() -> Result<()> {
         "tool",
         "reasoning",
         "tool-interrupt",
+        "callback-new",
+        "callback-resume",
+        "callback-upgrade",
     ]
     .into_iter()
+    .filter(|mode| !callbacks_only || mode.starts_with("callback-"))
     .enumerate()
     {
         let root = output.join(format!("case-{index}-{}", uuid::Uuid::new_v4()));
@@ -193,7 +218,7 @@ async fn main() -> Result<()> {
         let project = root.join("project");
         std::fs::create_dir(&project)?;
         std::fs::write(project.join("project.godot"), "[application]\n")?;
-        let files = Files::new(root.join("data"));
+        let files = Arc::new(Files::new(root.join("data")));
         let baseline = files.capture(&project)?;
         let workspace = root.join("workspace");
         files.restore_copy(&baseline, &workspace)?;
@@ -202,9 +227,23 @@ async fn main() -> Result<()> {
             .lock()
             .unwrap()
             .put("project", "p", &json!({"id":"p","path":project}))?;
-        store.lock().unwrap().put("task", "t", &json!({"id":"t","projectId":"p","workspace":workspace,"baseline":baseline,"capability":"code","status":"running","prompt":mode,"direction":"story","threadId":"existing-thread","unknown":42}))?;
+        let mut initial = json!({"id":"t","projectId":"p","workspace":workspace,"baseline":baseline,"capability":"code","status":"running","prompt":mode,"direction":"story","threadId":"existing-thread","unknown":42,
+            "callbackToolVersion":beaver_core::task_callback_contract::VERSION});
+        if mode == "callback-new" {
+            initial.as_object_mut().unwrap().remove("threadId");
+        } else if mode == "callback-upgrade" {
+            initial
+                .as_object_mut()
+                .unwrap()
+                .remove("callbackToolVersion");
+        }
+        store.lock().unwrap().put("task", "t", &initial)?;
+        if mode.starts_with("callback-") {
+            callbacks::seed_unfinished_work(store.clone(), files.clone(), &initial).await?;
+        }
         let execution = Execution {
             store: store.clone(),
+            files: files.clone(),
             task_id: "t".into(),
             model: "fixture".into(),
             prompt: mode.into(),
@@ -284,6 +323,10 @@ async fn main() -> Result<()> {
             ensure!(events.contains("providerError") && events.contains("watchdog"));
         }
         let task: Value = store.lock().unwrap().get("task", "t")?.unwrap();
+        if mode.starts_with("callback-") {
+            callbacks::verify_receipt(&store.lock().unwrap(), &task, mode, &workspace)?;
+            continue;
+        }
         ensure!(
             task["threadId"] == "existing-thread"
                 && task["unknown"] == 42
@@ -375,6 +418,7 @@ async fn main() -> Result<()> {
             let (sender, receiver) = mpsc::channel(8);
             let outcome = Execution {
                 store: store.clone(),
+                files: files.clone(),
                 task_id: "t".into(),
                 model: "fixture".into(),
                 prompt: "complete".into(),
@@ -418,7 +462,11 @@ async fn main() -> Result<()> {
         }
         drop(sender);
     }
-    let proof = json!({"passed":true,"checks":["thread resume and turn completion", "stale completion ignored", "reports redact keys and bearer tokens", "question persisted before runner stops", "steer acknowledged and persisted", "interrupt stops runner", "unrelated task fields preserved", "runner does not claim project merge", "isolated subprocess output merged only after executor exit", "final merge has completed durable journal", "silent model is interrupted within idle limit", "retry and stale/usage events cannot extend idle deadline", "active tools and reasoning progress survive beyond idle limit", "active tool remains interruptible", "stalled workspace and baseline preserved without merge", "private reasoning is not persisted", "fresh context starts a new thread in the same workspace", "fresh recovery merges existing output and preserves original rollback boundary"],"realModelTaskVerified":false});
+    let proof = if callbacks_only {
+        json!({"passed":true,"checks":["new thread registers callback tool", "compatible thread resumes", "old thread upgrades and retains prior identity", "executor dispatch persists callback input and output", "result report does not create a file or complete task", "new turn retires previous unfinished attempt without Blender", "work retry callback binds a new attempt to the active thread and turn", "turn completion retires unfinished retry without replaying operations", "file-bearing work callbacks freeze and verify dependencies without a Blender session"],"realModelTaskVerified":false})
+    } else {
+        json!({"passed":true,"checks":["thread resume and turn completion", "stale completion ignored", "reports redact keys and bearer tokens", "question persisted before runner stops", "steer acknowledged and persisted", "interrupt stops runner", "unrelated task fields preserved", "runner does not claim project merge", "isolated subprocess output merged only after executor exit", "final merge has completed durable journal", "silent model is interrupted within idle limit", "retry and stale/usage events cannot extend idle deadline", "active tools and reasoning progress survive beyond idle limit", "active tool remains interruptible", "stalled workspace and baseline preserved without merge", "private reasoning is not persisted", "fresh context starts a new thread in the same workspace", "fresh recovery merges existing output and preserves original rollback boundary", "task callbacks survive new/resumed/upgraded threads"],"realModelTaskVerified":false})
+    };
     std::fs::write(
         output.join("proof.json"),
         serde_json::to_vec_pretty(&proof)?,

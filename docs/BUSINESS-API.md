@@ -7,8 +7,9 @@ MCP bridge. Both use the same `business_call` service as the desktop Tauri comma
 the same database, scheduler, project files, revision checks, recovery gates and
 desktop change notifications. There is no second task executor or shadow store.
 
-The implementation exposes 51 business operations, including task autonomy,
-NPR package installation, standard workflows and call-log queries. This is a
+The implementation exposes business operations including task autonomy,
+NPR package installation, standard workflows, call-log queries, task callbacks,
+reviewed asset deliveries and generic framework operations. This is a
 local-owner integration preview, not the final multi-user or remote-access API.
 The Electron host does not expose this API yet. R7 binaries predate this change.
 
@@ -33,7 +34,7 @@ This is not project-scoped authorization or a sandbox.
 
 ## HTTP contract, version 1
 
-`GET /v1/capabilities` returns the API version, 51 tool descriptions and JSON input
+`GET /v1/capabilities` returns the API version, current tool descriptions and JSON input
 schemas, project design/blueprint catalogs and execution constraints. Schemas for
 design, blueprint, overview and direction are generated from the existing shared
 TypeScript schemas during the native UI build. Domain refinements such as valid
@@ -76,10 +77,36 @@ messages; fine-grained domain error codes remain future work.
 Up to 16 external calls run concurrently. Excess calls are rejected before
 execution. If the client disconnects, an accepted business call continues;
 desktop exit cancels owned jobs and waits for outstanding API calls before
-closing the store. Mutations have no automatic retry or idempotency guarantee.
-After a transport failure, inspect state before repeating a mutation.
+closing the store. General mutations have no automatic retry or idempotency guarantee.
+After a transport failure, inspect state before repeating a mutation. The new
+`task.callback` mutations and `assetTask.deliveryDecide` have task-scoped durable
+request receipts and exact-retry semantics; see [task callback contracts](TASK-CALLBACKS.md)
+and [asset delivery contracts](ASSET-DELIVERIES.md). `task.framework` start requests
+also persist exact-retry receipts, scoped to the task, caller source, execution
+identity, request ID and job content. Inspect the original operation after a
+transport failure; restart recovery does not replay external side effects.
+This does not extend idempotency to other business methods or external Blender operations.
 
 ## Business workflow
+
+For an asset task that explicitly requests reviewed stages, managed Codex can
+define `deliveryPlan` before creating stages, then submit actual candidate files
+with `submitDelivery`. The task pauses for an owner decision. The desktop, HTTP
+and business MCP share `assetTask.deliveryState`, `assetTask.deliveryFile`,
+`assetTask.deliveryExport` and `assetTask.deliveryDecide`. Decisions require an
+integer asset revision and a unique request ID; there is no force-approve option.
+Only the existing owner boundary exposes decisions; the managed task tool has no
+approval operation or owner token. See [usage and limits](ASSET-DELIVERIES.md).
+
+`task.framework` accepts `{id, request}` through the same desktop, HTTP and MCP
+service. It provides state, start, inspect, cancel, configure and judge operations.
+Configuration is owner-only; a managed Codex turn uses the identity-bound
+`beaver_workflow` tool without owner credentials or configuration permission.
+Model and owner judgments remain distinct, and only an owner decision can advance
+a reviewed stage. A successful start returns a durable operation, not completed
+work; inspect its terminal status and the job's readiness or check result.
+See the [generic framework contract](WORKFLOW-FRAMEWORK.md) for adapter schemas,
+frozen evidence, versioned gates, cancellation and recovery behavior.
 
 1. Discover capabilities and catalogs; read `state` for projects, tasks, redacted
    settings and feature packages.

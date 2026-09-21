@@ -1,65 +1,283 @@
-use crate::{anyhow_result, Backend};
-use beaver_core::{documents, files::Files};
-use serde_json::{json, Value};
+use crate::{
+    anyhow_result,
+    business_routing::{project_runtime_handles, query_runtime_handles},
+    Backend,
+};
+use serde_json::Value;
 use std::sync::atomic::Ordering;
+
+#[path = "data_dispatch_projects.rs"]
+mod data_dispatch_projects;
+#[path = "data_dispatch_state.rs"]
+mod data_dispatch_state;
+#[path = "data_dispatch_tasks.rs"]
+mod data_dispatch_tasks;
+use data_dispatch_projects::{
+    project_document_operation, resolve_project_asset, reveal_project_asset,
+};
+use data_dispatch_state::state_operation;
+use data_dispatch_tasks::{
+    complete_task_action, create_project_task, create_related_task, document_save_operation,
+    feature_add_operation, resolve_task_reveal, retry_merge_task, reveal_task, task_callback_state,
+    task_events, task_resource_operation, task_setting_operation,
+};
 
 pub(crate) fn call(
     backend: &Backend,
     method: String,
     input: Option<Value>,
 ) -> Result<Value, String> {
-    let mut store = backend.store.lock().map_err(|_| "数据库锁不可用")?;
     if backend.closing.load(Ordering::SeqCst) {
         return Err("应用正在退出".into());
     }
+    if method == "state" {
+        return state_operation(backend.store.clone(), backend.project_storage.as_ref())
+            .map_err(|error| error.to_string());
+    }
+    if method == "project.storage.status" {
+        let input = input.as_ref().ok_or("缺少项目参数")?;
+        let id = input["id"]
+            .as_str()
+            .filter(|id| !id.is_empty())
+            .ok_or("项目 ID 无效")?;
+        let store = backend.store.lock().map_err(|_| "数据库锁不可用")?;
+        return beaver_core::object_framework_status::registration_status(&store, id)
+            .map_err(|error| error.to_string());
+    }
+    if method == "project.unregister" {
+        let input = input.as_ref().ok_or("缺少注销参数")?;
+        let id = input["id"]
+            .as_str()
+            .filter(|s| !s.is_empty())
+            .ok_or("项目 ID 无效")?;
+        let expected = input["expectedPath"]
+            .as_str()
+            .filter(|s| !s.is_empty() && s.len() <= 2000)
+            .ok_or("原项目路径无效")?;
+        return backend
+            .project_storage
+            .unregister(id, expected)
+            .map_err(|error| error.to_string());
+    }
+    if method == "project.reassociate" {
+        let input = input.as_ref().ok_or("缺少重新关联参数")?;
+        let id = input["id"]
+            .as_str()
+            .filter(|s| !s.is_empty())
+            .ok_or("项目 ID 无效")?;
+        let expected = input["expectedPath"]
+            .as_str()
+            .filter(|s| !s.is_empty() && s.len() <= 2000)
+            .ok_or("原项目路径无效")?;
+        let directory = input["path"]
+            .as_str()
+            .filter(|s| !s.is_empty() && s.len() <= 2000)
+            .ok_or("项目路径无效")?;
+        return backend
+            .project_storage
+            .reassociate(id, expected, std::path::Path::new(directory), &backend.root)
+            .map_err(|error| error.to_string());
+    }
+    if method == "task.create" {
+        return create_project_task(&backend.project_storage, input)
+            .map_err(|error| error.to_string());
+    }
+    if method == "feature.add" {
+        return feature_add_operation(
+            backend.project_storage.as_ref(),
+            backend.store.clone(),
+            &backend.root,
+            input,
+        )
+        .map_err(|error| error.to_string());
+    }
+    if matches!(
+        method.as_str(),
+        "task.followup" | "task.delegate" | "task.dialogueRollback"
+    ) {
+        return create_related_task(
+            backend.project_storage.as_ref(),
+            backend.store.clone(),
+            &backend.root,
+            &method,
+            input,
+        )
+        .map_err(|error| error.to_string());
+    }
+    if matches!(
+        method.as_str(),
+        "task.direction" | "task.autonomy" | "task.approval"
+    ) {
+        return task_setting_operation(
+            backend.project_storage.as_ref(),
+            backend.store.clone(),
+            &backend.root,
+            &method,
+            input,
+        )
+        .map_err(|error| error.to_string());
+    }
+    if method == "task.retryMerge" {
+        return retry_merge_task(
+            backend.project_storage.as_ref(),
+            backend.store.clone(),
+            &backend.root,
+            &backend.closing,
+            input,
+        )
+        .map_err(|error| error.to_string());
+    }
+    if matches!(method.as_str(), "task.rollback" | "task.accept") {
+        return complete_task_action(
+            backend.project_storage.as_ref(),
+            backend.store.clone(),
+            &backend.root,
+            &method,
+            input,
+        )
+        .map_err(|error| error.to_string());
+    }
+    if matches!(
+        method.as_str(),
+        "task.resources" | "task.resourceText" | "task.resourceBytes"
+    ) {
+        return task_resource_operation(
+            backend.project_storage.as_ref(),
+            backend.store.clone(),
+            &backend.root,
+            &method,
+            input,
+        )
+        .map_err(|error| error.to_string());
+    }
+    if method == "task.events" {
+        return task_events(
+            backend.project_storage.as_ref(),
+            backend.store.clone(),
+            &backend.root,
+            input,
+        )
+        .map_err(|error| error.to_string());
+    }
+    if method == "task.callbackState" {
+        return task_callback_state(
+            backend.project_storage.as_ref(),
+            backend.store.clone(),
+            &backend.root,
+            input,
+        )
+        .map_err(|error| error.to_string());
+    }
+    if method == "task.reveal" {
+        return reveal_task(
+            backend.project_storage.as_ref(),
+            backend.store.clone(),
+            &backend.root,
+            input,
+        )
+        .map_err(|error| error.to_string());
+    }
+    if matches!(method.as_str(), "project.reveal" | "asset.reveal") {
+        return reveal_project_asset(
+            backend.project_storage.as_ref(),
+            backend.store.clone(),
+            &backend.root,
+            &method,
+            input,
+        )
+        .map_err(|error| error.to_string());
+    }
+    if method == "document.save" {
+        return document_save_operation(
+            backend.project_storage.as_ref(),
+            backend.store.clone(),
+            &backend.root,
+            input,
+        )
+        .map_err(|error| error.to_string());
+    }
+    if matches!(method.as_str(), "assets" | "asset.text" | "document.read") {
+        return project_document_operation(
+            backend.project_storage.as_ref(),
+            backend.store.clone(),
+            &method,
+            input,
+        )
+        .map_err(|error| error.to_string());
+    }
+    if method == "objectFramework.status" {
+        let input = input.ok_or_else(|| "缺少项目参数".to_owned())?;
+        let project_id = input["projectId"]
+            .as_str()
+            .ok_or_else(|| "缺少项目标识".to_owned())?;
+        let handles = query_runtime_handles(
+            backend.project_storage.as_ref(),
+            backend.store.clone(),
+            &backend.root,
+            &input,
+        )?;
+        let store = handles.store.lock().map_err(|_| "数据库锁不可用")?;
+        return beaver_core::object_framework_status::status_with_routing(
+            &store,
+            project_id,
+            handles.project_routed,
+        )
+        .map_err(|error| error.to_string());
+    }
+    if method == "logs.query" {
+        let input = input.unwrap_or_else(|| serde_json::json!({}));
+        let handles = query_runtime_handles(
+            backend.project_storage.as_ref(),
+            backend.store.clone(),
+            &backend.root,
+            &input,
+        )?;
+        let store = handles.store.lock().map_err(|_| "数据库锁不可用")?;
+        return beaver_core::call_log::query(&store, &input).map_err(|error| error.to_string());
+    }
+
+    if matches!(
+        method.as_str(),
+        "project.blueprint.save" | "project.overview.save"
+    ) {
+        let input = input.ok_or_else(|| "缺少项目规划参数".to_owned())?;
+        let id = input["id"]
+            .as_str()
+            .ok_or_else(|| "缺少项目标识".to_owned())?;
+        let revision = input["expectedRevision"]
+            .as_u64()
+            .ok_or_else(|| "规划版本无效".to_owned())?;
+        let overview = method == "project.overview.save";
+        if overview && input["allowRiskyChanges"] != true {
+            return Err("修改基础设定需要明确确认风险".into());
+        }
+        let handles = project_runtime_handles(
+            backend.project_storage.as_ref(),
+            backend.store.clone(),
+            &backend.root,
+            id,
+        )?;
+        let store = handles.store.lock().map_err(|_| "数据库锁不可用")?;
+        return beaver_core::blueprint::save(
+            &store,
+            id,
+            input[if overview { "overview" } else { "blueprint" }].clone(),
+            revision,
+            overview,
+            &serde_json::from_str(include_str!("../../../dist-native/blueprint-catalog.json"))
+                .map_err(|error| error.to_string())?,
+        )
+        .map_err(|error| error.to_string());
+    }
+
+    let mut store = backend.store.lock().map_err(|_| "数据库锁不可用")?;
     let result = (|| -> anyhow_result::Result<Value> {
         match method.as_str() {
-            "logs.query" => Ok(beaver_core::call_log::query(
-                &store,
-                &input.unwrap_or_else(|| json!({})),
-            )?),
-            "task.approval" => {
-                let input = input.as_ref().ok_or("缺少审批参数")?;
-                Ok(beaver_core::task_plan::approval(
-                    &store,
-                    input["id"].as_str().ok_or("缺少任务标识")?,
-                    input["autoAccept"].as_bool().ok_or("审批策略无效")?,
-                )?)
-            }
-            "task.autonomy" => {
-                let input = input.as_ref().ok_or("缺少任务设置")?;
-                Ok(beaver_core::autonomy::set(
-                    &store,
-                    input["id"].as_str().ok_or("缺少任务标识")?,
-                    input.get("askRatio").cloned().ok_or("缺少询问档位")?,
-                )?)
-            }
-            "feature.add" => Ok(beaver_core::feature_tasks::create(
+            "task.callbackState" => Ok(beaver_core::task_callback::business(
                 &mut store,
-                &backend.root,
-                input.ok_or("缺少功能块参数")?,
-                &serde_json::from_str(include_str!("../../../dist-native/feature-sources.json"))?,
-                &serde_json::from_str(include_str!("../../../dist-native/design-catalog.json"))?,
-                &serde_json::from_str(include_str!("../../../dist-native/blueprint-catalog.json"))?,
+                &method,
+                input.as_ref().ok_or("Missing task callback input")?,
             )?),
-            "task.direction" => Ok(beaver_core::task_relations::set_direction(
-                &store,
-                &input.ok_or("缺少任务参数")?,
-            )?),
-            "task.followup" | "task.delegate" | "task.dialogueRollback" => {
-                Ok(beaver_core::task_relations::create(
-                    &mut store,
-                    &backend.root,
-                    &method,
-                    input.ok_or("缺少任务参数")?,
-                    &serde_json::from_str(include_str!(
-                        "../../../dist-native/design-catalog.json"
-                    ))?,
-                    &serde_json::from_str(include_str!(
-                        "../../../dist-native/blueprint-catalog.json"
-                    ))?,
-                )?)
-            }
             "project.create" => Ok(beaver_core::projects::create_project(
                 &store,
                 &backend.root,
@@ -68,55 +286,6 @@ pub(crate) fn call(
                 &serde_json::from_str(include_str!("../../../dist-native/blueprint-catalog.json"))?,
                 &serde_json::from_str(include_str!("../../../dist-native/templates.json"))?,
             )?),
-            "task.create" => Ok(beaver_core::task_create::create(
-                &mut store,
-                &backend.root,
-                input.ok_or("缺少任务参数")?,
-                &serde_json::from_str(include_str!("../../../dist-native/design-catalog.json"))?,
-                &serde_json::from_str(include_str!("../../../dist-native/blueprint-catalog.json"))?,
-            )?),
-            "state" => {
-                let mut tasks = store.list::<Value>("task")?;
-                let projects = store.list::<Value>("project")?;
-                for task in &mut tasks {
-                    task["effectiveAskRatio"] =
-                        json!(beaver_core::autonomy::effective(&store, task)?);
-                    task["delivery"] = projects
-                        .iter()
-                        .find(|p| p["id"] == task["projectId"])
-                        .map(|p| p["delivery"].clone())
-                        .unwrap_or(Value::Null);
-                }
-                let settings = beaver_core::preferences::read(
-                    &store,
-                    serde_json::from_str(include_str!(
-                        "../../../dist-native/default-settings.json"
-                    ))?,
-                )?;
-                Ok(
-                    json!({"projects":projects, "tasks":tasks, "settings":settings,
-                    "features":serde_json::from_str::<Value>(include_str!("../../../dist-native/features.json"))?}),
-                )
-            }
-            "project.blueprint.save" | "project.overview.save" => {
-                let input = input.as_ref().ok_or("缺少项目规划参数")?;
-                let id = input["id"].as_str().ok_or("缺少项目标识")?;
-                let revision = input["expectedRevision"].as_u64().ok_or("规划版本无效")?;
-                let overview = method == "project.overview.save";
-                if overview && input["allowRiskyChanges"] != true {
-                    return Err("修改基础设定需要明确确认风险".into());
-                }
-                Ok(beaver_core::blueprint::save(
-                    &store,
-                    id,
-                    input[if overview { "overview" } else { "blueprint" }].clone(),
-                    revision,
-                    overview,
-                    &serde_json::from_str(include_str!(
-                        "../../../dist-native/blueprint-catalog.json"
-                    ))?,
-                )?)
-            }
             "settings.save" => {
                 let _setup = backend
                     .setup_gate
@@ -151,114 +320,6 @@ pub(crate) fn call(
                 beaver_core::preferences::clear_key(&store, slot)?;
                 Ok(Value::Null)
             }
-            "task.retryMerge" => {
-                let id = input
-                    .as_ref()
-                    .and_then(|v| v["id"].as_str())
-                    .ok_or("缺少任务标识")?;
-                Ok(beaver_core::task_finish::retry_merge(
-                    &mut store,
-                    &Files::new(backend.root.clone()),
-                    id,
-                    &backend.closing,
-                )?)
-            }
-            "task.rollback" | "task.accept" => {
-                let input = input.as_ref().ok_or("缺少任务参数")?;
-                let id = input["id"].as_str().ok_or("缺少任务标识")?;
-                if method == "task.accept" {
-                    beaver_core::task_actions::accept(&mut store, id)?;
-                } else {
-                    let keep: Vec<String> = serde_json::from_value(input["keep"].clone())
-                        .map_err(|_| "保留文件列表无效")?;
-                    beaver_core::task_actions::rollback(
-                        &mut store,
-                        &Files::new(backend.root.clone()),
-                        id,
-                        keep,
-                    )?;
-                }
-                Ok(Value::Null)
-            }
-            "task.resources" | "task.resourceText" | "task.resourceBytes" => {
-                let input = input.as_ref().ok_or("缺少任务参数")?;
-                let id = input["id"].as_str().ok_or("缺少任务标识")?;
-                let task: Value = store.get("task", id)?.ok_or("任务不存在")?;
-                if method == "task.resources" {
-                    Ok(beaver_core::task_resources::resources(&task)?)
-                } else {
-                    let path = input["path"]
-                        .as_str()
-                        .filter(|s| !s.is_empty() && s.encode_utf16().count() <= 2000)
-                        .ok_or("资源路径无效")?;
-                    if method == "task.resourceBytes" {
-                        Ok(beaver_core::task_resources::raw(&task, path)?)
-                    } else {
-                        Ok(json!(beaver_core::task_resources::text(&task, path)?))
-                    }
-                }
-            }
-            "project.reveal" | "task.reveal" | "asset.reveal" => {
-                let target = beaver_core::reveal::resolve(
-                    &store,
-                    &method,
-                    input.as_ref().ok_or("缺少显示参数")?,
-                )?;
-                beaver_core::reveal::open(&target)?;
-                Ok(if method == "asset.reveal" {
-                    Value::Null
-                } else {
-                    json!("")
-                })
-            }
-            "task.events" => {
-                let id = input
-                    .as_ref()
-                    .and_then(|v| v.get("id"))
-                    .and_then(Value::as_str)
-                    .ok_or("缺少任务标识")?;
-                Ok(serde_json::to_value(store.events(id)?)?)
-            }
-            "assets" | "asset.text" | "document.read" | "document.save" => {
-                let input = input.as_ref().ok_or("缺少操作参数")?;
-                let id = input["id"].as_str().ok_or("缺少项目标识")?;
-                let root = documents::project_path(&store, id)?;
-                if method == "assets" {
-                    return Ok(json!(documents::assets(&root)?));
-                }
-                let relative = input["path"]
-                    .as_str()
-                    .filter(|s| s.len() <= 2000)
-                    .ok_or("资料路径无效")?;
-                match method.as_str() {
-                    "asset.text" => Ok(json!(documents::text(&root, relative)?)),
-                    "document.read" => Ok(documents::read_document(&root, relative)?),
-                    _ => {
-                        let text = input["text"].as_str().ok_or("缺少资料内容")?;
-                        let revision = match input.get("revision") {
-                            Some(Value::Null) => None,
-                            Some(Value::String(value))
-                                if value.len() == 64
-                                    && value.bytes().all(|b| {
-                                        b.is_ascii_digit() || (b'a'..=b'f').contains(&b)
-                                    }) =>
-                            {
-                                Some(value.as_str())
-                            }
-                            _ => return Err("资料版本无效".into()),
-                        };
-                        documents::save_document(
-                            &mut store,
-                            &backend.root,
-                            id,
-                            relative,
-                            text,
-                            revision,
-                        )?;
-                        Ok(Value::Null)
-                    }
-                }
-            }
             "project.import" => {
                 let directory = input
                     .as_ref()
@@ -279,3 +340,7 @@ pub(crate) fn call(
     })();
     result.map_err(|error| error.to_string())
 }
+
+#[cfg(test)]
+#[path = "data_dispatch_tests.rs"]
+mod tests;

@@ -1,7 +1,8 @@
 use crate::{
-    asset_protocol, business_api, instance, setup_runtime, task_runtime, template_runtime, Backend,
+    asset_protocol, business_api, instance, project_runtime_lifecycle, task_runtime,
+    template_runtime, Backend,
 };
-use beaver_core::{files::Files, journal::Journal, store::Store};
+use beaver_core::{files::Files, store::Store};
 use serde_json::{json, Value};
 use std::{
     fs,
@@ -68,22 +69,32 @@ pub(crate) fn run() {
                 let _ = handle.run_on_main_thread(move || show_main(&app));
             })?;
             let mut store = Store::open(&root)?;
-            Journal::new(&mut store, &Files::new(root.clone())).recover()?;
-            store.recover_tasks()?;
-            beaver_core::validation::repository::recover(&store)?;
-            setup_runtime::recover(&store)?;
+            project_runtime_lifecycle::recover(&mut store, &Files::new(root.clone()))?;
             let store = Arc::new(Mutex::new(store));
+            let project_storage = Arc::new(
+                beaver_core::project_storage_router::ProjectStorageRouter::new(store.clone()),
+            );
+            project_runtime_lifecycle::open_registered_local(&project_storage)?;
             let scheduler = tauri::async_runtime::block_on(async {
-                task_runtime::start(app.handle().clone(), &root, store.clone())
+                task_runtime::start(
+                    app.handle().clone(),
+                    &root,
+                    store.clone(),
+                    store.clone(),
+                    project_storage.clone(),
+                )
             })?;
             let validation = crate::validation_runtime::start(
                 app.handle().clone(),
                 &root,
                 store.clone(),
+                store.clone(),
+                project_storage.clone(),
                 scheduler.clone(),
             )?;
             let backend = Arc::new(Backend {
                 store,
+                project_storage,
                 scheduler,
                 validation,
                 players: beaver_core::game_play::Players::default(),
@@ -126,6 +137,28 @@ pub(crate) fn run() {
                                 if let Err(error) = backend.scheduler.shutdown().await {
                                     let _ = app.emit("beaver:shutdown-error", error);
                                 }
+                                if let Err(error) =
+                                    beaver_core::framework::shutdown(&backend.store).await
+                                {
+                                    let _ = app.emit("beaver:shutdown-error", error.to_string());
+                                }
+                                let project_runtimes = match backend.project_storage.runtimes() {
+                                    Ok(runtimes) => runtimes,
+                                    Err(error) => {
+                                        let _ =
+                                            app.emit("beaver:shutdown-error", error.to_string());
+                                        Vec::new()
+                                    }
+                                };
+                                for runtime in &project_runtimes {
+                                    if let Err(error) =
+                                        beaver_core::framework::shutdown(&runtime.store()).await
+                                    {
+                                        let _ =
+                                            app.emit("beaver:shutdown-error", error.to_string());
+                                    }
+                                }
+                                drop(project_runtimes);
                                 let _api_calls = backend
                                     .api_calls
                                     .clone()
@@ -140,6 +173,10 @@ pub(crate) fn run() {
                                     let _templates = backend.template_gate.lock();
                                     let _captures = backend.captures.lock();
                                     let _operations = backend.operations.lock();
+                                    if let Err(error) = backend.project_storage.close_all() {
+                                        let _ =
+                                            app.emit("beaver:shutdown-error", error.to_string());
+                                    }
                                     let _guard = backend.store.lock();
                                     app.exit(0);
                                 })

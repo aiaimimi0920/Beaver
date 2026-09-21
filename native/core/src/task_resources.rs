@@ -1,13 +1,25 @@
-use crate::files::{file_hash, list_files, safe_path, Snapshot};
+use crate::files::{file_hash, list_files, safe_path, Files, Snapshot};
 use anyhow::{bail, Context, Result};
 use serde_json::{json, Value};
-use std::{collections::BTreeSet, fs, io::Read, path::Path};
+use std::{
+    collections::BTreeSet,
+    fs,
+    io::Read,
+    path::{Path, PathBuf},
+};
 
-pub fn resources(task: &Value) -> Result<Value> {
+fn workspace(files: &Files, task: &Value) -> Result<PathBuf> {
+    files.resolve_workspace(
+        task["id"].as_str().context("任务标识无效")?,
+        Path::new(task["workspace"].as_str().context("任务工作副本无效")?),
+    )
+}
+
+pub fn resources(files: &Files, task: &Value) -> Result<Value> {
     if task["workspacePrepared"] == false {
         return Ok(json!([]));
     }
-    let workspace = Path::new(task["workspace"].as_str().context("任务工作副本无效")?);
+    let workspace = workspace(files, task)?;
     let baseline: Snapshot = serde_json::from_value(task["baseline"].clone())?;
     let mut paths: Vec<(String, &'static str)> = Vec::new();
     fn add(paths: &mut Vec<(String, &'static str)>, path: &str, origin: &'static str) {
@@ -31,7 +43,7 @@ pub fn resources(task: &Value) -> Result<Value> {
             "修改",
         );
     }
-    let current: BTreeSet<String> = list_files(workspace)?.into_iter().collect();
+    let current: BTreeSet<String> = list_files(&workspace)?.into_iter().collect();
     for path in baseline.keys() {
         if !current.contains(path) {
             add(&mut paths, path, "删除");
@@ -39,14 +51,14 @@ pub fn resources(task: &Value) -> Result<Value> {
     }
     for path in current {
         if !paths.iter().any(|item| item.0 == path)
-            && file_hash(&safe_path(workspace, &path)?)?.as_ref() != baseline.get(&path)
+            && file_hash(&safe_path(&workspace, &path)?)?.as_ref() != baseline.get(&path)
         {
             add(&mut paths, &path, "修改");
         }
     }
     let mut result = Vec::new();
     for (path, origin) in paths {
-        let exists = match fs::metadata(safe_path(workspace, &path)?) {
+        let exists = match fs::metadata(safe_path(&workspace, &path)?) {
             Ok(metadata) => metadata.is_file(),
             Err(error) if error.kind() == std::io::ErrorKind::NotFound => false,
             Err(error) => return Err(error.into()),
@@ -56,9 +68,9 @@ pub fn resources(task: &Value) -> Result<Value> {
     Ok(json!(result))
 }
 
-fn bytes(task: &Value, relative: &str) -> Result<Vec<u8>> {
-    let workspace = Path::new(task["workspace"].as_str().context("任务工作副本无效")?);
-    let handle = fs::File::open(safe_path(workspace, relative)?)?;
+fn bytes(files: &Files, task: &Value, relative: &str) -> Result<Vec<u8>> {
+    let workspace = workspace(files, task)?;
+    let handle = fs::File::open(safe_path(&workspace, relative)?)?;
     if !handle.metadata()?.is_file() {
         bail!("资源不是文件");
     }
@@ -101,13 +113,13 @@ pub fn decode_text(bytes: &[u8]) -> Result<String> {
     Ok(text.strip_prefix('\u{feff}').unwrap_or(&text).into())
 }
 
-pub fn text(task: &Value, relative: &str) -> Result<String> {
-    decode_text(&bytes(task, relative)?)
+pub fn text(files: &Files, task: &Value, relative: &str) -> Result<String> {
+    decode_text(&bytes(files, task, relative)?)
 }
 
-pub fn raw(task: &Value, relative: &str) -> Result<Value> {
+pub fn raw(files: &Files, task: &Value, relative: &str) -> Result<Value> {
     use base64::Engine;
-    let bytes = bytes(task, relative)?;
+    let bytes = bytes(files, task, relative)?;
     Ok(
         json!({"path":relative,"bytes":bytes.len(),"base64":base64::engine::general_purpose::STANDARD.encode(bytes)}),
     )
@@ -116,7 +128,6 @@ pub fn raw(task: &Value, relative: &str) -> Result<Value> {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::files::Files;
     #[test]
     fn known_encodings_are_lossless_and_unknown_bytes_remain_available() -> Result<()> {
         let expected = "日志：完成\n";
@@ -140,9 +151,10 @@ mod tests {
         assert!(decode_text(&[0xff]).is_err());
         let temp = tempfile::tempdir()?;
         fs::write(temp.path().join("unknown.log"), [0xff, 0x81])?;
-        let task = json!({"workspace":temp.path()});
-        assert_eq!(raw(&task, "unknown.log")?["base64"], "/4E=");
-        assert!(raw(&task, "../outside").is_err());
+        let files = Files::new(temp.path().join("data"));
+        let task = json!({"id":"task","workspace":temp.path()});
+        assert_eq!(raw(&files, &task, "unknown.log")?["base64"], "/4E=");
+        assert!(raw(&files, &task, "../outside").is_err());
         Ok(())
     }
     #[test]
@@ -152,23 +164,24 @@ mod tests {
         fs::create_dir(&workspace)?;
         fs::write(workspace.join("keep.md"), "unchanged")?;
         fs::write(workspace.join("gone.md"), "before")?;
-        let baseline = Files::new(temp.path().join("data")).capture(&workspace)?;
+        let files = Files::new(temp.path().join("data"));
+        let baseline = files.capture(&workspace)?;
         fs::remove_file(workspace.join("gone.md"))?;
         fs::write(workspace.join("new.md"), "\u{feff}# 新资料")?;
-        let mut task = json!({"workspace":workspace,"baseline":baseline,"references":[{"path":"missing.png"}],"changes":[]});
-        let items = resources(&task)?;
+        let mut task = json!({"id":"task","workspace":workspace,"baseline":baseline,"references":[{"path":"missing.png"}],"changes":[]});
+        let items = resources(&files, &task)?;
         assert_eq!(
             items,
             json!([{"path":"missing.png","origin":"参考","exists":false},{"path":"gone.md","origin":"删除","exists":false},{"path":"new.md","origin":"修改","exists":true}])
         );
-        assert_eq!(text(&task, "new.md")?, "# 新资料");
-        assert!(text(&task, "../outside").is_err());
+        assert_eq!(text(&files, &task, "new.md")?, "# 新资料");
+        assert!(text(&files, &task, "../outside").is_err());
         fs::write(workspace.join("binary"), [0xff])?;
-        assert!(text(&task, "binary").is_err());
+        assert!(text(&files, &task, "binary").is_err());
         fs::write(workspace.join("big.txt"), vec![b'a'; 512001])?;
-        assert!(text(&task, "big.txt").is_err());
+        assert!(text(&files, &task, "big.txt").is_err());
         task["references"] = json!([{"path":"../outside"}]);
-        assert!(resources(&task).is_err());
+        assert!(resources(&files, &task).is_err());
         Ok(())
     }
 }

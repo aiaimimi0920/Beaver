@@ -3,6 +3,7 @@ use super::{
     sandbox::{check_output, engine_path, Sandbox},
     GUT_VERSION,
 };
+use crate::files::{safe_path, Files};
 use anyhow::{bail, ensure, Context, Result};
 use serde_json::Value;
 use std::{fs, path::Path, sync::atomic::AtomicBool};
@@ -153,24 +154,23 @@ pub fn green(run: &Run) -> bool {
         })
 }
 
-pub fn validate(data: &Path, run: &Run) -> Result<()> {
+pub fn validate(files: &Files, run: &Run) -> Result<()> {
     ensure!(green(run), "Required GUT cases have not all passed");
     let report = run.code.as_ref().unwrap();
-    let output = super::repository::run_dir(data, &run.id)?;
+    let output = super::repository::run_dir(files, &run.id)?;
     for (name, hash) in [
         ("gut.xml", &report.report_sha256),
         ("gut.log", &report.output_sha256),
     ] {
         ensure!(
-            crate::files::file_hash(&output.join(name))?.as_ref() == Some(hash),
+            crate::files::file_hash(&safe_path(&output, name)?)?.as_ref() == Some(hash),
             "GUT artifact changed or is missing: {name}"
         );
     }
     ensure!(
-        parse_report(&fs::read_to_string(output.join("gut.xml"))?)? == report.cases,
+        parse_report(&fs::read_to_string(safe_path(&output, "gut.xml")?)?)? == report.cases,
         "GUT cases differ from the recorded report"
     );
-    let files = crate::files::Files::new(data.into());
     let config: Value = match run.snapshot.get("beaver.validation.json") {
         Some(hash) => serde_json::from_slice(&fs::read(files.blob(hash)?)?)?,
         None => Value::Null,

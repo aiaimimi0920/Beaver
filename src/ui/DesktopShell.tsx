@@ -8,27 +8,27 @@ import { errorMessage } from "./notification-state";
 export type Page =
   | "overview"
   | "tasks"
-  | "assets"
   | "features"
   | "project"
   | "settings"
   | "environment"
   | "create"
   | "docs"
-  | "library"
+  | "objects"
+  | "manufacture"
   | "validation";
 const titles = {
   overview: "游戏",
   create: "创作",
   docs: "资料",
-  library: "素材",
+  objects: "对象",
+  manufacture: "制造",
   tasks: "任务",
-  assets: "素材",
   features: "功能块",
   project: "项目设置",
   settings: "设置",
   environment: "创作环境",
-  validation: "测试与画面",
+  validation: "测试",
 };
 
 export function DesktopShell({
@@ -39,6 +39,7 @@ export function DesktopShell({
   selectProject,
   createProject,
   openProject,
+  manageProject,
   refresh,
   busy,
   running,
@@ -54,6 +55,7 @@ export function DesktopShell({
   selectProject: (id: string) => void;
   createProject: () => void;
   openProject: () => void;
+  manageProject?: () => void;
   refresh: () => void;
   busy: boolean;
   running: number;
@@ -104,11 +106,9 @@ export function DesktopShell({
   const activePage =
     page === "tasks"
       ? "create"
-      : page === "assets"
-        ? "library"
-        : ["features", "project"].includes(page)
-          ? "overview"
-          : page;
+      : ["features", "project"].includes(page)
+        ? "overview"
+        : page;
   const navigationItem = (id: Page) => (
     <button
       className={`rail-item${activePage === id ? " active" : ""}`}
@@ -125,13 +125,15 @@ export function DesktopShell({
               ? "tasks"
               : id === "docs"
                 ? "book"
-                : id === "library"
-                  ? "assets"
-                  : id === "environment"
-                    ? "tools"
-                    : id === "validation"
-                      ? "review"
-                      : id
+                : id === "objects"
+                  ? "features"
+                  : id === "manufacture"
+                    ? "layers"
+                    : id === "environment"
+                      ? "tools"
+                      : id === "validation"
+                        ? "review"
+                        : id
           }
         />
       </span>
@@ -167,7 +169,14 @@ export function DesktopShell({
         </div>
         <nav className="rail-nav" aria-label="工作区">
           {(
-            ["create", "docs", "library", "validation", "overview"] as const
+            [
+              "create",
+              "objects",
+              "manufacture",
+              "docs",
+              "validation",
+              "overview",
+            ] as const
           ).map(navigationItem)}
         </nav>
         <nav className="rail-footer" aria-label="应用">
@@ -237,6 +246,17 @@ export function DesktopShell({
               >
                 <Icon name="folder" />
               </button>
+              {manageProject && (
+                <button
+                  className="shell-icon-button"
+                  aria-label="管理项目登记"
+                  title="管理项目登记"
+                  disabled={!ready || !projectId || busy}
+                  onClick={manageProject}
+                >
+                  <Icon name="settings" />
+                </button>
+              )}
             </div>
           )}
         </div>
@@ -278,7 +298,7 @@ export function DesktopShell({
         </div>
       </header>
       <main
-        className={`main${["settings", "environment"].includes(page) ? " main-settings" : ""}${["create", "docs", "library"].includes(page) ? " main-studio" : ""}`}
+        className={`main${["settings", "environment"].includes(page) ? " main-settings" : ""}${["create", "docs"].includes(page) ? " main-studio" : ""}`}
       >
         {![
           "settings",
@@ -286,7 +306,9 @@ export function DesktopShell({
           "overview",
           "create",
           "docs",
-          "library",
+          "objects",
+          "manufacture",
+          "validation",
         ].includes(page) && (
           <div className="page-header">
             <h1>{titles[page]}</h1>

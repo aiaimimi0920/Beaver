@@ -6,7 +6,7 @@ use crate::{
 use anyhow::{bail, Context, Result};
 use serde::{Deserialize, Serialize};
 use serde_json::{json, Value};
-use std::{collections::HashSet, fs, path::Path};
+use std::{collections::HashSet, fs};
 
 #[derive(Deserialize, Serialize)]
 #[serde(deny_unknown_fields)]
@@ -63,6 +63,7 @@ pub fn tool() -> Value {
 }
 pub fn submit(store: &Store, id: &str, params: &Value) -> Result<()> {
     let mut task: Value = store.get("task", id)?.context("任务不存在")?;
+    crate::object_framework::require_legacy(&task)?;
     anyhow::ensure!(
         task["status"] == "running" && task["decompose"] == true && task["parentTaskId"].is_null(),
         "当前任务不能提交计划"
@@ -87,7 +88,8 @@ pub fn submit(store: &Store, id: &str, params: &Value) -> Result<()> {
 }
 
 /// After a successful planning merge. Parent + all child identities commit together.
-pub fn expand(store: &mut Store, root: &Path, parent: &mut Value) -> Result<()> {
+pub fn expand(store: &mut Store, files: &Files, parent: &mut Value) -> Result<()> {
+    crate::object_framework::require_legacy(parent)?;
     if parent["status"] != "waitingChildren"
         || parent["subtaskIds"]
             .as_array()
@@ -103,15 +105,15 @@ pub fn expand(store: &mut Store, root: &Path, parent: &mut Value) -> Result<()> 
         .iter()
         .map(|_| uuid::Uuid::new_v4().to_string())
         .collect();
-    let children: Vec<Value> = plan.steps.iter().enumerate().map(|(i, step)| {
+    let children = plan.steps.iter().enumerate().map(|(i, step)| -> Result<Value> {
         let mut child = json!({"id":ids[i],"projectId":parent["projectId"],"parentTaskId":id,"relation":"child","title":step.title,
           "prompt":format!("子目标：{}\n验收标准：{}\n阅读 .beaver-context/parent/task.json 中的原始目标和已确认回答，以及当前工作副本内的前置成果。仅完成本子目标并验证，不代替其他子任务宣布完成。",step.prompt,step.acceptance),
           "direction":step.direction,"capability":"code","decompose":false,"autoAccept":parent["autoAccept"].as_bool().unwrap_or(true),
-          "workspace":root.join("workspaces").join(&ids[i]),"workspacePrepared":false,"baseline":{},"changes":[],"conflicts":[],
+          "workspace":files.workspace_location(&ids[i])?,"workspacePrepared":false,"baseline":{},"changes":[],"conflicts":[],
           "status":"queued","createdAt":now,"updatedAt":now,"dependsOn":if i == 0 { vec![] } else { vec![ids[i-1].clone()] }});
         for key in ["askRatio","references","stopConditions","maxMinutes","projectContext","design","validationVersion"] { if let Some(v) = parent.get(key) { child[key] = v.clone(); } }
-        child
-    }).collect();
+        Ok(child)
+    }).collect::<Result<Vec<_>>>()?;
     parent["subtaskIds"] = json!(ids);
     store.transaction(|db| {
         for child in &children {
@@ -140,37 +142,52 @@ pub fn expand(store: &mut Store, root: &Path, parent: &mut Value) -> Result<()> 
 }
 
 pub fn eligible(task: &Value, tasks: &[Value]) -> bool {
+    // Legacy history retained by a partition activation is never scheduled until converted.
+    if crate::object_framework::marked(task) || task.get("migrationRetained").is_some() {
+        return false;
+    }
     if let Some(parent) = task["parentTaskId"]
         .as_str()
         .filter(|_| task["workspacePrepared"].is_boolean())
     {
         if !tasks.iter().any(|t| {
-            t["id"] == parent && t["status"] == "waitingChildren" && t["planPaused"] != true
+            t["id"] == parent
+                && t["status"] == "waitingChildren"
+                && t["planPaused"] != true
+                && !crate::object_framework::marked(t)
         }) {
             return false;
         }
     }
     task["dependsOn"].as_array().is_none_or(|ids| {
         ids.iter().all(|id| {
-            tasks
-                .iter()
-                .any(|t| t["id"] == *id && t["status"] == "completed" && t["accepted"] == true)
+            tasks.iter().any(|t| {
+                t["id"] == *id
+                    && t["status"] == "completed"
+                    && t["accepted"] == true
+                    && !crate::object_framework::marked(t)
+            })
         })
     })
 }
 
 /// Freeze the latest integrated files only when dependencies have passed approval.
 pub fn prepare(store: &mut Store, files: &Files, task: &mut Value) -> Result<()> {
+    crate::object_framework::require_legacy(task)?;
     if task["workspacePrepared"] != false {
         return Ok(());
     }
+    let parent: Value = store
+        .get("task", task["parentTaskId"].as_str().context("父任务无效")?)?
+        .context("父任务不存在")?;
+    crate::object_framework::require_legacy(&parent)?;
     let id = task["id"].as_str().context("任务标识无效")?;
     anyhow::ensure!(
         !crate::journal::Journal::new(store, files)
             .blocked(task["projectId"].as_str().context("项目标识无效")?)?,
         "项目存在未完成的文件恢复"
     );
-    let workspace = safe_path(files.root(), &format!("workspaces/{id}"))?;
+    let workspace = files.workspace(id)?;
     let baseline = files.capture(&project_path(
         store,
         task["projectId"].as_str().context("项目标识无效")?,
@@ -183,36 +200,53 @@ pub fn prepare(store: &mut Store, files: &Files, task: &mut Value) -> Result<()>
         );
     }
     files.restore_copy(&baseline, &workspace)?;
-    let parent: Value = store
-        .get("task", task["parentTaskId"].as_str().context("父任务无效")?)?
-        .context("父任务不存在")?;
     let dir = safe_path(&workspace, ".beaver-context/parent")?;
     fs::create_dir_all(&dir)?;
     let record = json!({"title":parent["title"],"prompt":parent["prompt"],"plan":parent["plan"],"clarifications":parent["clarifications"]});
     fs::write(dir.join("task.json"), serde_json::to_vec_pretty(&record)?)?;
+    let location = files.workspace_location(id)?;
     task["baseline"] = json!(baseline);
-    task["workspace"] = json!(workspace);
+    task["workspace"] = json!(location);
     task["workspacePrepared"] = json!(true);
     Ok(())
 }
 
 pub fn reconcile(store: &mut Store, files: &Files) -> Result<()> {
-    let tasks: Vec<Value> = store.list("task")?;
+    reconcile_matching(store, files, |_| true)
+}
+
+pub(crate) fn reconcile_matching(
+    store: &mut Store,
+    files: &Files,
+    owns: impl Fn(&Value) -> bool,
+) -> Result<()> {
+    let tasks: Vec<Value> = store
+        .list::<Value>("task")?
+        .into_iter()
+        .filter(owns)
+        .collect();
     for mut parent in tasks
         .iter()
-        .filter(|t| t["status"] == "waitingChildren" && t["planPaused"] != true)
+        .filter(|t| {
+            !crate::object_framework::marked(t)
+                && t["status"] == "waitingChildren"
+                && t["planPaused"] != true
+        })
         .cloned()
     {
-        expand(store, files.root(), &mut parent)?;
+        expand(store, files, &mut parent)?;
         let ids = parent["subtaskIds"]
             .as_array()
             .context("子任务标识无效")?
             .clone();
         if !ids.is_empty()
             && ids.iter().all(|id| {
-                tasks
-                    .iter()
-                    .any(|t| t["id"] == *id && t["status"] == "completed" && t["accepted"] == true)
+                tasks.iter().any(|t| {
+                    t["id"] == *id
+                        && t["status"] == "completed"
+                        && t["accepted"] == true
+                        && !crate::object_framework::marked(t)
+                })
             })
         {
             if parent["validationVersion"] == 1 {
@@ -234,6 +268,7 @@ pub fn reconcile(store: &mut Store, files: &Files) -> Result<()> {
 
 pub fn approval(store: &Store, id: &str, automatic: bool) -> Result<Value> {
     let mut task: Value = store.get("task", id)?.context("任务不存在")?;
+    crate::object_framework::require_legacy(&task)?;
     if task["accepted"] == true {
         bail!("已审批任务不能更改历史审批来源");
     }
@@ -243,6 +278,7 @@ pub fn approval(store: &Store, id: &str, automatic: bool) -> Result<Value> {
         if child["parentTaskId"] == id
             && child["workspacePrepared"].is_boolean()
             && child["accepted"] != true
+            && !crate::object_framework::marked(&child)
         {
             child["autoAccept"] = json!(automatic);
             store.put(

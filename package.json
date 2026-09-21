@@ -1,6 +1,7 @@
 {
   "name": "beaver-studio",
   "version": "0.1.19",
+  "beaverBuild": 36,
   "private": true,
   "description": "Local conversation-driven Godot game studio",
   "main": "dist/main.cjs",
@@ -9,7 +10,8 @@
     "check:effective-lines:strict": "cargo run --quiet --locked -p beaver-core --bin beaver-code-structure -- --root . --repo --strict --json output/effective-code-lines-strict.json",
     "test:effective-lines": "cargo test --locked -p beaver-core code_structure",
     "build:native:ui": "tsx scripts/build-native.ts",
-    "build:native": "npm run check:effective-lines && npm run build:native:ui && cargo build --release --locked -p beaver-desktop",
+    "preview:objects": "tsx scripts/preview-object-ui.ts",
+    "build:native": "npm run check:effective-lines && npm run build:native:ui && cargo build --release --locked -p beaver-desktop && tsx scripts/stamp-native-version.ts",
     "check:native": "cargo check --locked -p beaver-desktop",
     "package:native": "npm run build:native && tsx scripts/package-native.ts",
     "verify:native-release": "tsx scripts/verify-native-release.ts",
@@ -22,7 +24,7 @@
     "verify:native-brief": "tsx scripts/native-brief-smoke.ts",
     "verify:native-media": "npm run build:native:ui && cargo build --locked -p beaver-desktop && tsx scripts/native-media-smoke.ts",
     "build:icons": "tsx scripts/build-icons.ts",
-    "build": "npm run build:icons && node scripts/build.mjs",
+    "build": "npm run build:icons && tsx scripts/build.mjs",
     "start": "npm run build && electron .",
     "typecheck": "tsc --noEmit",
     "test": "tsx --test tests/*.test.ts",
@@ -34,7 +36,7 @@
     "check": "npm run check:effective-lines && npm run typecheck && npm test && npm run build",
     "format": "prettier --write src tests scripts package.json tsconfig.json",
     "format:check": "prettier --check src tests scripts package.json tsconfig.json",
-    "package": "npm run build && node scripts/package.mjs"
+    "package": "npm run build && tsx scripts/package.mjs"
   },
   "dependencies": {
     "react": "19.2.8",

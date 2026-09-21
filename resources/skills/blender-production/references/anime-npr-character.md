@@ -90,6 +90,9 @@ Distribute corner transitions and keep high-valence poles away from eyelid/lip
 creases and exposed silhouettes. Pairing arbitrary triangles into quads can leave
 the same bad flow. Imported triangulated references can suggest the original
 loops, but the original quad pairing cannot always be recovered uniquely.
+At mirrored chin or crown closures, avoid quads with three vertices on the center
+plane: their triangulation can create internal seam faces. Reconnect the corner
+patch and inspect its evaluated triangles instead of hiding the seam with normals.
 
 Game export and GPU rendering use triangles. Preserve the quad source, inspect
 the chosen triangulation on an evaluated/export copy, and reimport the actual
@@ -165,6 +168,8 @@ in the resting expression. Rebuild local perioral support with the lip contours;
 an inward mouth cavity alone does not establish the visible lip shape.
 
 Place ears using height, fore-aft position, tilt and root attachment together.
+Isolate the actual reference ear using connected surfaces and UV boundaries before
+measuring it; a spatial selection near the ear can include cheek or eyelid vertices.
 Trace the helix, concha and lobule from the reference and inspect the root in
 profile. Use a shaped shell and coherent attachment when the reference has them;
 matching only an oval's frontal size leaves its depth and placement unresolved.

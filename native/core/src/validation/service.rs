@@ -1,5 +1,5 @@
-use super::{model::Run, operations, repository, requests::Request};
-use crate::store::Store;
+use super::{operations, repository, requests::Request, settings::Settings};
+use crate::{files::Files, project_work_gate::ProjectWorkGate, store::Store};
 use anyhow::{anyhow, Result};
 use serde_json::{json, Value};
 use std::{
@@ -16,11 +16,31 @@ pub struct Tools {
     pub godot: PathBuf,
     pub ffmpeg: Option<PathBuf>,
 }
-pub type Resolver = Arc<dyn Fn(&Store, &Run) -> Result<Tools> + Send + Sync>;
+pub struct ToolContext {
+    pub project: Value,
+    pub settings: Settings,
+}
+pub type Resolver = Arc<dyn Fn(&ToolContext) -> Result<Tools> + Send + Sync>;
+
+#[derive(Clone)]
+pub struct Storage {
+    pub store: Arc<Mutex<Store>>,
+    pub files: Arc<Files>,
+    /// `Some` identifies a project-owned store; `None` is the legacy host store.
+    pub project_id: Option<String>,
+    /// Retained for active work and shadow suppression, but unavailable for new work.
+    pub draining: bool,
+    pub work_gate: ProjectWorkGate,
+}
+
+pub type StorageResolver = Arc<dyn Fn(&str) -> Result<Storage> + Send + Sync>;
+pub type StorageEnumerator = Arc<dyn Fn() -> Result<Vec<Storage>> + Send + Sync>;
 
 pub(crate) struct State {
     pub store: Arc<Mutex<Store>>,
-    pub data: PathBuf,
+    pub files: Arc<Files>,
+    pub storage: StorageResolver,
+    pub enumerate: StorageEnumerator,
     pub resolve: Resolver,
     pub changed: Arc<dyn Fn() + Send + Sync>,
     pub stop: AtomicBool,
@@ -36,14 +56,39 @@ pub struct Service {
 impl Service {
     pub fn start(
         store: Arc<Mutex<Store>>,
-        data: PathBuf,
+        files: Arc<Files>,
+        resolve: Resolver,
+        changed: Arc<dyn Fn() + Send + Sync>,
+    ) -> Result<Self> {
+        let fallback = Storage {
+            store: store.clone(),
+            files: files.clone(),
+            project_id: None,
+            draining: false,
+            work_gate: ProjectWorkGate::default(),
+        };
+        let storage = Arc::new({
+            let fallback = fallback.clone();
+            move |_project_id: &str| Ok(fallback.clone())
+        });
+        let enumerate = Arc::new(move || Ok(vec![fallback.clone()]));
+        Self::start_with_routing(store, files, storage, enumerate, resolve, changed)
+    }
+
+    pub fn start_with_routing(
+        store: Arc<Mutex<Store>>,
+        files: Arc<Files>,
+        storage: StorageResolver,
+        enumerate: StorageEnumerator,
         resolve: Resolver,
         changed: Arc<dyn Fn() + Send + Sync>,
     ) -> Result<Self> {
         let service = Self {
             state: Arc::new(State {
                 store,
-                data,
+                files,
+                storage,
+                enumerate,
                 resolve,
                 changed,
                 stop: AtomicBool::new(false),
@@ -66,8 +111,9 @@ impl Service {
     }
 
     pub fn cancel(&self, input: &Value) -> Result<Value> {
-        let mut store = self
-            .state
+        let project_id = operations::string(input, "projectId")?;
+        let storage = (self.state.storage)(project_id)?;
+        let mut store = storage
             .store
             .lock()
             .map_err(|_| anyhow!("Database lock unavailable"))?;

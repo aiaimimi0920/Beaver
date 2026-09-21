@@ -2,30 +2,31 @@ use crate::{
     asset_feedback::{self, Submission},
     asset_reference,
     asset_task::{self, Feedback, Frame},
+    files::Files,
     store::Store,
     task_relations,
 };
 use anyhow::{bail, Context, Result};
 use serde_json::{json, Value};
-use std::path::Path;
 
 /// Caller holds the task's store boundary, also used by final delivery.
 pub fn submit(
     store: &mut Store,
-    root: &Path,
+    files: &Files,
     input: Submission,
     live: Option<&Frame>,
     designs: &Value,
     blueprints: &Value,
 ) -> Result<Feedback> {
     input.validate()?;
+    let task: Value = store
+        .get("task", &input.id)?
+        .context("Task no longer exists")?;
+    crate::object_framework::require_legacy(&task)?;
     let mut state = asset_task::get(store, &input.id)?;
     if let Some(existing) = asset_feedback::duplicate(&state, &input)? {
         return Ok(existing);
     }
-    let task: Value = store
-        .get("task", &input.id)?
-        .context("Task no longer exists")?;
     let delivered = matches!(task["status"].as_str(), Some("completed" | "rolledBack"));
     // Task creation persists the seed atomically. Repair the source receipt after a crash.
     if delivered {
@@ -52,7 +53,7 @@ pub fn submit(
     if reference.project_id != state.project_id {
         bail!("Reference belongs to another project");
     }
-    asset_reference::read(&reference)?;
+    asset_reference::read(files, &reference)?;
     if !delivered {
         if state.session_id.as_deref() != Some(reference.frame.session_id.as_str()) {
             bail!("Preview session changed; capture a new reference");
@@ -75,7 +76,7 @@ pub fn submit(
     )?;
     let destination = task_relations::create_seeded(
         store,
-        root,
+        files,
         "task.followup",
         json!({"id":input.id,"text":input.text}),
         designs,

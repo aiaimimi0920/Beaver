@@ -1,9 +1,13 @@
-use crate::{asset_task_preview as preview, asset_task_windows, Backend};
+use crate::{
+    asset_task_preview as preview, asset_task_windows, business_routing::task_runtime_handles,
+    Backend,
+};
 use anyhow::{bail, Context, Result};
 use base64::Engine;
 use beaver_core::{
     asset_feedback::{self, Submission},
     asset_reference, asset_submission, asset_task, asset_withdrawal,
+    store::Store,
 };
 use serde_json::{json, Value};
 use std::sync::Arc;
@@ -12,7 +16,12 @@ use tauri::Emitter;
 pub(crate) fn transient(method: &str) -> bool {
     matches!(
         method,
-        "assetTask.status" | "assetTask.view" | "assetTask.state" | "assetTask.image"
+        "assetTask.status"
+            | "assetTask.view"
+            | "assetTask.state"
+            | "assetTask.image"
+            | "assetTask.deliveryState"
+            | "assetTask.deliveryFile"
     )
 }
 
@@ -24,6 +33,9 @@ pub(crate) async fn call(
 ) -> Result<Value> {
     let id = input["id"].as_str().context("缺少任务标识")?;
     asset_task::validate_id(id)?;
+    if method.starts_with("assetTask.delivery") {
+        return crate::asset_delivery_runtime::call(app, backend, method, input).await;
+    }
     match method {
         "assetTask.open" => {
             return asset_task_windows::open(&app, &backend, id)
@@ -57,7 +69,14 @@ pub(crate) async fn call(
     let result = match method {
         "assetTask.submit" => submit(backend.clone(), serde_json::from_value(input)?).await?,
         "assetTask.cancel" => {
-            let store = backend
+            let handles = task_runtime_handles(
+                &backend.project_storage,
+                backend.store.clone(),
+                &backend.root,
+                id,
+            )
+            .map_err(anyhow::Error::msg)?;
+            let store = handles
                 .store
                 .lock()
                 .map_err(|_| anyhow::anyhow!("数据库锁不可用"))?;
@@ -76,7 +95,14 @@ pub(crate) async fn call(
 }
 
 fn state(backend: &Backend, id: &str) -> Result<Value> {
-    let store = backend
+    let handles = task_runtime_handles(
+        &backend.project_storage,
+        backend.store.clone(),
+        &backend.root,
+        id,
+    )
+    .map_err(anyhow::Error::msg)?;
+    let store = handles
         .store
         .lock()
         .map_err(|_| anyhow::anyhow!("数据库锁不可用"))?;
@@ -97,17 +123,52 @@ fn state(backend: &Backend, id: &str) -> Result<Value> {
     Ok(json!({"task":task,"tasks":tasks,"project":project,"asset":asset}))
 }
 
+fn feedback_task_to_index(store: &Store, task_id: &str) -> Result<Option<Value>> {
+    let task_id = task_id.trim();
+    if task_id.is_empty() {
+        return Ok(None);
+    }
+    store
+        .get::<Value>("task", task_id)?
+        .with_context(|| format!("反馈任务不存在：{task_id}"))
+        .map(Some)
+}
+
 async fn submit(backend: Arc<Backend>, input: Submission) -> Result<Value> {
     input.validate()?;
-    let (reference, delivered) = {
-        let store = backend
+    let handles = task_runtime_handles(
+        &backend.project_storage,
+        backend.store.clone(),
+        &backend.root,
+        &input.id,
+    )
+    .map_err(anyhow::Error::msg)?;
+    let duplicate = {
+        let store = handles
             .store
             .lock()
             .map_err(|_| anyhow::anyhow!("数据库锁不可用"))?;
         let state = asset_task::get(&store, &input.id)?;
         if let Some(feedback) = asset_feedback::duplicate(&state, &input)? {
-            return Ok(json!(feedback));
+            Some((
+                feedback.clone(),
+                feedback_task_to_index(&store, &feedback.task_id)?,
+            ))
+        } else {
+            None
         }
+    };
+    if let Some((feedback, task_to_index)) = duplicate {
+        if let Some(task) = task_to_index {
+            backend.project_storage.index_task(&task)?;
+        }
+        return Ok(json!(feedback));
+    }
+    let (reference, delivered) = {
+        let store = handles
+            .store
+            .lock()
+            .map_err(|_| anyhow::anyhow!("数据库锁不可用"))?;
         let task: Value = store.get("task", &input.id)?.context("任务不存在")?;
         let delivered = matches!(task["status"].as_str(), Some("completed" | "rolledBack"));
         (
@@ -121,20 +182,58 @@ async fn submit(backend: Arc<Backend>, input: Submission) -> Result<Value> {
         None
     };
     // Store serialization also protects final merge and dependent-task release.
-    tauri::async_runtime::spawn_blocking(move || {
-        let mut store = backend
-            .store
-            .lock()
-            .map_err(|_| anyhow::anyhow!("数据库锁不可用"))?;
-        let feedback = asset_submission::submit(
-            &mut store,
-            &backend.root,
-            input,
-            live.as_ref(),
-            &serde_json::from_str(include_str!("../../../dist-native/design-catalog.json"))?,
-            &serde_json::from_str(include_str!("../../../dist-native/blueprint-catalog.json"))?,
+    let store = handles.store;
+    let files = handles.files;
+    let (result, task_to_index) =
+        tauri::async_runtime::spawn_blocking(move || -> Result<(Value, Option<Value>)> {
+            let mut store = store
+                .lock()
+                .map_err(|_| anyhow::anyhow!("数据库锁不可用"))?;
+            let feedback = asset_submission::submit(
+                &mut store,
+                files.as_ref(),
+                input,
+                live.as_ref(),
+                &serde_json::from_str(include_str!("../../../dist-native/design-catalog.json"))?,
+                &serde_json::from_str(include_str!("../../../dist-native/blueprint-catalog.json"))?,
+            )?;
+            let task_to_index = feedback_task_to_index(&store, &feedback.task_id)?;
+            Ok((json!(feedback), task_to_index))
+        })
+        .await??;
+    if let Some(task) = task_to_index {
+        backend.project_storage.index_task(&task)?;
+    }
+    Ok(result)
+}
+
+#[cfg(test)]
+mod tests {
+    use super::feedback_task_to_index;
+    use beaver_core::store::Store;
+    use serde_json::json;
+
+    #[test]
+    fn feedback_task_to_index_reads_existing_task() -> anyhow::Result<()> {
+        let temp = tempfile::tempdir()?;
+        let store = Store::open(&temp.path().join("store"))?;
+        store.put(
+            "task",
+            "task-a",
+            &json!({"id":"task-a","projectId":"project-a","status":"queued"}),
         )?;
-        Ok(json!(feedback))
-    })
-    .await?
+
+        let task = feedback_task_to_index(&store, "task-a")?.expect("task should be indexed");
+        assert_eq!(task["projectId"], "project-a");
+        Ok(())
+    }
+
+    #[test]
+    fn feedback_task_to_index_ignores_empty_task_id() -> anyhow::Result<()> {
+        let temp = tempfile::tempdir()?;
+        let store = Store::open(&temp.path().join("store"))?;
+
+        assert!(feedback_task_to_index(&store, "   ")?.is_none());
+        Ok(())
+    }
 }

@@ -50,14 +50,14 @@ fn length(text: &str, min: usize, max: usize) -> bool {
 /// Caller owns the project snapshot lock. This persists a queue item, not execution.
 pub fn create(
     store: &mut Store,
-    root: &Path,
+    files: &Files,
     input: Value,
     design_catalog: &Value,
     blueprint_catalog: &Value,
 ) -> Result<Value> {
     create_with_context(
         store,
-        root,
+        files,
         input,
         design_catalog,
         blueprint_catalog,
@@ -67,7 +67,7 @@ pub fn create(
 
 pub(crate) fn create_with_context(
     store: &mut Store,
-    root: &Path,
+    files: &Files,
     input: Value,
     design_catalog: &Value,
     blueprint_catalog: &Value,
@@ -75,7 +75,7 @@ pub(crate) fn create_with_context(
 ) -> Result<Value> {
     create_recorded(
         store,
-        root,
+        files,
         input,
         design_catalog,
         blueprint_catalog,
@@ -89,12 +89,13 @@ pub(crate) fn create_with_context(
 /// Context and related receipts commit with the queue item, so a retry cannot duplicate work.
 pub(crate) fn create_recorded(
     store: &mut Store,
-    root: &Path,
+    files: &Files,
     input: Value,
     design_catalog: &Value,
     blueprint_catalog: &Value,
     prepare: impl FnOnce(&Files, &Path, &mut Value) -> Result<Vec<(&'static str, String, Value)>>,
 ) -> Result<Value> {
+    crate::object_framework::require_legacy(&input)?;
     let input: Input = serde_json::from_value(input).context("任务输入格式无效")?;
     if input
         .ask_ratio
@@ -149,8 +150,7 @@ pub(crate) fn create_recorded(
         .get("project", &input.project_id)?
         .context("项目不存在")?;
     let project_path = Path::new(project["path"].as_str().context("项目路径无效")?);
-    let files = Files::new(root.into());
-    if Journal::new(store, &files).blocked(&input.project_id)? {
+    if Journal::new(store, files).blocked(&input.project_id)? {
         bail!("项目存在未完成的文件恢复，禁止创建任务");
     }
     let context = if project["blueprint"].is_object() {
@@ -165,9 +165,7 @@ pub(crate) fn create_recorded(
     }
     let baseline = files.capture(project_path)?;
     let id = uuid::Uuid::new_v4().to_string();
-    let workspaces = safe_path(root, "workspaces")?;
-    fs::create_dir_all(&workspaces)?;
-    let workspace = safe_path(&workspaces, &id)?;
+    let workspace = files.workspace(&id)?;
     files.restore_copy(&baseline, &workspace)?;
     let metadata = safe_path(&workspace, "beaver.project.json")?;
     let design = match fs::File::open(metadata) {
@@ -199,7 +197,7 @@ pub(crate) fn create_recorded(
             })
             .collect()
     });
-    let mut task = json!({"id":id,"projectId":input.project_id,"title":title,"prompt":input.prompt,"stopConditions":input.stop_conditions,"references":input.references,"maxMinutes":input.max_minutes,"capability":capability,"status":"queued","createdAt":now,"updatedAt":now,"workspace":workspace,"baseline":baseline,"changes":[],"conflicts":[]});
+    let mut task = json!({"id":id,"projectId":input.project_id,"title":title,"prompt":input.prompt,"stopConditions":input.stop_conditions,"references":input.references,"maxMinutes":input.max_minutes,"capability":capability,"status":"queued","createdAt":now,"updatedAt":now,"workspace":files.workspace_location(&id)?,"baseline":baseline,"changes":[],"conflicts":[]});
     if let Some(ref direction) = input.direction {
         task["direction"] = json!(direction);
     }
@@ -232,7 +230,7 @@ pub(crate) fn create_recorded(
             crate::task_brief::format(&task, blueprint_catalog),
         )?;
     }
-    let mut records = prepare(&files, &workspace, &mut task)?;
+    let mut records = prepare(files, &workspace, &mut task)?;
     if task["assetTask"] == true {
         records.push((
             "asset-task",
@@ -282,6 +280,7 @@ mod tests {
         let temp = tempfile::tempdir()?;
         let root = temp.path().join("data");
         let mut store = Store::open(&root)?;
+        let files = Files::new(root.clone());
         let project = temp.path().join("project");
         fs::create_dir(&project)?;
         fs::write(project.join("project.godot"), "[application]\n")?;
@@ -292,7 +291,7 @@ mod tests {
         store.put("project","p",&json!({"id":"p","name":"原游戏","path":project,"blueprint":catalog["default"],"blueprintRevision":3,"design":{"outdated":true}}))?;
         let task = create(
             &mut store,
-            &root,
+            &files,
             json!({"projectId":"p","prompt":"制作游戏","direction":"story"}),
             &designs,
             &catalog,
@@ -321,7 +320,7 @@ mod tests {
         assert_eq!(store.events(task["id"].as_str().unwrap())?.len(), 1);
         assert!(create(
             &mut store,
-            &root,
+            &files,
             json!({"projectId":"p","prompt":"x","references":[{"path":"../escape","note":""}]}),
             &designs,
             &catalog

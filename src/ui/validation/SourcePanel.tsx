@@ -26,8 +26,8 @@ export function SourcePanel({
   );
   const sources = { author: "流程作者", runtime: "运行时报告", ai: "AI 推断" };
   return (
-    <details className="validation-source" open={!!path}>
-      <summary>相关代码、场景与资源</summary>
+    <section className="validation-source">
+      <h3>相关代码、场景与资源</h3>
       {references.length ? (
         <ul>
           {references.map((ref, i) => (
@@ -76,6 +76,6 @@ export function SourcePanel({
           </div>
         </>
       )}
-    </details>
+    </section>
   );
 }

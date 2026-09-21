@@ -2,11 +2,13 @@ use anyhow::{Context, Result};
 use rusqlite::{params, Connection, OptionalExtension, TransactionBehavior};
 use serde::{de::DeserializeOwned, Deserialize, Serialize};
 use serde_json::Value;
-use std::{fs, path::Path, time::Duration};
+use std::{fs, path::Path, sync::Arc, time::Duration};
 
 /// The schema remains readable by the existing TypeScript Store during migration.
 pub struct Store {
     pub(crate) connection: Connection,
+    // Close SQLite before releasing project ownership, including detached worker handles.
+    _project_lock: Option<Arc<fs::File>>,
 }
 
 #[derive(Debug, Serialize, Deserialize, PartialEq)]
@@ -21,22 +23,19 @@ impl Store {
         fs::create_dir_all(root).context("create Beaver data directory")?;
         let connection = Connection::open(root.join("beaver.sqlite"))?;
         connection.busy_timeout(Duration::from_secs(5))?;
-        connection.execute_batch(
-            "PRAGMA journal_mode=WAL;
-             CREATE TABLE IF NOT EXISTS entities (
-               kind TEXT NOT NULL, id TEXT NOT NULL, value TEXT NOT NULL,
-               PRIMARY KEY(kind,id));
-             CREATE TABLE IF NOT EXISTS events (
-               seq INTEGER PRIMARY KEY, task TEXT NOT NULL, time TEXT NOT NULL,
-               kind TEXT NOT NULL, text TEXT NOT NULL);
-             CREATE INDEX IF NOT EXISTS task_events ON events(task,seq);
-             CREATE TABLE IF NOT EXISTS calls (
-               seq INTEGER PRIMARY KEY AUTOINCREMENT, id TEXT NOT NULL UNIQUE,
-               task TEXT, project TEXT, method TEXT NOT NULL, value TEXT NOT NULL);
-             CREATE INDEX IF NOT EXISTS calls_task ON calls(task,seq);
-             CREATE INDEX IF NOT EXISTS calls_project ON calls(project,seq);",
-        )?;
-        Ok(Self { connection })
+        connection.execute_batch("PRAGMA journal_mode=WAL;")?;
+        crate::store_schema::initialize(&connection)?;
+        Ok(Self {
+            connection,
+            _project_lock: None,
+        })
+    }
+
+    pub(crate) fn project(connection: Connection, lock: Arc<fs::File>) -> Self {
+        Self {
+            connection,
+            _project_lock: Some(lock),
+        }
     }
 
     pub fn get<T: DeserializeOwned>(&self, kind: &str, id: &str) -> Result<Option<T>> {
@@ -53,11 +52,26 @@ impl Store {
     }
 
     pub fn list<T: DeserializeOwned>(&self, kind: &str) -> Result<Vec<T>> {
+        Ok(self
+            .list_with_ids::<T>(kind)?
+            .into_iter()
+            .map(|(_, value)| value)
+            .collect())
+    }
+
+    /// List entities together with their database keys for identity validation.
+    pub fn list_with_ids<T: DeserializeOwned>(&self, kind: &str) -> Result<Vec<(String, T)>> {
         let mut statement = self
             .connection
-            .prepare("SELECT value FROM entities WHERE kind=? ORDER BY rowid DESC")?;
-        let rows = statement.query_map([kind], |row| row.get::<_, String>(0))?;
-        rows.map(|row| Ok(serde_json::from_str(&row?)?)).collect()
+            .prepare("SELECT id,value FROM entities WHERE kind=? ORDER BY rowid DESC")?;
+        let rows = statement.query_map([kind], |row| {
+            Ok((row.get::<_, String>(0)?, row.get::<_, String>(1)?))
+        })?;
+        rows.map(|row| {
+            let (id, json) = row?;
+            Ok((id, serde_json::from_str(&json)?))
+        })
+        .collect()
     }
 
     pub fn put<T: Serialize>(&self, kind: &str, id: &str, value: &T) -> Result<()> {
@@ -122,6 +136,8 @@ impl Store {
     /// Call only after filesystem-journal recovery and exclusive application ownership.
     pub fn recover_tasks(&mut self) -> Result<usize> {
         crate::call_log::recover(self)?;
+        crate::framework_evidence::recover(self)?;
+        crate::framework_operations::recover(self)?;
         crate::asset_task::recover_all(self)?;
         self.transaction(|connection| {
             let mut statement =

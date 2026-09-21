@@ -1,0 +1,87 @@
+.op-object-form-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 140px;
+  gap: 12px;
+}
+.op-object-import-dialog .op-field,
+.op-object-generate-dialog .op-field {
+  margin-top: 14px;
+}
+.op-object-import-dialog textarea,
+.op-object-generate-dialog textarea {
+  min-height: 64px;
+}
+.op-resource-picker {
+  display: flex;
+  gap: 8px;
+  margin-top: 8px;
+}
+.op-resource-picker button {
+  font-size: 11px;
+}
+.op-import-folders {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 14px 0 10px;
+  padding: 0;
+  border: 0;
+}
+.op-import-folders legend {
+  margin-bottom: 8px;
+  font-size: 11px;
+  color: var(--muted);
+}
+.op-import-folders > label {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 8px;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  background: var(--surface);
+  font-size: 11px;
+  cursor: pointer;
+}
+.op-import-folders > label:has(input:checked) {
+  border-color: #7f6c9d;
+  background: #b89bfa0a;
+}
+.op-import-folders input[type="radio"] {
+  width: 13px;
+  height: 13px;
+  min-height: 0;
+  margin: 0;
+  accent-color: #b89bfa;
+}
+.op-import-folders .icon {
+  width: 14px;
+  height: 14px;
+  color: #c5b0e4;
+}
+.op-import-contents {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 12px;
+  max-height: 66px;
+  overflow: auto;
+  color: var(--muted);
+}
+.op-import-contents > span {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 10px;
+  overflow-wrap: anywhere;
+}
+.op-import-contents .icon {
+  flex: none;
+  width: 12px;
+  height: 12px;
+}
+@media (max-width: 500px) {
+  .op-object-form-row {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0;
+  }
+}

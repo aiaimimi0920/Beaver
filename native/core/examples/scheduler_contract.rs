@@ -49,6 +49,7 @@ async fn main() -> Result<()> {
     let recorded = launched.clone();
     let notifications = Arc::new(AtomicUsize::new(0));
     let observed = notifications.clone();
+    let host = store.clone();
     let scheduler = Scheduler::start(
         store.clone(),
         files,
@@ -76,6 +77,10 @@ async fn main() -> Result<()> {
         }),
         Arc::new(move || {
             observed.fetch_add(1, Ordering::SeqCst);
+        }),
+        Arc::new(move || {
+            beaver_core::execution_settings::parallel_limit(&host.lock().unwrap())
+                .map_err(|error| error.to_string())
         }),
     );
     let test = async {

@@ -160,11 +160,11 @@ else {
         (_wc, _permission, callback) => callback(false),
       );
       window = new BrowserWindow({
-        width: 1120,
-        height: 760,
+        width: 1680,
+        height: 1050,
         useContentSize: true,
-        minWidth: 960,
-        minHeight: 680,
+        minWidth: 1680,
+        minHeight: 1050,
         frame: false,
         title: "Beaver",
         icon: windowIcon,
@@ -178,7 +178,7 @@ else {
         },
       });
       // Windows may round the initial frameless client size at fractional DPI.
-      window.setContentSize(1120, 760);
+      window.setContentSize(1680, 1050);
       ipcMain.handle("beaver:window", (event, input: unknown) => {
         if (quitting) throw new Error("应用正在退出");
         if (

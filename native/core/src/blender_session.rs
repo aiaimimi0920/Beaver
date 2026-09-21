@@ -1,4 +1,9 @@
-use crate::{call_log, files::safe_path, process::OwnedChild, store::Store};
+use crate::{
+    call_log,
+    files::{safe_path, Files},
+    process::OwnedChild,
+    store::Store,
+};
 use anyhow::{bail, Context, Result};
 use serde_json::{json, Value};
 use std::{
@@ -68,7 +73,7 @@ impl Request {
             executable: executable.to_owned(),
             workspace: workspace.to_owned(),
             directory,
-            checkpoints: home.join("asset-checkpoints"),
+            checkpoints: safe_path(home, "asset-checkpoints")?,
             reservation,
             port,
         })
@@ -192,6 +197,7 @@ impl Request {
     pub fn start_logged(
         self,
         store: Arc<Mutex<Store>>,
+        files: Arc<Files>,
         task: &Value,
         cancelled: &AtomicBool,
     ) -> Result<Session> {
@@ -206,12 +212,16 @@ impl Request {
             uuid::Uuid::new_v4().simple()
         );
         let checkpoints = self.checkpoints.clone();
+        files.check_checkpoint_directory(&task_id, &checkpoints)?;
         let observer = json!({"taskId":task_id,"projectId":project,"sessionId":session_id,"token":token,"checkpoints":checkpoints});
         let restore = {
             let db = store
                 .lock()
                 .map_err(|_| anyhow::anyhow!("Database lock unavailable"))?;
-            crate::asset_task::enable(&db, task)?.checkpoint
+            crate::asset_task::enable(&db, task)?
+                .checkpoint
+                .map(|path| files.resolve_checkpoint(&path))
+                .transpose()?
         };
         let log = self.directory.join("blender.log");
         let id = {
@@ -227,7 +237,8 @@ impl Request {
                 &json!({"port":port}),
             )?
         };
-        let result = self.start(cancelled, &observer, restore.as_deref());
+        let restore_path = restore.as_ref().map(|path| path.to_string_lossy());
+        let result = self.start(cancelled, &observer, restore_path.as_deref());
         let output = match &result {
             Ok((child, _)) => {
                 json!({"pid":child.0.id(),"port":port,"log":log,"sessionId":session_id,"restore":restore})
@@ -277,6 +288,7 @@ impl Request {
             pub_port: port,
             client,
             store,
+            files,
             task: task_id,
             project,
         })
@@ -309,6 +321,7 @@ fn ping(port: u16) -> Result<()> {
 pub struct Session {
     child: Option<OwnedChild>,
     store: Arc<Mutex<Store>>,
+    pub(crate) files: Arc<Files>,
     task: String,
     project: Option<String>,
     pub pub_port: u16,
@@ -316,6 +329,10 @@ pub struct Session {
 }
 
 impl Session {
+    pub(crate) fn store(&self) -> Arc<Mutex<Store>> {
+        self.store.clone()
+    }
+
     pub fn alive(&mut self) -> bool {
         self.child.as_mut().is_some_and(|child| {
             child

@@ -25,7 +25,7 @@ fn watch(store: &Store, project: &str) -> Result<String> {
     repository::digest(&json!([manifest, repository::flows(store, project)?]))
 }
 
-pub fn refresh(store: &mut Store, data: &Path, coverage: &mut Value) -> Result<()> {
+pub fn refresh(store: &mut Store, files: &Files, coverage: &mut Value) -> Result<()> {
     let id = coverage["taskId"]
         .as_str()
         .context("Missing coverage task")?
@@ -70,9 +70,8 @@ pub fn refresh(store: &mut Store, data: &Path, coverage: &mut Value) -> Result<(
     if coverage["status"] != "pending" && coverage["watchSignature"] == signature {
         return Ok(());
     }
-    let files = Files::new(data.into());
-    let snapshot = repository::snapshot(store, &files, &project)?;
-    repository::import_manifest(store, &files, &project, &snapshot)?;
+    let snapshot = repository::snapshot(store, files, &project)?;
+    repository::import_manifest(store, files, &project, &snapshot)?;
     coverage["watchSignature"] = json!(watch(store, &project)?);
     let linked: Vec<_> = repository::flows(store, &project)?
         .into_iter()

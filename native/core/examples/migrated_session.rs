@@ -1,6 +1,7 @@
 //! Isolated real-Codex migration probe. Never accepts unmarked user data.
 use anyhow::{ensure, Context, Result};
 use beaver_core::{
+    execution_settings::ExecutionSettings,
     executor::{Execution, Outcome},
     files::Files,
     launch, preferences,
@@ -84,11 +85,21 @@ async fn main() -> Result<()> {
             .unwrap_or_else(|_| "not installed".into());
         tools.insert(name.into(), path);
     }
-    let launch = launch::prepare(
-        &root,
+    let execution_settings = ExecutionSettings::read(
         &store.lock().unwrap(),
         &preferences::SystemVault,
-        &settings,
+        settings,
+        Some(
+            task["capability"]
+                .as_str()
+                .context("task capability missing")?,
+        ),
+    )?;
+    let files = Arc::new(Files::new(root.clone()));
+    let launch = launch::prepare(
+        &files,
+        &store.lock().unwrap(),
+        &execution_settings,
         &task,
         &resources,
         &tools,
@@ -96,6 +107,7 @@ async fn main() -> Result<()> {
     )?;
     let execution = Execution {
         store: store.clone(),
+        files: files.clone(),
         task_id: id.clone(),
         model: launch.model,
         prompt: "BEAVER_RELOCATED_TURN. Continue the previous session in this working directory."
@@ -114,7 +126,7 @@ async fn main() -> Result<()> {
     );
     let task = task_finish::finish(
         &mut store.lock().unwrap(),
-        &Files::new(root.clone()),
+        &files,
         &id,
         outcome,
         &AtomicBool::new(false),

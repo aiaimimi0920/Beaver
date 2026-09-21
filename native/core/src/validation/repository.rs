@@ -3,7 +3,7 @@ use super::{
     model::{Baseline, Flow, Run},
 };
 use crate::{
-    files::{safe_path, Files, Snapshot},
+    files::{Files, Snapshot},
     store::Store,
 };
 use anyhow::{bail, Context, Result};
@@ -33,10 +33,8 @@ pub fn snapshot(store: &Store, files: &Files, project_id: &str) -> Result<Snapsh
         project["path"].as_str().context("Project path missing")?,
     ))
 }
-pub fn run_dir(data: &Path, id: &str) -> Result<PathBuf> {
-    uuid::Uuid::parse_str(id).context("Invalid run ID")?;
-    std::fs::create_dir_all(data.join("validation"))?;
-    safe_path(&data.join("validation"), id)
+pub fn run_dir(files: &Files, id: &str) -> Result<PathBuf> {
+    files.validation_evidence(id)
 }
 pub fn prepare_flow(
     store: &Store,

@@ -52,6 +52,10 @@ pub fn duplicate(state: &State, input: &Submission) -> Result<Option<Feedback>> 
 }
 
 pub fn build(state: &mut State, input: Submission, mut reference: Reference) -> Result<Feedback> {
+    anyhow::ensure!(
+        state.delivery.is_none(),
+        "Use delivery rejection or stage rework for a reviewed delivery workflow"
+    );
     input.validate()?;
     if state.feedback.len() >= asset_task::MAX_FEEDBACK {
         bail!("Task feedback limit reached; finish this task before adding more");

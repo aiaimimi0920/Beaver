@@ -126,17 +126,23 @@ fn custom_template(config: &str, preset: &str) -> Result<Option<String>> {
 }
 
 /// Caller holds the project write lock only while freezing this export snapshot.
-pub fn prepare(data: &Path, project: &Value, destination: &Path, preset: &str) -> Result<Prepared> {
+pub fn prepare(
+    files: &Files,
+    scratch: &Path,
+    project: &Value,
+    destination: &Path,
+    preset: &str,
+) -> Result<Prepared> {
     let root = Path::new(project["path"].as_str().context("项目路径无效")?);
-    let snapshot = Files::new(data.into()).capture(root)?;
-    prepare_snapshot(data, project, destination, preset, &snapshot)
+    let snapshot = files.capture(root)?;
+    prepare_snapshot(files, scratch, project, destination, preset, &snapshot)
 }
 
-pub fn snapshot_preset(data: &Path, snapshot: &Snapshot, preset: &str) -> Result<()> {
+pub fn snapshot_preset(files: &Files, snapshot: &Snapshot, preset: &str) -> Result<()> {
     let hash = snapshot
         .get("export_presets.cfg")
         .context("发布候选缺少导出预设")?;
-    let blob = Files::new(data.into()).blob(hash)?;
+    let blob = files.blob(hash)?;
     anyhow::ensure!(
         crate::files::file_hash(&blob)?.as_ref() == Some(hash),
         "导出预设快照损坏"
@@ -157,7 +163,8 @@ pub fn snapshot_preset(data: &Path, snapshot: &Snapshot, preset: &str) -> Result
 
 /// Formal export supplies the already-validated candidate, never the live project.
 pub fn prepare_snapshot(
-    data: &Path,
+    files: &Files,
+    scratch: &Path,
     project: &Value,
     destination: &Path,
     preset: &str,
@@ -171,10 +178,10 @@ pub fn prepare_snapshot(
     if parent.starts_with(&root) {
         bail!("导出目录必须位于项目外，避免把构建产物重新导入资源");
     }
-    let files = Files::new(data.into());
+    // After restoration, the job owns its copy and no longer needs the content store.
     let workspace = tempfile::Builder::new()
         .prefix("export-workspace-")
-        .tempdir_in(data)?;
+        .tempdir_in(scratch)?;
     files.restore_copy(snapshot, workspace.path())?;
     let export_config = config(workspace.path())?;
     let target = targets(&export_config)
@@ -363,6 +370,10 @@ fn require_import_support(code: i32, help: &str) -> Result<()> {
     }
     Ok(())
 }
+
+#[cfg(test)]
+#[path = "game_export_project_tests.rs"]
+mod project_tests;
 
 #[cfg(test)]
 mod tests {

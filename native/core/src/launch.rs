@@ -1,6 +1,7 @@
 use crate::{
     codex_home::{self, HomeRequest},
-    preferences::{self, Vault},
+    execution_settings::ExecutionSettings,
+    files::Files,
     scheduler::Launch,
     store::Store,
     task_brief,
@@ -22,10 +23,9 @@ pub struct Resources {
 
 /// Called on the scheduler's blocking preparation worker, before any process starts.
 pub fn prepare(
-    root: &Path,
+    files: &Files,
     store: &Store,
-    vault: &impl Vault,
-    settings: &Value,
+    settings: &ExecutionSettings,
     task: &Value,
     resources: &Resources,
     tools: &BTreeMap<String, String>,
@@ -52,25 +52,25 @@ pub fn prepare(
     }
     let codex = std::fs::canonicalize(codex)?;
     let capability = task["capability"].as_str().context("任务能力无效")?;
-    let provider = preferences::resolve(store, vault, settings, capability)?;
-    let workspace = Path::new(task["workspace"].as_str().context("任务工作副本无效")?);
+    settings.require_capability(capability)?;
+    let provider = settings.provider()?;
+    let task_id = task["id"].as_str().context("任务标识无效")?;
+    let recorded_workspace = Path::new(task["workspace"].as_str().context("任务工作副本无效")?);
+    let workspace = files.resolve_workspace(task_id, recorded_workspace)?;
     let baseline = serde_json::from_value(task["baseline"].clone()).context("任务基线无效")?;
-    crate::validation::task_completion::freeze_repair(store, root, workspace, task)?;
+    crate::validation::task_completion::freeze_repair(store, files, &workspace, task)?;
     let environment = codex_home::prepare(
-        root,
-        store,
-        vault,
+        files,
         settings,
         HomeRequest {
-            task_id: task["id"].as_str().context("任务标识无效")?,
+            task_id,
             asset_task: task["assetTask"] == true,
             retained_blender_port: task["retainedBlenderPort"]
                 .as_u64()
                 .and_then(|port| u16::try_from(port).ok())
                 .filter(|port| *port != 0),
-            workspace,
+            workspace: recorded_workspace,
             baseline: &baseline,
-            capability,
             skills: &resources.skills,
             media_executable: &resources.media,
             media_args: &[crate::media_server::MODE_ARGUMENT.into()],
@@ -78,14 +78,6 @@ pub fn prepare(
         },
         inherited,
     )?;
-    let mut secrets = Vec::new();
-    for capability in ["code", "review", "image", "speech", "music", "translation"] {
-        if let Ok(provider) = preferences::resolve(store, vault, settings, capability) {
-            if !provider.key.is_empty() && !secrets.contains(&provider.key) {
-                secrets.push(provider.key);
-            }
-        }
-    }
     let mut command = tokio::process::Command::new(codex);
     command
         .arg("app-server")
@@ -99,10 +91,10 @@ pub fn prepare(
     }
     Ok(Launch {
         command: Some(command),
-        model: provider.model,
+        model: provider.model.clone(),
         prompt: task_brief::prompt(task, &resources.catalog),
         ask_user_tool: resources.ask_user_tool.clone(),
-        secrets,
+        secrets: settings.secrets(),
         max_minutes: task["maxMinutes"].as_u64().unwrap_or(0),
         blender: environment.blender,
         godot: tools

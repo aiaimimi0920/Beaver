@@ -4,19 +4,14 @@ use anyhow::{Context, Result};
 use serde_json::{json, Value};
 use std::path::Path;
 
-pub fn freeze_repair(store: &Store, data: &Path, workspace: &Path, task: &Value) -> Result<()> {
+pub fn freeze_repair(store: &Store, files: &Files, workspace: &Path, task: &Value) -> Result<()> {
     if let Some(id) = task["validationRepair"]["runId"].as_str() {
         let run: Run = repository::get(store, "validationRun", id)?;
         anyhow::ensure!(
             task["projectId"] == run.project_id,
             "Repair belongs to another project"
         );
-        super::feedback_context::freeze_repair(
-            &Files::new(data.into()),
-            workspace,
-            &run,
-            &task["validationRepair"],
-        )?;
+        super::feedback_context::freeze_repair(files, workspace, &run, &task["validationRepair"])?;
     }
     Ok(())
 }
@@ -37,7 +32,7 @@ fn child(
         "id":child_id,"projectId":task["projectId"],"parentTaskId":id,"relation":"child",
         "title":title,"prompt":prompt,"origin":origin,
         "capability":"code","direction":"engineering","decompose":false,"validationVersion":1,
-        "autoAccept":task["autoAccept"],"workspace":files.root().join("workspaces").join(&child_id),
+        "autoAccept":task["autoAccept"],"workspace":files.workspace_location(&child_id)?,
         "workspacePrepared":false,"baseline":{},"changes":[],"conflicts":[],"dependsOn":[],
         "status":"queued","createdAt":now,"updatedAt":now
     });

@@ -3,6 +3,7 @@ use beaver_core::{
     asset_feedback::{self, Submission},
     asset_reference, asset_submission,
     asset_task::{self, Frame, Reference, Stage, State},
+    files::Files,
     store::Store,
     task_create,
 };
@@ -12,6 +13,7 @@ use std::{fs, path::PathBuf};
 
 pub struct Fixture {
     pub store: Store,
+    pub files: Files,
     pub root: PathBuf,
     pub project: PathBuf,
     pub task: Value,
@@ -27,6 +29,7 @@ impl Fixture {
         fs::create_dir(&project)?;
         fs::write(project.join("original.txt"), "original project")?;
         let mut store = Store::open(&root)?;
+        let files = Files::new(root.clone());
         store.put(
             "project",
             "project",
@@ -34,7 +37,7 @@ impl Fixture {
         )?;
         let mut task = task_create::create(
             &mut store,
-            &root,
+            &files,
             json!({"projectId":"project","prompt":"Create a character","assetTask":true}),
             &Value::Null,
             &Value::Null,
@@ -49,6 +52,7 @@ impl Fixture {
         asset_task::save(&store, &state)?;
         Ok(Self {
             store,
+            files,
             root,
             project,
             task,
@@ -62,7 +66,7 @@ impl Fixture {
     }
 
     pub fn reference(&self) -> Result<Reference> {
-        asset_reference::capture(&self.store, &self.root, &self.id, frame(), &png()?)
+        asset_reference::capture(&self.store, &self.files, &self.id, frame(), &png()?)
     }
 
     pub fn input(&self, feedback_id: &str, timing: &str) -> Result<Submission> {
@@ -79,7 +83,7 @@ impl Fixture {
     pub fn submit(&mut self, input: Submission) -> Result<asset_task::Feedback> {
         asset_submission::submit(
             &mut self.store,
-            &self.root,
+            &self.files,
             input,
             Some(&frame()),
             &Value::Null,

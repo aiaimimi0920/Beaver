@@ -1,0 +1,106 @@
+.op-creation-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 296px;
+  flex: 1;
+  min-width: 0;
+  min-height: 0;
+}
+.op-stage-rail {
+  display: flex;
+  flex-direction: column;
+  padding: 19px 14px;
+  border-left: 1px solid var(--line);
+  min-height: 0;
+  background: var(--surface);
+  overflow-y: auto;
+}
+.op-stage-rail select {
+  width: 100%;
+  font-size: 11px;
+  min-height: 34px;
+}
+.op-creation-object {
+  min-height: 34px;
+  display: flex;
+  align-items: center;
+  padding: 7px 10px;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  background: var(--control);
+  font-size: 11px;
+  overflow-wrap: anywhere;
+}
+.op-stage-rail > .op-section-label {
+  margin-top: 20px;
+  margin-bottom: 9px;
+}
+.op-stage-rail > .op-section-label:first-child {
+  margin-top: 0;
+}
+.op-stage-list {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+.op-stage-list button {
+  position: relative;
+  justify-content: flex-start;
+  text-align: left;
+  padding: 11px 7px;
+  gap: 10px;
+  border-color: transparent;
+  background: transparent;
+}
+.op-stage-list button::after {
+  content: "";
+  width: 1px;
+  height: 12px;
+  background: var(--line);
+  position: absolute;
+  left: 20px;
+  bottom: -10px;
+}
+.op-stage-list button:last-child::after {
+  display: none;
+}
+.op-stage-list button.is-selected {
+  background: var(--control);
+  border-color: var(--line);
+}
+.op-stage-list button.is-selected strong {
+  color: var(--yellow);
+}
+.op-step-number {
+  display: grid;
+  place-items: center;
+  width: 25px;
+  height: 25px;
+  border: 1px solid var(--line);
+  border-radius: 50%;
+  color: var(--muted);
+  font:
+    10px Consolas,
+    monospace;
+  flex: none;
+}
+.op-step-number.is-done {
+  color: var(--green);
+}
+.op-stage-list strong {
+  display: block;
+  font-size: 11px;
+  font-weight: 500;
+}
+.op-stage-list small {
+  display: block;
+  font-size: 9px;
+  margin-top: 4px;
+}
+@media (max-width: 1360px) {
+  .op-creation-layout {
+    grid-template-columns: minmax(0, 1fr) 264px;
+  }
+  .op-stage-rail {
+    padding: 16px 10px;
+  }
+}

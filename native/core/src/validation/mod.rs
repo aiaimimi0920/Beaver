@@ -32,6 +32,8 @@ mod code_tests;
 #[cfg(test)]
 mod feedback_context_tests;
 #[cfg(test)]
+mod project_evidence_tests;
+#[cfg(test)]
 mod release_tests;
 #[cfg(test)]
 mod task_integration_tests;

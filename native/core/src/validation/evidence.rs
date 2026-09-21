@@ -1,15 +1,15 @@
 use super::{flow::Action, model::Run, repository};
-use crate::files::{file_hash, safe_path};
+use crate::files::{file_hash, safe_path, Files};
 use anyhow::{bail, ensure, Context, Result};
-use std::{collections::BTreeSet, io::Read, path::Path};
+use std::{collections::BTreeSet, io::Read};
 
-pub fn media_path(data: &Path, run: &Run, evidence_id: &str) -> Result<std::path::PathBuf> {
+pub fn media_path(files: &Files, run: &Run, evidence_id: &str) -> Result<std::path::PathBuf> {
     let evidence = run
         .evidence
         .iter()
         .find(|e| e.id == evidence_id)
         .context("Evidence not registered")?;
-    let path = safe_path(&repository::run_dir(data, &run.id)?, &evidence.file)?;
+    let path = safe_path(&repository::run_dir(files, &run.id)?, &evidence.file)?;
     ensure!(
         file_hash(&path)?.as_ref() == Some(&evidence.sha256),
         "Evidence is missing or changed"
@@ -17,7 +17,7 @@ pub fn media_path(data: &Path, run: &Run, evidence_id: &str) -> Result<std::path
     Ok(path)
 }
 
-pub fn validate(data: &Path, run: &Run) -> Result<()> {
+pub fn validate(files: &Files, run: &Run) -> Result<()> {
     ensure!(
         run.kind == "visual"
             && run.status == "completed"
@@ -35,7 +35,7 @@ pub fn validate(data: &Path, run: &Run) -> Result<()> {
         run.completed_steps == flow.definition.steps.len(),
         "Flow has incomplete steps"
     );
-    let directory = repository::run_dir(data, &run.id)?;
+    let directory = repository::run_dir(files, &run.id)?;
     let mut ids = BTreeSet::new();
     let mut points = BTreeSet::new();
     for evidence in &run.evidence {

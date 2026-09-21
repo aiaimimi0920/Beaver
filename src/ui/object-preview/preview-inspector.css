@@ -1,0 +1,126 @@
+.op-inspector-heading {
+  gap: 8px;
+  flex: none;
+}
+.op-inspector-heading > .op-mono {
+  white-space: nowrap;
+  font-size: 11px;
+}
+.op-inspector-version-status {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+.op-inspector-select {
+  position: relative;
+  display: flex;
+  min-width: 0;
+}
+.op-shell .op-inspector-select select {
+  appearance: none;
+  width: 100%;
+  min-width: 0;
+  height: 30px;
+  padding: 4px 23px 4px 8px;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  background: var(--panel);
+  color: var(--text);
+  font: inherit;
+  font-size: 11px;
+  text-overflow: ellipsis;
+  cursor: pointer;
+}
+.op-inspector-select > .icon {
+  position: absolute;
+  right: 7px;
+  top: 9px;
+  width: 12px;
+  height: 12px;
+  color: var(--muted);
+  pointer-events: none;
+}
+.op-inspector-version {
+  width: 62px;
+  flex: none;
+}
+.op-inspector-version-progress {
+  min-width: 0;
+}
+.op-inspector-version-progress > div {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap;
+}
+.op-inspector-version-progress > div > span:last-child {
+  font-size: 10px;
+}
+.op-inspector-version-progress progress {
+  display: block;
+  width: 100%;
+  height: 3px;
+  margin-top: 5px;
+  accent-color: var(--green);
+}
+.op-inspector-title-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 3px 18px 16px;
+  flex: none;
+}
+.op-inspector-title-row h2 {
+  flex: 1;
+  min-width: 0;
+  font-size: 15px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.op-inspector-child {
+  flex: 0 1 110px;
+  min-width: 74px;
+}
+.op-inspector-preview {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.op-inspector-preview-tools,
+.op-inspector-preview-source {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+.op-inspector-preview-tools button {
+  width: 29px;
+  height: 29px;
+  padding: 0;
+}
+.op-inspector-preview-source {
+  color: var(--muted);
+  font-size: 10px;
+}
+.op-inspector-preview-source button {
+  padding: 5px 10px;
+  font-size: 10px;
+}
+.op-inspector-preview .op-prompt textarea {
+  min-height: 90px;
+}
+.op-inspector-preview .op-prompt footer {
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 10px;
+}
+.op-inspector-preview .op-prompt footer > span {
+  flex: 1 0 100%;
+  overflow-wrap: anywhere;
+}
+.op-inspector-preview > .op-muted {
+  font-size: 10px;
+  line-height: 1.6;
+}

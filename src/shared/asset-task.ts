@@ -1,4 +1,6 @@
 import type { Project, Task } from "./types";
+import type { DeliveryWorkflow } from "./asset-delivery";
+import type { AssetWork } from "./asset-work";
 
 export type Point = [number, number];
 export interface AssetFrame {
@@ -100,6 +102,8 @@ export interface AssetFeedback {
   history: { at: string; status: string; evidence?: string }[];
 }
 export interface AssetTaskState {
+  delivery?: DeliveryWorkflow | null;
+  work?: AssetWork;
   protocolVersion: number;
   taskId: string;
   projectId: string;

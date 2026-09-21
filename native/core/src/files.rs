@@ -6,7 +6,11 @@ use std::{
     fs::{self, File, Metadata},
     io::{self, Read},
     path::{Path, PathBuf},
+    sync::Arc,
 };
+
+#[path = "files_task_paths.rs"]
+mod task_paths;
 
 pub type Snapshot = BTreeMap<String, String>;
 
@@ -19,7 +23,7 @@ pub struct Change {
     pub after: Option<String>,
 }
 
-fn linked(metadata: &Metadata) -> bool {
+pub(crate) fn linked(metadata: &Metadata) -> bool {
     #[cfg(windows)]
     {
         use std::os::windows::fs::MetadataExt;
@@ -105,6 +109,10 @@ pub fn list_files(root: &Path) -> Result<Vec<String>> {
 }
 
 pub fn file_hash(path: &Path) -> Result<Option<String>> {
+    file_hash_limited(path, None)
+}
+
+pub(crate) fn file_hash_limited(path: &Path, limit: Option<u64>) -> Result<Option<String>> {
     let mut file = match File::open(path) {
         Ok(file) => file,
         Err(error) if error.kind() == io::ErrorKind::NotFound => return Ok(None),
@@ -112,11 +120,17 @@ pub fn file_hash(path: &Path) -> Result<Option<String>> {
     };
     let mut hasher = Sha256::new();
     let mut buffer = [0u8; 65536];
+    let mut total = 0_u64;
     loop {
         let length = file.read(&mut buffer)?;
         if length == 0 {
             break;
         }
+        total += length as u64;
+        anyhow::ensure!(
+            limit.is_none_or(|limit| total <= limit),
+            "Snapshot file exceeds size limit"
+        );
         hasher.update(&buffer[..length]);
     }
     Ok(Some(format!("{:x}", hasher.finalize())))
@@ -124,13 +138,30 @@ pub fn file_hash(path: &Path) -> Result<Option<String>> {
 
 pub struct Files {
     root: PathBuf,
+    // File-only background operations must retain the same writer lease as SQLite.
+    project: Option<(PathBuf, Arc<File>)>,
 }
 impl Files {
     pub(crate) fn root(&self) -> &Path {
         &self.root
     }
     pub fn new(root: PathBuf) -> Self {
-        Self { root }
+        Self {
+            root,
+            project: None,
+        }
+    }
+    pub(crate) fn project(root: PathBuf, lock: Arc<File>) -> Self {
+        Self {
+            root: root.join(crate::project_storage_layout::CONTROL_DIR),
+            project: Some((root, lock)),
+        }
+    }
+    fn blob_directory(&self) -> Result<PathBuf> {
+        match &self.project {
+            Some((root, _)) => safe_path(root, ".beaver/content/blobs"),
+            None => Ok(self.root.join("blobs")),
+        }
     }
     pub fn blob(&self, hash: &str) -> Result<PathBuf> {
         if hash.len() != 64
@@ -140,29 +171,42 @@ impl Files {
         {
             bail!("非法内容摘要");
         }
-        Ok(self.root.join("blobs").join(hash))
+        match &self.project {
+            Some((root, _)) => safe_path(root, &format!(".beaver/content/blobs/{hash}")),
+            None => Ok(self.blob_directory()?.join(hash)),
+        }
     }
     pub fn capture(&self, project: &Path) -> Result<Snapshot> {
-        let blobs = self.root.join("blobs");
+        self.capture_paths(project, list_files(project)?, None)
+    }
+    pub(crate) fn capture_paths(
+        &self,
+        project: &Path,
+        paths: Vec<String>,
+        limit: Option<u64>,
+    ) -> Result<Snapshot> {
+        let blobs = self.blob_directory()?;
         fs::create_dir_all(&blobs)?;
         let reuse_existing = fs::read_dir(&blobs)?.next().transpose()?.is_some();
         let mut snapshot = Snapshot::new();
-        for relative in list_files(project)? {
+        for relative in paths {
             let source = safe_path(project, &relative)?;
             let mut expected_hash = None;
             // An empty content store needs no extra source hash pass for cache lookup.
             if reuse_existing {
-                let hash = file_hash(&source)?.context("快照源文件读取失败")?;
+                let hash = file_hash_limited(&source, limit)?.context("快照源文件读取失败")?;
                 let destination = self.blob(&hash)?;
                 match fs::symlink_metadata(&destination) {
                     Ok(metadata) => {
                         if linked(&metadata)
                             || !metadata.is_file()
-                            || file_hash(&destination)?.as_ref() != Some(&hash)
+                            || file_hash_limited(&destination, limit)?.as_ref() != Some(&hash)
                         {
                             bail!("已有快照内容损坏");
                         }
-                        if file_hash(&safe_path(project, &relative)?)?.as_ref() != Some(&hash) {
+                        if file_hash_limited(&safe_path(project, &relative)?, limit)?.as_ref()
+                            != Some(&hash)
+                        {
                             bail!("文件在快照时发生变化：{relative}");
                         }
                         // Existing content is verified, not rewritten or fsynced per capture.
@@ -177,13 +221,21 @@ impl Files {
             let mut temporary = tempfile::Builder::new()
                 .prefix(".tmp-")
                 .tempfile_in(&blobs)?;
-            io::copy(&mut File::open(&source)?, &mut temporary)?;
+            let copied = io::copy(
+                &mut File::open(&source)?.take(limit.unwrap_or(u64::MAX).saturating_add(1)),
+                &mut temporary,
+            )?;
+            anyhow::ensure!(
+                limit.is_none_or(|limit| copied <= limit),
+                "Snapshot file exceeds size limit"
+            );
             temporary.as_file().sync_all()?;
-            let hash = file_hash(temporary.path())?.context("快照文件读取失败")?;
+            let hash = file_hash_limited(temporary.path(), limit)?.context("快照文件读取失败")?;
             if expected_hash
                 .as_ref()
                 .is_some_and(|expected| expected != &hash)
-                || file_hash(&safe_path(project, &relative)?)?.as_ref() != Some(&hash)
+                || file_hash_limited(&safe_path(project, &relative)?, limit)?.as_ref()
+                    != Some(&hash)
             {
                 bail!("文件在快照时发生变化：{relative}");
             }
@@ -195,7 +247,7 @@ impl Files {
                 let metadata = fs::symlink_metadata(&destination)?;
                 if linked(&metadata)
                     || !metadata.is_file()
-                    || file_hash(&destination)?.as_ref() != Some(&hash)
+                    || file_hash_limited(&destination, limit)?.as_ref() != Some(&hash)
                 {
                     bail!("已有快照内容损坏");
                 }

@@ -33,12 +33,7 @@ fn repair_relaunch_preserves_original_feedback_selection_and_sources() -> Result
             json!({"projectId":"p","validationRepair":{"runId":repair.id,"error":"GUT failed"}});
         // Initial launch and repeated launch of the same repair must both preserve feedback.
         for _ in 0..2 {
-            task_completion::freeze_repair(
-                &fixture.store,
-                fixture.files.root(),
-                &workspace,
-                &task,
-            )?;
+            task_completion::freeze_repair(&fixture.store, &fixture.files, &workspace, &task)?;
         }
         let path = root.join("repairs").join(&repair.id);
         let captured: Value = serde_json::from_slice(&fs::read(path.join("run.json"))?)?;

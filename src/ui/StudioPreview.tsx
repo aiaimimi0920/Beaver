@@ -1,6 +1,5 @@
 import { useEffect, useRef, useState } from "react";
 import { StudioDocuments } from "./StudioDocuments";
-import { StudioAssets } from "./StudioAssets";
 import { StudioTasks } from "./StudioTasks";
 import {
   createStudioState,
@@ -20,7 +19,7 @@ export function StudioPreview({
   projectKey: string;
   page: StudioPage;
   navigate: (page: StudioPage) => void;
-  existing?: (page: "tasks" | "assets") => void;
+  existing?: (page: "tasks") => void;
 }) {
   const key = `beaver.studio-preview.v1.${projectKey}`;
   const [state, setState] = useState(() => {
@@ -73,13 +72,6 @@ export function StudioPreview({
           change={(notes) => setState((old) => ({ ...old, notes }))}
           request={request}
         />
-      ) : page === "library" ? (
-        <StudioAssets
-          assets={state.assets}
-          change={(assets) => setState((old) => ({ ...old, assets }))}
-          request={request}
-          openFiles={existing ? () => existing("assets") : undefined}
-        />
       ) : (
         <StudioTasks
           tasks={state.tasks}
@@ -97,7 +89,7 @@ export function StudioPreview({
       )}
       {reset && (
         <Dialog title="重置交互预览" close={() => setReset(false)}>
-          <p>将清除预览中的任务、文档草稿与素材备注，不影响真实项目。</p>
+          <p>将清除预览中的任务与文档草稿，不影响真实项目。</p>
           <footer>
             <button onClick={() => setReset(false)}>取消</button>
             <button

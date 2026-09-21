@@ -19,9 +19,10 @@ fn fixture() -> Result<(tempfile::TempDir, Store, PathBuf)> {
 #[tokio::test]
 async fn queued_asset_state_survives_interruption_without_starting_blender() -> Result<()> {
     let (_temp, mut store, root) = fixture()?;
+    let files = Arc::new(Files::new(root.clone()));
     let mut ordinary = create(
         &mut store,
-        &root,
+        &files,
         json!({"projectId":"p","prompt":"Ordinary task","decompose":false}),
         &Value::Null,
         &Value::Null,
@@ -34,7 +35,7 @@ async fn queued_asset_state_survives_interruption_without_starting_blender() -> 
     store.put("settings", "main", &json!({"maxParallel":1}))?;
     let task = create(
         &mut store,
-        &root,
+        &files,
         json!({"projectId":"p","prompt":"Wait for confirmation","assetTask":true}),
         &Value::Null,
         &Value::Null,
@@ -48,11 +49,16 @@ async fn queued_asset_state_survives_interruption_without_starting_blender() -> 
     assert!(initial.session_id.is_none());
 
     let store = Arc::new(Mutex::new(store));
+    let host = store.clone();
     let scheduler = Scheduler::start(
         store.clone(),
-        Arc::new(Files::new(root.clone())),
+        files,
         Arc::new(|_| panic!("An occupied scheduler must not launch queued work")),
         Arc::new(|| {}),
+        Arc::new(move || {
+            crate::execution_settings::parallel_limit(&host.lock().unwrap())
+                .map_err(|error| error.to_string())
+        }),
     );
     scheduler
         .interrupt(id.clone())
@@ -80,6 +86,7 @@ async fn queued_asset_state_survives_interruption_without_starting_blender() -> 
 #[test]
 fn asset_state_failure_rolls_back_task_event_and_related_receipt() -> Result<()> {
     let (_temp, mut store, root) = fixture()?;
+    let files = Files::new(root);
     store.connection.execute_batch(
         "CREATE TRIGGER reject_asset_state BEFORE INSERT ON entities
          WHEN NEW.kind = 'asset-task'
@@ -88,7 +95,7 @@ fn asset_state_failure_rolls_back_task_event_and_related_receipt() -> Result<()>
     let mut attempted_id = String::new();
     let result = create_recorded(
         &mut store,
-        &root,
+        &files,
         json!({"projectId":"p","prompt":"Create asset","assetTask":true}),
         &Value::Null,
         &Value::Null,

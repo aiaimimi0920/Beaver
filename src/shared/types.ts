@@ -46,6 +46,7 @@ export interface Change {
   after?: string;
 }
 export interface Task {
+  objectFramework?: import("./object-framework").ObjectTaskIdentity;
   assetTask?: boolean;
   delivery?: Delivery;
   askRatio?: import("./autonomy").AskRatio | null;

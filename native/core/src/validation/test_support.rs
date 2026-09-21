@@ -3,24 +3,30 @@ use super::{
     model::{CodeReport, Evidence, Flow, Run},
     repository,
 };
-use crate::{files::Files, store::Store};
+use crate::{files::Files, project_storage::ProjectStore, store::Store};
 use anyhow::Result;
 use serde_json::json;
-use std::{fs, path::PathBuf};
+use std::{fs, path::PathBuf, sync::Arc};
 
 pub struct Fixture {
     pub store: Store,
     pub files: Files,
     pub project: PathBuf,
-    _temp: tempfile::TempDir,
+    pub _temp: tempfile::TempDir,
 }
 
 impl Fixture {
     pub fn new() -> Result<Self> {
+        Self::create(false)
+    }
+
+    pub fn project() -> Result<Self> {
+        Self::create(true)
+    }
+
+    fn create(project_storage: bool) -> Result<Self> {
         let temp = tempfile::tempdir()?;
         let data = temp.path().join("data");
-        let store = Store::open(&data)?;
-        let files = Files::new(data);
         let project = temp.path().join("project");
         fs::create_dir_all(project.join("tests"))?;
         fs::write(project.join("project.godot"), "config_version=5\n")?;
@@ -29,6 +35,22 @@ impl Fixture {
             "extends GutTest\nfunc test_default_value():\n\tvar subject = load(\"res://game.gd\").new()\n\tassert_eq(subject.value, 1)\n\tsubject.free()\n")?;
         fs::write(project.join("export_presets.cfg"),
             "[preset.0]\nname=\"Windows Desktop\"\nplatform=\"Windows Desktop\"\nexport_filter=\"all_resources\"\n")?;
+        let (store, files) = if project_storage {
+            let runtime = ProjectStore::initialize(&project, "p")?.into_runtime();
+            let store = runtime.store();
+            let files = runtime.files();
+            drop(runtime);
+            (
+                Arc::try_unwrap(store)
+                    .map_err(|_| anyhow::anyhow!("Fixture database is still shared"))?
+                    .into_inner()
+                    .map_err(|_| anyhow::anyhow!("Fixture database lock failed"))?,
+                Arc::try_unwrap(files)
+                    .map_err(|_| anyhow::anyhow!("Fixture files are still shared"))?,
+            )
+        } else {
+            (Store::open(&data)?, Files::new(data))
+        };
         store.put(
             "project",
             "p",
@@ -79,7 +101,7 @@ impl Fixture {
         run.status = "completed".into();
         run.engine_version = "4.4.1.stable".into();
         run.completed_steps = flow.definition.steps.len();
-        let directory = repository::run_dir(self.files.root(), &run.id)?;
+        let directory = repository::run_dir(&self.files, &run.id)?;
         fs::create_dir_all(&directory)?;
         for step in &flow.definition.steps {
             let id = repository::id();
@@ -102,7 +124,7 @@ impl Fixture {
     }
 
     pub fn passing_code(&self, run: &mut Run) -> Result<()> {
-        let directory = repository::run_dir(self.files.root(), &run.id)?;
+        let directory = repository::run_dir(&self.files, &run.id)?;
         fs::create_dir_all(&directory)?;
         let xml = "<testsuites tests=\"1\"><testsuite><testcase name=\"test_default_value\" classname=\"tests/test_game.gd\" status=\"pass\" assertions=\"1\"/></testsuite></testsuites>";
         fs::write(directory.join("gut.xml"), xml)?;

@@ -6,7 +6,17 @@
   "build": { "frontendDist": "../../dist-native" },
   "app": {
     "withGlobalTauri": true,
-    "windows": [{ "label": "main", "title": "Beaver", "width": 1120, "height": 760, "minWidth": 980, "minHeight": 680, "decorations": false }],
+    "windows": [
+      {
+        "label": "main",
+        "title": "Beaver",
+        "width": 1680,
+        "height": 1050,
+        "minWidth": 1680,
+        "minHeight": 1050,
+        "decorations": false
+      }
+    ],
     "security": {
       "csp": "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: http://beaver-asset.localhost; media-src 'self' blob: http://beaver-asset.localhost; connect-src ipc: http://ipc.localhost http://beaver-asset.localhost; worker-src 'self' blob:; object-src 'none'; frame-src 'none'"
     }

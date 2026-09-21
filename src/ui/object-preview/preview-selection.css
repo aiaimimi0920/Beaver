@@ -1,0 +1,142 @@
+.op-selection-surface {
+  display: block;
+  position: relative;
+  width: 100%;
+  aspect-ratio: 10 / 7;
+  overflow: hidden;
+  touch-action: none;
+  user-select: none;
+}
+.op-selection-surface > .op-art {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+.op-selectable-preview[data-selection-mode="box"] {
+  cursor: crosshair;
+}
+.op-preview-tools button {
+  width: 30px;
+  height: 30px;
+  padding: 0;
+}
+.op-preview-box {
+  position: absolute;
+  border: 1px solid white;
+  background: #ffffff18;
+  box-shadow:
+    0 0 0 1px #111a,
+    0 0 0 999px #06080d35;
+  pointer-events: none;
+}
+.op-preview-point {
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  transform: translate(-50%, -50%);
+  border: 2px solid white;
+  border-radius: 50%;
+  box-shadow: 0 0 0 1px #111b;
+  pointer-events: none;
+}
+.op-feedback-bar {
+  flex: none;
+  min-width: 0;
+  padding: 9px 16px;
+  border-top: 1px solid var(--line);
+  background: var(--surface);
+}
+.op-feedback-context,
+.op-feedback-input {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+.op-feedback-context {
+  margin-bottom: 7px;
+  font-size: 11px;
+}
+.op-feedback-context strong {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.op-feedback-context > span {
+  flex: 1;
+  color: var(--muted);
+  font-size: 10px;
+}
+.op-shell .op-feedback-context button {
+  flex: none;
+  background: transparent;
+  border: 0;
+  padding: 3px;
+  font-size: 10px;
+}
+.op-feedback-context .icon {
+  width: 14px;
+  height: 14px;
+}
+.op-feedback-input input {
+  flex: 1;
+  min-width: 0;
+  font-size: 12px;
+}
+.op-feedback-input button {
+  flex: none;
+  font-size: 11px;
+}
+.op-feedback-bar > small {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--muted);
+  font-size: 10px;
+  margin-top: 6px;
+}
+.op-shell .op-preview-inspect-dialog {
+  width: min(1040px, 94vw);
+  height: min(860px, 92vh);
+  max-height: 92vh;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.op-inspect-tools {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.op-inspect-canvas {
+  min-height: 0;
+  flex: 1;
+  display: grid;
+  place-items: center;
+  container-type: size;
+  background: #111820;
+}
+.op-shell .op-inspect-canvas > .op-selectable-preview {
+  width: min(100cqw, calc(100cqh * 10 / 7));
+}
+.op-inspect-source {
+  margin: 0;
+  font-size: 11px;
+  color: var(--muted);
+}
+.op-preview-inspect-dialog .op-feedback-bar {
+  padding: 9px 0 0;
+}
+.op-preview-inspect-dialog button[aria-label="放大查看与反馈"] {
+  display: none;
+}
+@media (max-width: 760px) {
+  .op-feedback-context {
+    flex-wrap: wrap;
+  }
+  .op-feedback-context > span {
+    flex-basis: 50%;
+  }
+}

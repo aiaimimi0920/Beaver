@@ -2,8 +2,10 @@ import fs from "node:fs/promises";
 import path from "node:path";
 import { createHash } from "node:crypto";
 import assert from "node:assert/strict";
+import { readProductVersion, verifyProductVersion } from "./product-version.ts";
+import { verifyWindowsVersion } from "./windows-version.ts";
 
-const { version } = JSON.parse(await fs.readFile("package.json", "utf8"));
+const { version } = await readProductVersion();
 const root = path.resolve(
   process.argv[2] || `release/Beaver-${version}-win32-x64`,
 );
@@ -14,6 +16,12 @@ assert.ok(
 );
 const manifestPath = path.join(root, "RELEASE.json");
 const manifest = JSON.parse(await fs.readFile(manifestPath, "utf8"));
+if (manifest.channel !== undefined) {
+  verifyWindowsVersion(
+    await fs.readFile(path.join(root, "Beaver.exe")),
+    verifyProductVersion(manifest),
+  );
+}
 let bytes = 0;
 for (const file of manifest.files) {
   const resolved = path.resolve(root, file.path);

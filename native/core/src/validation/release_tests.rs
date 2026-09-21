@@ -11,7 +11,7 @@ use std::fs;
 fn start(fixture: &mut Fixture, request: &str) -> Result<Release> {
     let result = release::start(
         &mut fixture.store,
-        fixture.files.root(),
+        &fixture.files,
         &json!({
             "projectId":"p", "requestId":request, "preset":"Windows Desktop"
         }),
@@ -41,7 +41,7 @@ fn finish_runs(fixture: &mut Fixture, release: &Release) -> Result<()> {
                 .map(|e| e.id.clone())
                 .collect::<Vec<_>>();
             confirmation::confirm(
-                fixture.files.root(),
+                &fixture.files,
                 &mut fixture.store,
                 &run.id,
                 &run.snapshot_id,
@@ -76,16 +76,16 @@ fn disabling_visual_checks_changes_only_new_candidates_and_never_waives_code() -
     let off = start(&mut fixture, "off")?;
     assert!(!off.visual_required);
     assert_eq!(off.run_ids.len(), 1);
-    assert!(release::authorize(&fixture.store, fixture.files.root(), &export_input(&off)).is_err());
+    assert!(release::authorize(&fixture.store, &fixture.files, &export_input(&off)).is_err());
     finish_runs(&mut fixture, &off)?;
-    assert!(release::authorize(&fixture.store, fixture.files.root(), &export_input(&off)).is_ok());
+    assert!(release::authorize(&fixture.store, &fixture.files, &export_input(&off)).is_ok());
     assert_eq!(release::inspect(&fixture.store, &on)?["ready"], false);
 
     let mut code: Run = repository::get(&fixture.store, "validationRun", &off.run_ids[0])?;
     code.status = "failed".into();
     code.error = Some("A required assertion failed".into());
     fixture.save(&code)?;
-    assert!(release::authorize(&fixture.store, fixture.files.root(), &export_input(&off)).is_err());
+    assert!(release::authorize(&fixture.store, &fixture.files, &export_input(&off)).is_err());
     Ok(())
 }
 
@@ -103,12 +103,7 @@ fn human_visual_approval_cannot_clear_code_failures_or_missing_task_coverage() -
     let missing = start(&mut fixture, "missing")?;
     assert!(missing.missing.iter().any(|text| text.contains("task-1")));
     finish_runs(&mut fixture, &missing)?;
-    assert!(release::authorize(
-        &fixture.store,
-        fixture.files.root(),
-        &export_input(&missing)
-    )
-    .is_err());
+    assert!(release::authorize(&fixture.store, &fixture.files, &export_input(&missing)).is_err());
 
     let mut definition = flow.definition.clone();
     definition.task_ids.push("task-1".into());
@@ -116,34 +111,27 @@ fn human_visual_approval_cannot_clear_code_failures_or_missing_task_coverage() -
     let complete = start(&mut fixture, "complete")?;
     assert!(complete.missing.is_empty());
     finish_runs(&mut fixture, &complete)?;
-    assert!(release::authorize(
-        &fixture.store,
-        fixture.files.root(),
-        &export_input(&complete)
-    )
-    .is_ok());
-    assert!(release::authorize(
-        &fixture.store,
-        fixture.files.root(),
-        &export_input(&missing)
-    )
-    .is_err());
+    assert!(release::authorize(&fixture.store, &fixture.files, &export_input(&complete)).is_ok());
+    assert!(release::authorize(&fixture.store, &fixture.files, &export_input(&missing)).is_err());
     let mut code: Run = repository::get(&fixture.store, "validationRun", &complete.run_ids[0])?;
     code.code.as_mut().unwrap().exit_code = Some(1);
     fixture.save(&code)?;
     assert_eq!(release::inspect(&fixture.store, &complete)?["ready"], false);
-    assert!(release::authorize(
-        &fixture.store,
-        fixture.files.root(),
-        &export_input(&complete)
-    )
-    .is_err());
+    assert!(release::authorize(&fixture.store, &fixture.files, &export_input(&complete)).is_err());
     Ok(())
 }
 
 #[test]
 fn formal_export_is_bound_to_the_frozen_candidate_scope_and_artifacts() -> Result<()> {
-    let mut fixture = Fixture::new()?;
+    assert_frozen_candidate(Fixture::new()?)
+}
+
+#[test]
+fn project_release_checks_use_project_evidence_and_reject_tampering() -> Result<()> {
+    assert_frozen_candidate(Fixture::project()?)
+}
+
+fn assert_frozen_candidate(mut fixture: Fixture) -> Result<()> {
     fixture.flow()?;
     let release = start(&mut fixture, "candidate")?;
     finish_runs(&mut fixture, &release)?;
@@ -152,34 +140,31 @@ fn formal_export_is_bound_to_the_frozen_candidate_scope_and_artifacts() -> Resul
         fixture.project.join("game.gd"),
         "extends Node\nvar value = 3\n",
     )?;
-    let approved = release::authorize(&fixture.store, fixture.files.root(), &input)?;
+    let approved = release::authorize(&fixture.store, &fixture.files, &input)?;
     assert_eq!(approved.snapshot, release.snapshot);
     assert_ne!(approved.snapshot, fixture.files.capture(&fixture.project)?);
     for field in ["id", "snapshotId", "scopeId", "preset"] {
         let mut mismatched = input.clone();
         mismatched[field] = json!("different");
         assert!(
-            release::authorize(&fixture.store, fixture.files.root(), &mismatched).is_err(),
+            release::authorize(&fixture.store, &fixture.files, &mismatched).is_err(),
             "{field}"
         );
     }
     let next = start(&mut fixture, "updated-candidate")?;
     assert_ne!(next.snapshot_id, release.snapshot_id);
     assert!(next.run_ids.iter().all(|id| !release.run_ids.contains(id)));
-    assert!(
-        release::authorize(&fixture.store, fixture.files.root(), &export_input(&next)).is_err()
-    );
+    assert!(release::authorize(&fixture.store, &fixture.files, &export_input(&next)).is_err());
 
-    let code_path = repository::run_dir(fixture.files.root(), &release.run_ids[0])?.join("gut.xml");
+    let code_path = repository::run_dir(&fixture.files, &release.run_ids[0])?.join("gut.xml");
     let original = fs::read(&code_path)?;
     fs::write(&code_path, b"truncated")?;
-    assert!(release::authorize(&fixture.store, fixture.files.root(), &input).is_err());
+    assert!(release::authorize(&fixture.store, &fixture.files, &input).is_err());
     fs::write(&code_path, original)?;
     let visual: Run = repository::get(&fixture.store, "validationRun", &release.run_ids[1])?;
-    let image =
-        repository::run_dir(fixture.files.root(), &visual.id)?.join(&visual.evidence[0].file);
+    let image = repository::run_dir(&fixture.files, &visual.id)?.join(&visual.evidence[0].file);
     fs::remove_file(image)?;
-    assert!(release::authorize(&fixture.store, fixture.files.root(), &input).is_err());
+    assert!(release::authorize(&fixture.store, &fixture.files, &input).is_err());
     Ok(())
 }
 

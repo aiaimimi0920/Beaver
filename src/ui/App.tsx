@@ -3,7 +3,6 @@ import type { Project, Reference, ToolStatus } from "../shared/types";
 import { call, type Run, type State } from "./api";
 import { Dialog } from "./components";
 import { TasksView } from "./TasksView";
-import { AssetsView } from "./AssetsView";
 import { SettingsView } from "./SettingsView";
 import { DesktopShell, type Page } from "./DesktopShell";
 import { Icon } from "./Icon";
@@ -11,6 +10,8 @@ import { useNotify } from "./Notifications";
 import { errorMessage } from "./notification-state";
 import { FeaturesView } from "./FeaturesView";
 import { CreateProjectDialog } from "./CreateProjectDialog";
+import { ProjectRegistrationDialog } from "./ProjectRegistrationDialog";
+import { MigrationDialog } from "./MigrationDialog";
 import { ProjectBlueprintView } from "./ProjectBlueprintView";
 import type { BlueprintDraft } from "../shared/project-blueprint";
 import type { OverviewDraft } from "../shared/project-overview";
@@ -20,15 +21,22 @@ import { DocumentsView } from "./DocumentsView";
 import { TaskBoard } from "./TaskBoard";
 import { ExportGameDialog } from "./ExportGameDialog";
 import { ValidationView } from "./validation/ValidationView";
+import { ObjectFrameworkWorkspace } from "./object-preview/ObjectFrameworkWorkspace";
+import "./object-preview/preview-shell.css";
+import "./object-preview/preview-embedded.css";
+import "./object-preview/preview-object-toolbar.css";
+import "./object-preview/object-framework-workspace.css";
 
 export function App() {
   const notify = useNotify();
   const [state, setState] = useState<State>();
   const [projectId, setProjectId] = useState("");
-  const [page, setPage] = useState<Page>("create");
+  const [page, setPage] = useState<Page>("objects");
   const [busy, setBusy] = useState(0);
   const [refs, setRefs] = useState<Reference[]>([]);
   const [create, setCreate] = useState(false);
+  const [registration, setRegistration] = useState<Project>();
+  const [migration, setMigration] = useState(false);
   const [blueprintDrafts, setBlueprintDrafts] = useState<
     Record<string, BlueprintDraft>
   >({});
@@ -117,6 +125,9 @@ export function App() {
         projectId={projectId}
         selectProject={setProjectId}
         createProject={() => setCreate(true)}
+        manageProject={
+          "__TAURI__" in window ? () => setRegistration(project) : undefined
+        }
         openProject={() =>
           void run(async () => {
             const dir = await call<string | null>("chooseDirectory");
@@ -133,33 +144,39 @@ export function App() {
         ready={!!state}
         environment={() => setPage("environment")}
         actions={
-          project &&
-          page !== "settings" &&
-          page !== "overview" &&
-          page !== "project" && (
-            <div className="header-actions">
-              <button
-                onClick={() =>
-                  void run(() => call("game.play", { id: projectId }))
-                }
-              >
-                <Icon name="play" /> 试玩
-              </button>
-              <button onClick={() => setExporting({})}>导出</button>
-              <button
-                aria-label="打开项目文件夹"
-                title="打开项目文件夹"
-                onClick={() =>
-                  void run(() => call("project.reveal", { id: projectId }))
-                }
-              >
-                <Icon name="folder" />
-              </button>
-            </div>
+          page === "settings" && "__TAURI__" in window ? (
+            <button onClick={() => setMigration(true)}>数据迁移</button>
+          ) : (
+            project &&
+            page !== "settings" &&
+            page !== "overview" &&
+            page !== "project" && (
+              <div className="header-actions">
+                <button
+                  onClick={() =>
+                    void run(() => call("game.play", { id: projectId }))
+                  }
+                >
+                  <Icon name="play" /> 试玩
+                </button>
+                <button onClick={() => setExporting({})}>导出</button>
+                <button
+                  aria-label="打开项目文件夹"
+                  title="打开项目文件夹"
+                  onClick={() =>
+                    void run(() => call("project.reveal", { id: projectId }))
+                  }
+                >
+                  <Icon name="folder" />
+                </button>
+              </div>
+            )
           )
         }
       >
-        <div className="page-content">
+        <div
+          className={`page-content${["objects", "manufacture"].includes(page) ? " object-preview-content" : ""}${page === "validation" && project ? " validation-workspace-content" : ""}`}
+        >
           {project && ["overview", "project", "features"].includes(page) && (
             <nav className="game-section-tabs" aria-label="游戏设置">
               <button
@@ -182,7 +199,15 @@ export function App() {
               </button>
             </nav>
           )}
-          {!state ? (
+          {["objects", "manufacture"].includes(page) ? (
+            <ObjectFrameworkWorkspace
+              key={project?.id ?? "no-project"}
+              project={project}
+              loading={!state}
+              page={page === "manufacture" ? "manufacture" : "objects"}
+              createProject={() => setCreate(true)}
+            />
+          ) : !state ? (
             <div className="startup" role="status">
               正在打开本地工作室…
             </div>
@@ -200,11 +225,11 @@ export function App() {
               create={() => setCreate(true)}
               createLabel="创建项目"
             />
-          ) : !project && ["docs", "library"].includes(page) ? (
+          ) : !project && page === "docs" ? (
             <StudioPreview
               key="demo"
               projectKey="demo"
-              page={page as "create" | "docs" | "library"}
+              page={page}
               navigate={setPage}
             />
           ) : !project ? (
@@ -290,15 +315,6 @@ export function App() {
               clearRefs={() => setRefs([])}
               run={run}
             />
-          ) : page === "assets" || page === "library" ? (
-            <AssetsView
-              projectId={projectId}
-              addReferences={(r) => {
-                setRefs(r);
-                setPage("tasks");
-              }}
-              run={run}
-            />
           ) : (
             <FeaturesView
               key={project.id}
@@ -321,6 +337,7 @@ export function App() {
           )}
         </div>
       </DesktopShell>
+      {migration && <MigrationDialog close={() => setMigration(false)} />}
       {create && (
         <CreateProjectDialog
           close={closeCreate}
@@ -331,6 +348,13 @@ export function App() {
             setCreate(false);
             setPage("overview");
           }}
+        />
+      )}
+      {registration && (
+        <ProjectRegistrationDialog
+          project={registration}
+          close={() => setRegistration(undefined)}
+          run={run}
         />
       )}
       {overviewRisk && (

@@ -2,7 +2,10 @@ use super::{
     model::{Baseline, Run},
     repository,
 };
-use crate::{files::safe_path, store::Store};
+use crate::{
+    files::{safe_path, Files},
+    store::Store,
+};
 use anyhow::{bail, Context, Result};
 use serde_json::{json, Value};
 use std::path::Path;
@@ -10,9 +13,9 @@ use std::path::Path;
 pub use super::confirmation::confirm;
 pub use super::evidence::validate as validate_evidence;
 
-pub fn compare(data: &Path, store: &Store, run: &mut Run) -> Result<()> {
+pub fn compare(files: &Files, store: &Store, run: &mut Run) -> Result<()> {
     let baseline = baseline_run(store, run)?;
-    compare_with(data, run, baseline.as_ref())
+    compare_with(files, run, baseline.as_ref())
 }
 
 pub fn baseline_run(store: &Store, run: &Run) -> Result<Option<(Baseline, Run)>> {
@@ -27,8 +30,12 @@ pub fn baseline_run(store: &Store, run: &Run) -> Result<Option<(Baseline, Run)>>
 }
 
 /// Image decoding and comparison run without holding the database lock.
-pub fn compare_with(data: &Path, run: &mut Run, baseline: Option<&(Baseline, Run)>) -> Result<()> {
-    validate_evidence(data, run)?;
+pub fn compare_with(
+    files: &Files,
+    run: &mut Run,
+    baseline: Option<&(Baseline, Run)>,
+) -> Result<()> {
+    validate_evidence(files, run)?;
     let Some((baseline, previous)) = baseline else {
         run.verdict = "missingBaseline".into();
         return Ok(());
@@ -44,11 +51,11 @@ pub fn compare_with(data: &Path, run: &mut Run, baseline: Option<&(Baseline, Run
         run.verdict = "stale".into();
         return Ok(());
     }
-    validate_evidence(data, previous)?;
+    validate_evidence(files, previous)?;
     let mut findings = vec![];
     let mut green = run.evidence.len() == previous.evidence.len();
-    let current_dir = repository::run_dir(data, &run.id)?;
-    let previous_dir = repository::run_dir(data, &previous.id)?;
+    let current_dir = repository::run_dir(files, &run.id)?;
+    let previous_dir = repository::run_dir(files, &previous.id)?;
     for current in &run.evidence {
         let old = previous
             .evidence

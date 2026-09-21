@@ -31,7 +31,7 @@ fn freeze(files: &Files, directory: &Path, run: &Run, name: &str, record: &Value
     fs::write(safe_path(directory, "run.log")?, &run.log)?;
     let media = safe_path(directory, "media")?;
     fs::create_dir_all(&media)?;
-    let original = repository::run_dir(files.root(), &run.id)?;
+    let original = repository::run_dir(files, &run.id)?;
     for evidence in &run.evidence {
         let path = safe_path(&original, &evidence.file)?;
         ensure!(

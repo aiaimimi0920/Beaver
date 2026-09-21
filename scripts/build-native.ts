@@ -2,12 +2,14 @@ import { build } from "esbuild";
 import { z } from "zod";
 import { overviewSchema } from "../src/shared/project-overview";
 import { directionSchema } from "../src/shared/task-board";
+import { objectTaskIdentitySchema } from "../src/shared/object-framework";
 import fs from "node:fs/promises";
 import path from "node:path";
 import { defaultSettings } from "../src/shared/types";
 import { askUserTool } from "../src/shared/clarifications";
 import { planTool, planningInstruction } from "../src/shared/task-plan";
 import { buildBrandAssets } from "./lib/branding";
+import { readProductVersion } from "./product-version";
 import { windowsToolHintsScript } from "../src/core/tool-discovery";
 import {
   genres,
@@ -63,6 +65,7 @@ async function encodeTree(directory: string): Promise<Record<string, string>> {
 }
 
 async function main() {
+  const version = await readProductVersion();
   const brand = await fs.readFile("resources/branding/beaver.svg");
   for (const [name, data] of buildBrandAssets(brand))
     await writeIfChanged(path.join("resources/branding", name), data);
@@ -79,6 +82,10 @@ async function main() {
       blueprint: z.toJSONSchema(blueprintSchema),
       overview: z.toJSONSchema(overviewSchema),
       direction: z.toJSONSchema(directionSchema),
+      objectFramework: {
+        type: "object",
+        ...z.toJSONSchema(objectTaskIdentitySchema),
+      },
     }),
   );
   await writeIfChanged(
@@ -171,6 +178,7 @@ async function main() {
       scopes: scopes.map((v) => v.id),
     }),
   );
+  await writeIfChanged("dist-native/build.json", JSON.stringify(version));
   console.log(
     "Native frontend built without Electron or production source maps",
   );

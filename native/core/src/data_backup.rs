@@ -28,7 +28,16 @@ pub struct Manifest {
 }
 
 pub(crate) fn inventory(root: &Path) -> Result<Vec<Entry>> {
-    fn visit(root: &Path, directory: &Path, entries: &mut Vec<Entry>) -> Result<()> {
+    inventory_without(root, &[])
+}
+
+pub(crate) fn inventory_without(root: &Path, excluded: &[&str]) -> Result<Vec<Entry>> {
+    fn visit(
+        root: &Path,
+        directory: &Path,
+        excluded: &[&str],
+        entries: &mut Vec<Entry>,
+    ) -> Result<()> {
         for item in fs::read_dir(directory)? {
             let item = item?;
             let relative = item.path().strip_prefix(root)?.to_owned();
@@ -36,6 +45,9 @@ pub(crate) fn inventory(root: &Path) -> Result<Vec<Entry>> {
                 .to_str()
                 .context("backup filename is not UTF-8")?
                 .replace('\\', "/");
+            if excluded.contains(&relative.as_str()) {
+                continue;
+            }
             let file = safe_path(root, &relative)?;
             let metadata = fs::symlink_metadata(&file)?;
             ensure!(
@@ -56,14 +68,14 @@ pub(crate) fn inventory(root: &Path) -> Result<Vec<Entry>> {
                 },
             });
             if metadata.is_dir() {
-                visit(root, &file, entries)?;
+                visit(root, &file, excluded, entries)?;
             }
         }
         Ok(())
     }
     let root = fs::canonicalize(root)?;
     let mut entries = Vec::new();
-    visit(&root, &root, &mut entries)?;
+    visit(&root, &root, excluded, &mut entries)?;
     entries.sort_by(|a, b| a.path.cmp(&b.path));
     Ok(entries)
 }
@@ -111,13 +123,17 @@ pub(crate) fn copy_entries(source: &Path, target: &Path, entries: &[Entry]) -> R
 
 /// Deny sharing with existing/future SQLite writers without opening SQLite itself.
 /// The user must also stop external tools writing workspaces before creating a backup.
-#[cfg(windows)]
 pub(crate) fn hold_database(source: &Path) -> Result<Vec<File>> {
+    hold_named_database(source, "beaver.sqlite")
+}
+
+#[cfg(windows)]
+pub(crate) fn hold_named_database(source: &Path, database: &str) -> Result<Vec<File>> {
     use std::os::windows::fs::OpenOptionsExt;
     let mut handles = Vec::new();
-    for name in ["beaver.sqlite", "beaver.sqlite-wal", "beaver.sqlite-shm"] {
-        let file = safe_path(source, name)?;
-        if name != "beaver.sqlite" && !file.try_exists()? {
+    for suffix in ["", "-wal", "-shm"] {
+        let file = safe_path(source, &format!("{database}{suffix}"))?;
+        if !suffix.is_empty() && !file.try_exists()? {
             continue;
         }
         handles.push(
@@ -132,7 +148,7 @@ pub(crate) fn hold_database(source: &Path) -> Result<Vec<File>> {
 }
 
 #[cfg(not(windows))]
-pub(crate) fn hold_database(_source: &Path) -> Result<Vec<File>> {
+pub(crate) fn hold_named_database(_source: &Path, _database: &str) -> Result<Vec<File>> {
     anyhow::bail!("offline database writer exclusion is currently implemented only on Windows")
 }
 

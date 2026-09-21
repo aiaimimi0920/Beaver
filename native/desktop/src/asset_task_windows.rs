@@ -1,4 +1,4 @@
-use crate::Backend;
+use crate::{business_routing::task_runtime_handles, Backend};
 use beaver_core::asset_task;
 use serde_json::{json, Value};
 use tauri::{Manager, WebviewUrl, WebviewWindowBuilder};
@@ -25,7 +25,13 @@ pub(crate) fn authorize_image(backend: &Backend, label: &str, path: &str) -> Res
         .split('/')
         .next()
         .ok_or("缺少资源标识")?;
-    let store = backend.store.lock().map_err(|_| "数据库锁不可用")?;
+    let handles = task_runtime_handles(
+        &backend.project_storage,
+        backend.store.clone(),
+        &backend.root,
+        id,
+    )?;
+    let store = handles.store.lock().map_err(|_| "数据库锁不可用")?;
     let bound = asset_task::get(&store, id).map_err(|e| e.to_string())?;
     let project = if let Some(task) = resource.strip_prefix("task-") {
         store
@@ -55,7 +61,13 @@ pub(crate) fn authorize(
     }
     let id = label.strip_prefix(PREFIX).ok_or("未知窗口")?;
     let target = input["id"].as_str().ok_or("缺少任务标识")?;
-    let store = backend.store.lock().map_err(|_| "数据库锁不可用")?;
+    let handles = task_runtime_handles(
+        &backend.project_storage,
+        backend.store.clone(),
+        &backend.root,
+        id,
+    )?;
+    let store = handles.store.lock().map_err(|_| "数据库锁不可用")?;
     let bound = asset_task::get(&store, id).map_err(|e| e.to_string())?;
     if method.starts_with("assetTask.") && method != "assetTask.open" {
         return if target == id {
@@ -84,7 +96,13 @@ pub(crate) async fn open(
 ) -> Result<Value, String> {
     asset_task::validate_id(id).map_err(|e| e.to_string())?;
     let title = {
-        let store = backend.store.lock().map_err(|_| "数据库锁不可用")?;
+        let handles = task_runtime_handles(
+            &backend.project_storage,
+            backend.store.clone(),
+            &backend.root,
+            id,
+        )?;
+        let store = handles.store.lock().map_err(|_| "数据库锁不可用")?;
         let state = asset_task::get(&store, id).map_err(|e| e.to_string())?;
         let task: Value = store
             .get("task", id)

@@ -1,4 +1,4 @@
-use crate::{asset_preview::Client, asset_reference, asset_task, store::Store};
+use crate::{asset_preview::Client, asset_reference, asset_task, files::Files, store::Store};
 use anyhow::{Context, Result};
 use std::{
     collections::HashSet,
@@ -8,7 +8,8 @@ use std::{
 };
 
 /// Never remove recovery files referenced by any task, including a late follow-up.
-pub fn prune(store: &Store, directory: &Path) -> Result<()> {
+pub fn prune(store: &Store, files: &Files, task_id: &str, directory: &Path) -> Result<()> {
+    files.check_checkpoint_directory(task_id, directory)?;
     if !directory.is_dir() {
         return Ok(());
     }
@@ -19,8 +20,35 @@ pub fn prune(store: &Store, directory: &Path) -> Result<()> {
             .checkpoint
             .iter()
             .chain(state.feedback.iter().filter_map(|f| f.checkpoint.as_ref()))
+            .chain(
+                state
+                    .work
+                    .attempts
+                    .iter()
+                    .flat_map(|a| a.checkpoint.iter().chain(a.end_checkpoint.iter())),
+            )
         {
-            if let Ok(path) = fs::canonicalize(path) {
+            if let Ok(path) = files
+                .resolve_checkpoint(path)
+                .and_then(|p| Ok(fs::canonicalize(p)?))
+            {
+                pinned.insert(path);
+            }
+        }
+    }
+    // Follow-ups can be queued before their asset state has been initialized.
+    for task in store.list::<serde_json::Value>("task")? {
+        for recorded in [
+            task["assetRestore"].as_str(),
+            task["assetFeedbackSeed"]["checkpoint"].as_str(),
+        ]
+        .into_iter()
+        .flatten()
+        {
+            if let Ok(path) = files
+                .resolve_checkpoint(recorded)
+                .and_then(|p| Ok(fs::canonicalize(p)?))
+            {
                 pinned.insert(path);
             }
         }
@@ -42,14 +70,20 @@ pub fn prune(store: &Store, directory: &Path) -> Result<()> {
     Ok(())
 }
 
-pub async fn save(store: &Arc<Mutex<Store>>, client: &Client) -> Result<String> {
+pub async fn save(store: &Arc<Mutex<Store>>, files: &Files, client: &Client) -> Result<String> {
     {
         let db = store
             .lock()
             .map_err(|_| anyhow::anyhow!("Database lock unavailable"))?;
-        prune(&db, &client.checkpoints)?;
+        anyhow::ensure!(
+            asset_task::get(&db, &client.task_id)?.session_id.as_deref()
+                == Some(&client.session_id),
+            "Blender session changed before saving"
+        );
+        prune(&db, files, &client.task_id, &client.checkpoints)?;
     }
     let path = client.checkpoint().await?;
+    let path = files.checkpoint_location(&client.task_id, Path::new(&path))?;
     let db = store
         .lock()
         .map_err(|_| anyhow::anyhow!("Database lock unavailable"))?;
@@ -63,7 +97,7 @@ pub async fn save(store: &Arc<Mutex<Store>>, client: &Client) -> Result<String> 
     Ok(path)
 }
 
-pub async fn final_frame(store: &Arc<Mutex<Store>>, root: &Path, client: &Client) -> Result<()> {
+pub async fn final_frame(store: &Arc<Mutex<Store>>, files: &Files, client: &Client) -> Result<()> {
     let (frame, bytes) = client
         .latest()
         .await
@@ -71,7 +105,7 @@ pub async fn final_frame(store: &Arc<Mutex<Store>>, root: &Path, client: &Client
     let db = store
         .lock()
         .map_err(|_| anyhow::anyhow!("Database lock unavailable"))?;
-    let mut reference = asset_reference::capture(&db, root, &client.task_id, frame, &bytes)?;
+    let mut reference = asset_reference::capture(&db, files, &client.task_id, frame, &bytes)?;
     reference.used = true;
     db.put("asset-reference", &reference.id, &reference)?;
     let mut state = asset_task::get(&db, &client.task_id)?;

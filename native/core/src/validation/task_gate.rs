@@ -17,12 +17,27 @@ use std::{
 #[cfg(test)]
 #[path = "task_gate_asset_tests.rs"]
 mod asset_tests;
+#[cfg(test)]
+#[path = "task_gate_scope_tests.rs"]
+mod scope_tests;
+
+fn asset_only(change: &Change, path: &str) -> bool {
+    // Deletions and changes to existing validation policy still need the code gate.
+    change.after.is_some()
+        && (path.ends_with(".blend")
+            || path.ends_with(".glb")
+            || path.ends_with(".png")
+            || (path == "beaver.validation.json" && change.before.is_none()))
+}
 
 pub fn required(task: &Value, changes: &[Change]) -> bool {
     task["integrationValidation"] == true
         || changes.iter().any(|c| {
             let path = c.path.to_lowercase();
-            !path.starts_with("docs/") && !path.ends_with(".md") && !path.ends_with(".txt")
+            !path.starts_with("docs/")
+                && !path.ends_with(".md")
+                && !path.ends_with(".txt")
+                && !(task["assetTask"] == true && asset_only(c, &path))
         })
 }
 
@@ -56,13 +71,16 @@ pub fn changes(files: &Files, task: &Value) -> Result<Vec<Change>> {
         return Ok(serde_json::from_value(task["changes"].clone())?);
     }
     let baseline: Snapshot = serde_json::from_value(task["baseline"].clone())?;
-    let workspace = Path::new(
-        task["workspace"]
-            .as_str()
-            .context("Task workspace missing")?,
-    );
-    crate::source_encoding::normalize(workspace, &baseline)?;
-    Ok(Files::changes(&baseline, &files.capture(workspace)?))
+    let workspace = files.resolve_workspace(
+        task["id"].as_str().context("Task ID missing")?,
+        Path::new(
+            task["workspace"]
+                .as_str()
+                .context("Task workspace missing")?,
+        ),
+    )?;
+    crate::source_encoding::normalize(&workspace, &baseline)?;
+    Ok(Files::changes(&baseline, &files.capture(&workspace)?))
 }
 
 fn prepare(store: &Store, files: &Files, id: &str) -> Result<Option<Run>> {
@@ -95,8 +113,7 @@ fn prepare(store: &Store, files: &Files, id: &str) -> Result<Option<Run>> {
         return Ok(None);
     };
     if !required(&task, &changes) {
-        task["codeValidation"] =
-            json!({"status":"notRequired","reason":"No runtime changes in this task"});
+        task["codeValidation"] = json!({"status":"notRequired","reason":"Documentation or asset-only changes; GUT not required"});
         store.put("task", id, &task)?;
         return Ok(None);
     }
@@ -133,7 +150,7 @@ pub fn execute(
         };
         changed();
         if let Some(engine) = engine.filter(|path| path.is_file()) {
-            runner::execute(files.root(), engine, None, &mut run, cancelled, |run| {
+            runner::execute(files, engine, None, &mut run, cancelled, |run| {
                 if let Ok(store) = store.lock() {
                     let _ = store.put("validationRun", &run.id, run);
                 }
@@ -192,7 +209,7 @@ pub fn ready(store: &Store, files: &Files, task: &mut Value, changes: &[Change])
         task["status"] = json!(if count < 3 { "queued" } else { "failed" });
         task["error"] =
             json!("Integrated candidate changed; rechecking recorded output before merge");
-    } else if let Err(error) = code::validate(files.root(), &run) {
+    } else if let Err(error) = code::validate(files, &run) {
         task["status"] = json!("failed");
         let error = run.error.clone().unwrap_or_else(|| error.to_string());
         task["error"] = json!(error);

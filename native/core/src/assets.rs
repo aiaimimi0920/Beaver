@@ -1,4 +1,7 @@
-use crate::{files::safe_path, store::Store};
+use crate::{
+    files::{safe_path, Files},
+    store::Store,
+};
 use anyhow::{bail, Context, Result};
 use serde_json::Value;
 use std::{
@@ -7,7 +10,7 @@ use std::{
     path::{Path, PathBuf},
 };
 
-pub fn resolve_asset(store: &Store, uri_path: &str) -> Result<PathBuf> {
+pub fn resolve_asset(store: &Store, files: &Files, uri_path: &str) -> Result<PathBuf> {
     let (id, encoded) = uri_path
         .strip_prefix('/')
         .context("无效资源地址")?
@@ -22,9 +25,14 @@ pub fn resolve_asset(store: &Store, uri_path: &str) -> Result<PathBuf> {
         ("project", id, "path")
     };
     let entity: Value = store.get(kind, id)?.context("资源所属项目或任务不存在")?;
-    let root = entity[field].as_str().context("资源根目录无效")?;
+    let recorded = Path::new(entity[field].as_str().context("资源根目录无效")?);
+    let root = if kind == "task" {
+        files.resolve_workspace(id, recorded)?
+    } else {
+        recorded.to_owned()
+    };
     let relative = percent_encoding::percent_decode_str(encoded).decode_utf8()?;
-    safe_path(Path::new(root), &relative)
+    safe_path(&root, &relative)
 }
 
 pub fn import_root(store: &Store, id: &str) -> Result<PathBuf> {
@@ -34,14 +42,12 @@ pub fn import_root(store: &Store, id: &str) -> Result<PathBuf> {
 
 pub fn import_files(
     store: &mut Store,
-    data: &Path,
+    files: &Files,
     id: &str,
     sources: &[PathBuf],
 ) -> Result<Vec<String>> {
     let root = import_root(store, id)?;
-    if crate::journal::Journal::new(store, &crate::files::Files::new(data.to_path_buf()))
-        .blocked(id)?
-    {
+    if crate::journal::Journal::new(store, files).blocked(id)? {
         bail!("项目有尚未恢复的文件操作，禁止继续写入");
     }
     let invalid = regex::Regex::new(r"[^\p{L}\p{N}._ -]")?;
@@ -75,12 +81,10 @@ pub fn import_files(
     Ok(imported)
 }
 
-pub fn save_capture(store: &mut Store, data: &Path, id: &str, png: &[u8]) -> Result<String> {
+pub fn save_capture(store: &mut Store, files: &Files, id: &str, png: &[u8]) -> Result<String> {
     use std::io::Write;
     let root = import_root(store, id)?;
-    if crate::journal::Journal::new(store, &crate::files::Files::new(data.to_owned()))
-        .blocked(id)?
-    {
+    if crate::journal::Journal::new(store, files).blocked(id)? {
         bail!("项目有尚未恢复的文件操作，禁止继续写入");
     }
     if !png.starts_with(b"\x89PNG\r\n\x1a\n") || png.len() > 16 * 1024 * 1024 {
@@ -219,16 +223,17 @@ mod tests {
         std::fs::create_dir(&root)?;
         let data = temp.path().join("data");
         let mut store = Store::open(&data)?;
+        let files = Files::new(data);
         let id = uuid::Uuid::new_v4().to_string();
         store.put("project", &id, &json!({"path":root}))?;
         let mut encoded = std::io::Cursor::new(Vec::new());
         image::DynamicImage::new_rgba8(2, 2).write_to(&mut encoded, image::ImageFormat::Png)?;
         let png = encoded.into_inner();
-        assert!(save_capture(&mut store, &data, "invalid", &png).is_err());
-        assert!(save_capture(&mut store, &data, &id, b"invalid png").is_err());
+        assert!(save_capture(&mut store, &files, "invalid", &png).is_err());
+        assert!(save_capture(&mut store, &files, &id, b"invalid png").is_err());
         assert!(!root.join("references").exists());
-        let first = save_capture(&mut store, &data, &id, &png)?;
-        let second = save_capture(&mut store, &data, &id, &png)?;
+        let first = save_capture(&mut store, &files, &id, &png)?;
+        let second = save_capture(&mut store, &files, &id, &png)?;
         assert_ne!(first, second);
         for relative in [first, second] {
             assert!(relative.starts_with("references/capture-") && relative.ends_with(".png"));
@@ -263,6 +268,7 @@ mod tests {
         let root = temp.path().join("project");
         std::fs::create_dir(&root)?;
         let mut store = Store::open(&data)?;
+        let files = Files::new(data);
         let id = uuid::Uuid::new_v4().to_string();
         store.put("project", &id, &json!({"path":root}))?;
         let source = temp.path().join("角色 🎮.png");
@@ -270,7 +276,7 @@ mod tests {
         std::fs::write(&source, bytes)?;
         let imported = import_files(
             &mut store,
-            &data,
+            &files,
             &id,
             &[source.clone(), root.clone(), source.clone()],
         )?;
@@ -283,14 +289,14 @@ mod tests {
         assert_eq!(std::fs::read(&source)?, bytes);
         assert!(import_files(
             &mut store,
-            &data,
+            &files,
             &id,
             &[source, temp.path().join("missing")]
         )
         .is_err());
         assert_eq!(std::fs::read_dir(root.join("references"))?.count(), 3);
-        assert!(import_files(&mut store, &data, "invalid", &[]).is_err());
-        assert!(import_files(&mut store, &data, &uuid::Uuid::new_v4().to_string(), &[]).is_err());
+        assert!(import_files(&mut store, &files, "invalid", &[]).is_err());
+        assert!(import_files(&mut store, &files, &uuid::Uuid::new_v4().to_string(), &[]).is_err());
         Ok(())
     }
     #[test]
@@ -314,12 +320,13 @@ mod tests {
         #[cfg(unix)]
         std::os::unix::fs::symlink(&outside, &link)?;
         let mut store = Store::open(&data)?;
+        let files = Files::new(data);
         let id = uuid::Uuid::new_v4().to_string();
         store.put("project", &id, &json!({"path":root}))?;
         let source = temp.path().join("source.png");
         std::fs::write(&source, b"fixture")?;
-        assert!(import_files(&mut store, &data, &id, &[source]).is_err());
-        assert!(save_capture(&mut store, &data, &id, b"\x89PNG\r\n\x1a\n").is_err());
+        assert!(import_files(&mut store, &files, &id, &[source]).is_err());
+        assert!(save_capture(&mut store, &files, &id, b"\x89PNG\r\n\x1a\n").is_err());
         assert_eq!(std::fs::read_dir(&outside)?.count(), 0);
         #[cfg(windows)]
         std::fs::remove_dir(&link)?;
@@ -331,13 +338,14 @@ mod tests {
     fn only_registered_roots_are_readable() -> Result<()> {
         let temp = tempfile::tempdir()?;
         let store = Store::open(&temp.path().join("data"))?;
+        let files = Files::new(temp.path().join("data"));
         store.put("project", "p", &json!({"path":temp.path()}))?;
         store.put("task", "t", &json!({"workspace":temp.path()}))?;
         assert_eq!(
-            resolve_asset(&store, "/p/%E4%B8%96%E7%95%8C.md")?,
+            resolve_asset(&store, &files, "/p/%E4%B8%96%E7%95%8C.md")?,
             std::fs::canonicalize(temp.path())?.join("世界.md")
         );
-        assert!(resolve_asset(&store, "/task-t/a.wav").is_ok());
+        assert!(resolve_asset(&store, &files, "/task-t/a.wav").is_ok());
         for invalid in [
             "/unknown/a",
             "/p/%2e%2e/a",
@@ -346,7 +354,7 @@ mod tests {
             "/p/%2Fa",
             "/p/%ff",
         ] {
-            assert!(resolve_asset(&store, invalid).is_err(), "{invalid}");
+            assert!(resolve_asset(&store, &files, invalid).is_err(), "{invalid}");
         }
         Ok(())
     }

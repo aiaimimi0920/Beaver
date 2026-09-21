@@ -1,6 +1,6 @@
 use crate::store::Store;
 use anyhow::{bail, Context, Result};
-use rusqlite::params;
+use rusqlite::{params, OptionalExtension};
 use serde_json::{json, Value};
 use sha2::{Digest, Sha256};
 
@@ -93,6 +93,36 @@ pub fn link(store: &Store, id: &str, task: Option<&str>, project: Option<&str>) 
     Ok(())
 }
 
+/// Copy a completed call record into another runtime's log without changing its
+/// correlation ID. The destination insert is idempotent so recovery retries do
+/// not create duplicate records.
+pub fn copy_record(source: &Store, destination: &Store, id: &str) -> Result<bool> {
+    let record = source
+        .connection
+        .query_row(
+            "SELECT id,task,project,method,value FROM calls WHERE id=?",
+            [id],
+            |row| {
+                Ok((
+                    row.get::<_, String>(0)?,
+                    row.get::<_, Option<String>>(1)?,
+                    row.get::<_, Option<String>>(2)?,
+                    row.get::<_, String>(3)?,
+                    row.get::<_, String>(4)?,
+                ))
+            },
+        )
+        .optional()?;
+    let Some((id, task, project, method, value)) = record else {
+        return Ok(false);
+    };
+    let inserted = destination.connection.execute(
+        "INSERT OR IGNORE INTO calls(id,task,project,method,value) VALUES(?,?,?,?,?)",
+        params![id, task, project, method, value],
+    )?;
+    Ok(inserted == 1)
+}
+
 pub fn recover(store: &Store) -> Result<()> {
     store.connection.execute("UPDATE calls SET value=json_set(value,'$.status','interrupted','$.finishedAt',?,'$.durationMs',null,'$.output',null) WHERE json_extract(value,'$.status')='running'",[now()])?;
     Ok(())
@@ -175,6 +205,14 @@ impl Activity {
         }
     }
     pub fn item(&mut self, item: &Value, completed: bool) -> Result<()> {
+        self.item_at(item, completed, None)
+    }
+    pub fn item_at(
+        &mut self,
+        item: &Value,
+        completed: bool,
+        identity: Option<(&str, &str)>,
+    ) -> Result<()> {
         let kind = item["type"].as_str().unwrap_or("");
         if !matches!(
             kind,
@@ -220,6 +258,9 @@ impl Activity {
                 "UPDATE calls SET value=json_set(value,'$.itemId',?) WHERE id=?",
                 params![key, id],
             )?;
+            crate::framework_evidence::start(
+                &store, &self.task, &id, &name, item, identity, completed,
+            )?;
             self.spans
                 .insert(key.into(), (id, std::time::Instant::now()));
         }
@@ -242,6 +283,13 @@ impl Activity {
                     start.elapsed().as_millis() as u64,
                     item,
                 )?;
+                crate::framework_evidence::finish(
+                    &store,
+                    &self.task,
+                    &id,
+                    if failed { "failed" } else { "succeeded" },
+                    item,
+                )?;
             }
         }
         Ok(())
@@ -252,6 +300,13 @@ impl Drop for Activity {
     fn drop(&mut self) {
         if let Ok(store) = self.store.lock() {
             for (id, start) in self.spans.values() {
+                let _ = crate::framework_evidence::finish(
+                    &store,
+                    &self.task,
+                    id,
+                    "interrupted",
+                    &Value::Null,
+                );
                 let _ = finish(
                     &store,
                     id,
@@ -345,6 +400,32 @@ mod tests {
         assert_eq!(rows["records"][0]["method"], "blender.execute_code");
         assert_eq!(rows["records"][1]["status"], "interrupted");
         assert!(!rows.to_string().contains("private-code"));
+        Ok(())
+    }
+
+    #[test]
+    fn copies_completed_records_idempotently_between_runtime_stores() -> Result<()> {
+        let temp = tempfile::tempdir()?;
+        let source = Store::open(&temp.path().join("source"))?;
+        let destination = Store::open(&temp.path().join("destination"))?;
+        let id = begin(
+            &source,
+            "api",
+            "project.create",
+            None,
+            Some("project-a"),
+            &json!({"name":"Demo"}),
+        )?;
+        link(&source, &id, None, Some("project-a"))?;
+        finish(&source, &id, "succeeded", 7, &json!({"id":"project-a"}))?;
+
+        assert!(copy_record(&source, &destination, &id)?);
+        assert!(!copy_record(&source, &destination, &id)?);
+        let page = query(&destination, &json!({"projectId":"project-a"}))?;
+        assert_eq!(page["records"].as_array().unwrap().len(), 1);
+        assert_eq!(page["records"][0]["id"], id);
+        assert_eq!(page["records"][0]["status"], "succeeded");
+        assert_eq!(page["records"][0]["durationMs"], 7);
         Ok(())
     }
 }

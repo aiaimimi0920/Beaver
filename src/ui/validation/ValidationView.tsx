@@ -1,10 +1,11 @@
 import { useState } from "react";
 import type { Task } from "../../shared/types";
-import { Field } from "../components";
+import { Dialog, Field } from "../components";
+import { Icon } from "../Icon";
 import type { Flow } from "./flow";
 import { FlowEditor } from "./FlowEditor";
 import { FlowList } from "./FlowList";
-import { ReleaseStatus } from "./ReleaseStatus";
+import { ValidationRecords } from "./ValidationRecords";
 import { RunDetail } from "./RunDetail";
 import { ValidationSettings } from "./ValidationSettings";
 import {
@@ -23,6 +24,8 @@ import {
 } from "./useValidation";
 import "./validation.css";
 import "./validation-media.css";
+import "./validation-workspace.css";
+import "./validation-results.css";
 
 export function ValidationView({
   projectId,
@@ -50,11 +53,15 @@ export function ValidationView({
     { runId: initialRunId },
   );
   const [editor, setEditor] = useState<{ flow?: Flow }>();
+  const [page, setPage] = useState<"workbench" | "coverage" | "releases">(
+    "workbench",
+  );
+  const [settingsOpen, setSettingsOpen] = useState(false);
   if (!data)
     return (
       <section className="validation-page">
         <p className={error ? "validation-error" : "muted"}>
-          {error ?? "正在读取测试与画面…"}
+          {error ?? "正在读取测试…"}
         </p>
         <button onClick={refresh}>刷新</button>
       </section>
@@ -70,7 +77,10 @@ export function ValidationView({
         r.flow?.definition.taskIds.includes(taskId)),
   );
   const runId = selected.runId ?? history[0]?.id;
-  const openRun = (id: string) => setSelected({ runId: id });
+  const openRun = (id: string) => {
+    setSelected({ runId: id });
+    setPage("workbench");
+  };
   const enqueue = (method: string, input: Record<string, unknown> = {}) =>
     perform(
       mutate<{ runIds: string[] }>(method, {
@@ -80,189 +90,240 @@ export function ValidationView({
         if (r.runIds[0]) openRun(r.runIds[0]);
       }),
     );
-  const latestCode = data.runs.find((r) => r.kind === "code");
+  const latestRuns = data.runs.filter(
+    (run, index, runs) =>
+      runs.findIndex(
+        (item) =>
+          (item.kind === "code" ? "code" : item.flow?.id) ===
+          (run.kind === "code" ? "code" : run.flow?.id),
+      ) === index,
+  );
+  const runCurrent = () =>
+    flow
+      ? enqueue("validation.flow.run", {
+          flowId,
+          expectedRevision: flow.revision,
+        })
+      : enqueue("validation.code.run");
   return (
-    <section className="validation-page">
-      <div className="validation-summary">
-        <span
-          className={latestCode ? `validation-${tone(latestCode)}` : "muted"}
-        >
-          最近代码：{latestCode ? verdictLabel(latestCode) : "尚未建立验收结果"}
-        </span>
-        <span>
-          运行中 {data.runs.filter(running).length} · 画面流程{" "}
-          {data.flows.filter((f) => !f.definition.retiredReason).length}
-        </span>
-        <span>日常画面红项不撤销已交付任务</span>
-      </div>
-      <ValidationSettings
-        key={data.settings.revision}
-        settings={data.settings}
-        mutate={mutate}
-        busy={busy}
-      />
-      <div className="validation-toolbar">
-        <button disabled={busy} onClick={() => enqueue("validation.code.run")}>
-          运行代码验收
-        </button>
-        <button disabled={busy} onClick={() => enqueue("validation.run.all")}>
-          重跑全部流程
-        </button>
-        <button disabled={busy} onClick={() => setEditor({})}>
-          新增画面流程
-        </button>
-        <button onClick={() => exportGame()}>正式发布检查 / 内部导出</button>
-        <button onClick={refresh}>刷新</button>
-      </div>
-      {error && <p className="validation-error">{error}</p>}
-      <div className="validation-layout">
-        <FlowList
-          flows={data.flows}
-          runs={data.runs}
-          tasks={tasks}
-          taskId={taskId}
-          changeTask={(id) => {
-            setTaskId(id);
-            setSelected({});
-          }}
-          selected={flowId}
-          select={(id) => setSelected({ flowId: id })}
-        />
-        <div className="validation-main">
-          {flow && (
-            <div className="validation-toolbar">
-              <button
-                disabled={busy || !!flow.definition.retiredReason}
-                onClick={() =>
-                  enqueue("validation.flow.run", {
-                    flowId,
-                    expectedRevision: flow.revision,
-                  })
-                }
-              >
-                运行流程 v{flow.revision}
-              </button>
-              <button disabled={busy} onClick={() => setEditor({ flow })}>
-                编辑流程
-              </button>
-              {flow.definition.roaming && (
-                <button
-                  disabled={busy || !!flow.definition.retiredReason}
-                  onClick={() =>
-                    perform(
-                      mutate<Flow>("validation.flow.explore", {
-                        flowId,
-                        expectedRevision: flow.revision,
-                        seed: crypto.getRandomValues(new Uint32Array(1))[0],
-                      }).then((next) => setSelected({ flowId: next.id })),
-                    )
-                  }
-                >
-                  生成新随机路线
-                </button>
-              )}
-              {flow.definition.retiredReason && (
-                <span>退役原因：{flow.definition.retiredReason}</span>
-              )}
-            </div>
-          )}
-          <Field label="运行历史（每次运行独立保存，列表展示最近 200 次）">
-            <select
-              value={runId ?? ""}
-              onChange={(e) => openRun(e.target.value)}
+    <section className="validation-page validation-workbench">
+      <header className="validation-workspace-header">
+        <h1>
+          <Icon name="review" />
+          测试
+        </h1>
+        <nav className="validation-section-nav" aria-label="测试页面">
+          {(
+            [
+              ["workbench", "测试工作台"],
+              ["coverage", "任务覆盖"],
+              ["releases", "发布记录"],
+            ] as const
+          ).map(([id, title]) => (
+            <button
+              key={id}
+              aria-current={page === id ? "page" : undefined}
+              className={page === id ? "active" : ""}
+              onClick={() => setPage(id)}
             >
-              {!runId && <option value="">尚无运行</option>}
-              {runId && !history.some((r) => r.id === runId) && (
-                <option value={runId}>指定运行 {shortId(runId)}</option>
-              )}
-              {history.map((r) => (
-                <option key={r.id} value={r.id}>
-                  {time(r.createdAt)} · {shortId(r.snapshotId)} ·{" "}
-                  {label(r.status)} · {verdictLabel(r)}
-                  {r.releaseId ? " · 发布候选" : ""}
-                </option>
-              ))}
-            </select>
-          </Field>
-          {runId ? (
-            <RunDetail
-              key={runId}
-              projectId={projectId}
-              runId={runId}
-              tasks={tasks}
-              feedback={data.feedback}
-              mutate={mutate}
-              busy={busy}
-              openRun={openRun}
-              openTask={openTask}
-            />
-          ) : (
-            <p className="validation-notice">
-              选择已有流程运行，或让开发任务根据玩法生成流程。这里会保留每次运行的截图、视频和历史代码。
-            </p>
-          )}
+              {title}
+            </button>
+          ))}
+        </nav>
+        <div className="validation-workspace-actions">
+          <button onClick={() => setEditor({})} disabled={busy}>
+            <Icon name="add" />
+            新增流程
+          </button>
+          <button title="刷新测试" aria-label="刷新测试" onClick={refresh}>
+            <Icon name="refresh" />
+          </button>
+          <button
+            title="测试设置"
+            aria-label="测试设置"
+            onClick={() => setSettingsOpen(true)}
+          >
+            <Icon name="settings" />
+          </button>
+        </div>
+      </header>
+      {error && <p className="validation-error">{error}</p>}
+      <div className="validation-workspace-body" hidden={page !== "workbench"}>
+        <div className="validation-layout">
+          <FlowList
+            flows={data.flows}
+            runs={data.runs}
+            tasks={tasks}
+            taskId={taskId}
+            changeTask={(id) => {
+              setTaskId(id);
+              setSelected({});
+            }}
+            selected={flowId}
+            select={(id) => setSelected({ flowId: id })}
+          />
+          <div className="validation-main">
+            <header className="validation-flow-heading">
+              <div>
+                <span className="validation-eyebrow">
+                  {flow ? "画面测试" : "代码测试"}
+                  {flow && ` / v${flow.revision}`}
+                </span>
+                <h2>{flow?.definition.name ?? "GUT 代码验收"}</h2>
+                <p className="muted" title={flow?.definition.purpose}>
+                  {flow?.definition.purpose ??
+                    "运行项目中的 GUT 测试，查看用例结果和错误。"}
+                </p>
+              </div>
+              <div className="validation-toolbar">
+                <button
+                  className="primary"
+                  disabled={busy || !!flow?.definition.retiredReason}
+                  onClick={runCurrent}
+                >
+                  <Icon name="play" />
+                  运行当前测试
+                </button>
+                {flow && (
+                  <button disabled={busy} onClick={() => setEditor({ flow })}>
+                    编辑流程
+                  </button>
+                )}
+                {flow?.definition.roaming && (
+                  <button
+                    disabled={busy || !!flow.definition.retiredReason}
+                    onClick={() =>
+                      perform(
+                        mutate<Flow>("validation.flow.explore", {
+                          flowId,
+                          expectedRevision: flow.revision,
+                          seed: crypto.getRandomValues(new Uint32Array(1))[0],
+                        }).then((next) => setSelected({ flowId: next.id })),
+                      )
+                    }
+                  >
+                    生成新随机路线
+                  </button>
+                )}
+              </div>
+            </header>
+            {flow?.definition.retiredReason && (
+              <p className="validation-notice">
+                退役原因：{flow.definition.retiredReason}
+              </p>
+            )}
+            {runId && (
+              <div className="validation-history-bar">
+                <Field label="运行记录">
+                  <select
+                    value={runId ?? ""}
+                    onChange={(e) => openRun(e.target.value)}
+                  >
+                    {!runId && <option value="">尚无运行</option>}
+                    {runId && !history.some((r) => r.id === runId) && (
+                      <option value={runId}>指定运行 {shortId(runId)}</option>
+                    )}
+                    {history.map((r) => (
+                      <option key={r.id} value={r.id}>
+                        {time(r.createdAt)} ·{" "}
+                        {r.status === "completed"
+                          ? verdictLabel(r)
+                          : label(r.status)}
+                        {r.releaseId ? " · 发布候选" : ""}
+                      </option>
+                    ))}
+                  </select>
+                </Field>
+                <span className="muted">
+                  {history.length} 次记录 · 切换仅查看历史结果
+                </span>
+              </div>
+            )}
+            {runId ? (
+              <RunDetail
+                key={runId}
+                projectId={projectId}
+                runId={runId}
+                tasks={tasks}
+                feedback={data.feedback}
+                mutate={mutate}
+                busy={busy}
+                openRun={openRun}
+                openTask={openTask}
+              />
+            ) : (
+              <div className="validation-empty validation-run-empty">
+                <Icon name={flow ? "assets" : "code"} />
+                <h3>等待第一次测试</h3>
+                <p>
+                  {flow
+                    ? "运行后在这里查看截图、视频与对比结果，框选画面即可提交修改意见。"
+                    : "运行后在这里查看通过、失败的用例，以及对应的代码与日志。"}
+                </p>
+                <button
+                  className="primary"
+                  disabled={busy || !!flow?.definition.retiredReason}
+                  onClick={runCurrent}
+                >
+                  <Icon name="play" />
+                  运行当前测试
+                </button>
+              </div>
+            )}
+          </div>
         </div>
       </div>
-      <details className="validation-coverage">
-        <summary>
-          任务画面覆盖与自动修复 · {data.coverage.length} 个任务
-        </summary>
-        {data.coverage.map((c) => (
-          <article key={c.taskId}>
-            <button onClick={() => openTask(c.taskId)}>
-              {tasks.find((t) => t.id === c.taskId)?.title ?? c.taskId}
-            </button>
-            <span
-              className={
-                c.status === "missing" || c.status === "failed"
-                  ? "validation-bad"
-                  : "muted"
-              }
+      {page !== "workbench" && (
+        <ValidationRecords
+          page={page}
+          data={data}
+          tasks={tasks}
+          openTask={openTask}
+          openRun={openRun}
+          exportGame={exportGame}
+        />
+      )}
+      <footer className="validation-workspace-status">
+        <span className="validation-busy">
+          运行中 {data.runs.filter(running).length}
+        </span>
+        <span className="validation-good">
+          最近通过 {latestRuns.filter((run) => tone(run) === "good").length}
+        </span>
+        <span className="validation-attention">
+          需要关注{" "}
+          {
+            latestRuns.filter((run) => ["bad", "attention"].includes(tone(run)))
+              .length
+          }
+        </span>
+        <span className="muted">每个流程按最近一次结果统计</span>
+      </footer>
+      {settingsOpen && (
+        <Dialog title="测试设置" close={() => setSettingsOpen(false)}>
+          <ValidationSettings
+            key={data.settings.revision}
+            settings={data.settings}
+            mutate={mutate}
+            busy={busy}
+          />
+          <div className="validation-settings-extra">
+            <h3>批量运行</h3>
+            <p className="muted">
+              日常调试可在工作台单独运行当前测试。需要整体检查时，可重跑当前任务范围内的全部流程。
+            </p>
+            <button
+              disabled={busy}
+              onClick={() => {
+                enqueue("validation.run.all");
+                setSettingsOpen(false);
+              }}
             >
-              画面：{label(c.status)}
-            </span>
-            <p>{c.reason}</p>
-            {c.runIds?.map((id) => (
-              <button key={id} onClick={() => openRun(id)}>
-                查看运行 {shortId(id)}
-              </button>
-            ))}
-          </article>
-        ))}
-        {data.repairDecisions.map((d) => (
-          <article key={d.runId}>
-            <button onClick={() => openRun(d.runId)}>
-              代码修复 {shortId(d.runId)}
+              重跑全部流程{taskId ? "（当前任务）" : ""}
             </button>
-            <span>
-              {label(d.status)} · {d.reason}
-            </span>
-            {d.taskId && (
-              <button onClick={() => openTask(d.taskId!)}>关联修复任务</button>
-            )}
-          </article>
-        ))}
-        {!data.coverage.length && (
-          <p className="muted">
-            大任务完成后会登记画面覆盖；缺少流程会在此明确显示。
-          </p>
-        )}
-      </details>
-      <details className="validation-releases">
-        <summary>正式发布诊断历史 · {data.releases.length}</summary>
-        {data.releases.map((check) => (
-          <details key={check.id}>
-            <summary>
-              {time(check.createdAt)} · {check.preset} ·{" "}
-              {check.ready ? "通过" : "待处理"}
-            </summary>
-            <ReleaseStatus check={check} openRun={openRun} />
-            <button onClick={() => exportGame(check.id)}>
-              使用此固定候选导出
-            </button>
-          </details>
-        ))}
-      </details>
+          </div>
+        </Dialog>
+      )}
       {editor && (
         <FlowEditor
           flow={editor.flow}
@@ -270,7 +331,10 @@ export function ValidationView({
           tasks={tasks}
           mutate={mutate}
           close={() => setEditor(undefined)}
-          saved={(next) => setSelected({ flowId: next.id })}
+          saved={(next) => {
+            setSelected({ flowId: next.id });
+            setPage("workbench");
+          }}
         />
       )}
     </section>

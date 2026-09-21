@@ -1,5 +1,7 @@
-use crate::{files::safe_path, store::Store};
-use anyhow::{bail, Context, Result};
+use crate::{
+    files::safe_path, project_storage::ProjectStore, project_storage_layout as layout, store::Store,
+};
+use anyhow::{bail, ensure, Context, Result};
 use serde::Deserialize;
 use serde_json::{json, Value};
 use std::{
@@ -100,7 +102,8 @@ pub fn create_project(
         file.write_all(&bytes)?;
         file.sync_all()?;
     }
-    let mut project = json!({"id":uuid::Uuid::new_v4().to_string(),"name":name,"path":fs::canonicalize(&destination)?,"createdAt":chrono::Utc::now().to_rfc3339_opts(chrono::SecondsFormat::Millis,true)});
+    let project_id = uuid::Uuid::new_v4().to_string();
+    let mut project = json!({"id":project_id,"name":name,"path":fs::canonicalize(&destination)?,"createdAt":chrono::Utc::now().to_rfc3339_opts(chrono::SecondsFormat::Millis,true)});
     if let Some(design) = input.design {
         project["design"] = design;
     }
@@ -108,11 +111,11 @@ pub fn create_project(
         project["blueprint"] = blueprint;
         project["blueprintRevision"] = json!(1);
     }
-    store.put(
-        "project",
-        project["id"].as_str().context("项目标识无效")?,
-        &project,
-    )?;
+    let project_id = project["id"].as_str().context("项目标识无效")?;
+    let project_store =
+        ProjectStore::initialize(&destination, project_id).context("无法初始化项目本地存储")?;
+    project_store.store().put("project", project_id, &project)?;
+    store.put("project", project_id, &project)?;
     Ok(project)
 }
 
@@ -180,7 +183,43 @@ pub fn import_project(
             .as_ref()
             == Some(&root)
     });
-    let mut project=existing.unwrap_or(json!({"id":uuid::Uuid::new_v4().to_string(),"name":root.file_name().and_then(|s|s.to_str()).context("项目名称无效")?,"path":root,"createdAt":chrono::Utc::now().to_rfc3339_opts(chrono::SecondsFormat::Millis,true)}));
+    let local_project = match fs::symlink_metadata(root.join(layout::CONTROL_DIR)) {
+        Ok(metadata) => {
+            ensure!(metadata.is_dir(), "项目 .beaver 必须是实际目录");
+            let local_id = layout::read_manifest(
+                &root,
+                existing.as_ref().and_then(|project| project["id"].as_str()),
+            )?
+            .project_id;
+            if existing.is_some() {
+                None
+            } else {
+                ensure!(
+                    store.get::<Value>("project", &local_id)?.is_none(),
+                    "同一项目 ID 已登记在其他位置；请明确重新关联或派生独立项目身份：{local_id}"
+                );
+                Some(ProjectStore::read_project(&root, &local_id)?)
+            }
+        }
+        Err(error) if error.kind() == std::io::ErrorKind::NotFound => None,
+        Err(error) => return Err(error.into()),
+    };
+    let mut project = match existing.or(local_project) {
+        Some(project) => project,
+        None => {
+            let name = root
+                .file_name()
+                .and_then(|value| value.to_str())
+                .context("项目名称无效")?;
+            json!({
+                "id": uuid::Uuid::new_v4().to_string(),
+                "name": name,
+                "path": root.clone(),
+                "createdAt": chrono::Utc::now().to_rfc3339_opts(chrono::SecondsFormat::Millis, true)
+            })
+        }
+    };
+    project["path"] = json!(root);
     if let Some(design) = design {
         project["design"] = design;
     } else {
@@ -196,6 +235,10 @@ pub fn import_project(
     )?;
     Ok(project)
 }
+
+#[cfg(test)]
+#[path = "project_import_identity_tests.rs"]
+mod identity_tests;
 
 #[cfg(test)]
 mod tests {
@@ -230,6 +273,14 @@ mod tests {
             assert!(create_project(&store, &data, input, &designs, &plans, &templates).is_err());
             assert_eq!(
                 store
+                    .get::<Value>("project", project["id"].as_str().unwrap())?
+                    .unwrap(),
+                project
+            );
+            let project_store = ProjectStore::open(path, project["id"].as_str().unwrap())?;
+            assert_eq!(
+                project_store
+                    .store()
                     .get::<Value>("project", project["id"].as_str().unwrap())?
                     .unwrap(),
                 project
@@ -303,6 +354,50 @@ mod tests {
         )?;
         assert!(import_project(&store, &data, &root, &catalog).is_err());
         assert!(import_project(&store, &data, &data, &catalog).is_err());
+        Ok(())
+    }
+
+    #[test]
+    fn import_existing_beaver_project_preserves_local_identity() -> Result<()> {
+        let temp = tempfile::tempdir()?;
+        let data = temp.path().join("data");
+        let root = temp.path().join("game");
+        fs::create_dir(&root)?;
+        fs::write(root.join("project.godot"), "config_version=5\n")?;
+        let local_id = "local-project";
+        let local = ProjectStore::initialize(&root, local_id)?;
+        let project = json!({
+            "id": local_id,
+            "name": "Portable",
+            "path": root,
+            "createdAt": "2026-09-19T00:00:00.000Z"
+        });
+        local.store().put("project", local_id, &project)?;
+        drop(local);
+
+        let host = std::sync::Arc::new(std::sync::Mutex::new(Store::open(&data)?));
+        let catalog = json!({"genres":["narrative"],"themes":["cyberpunk"],"styles":["pixel"],"scopes":["prototype"]});
+        let imported = {
+            let host_store = host.lock().map_err(|_| anyhow::anyhow!("host lock"))?;
+            import_project(&host_store, &data, &root, &catalog)?
+        };
+
+        assert_eq!(imported["id"], local_id);
+        let host_store = host.lock().map_err(|_| anyhow::anyhow!("host lock"))?;
+        assert_eq!(host_store.list::<Value>("project")?.len(), 1);
+        let host_project = host_store.get::<Value>("project", local_id)?.unwrap();
+        assert_eq!(
+            host_project["path"],
+            fs::canonicalize(&root)?.to_string_lossy().as_ref()
+        );
+        drop(host_store);
+        let router = crate::project_storage_router::ProjectStorageRouter::new(host.clone());
+        router.open_registered(local_id)?;
+        let reimported = {
+            let host_store = host.lock().map_err(|_| anyhow::anyhow!("host lock"))?;
+            import_project(&host_store, &data, &root, &catalog)?
+        };
+        assert_eq!(reimported["id"], local_id);
         Ok(())
     }
 }

@@ -1,6 +1,7 @@
 /* Loom shell proportions, shared by every workspace including settings. */
 .app-shell {
-  --shell-rail-width: 186px;
+  --shell-rail-expanded-width: 186px;
+  --shell-rail-width: var(--shell-rail-expanded-width);
   --shell-titlebar-height: 50px;
   display: grid;
   grid-template-columns: var(--shell-rail-width) minmax(0, 1fr);

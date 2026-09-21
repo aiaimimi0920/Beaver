@@ -1,10 +1,14 @@
+use crate::scheduler_runtime_ops::{
+    claim_next_runtimes, close_sessions, interrupt_all, interrupt_task,
+};
 use crate::{
     executor::{Control, Outcome},
     files::Files,
+    scheduler_runtime::{RuntimeSource, TaskRuntime},
     store::Store,
     task_finish,
 };
-use serde_json::{json, Value};
+use serde_json::Value;
 use std::{
     collections::HashMap,
     sync::{
@@ -29,6 +33,8 @@ pub struct Launch {
     pub godot: Option<std::path::PathBuf>,
 }
 pub type Factory = Arc<dyn Fn(&Value) -> Result<Launch, String> + Send + Sync>;
+pub type RuntimeFactory = Arc<dyn Fn(&Value, &TaskRuntime) -> Result<Launch, String> + Send + Sync>;
+pub type ParallelLimit = Arc<dyn Fn() -> Result<usize, String> + Send + Sync>;
 type Reply = oneshot::Sender<Result<(), String>>;
 enum Message {
     Wake,
@@ -38,6 +44,7 @@ enum Message {
     Shutdown(Reply),
 }
 struct Active {
+    runtime: TaskRuntime,
     worker: Option<tokio::task::Id>,
     controls: mpsc::Sender<Control>,
     cancelled: Arc<AtomicBool>,
@@ -56,16 +63,39 @@ impl Scheduler {
         files: Arc<Files>,
         factory: Factory,
         changed: Arc<dyn Fn() + Send + Sync>,
+        parallel_limit: ParallelLimit,
     ) -> Self {
         let (sender, receiver) = mpsc::unbounded_channel();
         let sessions = crate::asset_sessions::Sessions::default();
+        let runtime = TaskRuntime::host(store, files);
+        let runtimes: RuntimeSource = Arc::new(move || Ok(vec![runtime.clone()]));
+        let factory: RuntimeFactory = Arc::new(move |task, _| factory(task));
         tokio::spawn(run(
-            store,
-            files,
+            runtimes,
             factory,
             changed,
             receiver,
             sessions.clone(),
+            parallel_limit,
+        ));
+        Self { sender, sessions }
+    }
+
+    pub fn start_with_runtimes(
+        runtimes: RuntimeSource,
+        factory: RuntimeFactory,
+        changed: Arc<dyn Fn() + Send + Sync>,
+        parallel_limit: ParallelLimit,
+    ) -> Self {
+        let (sender, receiver) = mpsc::unbounded_channel();
+        let sessions = crate::asset_sessions::Sessions::default();
+        tokio::spawn(run(
+            runtimes,
+            factory,
+            changed,
+            receiver,
+            sessions.clone(),
+            parallel_limit,
         ));
         Self { sender, sessions }
     }
@@ -107,73 +137,6 @@ impl Scheduler {
     }
 }
 
-fn claim(store: &mut Store, files: &Files, active: usize) -> anyhow::Result<Vec<Value>> {
-    crate::task_plan::reconcile(store, files)?;
-    let limit = store
-        .get::<Value>("settings", "main")?
-        .and_then(|s| s["maxParallel"].as_u64())
-        .unwrap_or(2)
-        .clamp(1, 6) as usize;
-    let tasks: Vec<Value> = store.list("task")?;
-    let count = tasks
-        .iter()
-        .filter(|t| t["status"] == "running")
-        .count()
-        .max(active);
-    let selected: Vec<_> = tasks
-        .iter()
-        .rev()
-        .filter(|t| t["status"] == "queued" && crate::task_plan::eligible(t, &tasks))
-        .take(limit.saturating_sub(count))
-        .cloned()
-        .collect();
-    let mut prepared = Vec::new();
-    for mut task in selected {
-        if let Err(error) = crate::task_plan::prepare(store, files, &mut task) {
-            task["status"] = json!("failed");
-            task["error"] = json!(error.to_string());
-            store.put("task", task["id"].as_str().unwrap(), &task)?;
-        } else {
-            prepared.push(task);
-        }
-    }
-    store.transaction(|db| {
-        let mut result = Vec::new();
-        for mut task in prepared {
-            let id = task["id"]
-                .as_str()
-                .ok_or_else(|| anyhow::anyhow!("任务标识无效"))?
-                .to_string();
-            task["status"] = json!("running");
-            task.as_object_mut()
-                .ok_or_else(|| anyhow::anyhow!("任务格式无效"))?
-                .remove("error");
-            task["updatedAt"] =
-                json!(chrono::Utc::now().to_rfc3339_opts(chrono::SecondsFormat::Millis, true));
-            db.execute(
-                "UPDATE entities SET value=? WHERE kind='task' AND id=?",
-                rusqlite::params![task.to_string(), id],
-            )?;
-            result.push(task);
-        }
-        Ok(result)
-    })
-}
-
-fn interrupt_queued(store: &mut Store, id: Option<&str>) -> Result<(), String> {
-    let tasks: Vec<Value> = store.list("task").map_err(|e| e.to_string())?;
-    for mut task in tasks {
-        let task_id = task["id"].as_str().ok_or("任务标识无效")?.to_string();
-        if task["status"] == "queued" && id.is_none_or(|id| id == task_id) {
-            task["status"] = json!("interrupted");
-            store
-                .put("task", &task_id, &task)
-                .map_err(|e| e.to_string())?;
-        }
-    }
-    Ok(())
-}
-
 fn cancel(entry: &Active) {
     if !entry.cancelled.swap(true, Ordering::SeqCst) {
         let sender = entry.controls.clone();
@@ -184,44 +147,16 @@ fn cancel(entry: &Active) {
 }
 
 #[cfg(test)]
-mod tests {
-    use super::*;
-    #[tokio::test]
-    async fn dropping_last_handle_interrupts_unstarted_queue() {
-        let temp = tempfile::tempdir().unwrap();
-        let store = Arc::new(Mutex::new(Store::open(temp.path()).unwrap()));
-        store
-            .lock()
-            .unwrap()
-            .put("task", "t", &json!({"id":"t","status":"queued"}))
-            .unwrap();
-        let scheduler = Scheduler::start(
-            store.clone(),
-            Arc::new(Files::new(temp.path().into())),
-            Arc::new(|_| panic!("closed scheduler must not start tasks")),
-            Arc::new(|| {}),
-        );
-        drop(scheduler);
-        tokio::task::yield_now().await;
-        assert_eq!(
-            store
-                .lock()
-                .unwrap()
-                .get::<Value>("task", "t")
-                .unwrap()
-                .unwrap()["status"],
-            "interrupted"
-        );
-    }
-}
+#[path = "scheduler_tests.rs"]
+mod tests;
 
 async fn run(
-    store: Arc<Mutex<Store>>,
-    files: Arc<Files>,
-    factory: Factory,
+    runtimes: RuntimeSource,
+    factory: RuntimeFactory,
     changed: Arc<dyn Fn() + Send + Sync>,
     mut receiver: mpsc::UnboundedReceiver<Message>,
     sessions: crate::asset_sessions::Sessions,
+    parallel_limit: ParallelLimit,
 ) {
     let mut active: HashMap<String, Active> = HashMap::new();
     let mut jobs = JoinSet::new();
@@ -234,21 +169,20 @@ async fn run(
             closing.store(true, Ordering::SeqCst);
         }
         if !closing.load(Ordering::SeqCst) {
-            let claimed = store
-                .lock()
-                .map_err(|_| "数据库锁不可用".to_string())
-                .and_then(|mut store| {
-                    claim(&mut store, &files, active.len()).map_err(|e| e.to_string())
-                });
+            let claimed = runtimes()
+                .and_then(|visible| claim_next_runtimes(&visible, active.len(), &parallel_limit));
             match claimed {
                 Ok(tasks) => {
-                    for task in tasks {
+                    for claimed in tasks {
+                        let task = claimed.task;
+                        let runtime = claimed.runtime;
                         let id = task["id"].as_str().unwrap().to_string();
                         let (controls, input) = mpsc::channel(16);
                         let cancelled = Arc::new(AtomicBool::new(false));
                         active.insert(
                             id.clone(),
                             Active {
+                                runtime: runtime.clone(),
                                 worker: None,
                                 controls,
                                 cancelled: cancelled.clone(),
@@ -256,13 +190,11 @@ async fn run(
                             },
                         );
                         let factory = factory.clone();
-                        let store = store.clone();
                         let active_id = id.clone();
                         let worker = jobs.spawn(crate::scheduler_worker::execute(
                             task,
+                            runtime,
                             factory,
-                            store,
-                            files.clone(),
                             sessions.clone(),
                             cancelled,
                             input,
@@ -281,11 +213,7 @@ async fn run(
         if closing.load(Ordering::SeqCst) {
             if !drained {
                 drained = true;
-                if let Err(error) = store
-                    .lock()
-                    .map_err(|_| "数据库锁不可用".into())
-                    .and_then(|mut store| interrupt_queued(&mut store, None))
-                {
+                if let Err(error) = runtimes().and_then(|visible| interrupt_all(&visible)) {
                     failure = Some(error);
                 }
                 changed();
@@ -294,7 +222,7 @@ async fn run(
                 cancel(entry);
             }
             if active.is_empty() {
-                sessions.close_all(&store).await;
+                close_sessions(&sessions).await;
                 receiver.close();
                 for reply in shutdown {
                     let _ = reply.send(failure.clone().map_or(Ok(()), Err));
@@ -308,15 +236,16 @@ async fn run(
                     Some(Ok((id, outcome))) => {
                         if let Some(entry) = active.remove(&id) {
                             let outcome = if entry.cancelled.load(Ordering::SeqCst) { Outcome::Interrupted } else { outcome };
-                            let db = store.clone(); let files = files.clone(); let finish_closing = closing.clone();
+                            let db = entry.runtime.store(); let files = entry.runtime.files(); let finish_closing = closing.clone();
                             let finish_id = id.clone();
+                            let finish_db = db.clone();
                             let finalized = tokio::task::spawn_blocking(move || {
-                                let mut store = db.lock().map_err(|_| "数据库锁不可用".to_string())?;
+                                let mut store = finish_db.lock().map_err(|_| "数据库锁不可用".to_string())?;
                                 task_finish::finish(&mut store,&files,&finish_id,outcome,&finish_closing).map(|_| ()).map_err(|e| e.to_string())
                             }).await.unwrap_or_else(|_| Err("任务结果收尾异常".into()));
-                            let retained = store.lock().ok().and_then(|db| db.get::<Value>("task", &id).ok().flatten())
+                            let retained = db.lock().ok().and_then(|db| db.get::<Value>("task", &id).ok().flatten())
                                 .is_some_and(|task| matches!(task["status"].as_str(), Some("awaitingInput" | "queued")));
-                            if !retained { sessions.close(&store, &id).await; }
+                            if !retained { sessions.close(&id).await; }
                             for reply in entry.waiters { let _ = reply.send(finalized.clone()); }
                             if let Err(error) = finalized { failure = Some(error); closing.store(true,Ordering::SeqCst); }
                             changed();
@@ -348,16 +277,18 @@ async fn run(
                             cancel(entry);
                             entry.waiters.push(reply);
                         } else {
-                            let result = store.lock().map_err(|_| "数据库锁不可用".into()).and_then(|mut store| interrupt_queued(&mut store,Some(&id)));
-                            sessions.close(&store, &id).await;
-                            let _ = reply.send(result); changed();
+                            let result = runtimes().and_then(|visible| interrupt_task(&visible, &id));
+                            if result.as_ref().is_ok_and(Option::is_some) {
+                                sessions.close(&id).await;
+                            }
+                            let _ = reply.send(result.map(|_| ())); changed();
                         }
                     },
                     Some(Message::Shutdown(reply)) => { closing.store(true,Ordering::SeqCst); shutdown.push(reply); },
                     None => { closing.store(true,Ordering::SeqCst); }
                 }
                 if closing.load(Ordering::SeqCst) {
-                    if let Err(error) = store.lock().map_err(|_| "数据库锁不可用".into()).and_then(|mut store| interrupt_queued(&mut store,None)) { failure = Some(error); }
+                    if let Err(error) = runtimes().and_then(|visible| interrupt_all(&visible)) { failure = Some(error); }
                     changed();
                 }
             }

@@ -2,6 +2,8 @@ import fs from "node:fs/promises";
 import path from "node:path";
 import { createHash } from "node:crypto";
 import assert from "node:assert/strict";
+import { verifyProductVersion } from "./product-version";
+import { verifyWindowsVersion } from "./windows-version";
 
 export const MAX_PAYLOAD_BYTES = 50_000_000;
 export type PayloadFile = { path: string; bytes: number; sha256: string };
@@ -37,6 +39,17 @@ export async function verifyNativeRelease(root: string) {
   assert.equal(manifest.format, "beaver-native-release-v1");
   assert.equal(manifest.entry, "Beaver.exe");
   assert.equal(manifest.maxPayloadBytes, MAX_PAYLOAD_BYTES);
+  // Historical v1 releases are still used as verified license caches.
+  if (
+    manifest.channel !== "migration-preview" ||
+    manifest.version !== undefined
+  ) {
+    const product = verifyProductVersion(manifest);
+    verifyWindowsVersion(
+      await fs.readFile(path.join(root, "Beaver.exe")),
+      product,
+    );
+  }
   const files = await inventory(root);
   assert.deepEqual(files, manifest.files, "Payload differs from manifest");
   assert.deepEqual(
@@ -60,6 +73,7 @@ export async function verifyNativeRelease(root: string) {
   );
   return {
     root,
+    version: manifest.version,
     files: files.length + 1,
     totalBytes,
     runtimeVerified: manifest.runtimeVerified === true,

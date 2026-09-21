@@ -1,5 +1,9 @@
 pub(crate) fn definitions() -> Vec<(&'static str, &'static str, &'static str, &'static str, bool)> {
     vec![
+        ("assetTask.deliveryState", "Inspect immutable delivery candidates, approved input versions and owner decisions.", "id:s", "", true),
+        ("assetTask.deliveryFile", "Read a frozen candidate file as base64 (16 MiB maximum). Never reads the live workspace.", "id:s,candidateId:s,path:s", "", true),
+        ("assetTask.deliveryExport", "Export a candidate's verified files to a new Beaver-owned directory; returns its absolute path.", "id:s,candidateId:s", "", false),
+        ("assetTask.deliveryDecide", "Owner-only approve, reject or reopen. Waits for the executor to stop, verifies approval files, then queues only the current stage. Use the latest asset revision and a unique requestId.", "id:s,requestId:s,expectedRevision:i,candidateId:s,decision:s,note:s", "", false),
         ("assetTask.open", "Open or focus the independent window bound to an asset task.", "id:s", "", false),
         ("assetTask.state", "Read durable asset stages, feedback and same-project task context.", "id:s", "", true),
         ("assetTask.status", "Read live observer status. A subscriber leases preview collection; release unsubscribes without stopping the task.", "id:s", "subscriber:s,release:b", true),

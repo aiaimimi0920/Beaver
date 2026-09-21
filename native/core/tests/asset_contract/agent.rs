@@ -25,7 +25,7 @@ fn context(fixture: Fixture, port: u16) -> Result<(asset_agent::Context, tempfil
     Ok((
         asset_agent::Context {
             store: Arc::new(Mutex::new(fixture.store)),
-            root: fixture.root,
+            files: Arc::new(fixture.files),
             client,
         },
         fixture._temp,
@@ -131,7 +131,7 @@ async fn missing_identity_and_other_tasks_cannot_read_the_asset_tool() -> Result
     Ok(())
 }
 
-fn checkpoint_server(
+pub(super) fn checkpoint_server(
     listener: TcpListener,
     context: asset_agent::Context,
     change_turn: bool,

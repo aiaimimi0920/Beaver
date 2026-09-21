@@ -1,18 +1,18 @@
 use crate::{
     asset_task::{self, Annotation, Frame, Reference},
-    files::safe_path,
+    files::Files,
     store::Store,
 };
 use anyhow::{bail, Context, Result};
 use image::{ImageEncoder, Rgba, RgbaImage};
 use sha2::{Digest, Sha256};
-use std::{fs, io::Read, path::Path};
+use std::{fs, io::Read};
 
 pub const MAX_IMAGE: usize = 4 * 1024 * 1024;
 
 pub fn capture(
     store: &Store,
-    root: &Path,
+    files: &Files,
     task_id: &str,
     frame: Frame,
     bytes: &[u8],
@@ -45,10 +45,8 @@ pub fn capture(
         .collect();
     unused.sort_by_key(|r| r.frame.captured_at);
     for old in unused.iter().take(unused.len().saturating_sub(7)) {
-        let path = safe_path(
-            root,
-            &format!("asset-observer/{task_id}/references/{}.png", old.id),
-        )?;
+        let location = files.observer_reference_location(task_id, &old.id)?;
+        let path = files.resolve_observer_reference(task_id, &old.id, &location)?;
         if path.exists() {
             fs::remove_file(path)?;
         }
@@ -63,10 +61,8 @@ pub fn capture(
         bail!("Task reference retention limit reached");
     }
     let id = uuid::Uuid::new_v4().to_string();
-    let path = safe_path(
-        root,
-        &format!("asset-observer/{task_id}/references/{id}.png"),
-    )?;
+    let image_path = files.observer_reference_location(task_id, &id)?;
+    let path = files.resolve_observer_reference(task_id, &id, &image_path)?;
     fs::create_dir_all(path.parent().context("Reference directory missing")?)?;
     fs::write(&path, bytes)?;
     let reference = Reference {
@@ -75,11 +71,12 @@ pub fn capture(
         project_id: state.project_id.clone(),
         frame,
         pick: None,
-        image_path: path.to_string_lossy().into_owned(),
+        image_path,
         sha256: format!("{:x}", Sha256::digest(bytes)),
         used: false,
     };
     store.put("asset-reference", &reference.id, &reference)?;
+    crate::framework_evidence::observation(store, task_id, &reference)?;
     state.last_frame = Some(reference.clone());
     asset_task::save(store, &state)?;
     Ok(reference)
@@ -96,9 +93,14 @@ pub fn get(store: &Store, task_id: &str, id: &str) -> Result<Reference> {
     Ok(reference)
 }
 
-pub fn read(reference: &Reference) -> Result<Vec<u8>> {
+pub fn read(files: &Files, reference: &Reference) -> Result<Vec<u8>> {
+    let path = files.resolve_observer_reference(
+        &reference.task_id,
+        &reference.id,
+        &reference.image_path,
+    )?;
     let mut bytes = Vec::new();
-    fs::File::open(&reference.image_path)?
+    fs::File::open(path)?
         .take((MAX_IMAGE + 1) as u64)
         .read_to_end(&mut bytes)?;
     if bytes.len() > MAX_IMAGE || format!("{:x}", Sha256::digest(&bytes)) != reference.sha256 {
@@ -155,9 +157,13 @@ pub fn validate_annotations(annotations: &[Annotation]) -> Result<()> {
     Ok(())
 }
 
-pub fn annotated(reference: &Reference, annotations: &[Annotation]) -> Result<Vec<u8>> {
+pub fn annotated(
+    files: &Files,
+    reference: &Reference,
+    annotations: &[Annotation],
+) -> Result<Vec<u8>> {
     validate_annotations(annotations)?;
-    let bytes = read(reference)?;
+    let bytes = read(files, reference)?;
     if annotations.is_empty() && reference.pick.is_none() {
         return Ok(bytes);
     }

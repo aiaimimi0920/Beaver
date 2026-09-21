@@ -3,13 +3,12 @@ use super::{
     model::{Baseline, Run},
     repository, requests,
 };
-use crate::store::Store;
+use crate::{files::Files, store::Store};
 use anyhow::{bail, Context, Result};
 use serde_json::json;
-use std::path::Path;
 
 pub fn confirm(
-    data: &Path,
+    files: &Files,
     store: &mut Store,
     run_id: &str,
     snapshot_id: &str,
@@ -24,7 +23,7 @@ pub fn confirm(
     if run.snapshot_id != snapshot_id {
         bail!("Snapshot changed; refresh the evidence being reviewed");
     }
-    evidence::validate(data, &run)?;
+    evidence::validate(files, &run)?;
     let input = json!({"projectId":run.project_id,"runId":run_id,"snapshotId":snapshot_id,"evidenceIds":evidence_ids,"requestId":request_id});
     let request = requests::Request::new("validation.evidence.confirm", &input)?;
     if request.replay(store)?.is_some() {

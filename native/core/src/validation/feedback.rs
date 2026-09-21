@@ -3,10 +3,9 @@ use super::{
     repository,
     requests::Request,
 };
-use crate::{store::Store, task_create};
+use crate::{files::Files, store::Store, task_create};
 use anyhow::{ensure, Context, Result};
 use serde_json::{json, Value};
-use std::path::Path;
 
 fn selection(run: &super::model::Run, input: &Value) -> Result<Value> {
     ensure!(
@@ -57,7 +56,7 @@ fn selection(run: &super::model::Run, input: &Value) -> Result<Value> {
 
 pub fn create(
     store: &mut Store,
-    data: &Path,
+    files: &Files,
     input: &Value,
     designs: &Value,
     blueprints: &Value,
@@ -115,7 +114,7 @@ pub fn create(
         "capability":if mode == "review" { "review" } else { "code" }});
     let task = task_create::create_recorded(
         store,
-        data,
+        files,
         task_input,
         designs,
         blueprints,

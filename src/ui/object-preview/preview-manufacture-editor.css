@@ -1,0 +1,184 @@
+.op-manufacture-rounds,
+.op-manufacture-actions,
+.op-manufacture-tabs,
+.op-manufacture-feedback > header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.op-manufacture-rounds {
+  flex: none;
+}
+.op-manufacture-rounds select {
+  width: 130px;
+}
+.op-manufacture-actions {
+  flex: none;
+}
+.op-manufacture-actions > small {
+  flex: 1;
+  min-width: 0;
+  font-size: 10px;
+}
+.op-manufacture-actions > button {
+  flex: none;
+}
+.op-manufacture-editor {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 132px;
+  border: 1px solid var(--line);
+  background: var(--surface);
+}
+.op-manufacture-tabs {
+  flex: none;
+  gap: 0;
+  padding: 0 10px;
+  border-bottom: 1px solid var(--line);
+}
+.op-shell .op-manufacture-tabs button {
+  position: relative;
+  padding: 9px 12px;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  color: var(--muted);
+  font-size: 12px;
+}
+.op-shell .op-manufacture-tabs button[aria-selected="true"] {
+  color: var(--text);
+  background: var(--hover);
+  box-shadow: inset 0 -2px var(--yellow);
+}
+.op-manufacture-editor-body {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  gap: 12px;
+  min-height: 0;
+  overflow: auto;
+  padding: 12px;
+}
+.op-manufacture-editor-body > .op-manufacture-prompt {
+  flex: 1;
+  min-height: 62px;
+}
+.op-manufacture-prompt > span {
+  display: none;
+}
+.op-manufacture-prompt.is-acceptance {
+  flex: none;
+  min-height: 80px;
+}
+.op-manufacture-checks {
+  display: grid;
+  gap: 6px;
+  font-size: 11px;
+}
+.op-manufacture-checks > header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 2px;
+}
+.op-manufacture-check {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 9px 10px;
+  border: 1px solid var(--line);
+  background: var(--control);
+}
+.op-manufacture-check > label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+}
+.op-manufacture-check > label > span {
+  display: grid;
+  gap: 2px;
+}
+.op-manufacture-check strong {
+  font-weight: 500;
+}
+.op-shell .op-manufacture-check input[type="checkbox"] {
+  flex: none;
+  width: 14px;
+  height: 14px;
+  min-height: 0;
+  margin: 0;
+  accent-color: var(--yellow);
+}
+.op-manufacture-limit {
+  flex: none;
+  color: var(--muted);
+}
+.op-manufacture-limit input {
+  width: 88px;
+  font-size: 11px;
+}
+.op-manufacture-feedback {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  flex: none;
+  min-width: 0;
+  min-height: 0;
+}
+.op-manufacture-feedback > header {
+  flex: none;
+  justify-content: space-between;
+  font-size: 12px;
+}
+.op-shell .op-manufacture-feedback > textarea {
+  flex: none;
+  min-height: 52px;
+  height: 52px;
+  padding: 8px 10px;
+  font-size: 12px;
+  line-height: 1.5;
+  resize: none;
+}
+.op-manufacture-feedback > small {
+  font-size: 10px;
+}
+.op-manufacture-feedback .op-annotation-list.is-gallery {
+  grid-template-columns: none;
+  grid-auto-flow: column;
+  grid-auto-columns: 160px;
+  max-height: 140px;
+  overflow: auto;
+  padding-bottom: 4px;
+}
+.op-manufacture-feedback .op-annotation-entry {
+  grid-template-columns: 60px minmax(0, 1fr);
+  align-items: start;
+  gap: 5px;
+}
+.op-manufacture-feedback .op-annotation-context {
+  display: block;
+}
+.op-manufacture-feedback .op-annotation-thumbnail > .op-content-thumbnail {
+  height: 100%;
+  aspect-ratio: auto;
+}
+.op-manufacture-feedback .op-annotation-thumbnail > svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+.op-shell .op-manufacture-feedback .op-annotation-entry textarea {
+  min-height: 70px;
+  height: 70px;
+  padding: 5px;
+  resize: none;
+}
+.op-shell .op-manufacture-feedback .op-annotation-remove {
+  top: auto;
+  bottom: 2px;
+  right: 2px;
+}

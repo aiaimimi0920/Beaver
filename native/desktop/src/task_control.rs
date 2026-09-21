@@ -1,4 +1,4 @@
-use crate::Backend;
+use crate::{business_routing::task_runtime_handles, Backend};
 use serde_json::{json, Value};
 use std::sync::{atomic::Ordering, Arc};
 use tauri::Emitter;
@@ -20,13 +20,20 @@ pub(crate) async fn call(
             .ok_or("缺少问题标识")?
             .to_owned();
         let answers = value["answers"].clone();
+        let handles = task_runtime_handles(
+            &state.project_storage,
+            state.store.clone(),
+            &state.root,
+            &id,
+        )?;
         let backend = state.clone();
         let task_id = id.clone();
         let question_id = question.clone();
         let check_answers = answers.clone();
         let check_automatic = automatic.clone();
+        let store = handles.store.clone();
         tauri::async_runtime::spawn_blocking(move || -> Result<(), String> {
-            let store = backend.store.lock().map_err(|_| "数据库锁不可用")?;
+            let store = store.lock().map_err(|_| "数据库锁不可用")?;
             if backend.closing.load(Ordering::SeqCst) {
                 return Err("应用正在退出".into());
             }
@@ -56,8 +63,9 @@ pub(crate) async fn call(
         .map_err(|error| error.to_string())??;
         state.scheduler.synchronize(id.clone()).await?;
         let backend = state.clone();
+        let store = handles.store;
         tauri::async_runtime::spawn_blocking(move || -> Result<(), String> {
-            let mut store = backend.store.lock().map_err(|_| "数据库锁不可用")?;
+            let mut store = store.lock().map_err(|_| "数据库锁不可用")?;
             if backend.closing.load(Ordering::SeqCst) {
                 return Err("应用正在退出".into());
             }
@@ -78,11 +86,18 @@ pub(crate) async fn call(
         let id = input["id"].as_str().ok_or("缺少任务标识")?.to_owned();
         let text = input["text"].as_str().ok_or("缺少补充要求")?.to_owned();
         let fresh_context = input["freshContext"].as_bool().unwrap_or(false);
+        let handles = task_runtime_handles(
+            &state.project_storage,
+            state.store.clone(),
+            &state.root,
+            &id,
+        )?;
         let backend = state.clone();
         let task_id = id.clone();
         let addition = text.clone();
+        let store = handles.store;
         let steer = tauri::async_runtime::spawn_blocking(move || -> Result<bool, String> {
-            let mut store = backend.store.lock().map_err(|_| "数据库锁不可用")?;
+            let mut store = store.lock().map_err(|_| "数据库锁不可用")?;
             if backend.closing.load(Ordering::SeqCst) {
                 return Err("应用正在退出".into());
             }
@@ -107,8 +122,10 @@ pub(crate) async fn call(
             .as_ref()
             .and_then(|v| v["id"].as_str())
             .ok_or("缺少任务标识")?;
+        let handles =
+            task_runtime_handles(&state.project_storage, state.store.clone(), &state.root, id)?;
         let ids = {
-            let store = state.store.lock().map_err(|_| "数据库锁不可用")?;
+            let store = handles.store.lock().map_err(|_| "数据库锁不可用")?;
             let mut task: Value = store
                 .get("task", id)
                 .map_err(|e| e.to_string())?

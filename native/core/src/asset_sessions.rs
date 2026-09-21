@@ -1,6 +1,4 @@
-use crate::{
-    asset_checkpoint, asset_preview::Client, asset_task, blender_session::Session, store::Store,
-};
+use crate::{asset_checkpoint, asset_preview::Client, asset_task, blender_session::Session};
 use std::{
     collections::HashMap,
     sync::{Arc, Mutex},
@@ -61,14 +59,22 @@ impl Sessions {
         Ok(session.client.clone())
     }
 
-    pub async fn close(&self, store: &Arc<Mutex<Store>>, id: &str) {
+    pub fn ids(&self) -> Vec<String> {
+        self.0
+            .lock()
+            .map(|sessions| sessions.keys().cloned().collect())
+            .unwrap_or_default()
+    }
+
+    pub async fn close(&self, id: &str) {
         let session = self
             .0
             .lock()
             .ok()
             .and_then(|mut sessions| sessions.remove(id).flatten());
         if let Some(session) = session {
-            let saved = asset_checkpoint::save(store, &session.client).await;
+            let store = session.store();
+            let saved = asset_checkpoint::save(&store, &session.files, &session.client).await;
             if let Ok(db) = store.lock() {
                 if let Ok(mut state) = asset_task::get(&db, id) {
                     if let Err(error) = saved {
@@ -86,14 +92,9 @@ impl Sessions {
         }
     }
 
-    pub async fn close_all(&self, store: &Arc<Mutex<Store>>) {
-        let ids: Vec<_> = self
-            .0
-            .lock()
-            .map(|sessions| sessions.keys().cloned().collect())
-            .unwrap_or_default();
-        for id in ids {
-            self.close(store, &id).await;
+    pub async fn close_all(&self) {
+        for id in self.ids() {
+            self.close(&id).await;
         }
     }
 }

@@ -1,0 +1,177 @@
+.op-annotation-mark {
+  position: absolute;
+  z-index: 2;
+  pointer-events: none;
+  box-sizing: border-box;
+}
+.op-annotation-mark.is-point {
+  width: 0;
+  height: 0;
+}
+.op-annotation-mark.is-point::before {
+  content: "";
+  position: absolute;
+  width: 7px;
+  height: 7px;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  background: #fff;
+  border: 1px solid #172b4d;
+}
+.op-annotation-mark.is-box {
+  border: 1px solid #fff;
+  background: #4a83db25;
+  box-shadow: 0 0 0 1px #172b4d;
+}
+.op-annotation-number {
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: grid;
+  place-items: center;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 3px;
+  box-sizing: border-box;
+  border: 1px solid #fff;
+  background: #172b4d;
+  color: #fff;
+  font: 600 11px/1 sans-serif;
+}
+.op-selectable-preview[data-annotating="true"] {
+  cursor: crosshair;
+}
+.op-annotation-list,
+.op-annotation-entry {
+  display: grid;
+  gap: 7px;
+  min-width: 0;
+}
+.op-annotation-list {
+  gap: 12px;
+}
+.op-annotation-context {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  min-width: 0;
+}
+.op-annotation-thumbnail {
+  position: relative;
+  flex: 0 0 64px;
+  width: 64px;
+  aspect-ratio: 10 / 7;
+  overflow: hidden;
+  background: var(--bg);
+}
+.op-annotation-thumbnail > .op-art {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+.op-annotation-thumbnail .op-annotation-number {
+  min-width: 14px;
+  height: 14px;
+  padding: 0 2px;
+  font-size: 9px;
+}
+.op-annotation-thumbnail > .op-annotation-index {
+  top: 4px;
+  left: 4px;
+  z-index: 3;
+  min-width: 20px;
+  height: 20px;
+  font-size: 11px;
+}
+.op-annotation-list.is-gallery {
+  grid-template-columns: repeat(auto-fill, minmax(128px, 1fr));
+  align-items: start;
+  gap: 10px;
+}
+.op-annotation-list.is-gallery .op-annotation-context {
+  position: relative;
+}
+.op-annotation-list.is-gallery .op-annotation-thumbnail {
+  display: block;
+  flex: 1;
+  width: 100%;
+  border: 1px solid var(--line);
+}
+.op-annotation-list.is-gallery .op-annotation-caption {
+  display: none;
+}
+.op-shell .op-annotation-list.is-gallery .op-annotation-remove {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  z-index: 3;
+  min-height: 22px;
+  padding: 0;
+  background: var(--bg);
+  color: var(--text);
+}
+.op-shell .op-iteration-compose .op-annotation-entry textarea {
+  min-height: 48px;
+  font-size: 11px;
+}
+.op-annotation-caption {
+  display: grid;
+  flex: 1;
+  gap: 2px;
+  min-width: 0;
+}
+.op-annotation-caption > * {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.op-annotation-caption strong {
+  font-size: 11px;
+}
+.op-annotation-caption small,
+.op-annotation-note {
+  font-size: 10px;
+  line-height: 1.5;
+  color: var(--muted);
+}
+.op-shell .op-annotation-remove {
+  flex-shrink: 0;
+  padding: 0;
+  width: 22px;
+  min-height: 22px;
+  border: 0;
+  background: transparent;
+  color: var(--muted);
+  font-size: 16px;
+}
+.op-shell .op-annotation-entry textarea {
+  min-height: 56px;
+  font-size: 11px;
+}
+.op-annotation-instruction {
+  margin: 0;
+  font-size: 12px;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+.op-annotation-tools {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex: none;
+  margin-left: auto;
+}
+.op-annotation-tools button[aria-pressed="true"] {
+  border-color: var(--yellow);
+  color: var(--yellow);
+}
+.op-annotation-tools .icon {
+  width: 13px;
+  height: 13px;
+}
+.op-annotation-hint {
+  margin: 0;
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.5;
+}

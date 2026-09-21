@@ -6,6 +6,7 @@ pub fn update(state: &mut State, revision: u64, stages: Vec<Stage>) -> Result<()
     if revision != state.revision {
         bail!("Stage revision changed; read current state before retrying");
     }
+    crate::asset_delivery::guard_update(state, &stages)?;
     if stages.is_empty() || stages.len() > 100 {
         bail!("Supply 1 to 100 actual production stages");
     }
@@ -119,6 +120,10 @@ fn visit<'a>(
 }
 
 pub fn complete_round(state: &mut State) -> Result<()> {
+    anyhow::ensure!(
+        crate::asset_delivery::complete(state),
+        "Delivery stages require owner approval before finishing the round"
+    );
     if state.phase == "ready" {
         return Ok(());
     }
