@@ -11,6 +11,11 @@ type Activation = {
   data_directory: string;
   default_data_directory_changed: boolean;
 };
+type AssemblyRegistration = {
+  registrationCommitted: boolean;
+  runtimeReady: boolean;
+  runtimeError?: string;
+};
 
 export function MigrationDialog({ close }: { close: () => void }) {
   const [backup, setBackup] = useState("");
@@ -20,6 +25,11 @@ export function MigrationDialog({ close }: { close: () => void }) {
   const [inventory, setInventory] = useState<Inventory>();
   const [receipt, setReceipt] = useState<Receipt>();
   const [activation, setActivation] = useState<Activation>();
+  const [assemblyPreparation, setAssemblyPreparation] = useState("");
+  const [assemblyDestination, setAssemblyDestination] = useState("");
+  const [assemblyActivated, setAssemblyActivated] = useState(false);
+  const [assemblyRegistration, setAssemblyRegistration] =
+    useState<AssemblyRegistration>();
   const [failedTarget, setFailedTarget] = useState("");
   const [confirm, setConfirm] = useState(false);
   const [busy, setBusy] = useState(false);
@@ -54,7 +64,7 @@ export function MigrationDialog({ close }: { close: () => void }) {
           <input
             aria-label="归档目录"
             value={backup}
-            disabled={frozen}
+            disabled={frozen || !!assemblyRegistration}
             onChange={(event) => {
               setBackup(event.target.value);
               setInventory(undefined);
@@ -62,7 +72,7 @@ export function MigrationDialog({ close }: { close: () => void }) {
             }}
           />
           <button
-            disabled={frozen}
+            disabled={frozen || !!assemblyRegistration}
             onClick={() =>
               void perform(async () => {
                 const selected = await call<string | null>("chooseDirectory");
@@ -248,6 +258,85 @@ export function MigrationDialog({ close }: { close: () => void }) {
           再启动。请保留原环境用于回退，勿让旧 Electron 读取转换后的副本。
         </p>
       )}
+      <section aria-label="已准备组装副本">
+        <h3>启用已准备的组装副本</h3>
+        <p className="muted">
+          组装启用和宿主登记分两步完成。登记成功但运行时恢复失败时，可以使用相同路径重试。
+        </p>
+        <Field label="组装准备目录">
+          <input
+            aria-label="组装准备目录"
+            value={assemblyPreparation}
+            disabled={frozen}
+            onChange={(event) => {
+              setAssemblyPreparation(event.target.value);
+              setAssemblyActivated(false);
+              setAssemblyRegistration(undefined);
+            }}
+          />
+        </Field>
+        <Field label="组装目标目录">
+          <input
+            aria-label="组装目标目录"
+            value={assemblyDestination}
+            disabled={frozen}
+            onChange={(event) => {
+              setAssemblyDestination(event.target.value);
+              setAssemblyActivated(false);
+              setAssemblyRegistration(undefined);
+            }}
+          />
+        </Field>
+        {!assemblyActivated && (
+          <button
+            disabled={
+              busy || !assemblyPreparation.trim() || !assemblyDestination.trim()
+            }
+            onClick={() =>
+              void perform(async () => {
+                await call("migration.activateAssembly", {
+                  preparation: assemblyPreparation.trim(),
+                  destination: assemblyDestination.trim(),
+                });
+                setAssemblyActivated(true);
+              })
+            }
+          >
+            启用组装副本
+          </button>
+        )}
+        {assemblyActivated &&
+          (!assemblyRegistration || !assemblyRegistration.runtimeReady) && (
+            <button
+              disabled={busy}
+              onClick={() =>
+                void perform(async () => {
+                  setAssemblyRegistration(
+                    await call<AssemblyRegistration>(
+                      "migration.registerAssembly",
+                      {
+                        preparation: assemblyPreparation.trim(),
+                        destination: assemblyDestination.trim(),
+                      },
+                    ),
+                  );
+                })
+              }
+            >
+              登记并恢复运行时
+            </button>
+          )}
+        {assemblyRegistration && (
+          <p role={assemblyRegistration.runtimeReady ? "status" : "alert"}>
+            {assemblyRegistration.registrationCommitted
+              ? "组装副本已登记。"
+              : "组装副本尚未登记。"}{" "}
+            {assemblyRegistration.runtimeReady
+              ? "项目运行时已恢复。"
+              : `运行时恢复失败，可重试登记：${assemblyRegistration.runtimeError ?? "未知错误"}`}
+          </p>
+        )}
+      </section>
       {busy && <p role="status">正在处理，请勿退出应用或修改迁移目录…</p>}
       {error && <p role="alert">{error}</p>}
       <footer>
