@@ -6,6 +6,7 @@ import { ObjectImportDialog } from "./ObjectImportDialog";
 import type { ObjectType } from "./object-categories";
 import { ObjectCatalogGrid } from "./ObjectCatalogGrid";
 import { useObjectCatalog } from "./use-object-catalog";
+import { ObjectCatalogDetails } from "./ObjectCatalogDetails";
 
 export function ObjectFrameworkWorkspace({
   project,
@@ -26,6 +27,10 @@ export function ObjectFrameworkWorkspace({
   const [selectedObject, setSelectedObject] = useState<string>();
   const [importTarget, setImportTarget] = useState<string>();
   const catalog = useObjectCatalog(project?.id, search);
+  const selectedObjectRecord =
+    selectedObject && catalog.kind === "ready"
+      ? catalog.objects.find((object) => object.id === selectedObject)
+      : undefined;
   const message = loading ? (
     <section className="op-framework-message" role="status">
       正在打开本地工作室…
@@ -88,17 +93,19 @@ export function ObjectFrameworkWorkspace({
                       setNotice(`已选择对象 ${id}`);
                     }}
                   />
+                  {selectedObjectRecord && project && (
+                    <ObjectCatalogDetails
+                      object={selectedObjectRecord}
+                      currentProjectId={project.id}
+                      select={(id) => setSelectedObject(id)}
+                    />
+                  )}
                 </div>
               )}
               {notice && <p role="status">{notice}</p>}
-              {page === "objects" && (
+              {page === "objects" && !selectedObject && (
                 <div className="op-framework-contents" aria-label="子对象内容">
-                  <button disabled aria-label="展开子对象">
-                    <span className="op-framework-up">
-                      <Icon name="chevronDown" />
-                    </span>
-                  </button>
-                  <span>尚未选择对象</span>
+                  <span>选择对象后查看组件、文件、引用和版本</span>
                 </div>
               )}
             </div>
