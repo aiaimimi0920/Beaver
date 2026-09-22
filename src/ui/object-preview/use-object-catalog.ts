@@ -36,6 +36,40 @@ function validate(value: unknown): ObjectCatalogRecord[] {
     ) {
       throw new Error("对象记录字段不完整");
     }
+    if (
+      !record.components.every(
+        (component) =>
+          component &&
+          typeof component === "object" &&
+          typeof component.id === "string" &&
+          typeof component.kind === "string" &&
+          typeof component.name === "string",
+      ) ||
+      !record.files.every(
+        (file) =>
+          file &&
+          typeof file === "object" &&
+          typeof file.path === "string" &&
+          typeof file.role === "string",
+      ) ||
+      !record.references.every(
+        (reference) =>
+          reference &&
+          typeof reference === "object" &&
+          typeof reference.projectId === "string" &&
+          typeof reference.objectId === "string" &&
+          (reference.versionId === undefined ||
+            typeof reference.versionId === "string"),
+      ) ||
+      !record.versions.every(
+        (version) =>
+          version &&
+          typeof version === "object" &&
+          typeof version.versionId === "string",
+      )
+    ) {
+      throw new Error("对象目录项字段无效");
+    }
     return record as ObjectCatalogRecord;
   });
 }
