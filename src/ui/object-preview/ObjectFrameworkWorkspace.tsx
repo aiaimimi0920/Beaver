@@ -4,8 +4,8 @@ import { Icon } from "../Icon";
 import { ObjectToolbarControls } from "./ObjectToolbarControls";
 import { ObjectImportDialog } from "./ObjectImportDialog";
 import type { ObjectType } from "./object-categories";
-import { FrameworkAvailability } from "./FrameworkAvailability";
-import { useObjectFrameworkStatus } from "./use-object-framework-status";
+import { ObjectCatalogGrid } from "./ObjectCatalogGrid";
+import { useObjectCatalog } from "./use-object-catalog";
 
 export function ObjectFrameworkWorkspace({
   project,
@@ -18,13 +18,14 @@ export function ObjectFrameworkWorkspace({
   page: "objects" | "manufacture";
   createProject: () => void;
 }) {
-  const { query, retry } = useObjectFrameworkStatus(project?.id);
   const [filter, setFilter] = useState<ObjectType | "全部">("全部");
   const [search, setSearch] = useState("");
   const [tags, setTags] = useState<string[]>([]);
   const [thumbnailSize, setThumbnailSize] = useState(240);
   const [notice, setNotice] = useState("");
+  const [selectedObject, setSelectedObject] = useState<string>();
   const [importTarget, setImportTarget] = useState<string>();
+  const catalog = useObjectCatalog(project?.id, search);
   const message = loading ? (
     <section className="op-framework-message" role="status">
       正在打开本地工作室…
@@ -35,9 +36,16 @@ export function ObjectFrameworkWorkspace({
       <p>创建或选择项目后查看对象与制造记录。</p>
       <button onClick={createProject}>创建项目</button>
     </section>
-  ) : (
-    <FrameworkAvailability query={query} retry={retry} />
-  );
+  ) : catalog.kind === "loading" ? (
+    <section className="op-framework-message" role="status">
+      正在读取对象目录…
+    </section>
+  ) : catalog.kind === "error" ? (
+    <section className="op-framework-message" role="alert">
+      <h2>无法读取对象目录</h2>
+      <p>{catalog.message}</p>
+    </section>
+  ) : null;
   return (
     <div className="op-shell op-embedded">
       <div className="op-workspace">
@@ -56,7 +64,7 @@ export function ObjectFrameworkWorkspace({
               mode={null}
               setMode={() => {}}
               canAnnotate={false}
-              unavailableReason="对象查询、导入及制作能力尚未接通"
+              unavailableReason="对象制作能力尚未接通"
               importObjects={
                 !loading && project
                   ? () => setImportTarget(project.id)
@@ -67,6 +75,21 @@ export function ObjectFrameworkWorkspace({
           <div className="op-main-content op-framework-content">
             <div className="op-framework-body">
               {message}
+              {page === "objects" && catalog.kind === "ready" && (
+                <div className="op-library-scroll">
+                  <ObjectCatalogGrid
+                    objects={catalog.objects}
+                    filter={filter}
+                    search={search}
+                    thumbnailSize={thumbnailSize}
+                    selected={selectedObject}
+                    select={(id) => {
+                      setSelectedObject(id);
+                      setNotice(`已选择对象 ${id}`);
+                    }}
+                  />
+                </div>
+              )}
               {notice && <p role="status">{notice}</p>}
               {page === "objects" && (
                 <div className="op-framework-contents" aria-label="子对象内容">
