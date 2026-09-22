@@ -26,6 +26,48 @@
   padding-left: 20px;
   line-height: 2;
 }
+.op-library-scroll {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+  padding: 20px;
+}
+.op-object-grid {
+  display: grid;
+  gap: 17px;
+}
+.op-framework-body .op-object-card {
+  display: block;
+  min-width: 0;
+  padding: 0 0 10px;
+  text-align: left;
+  background: var(--panel);
+  border: 1px solid var(--object-type-color);
+  border-radius: 0;
+  overflow: hidden;
+}
+.op-framework-body .op-object-card.is-selected {
+  box-shadow: 0 0 0 2px var(--object-type-color);
+}
+.op-framework-body .op-object-card strong,
+.op-framework-body .op-object-card small {
+  display: block;
+  padding: 4px 10px 0;
+}
+.op-framework-body .op-object-card small {
+  color: var(--muted);
+}
+.op-framework-body .op-object-cover {
+  display: grid;
+  min-height: 90px;
+  place-items: center;
+  background: #19232b;
+  color: var(--object-type-color);
+}
+.op-framework-body .op-object-cover .icon {
+  width: 32px;
+  height: 32px;
+}
 .op-framework-contents {
   display: flex;
   flex: none;
