@@ -20,6 +20,82 @@ pub(crate) async fn call(
     if state.closing.load(Ordering::SeqCst) {
         return Err("应用正在退出".into());
     }
+    if matches!(
+        method.as_str(),
+        "objectTask.attempts"
+            | "objectTask.attemptFile"
+            | "objectTask.attemptTrace"
+            | "objectTask.prepareCandidateReview"
+            | "objectTask.candidateReviews"
+            | "objectTask.publicationPreview"
+            | "objectTask.publishCandidate"
+            | "objectTask.publications"
+            | "objectTask.createPublicationFollowup"
+            | "objectTask.deferCandidateFeedback"
+            | "objectTask.publicationFollowups"
+            | "objectTask.publicationFrames"
+            | "objectTask.attemptFrames"
+            | "objectTask.abortPublication"
+            | "objectTask.checkAttempt"
+            | "objectTask.attemptChecks"
+            | "objectTask.interrupt"
+            | "objectTask.recovery"
+            | "objectTask.verifyRecovery"
+            | "objectTask.resumeRecovery"
+            | "objectTask.advanceAttempt"
+            | "objectTask.reworkCandidate"
+            | "objectTask.disposeRecovery"
+    ) {
+        let result = crate::object_attempt_runtime::call(
+            &state.scheduler,
+            &state.project_storage,
+            &method,
+            input.unwrap_or_else(|| json!({})),
+        )
+        .await
+        .map_err(|error| format!("{error:#}"))?;
+        if matches!(
+            method.as_str(),
+            "objectTask.interrupt"
+                | "objectTask.prepareCandidateReview"
+                | "objectTask.publishCandidate"
+                | "objectTask.createPublicationFollowup"
+                | "objectTask.deferCandidateFeedback"
+                | "objectTask.abortPublication"
+                | "objectTask.checkAttempt"
+                | "objectTask.verifyRecovery"
+                | "objectTask.disposeRecovery"
+                | "objectTask.resumeRecovery"
+                | "objectTask.advanceAttempt"
+                | "objectTask.reworkCandidate"
+        ) {
+            let _ = app.emit("beaver:changed", ());
+        }
+        return Ok(result);
+    }
+    if method.starts_with("objectTaskPlanning.") {
+        let input = input.unwrap_or_else(|| json!({}));
+        crate::business_catalog::validate(&method, &input).map_err(|(_, message)| message)?;
+        let result = crate::object_task_planning_runtime::call(
+            &state.planning,
+            &state.project_storage,
+            &method,
+            input,
+        )
+        .map_err(|error| error.to_string())?;
+        let _ = app.emit("beaver:changed", ());
+        return Ok(result);
+    }
+    if method == "objectTask.suggestTitle" {
+        return crate::object_task_title_runtime::call(
+            &state.titles,
+            state.store.clone(),
+            &state.project_storage,
+            input.unwrap_or_else(|| json!({})),
+        )
+        .await
+        .map_err(|error| error.to_string());
+    }
     if method.starts_with("migration.") {
         let input = input.unwrap_or_else(|| json!({}));
         crate::business_catalog::validate(&method, &input).map_err(|(_, message)| message)?;
@@ -76,24 +152,6 @@ pub(crate) async fn call(
                 .map_err(|error| error.to_string())?;
         let _ = app.emit("beaver:changed", ());
         return Ok(result);
-    }
-    if method == "task.callbackState" {
-        let input = input.unwrap_or_else(|| json!({}));
-        crate::business_catalog::validate(&method, &input).map_err(|(_, message)| message)?;
-        let id = input["id"].as_str().ok_or("Missing task ID")?.to_owned();
-        let handles = task_runtime_handles(
-            &state.project_storage,
-            state.store.clone(),
-            &state.root,
-            &id,
-        )?;
-        return tauri::async_runtime::spawn_blocking(move || {
-            let mut store = handles.store.lock().map_err(|_| "数据库锁不可用")?;
-            beaver_core::task_callback::business(&mut store, &method, &input)
-                .map_err(|error| error.to_string())
-        })
-        .await
-        .map_err(|error| error.to_string())?;
     }
     if method.starts_with("assetTask.") {
         return crate::asset_task_runtime::call(
@@ -264,14 +322,28 @@ pub(crate) async fn call(
     if method == "asset.import" {
         return crate::asset_runtime::call(app, state, method, input).await;
     }
-    if matches!(method.as_str(), "chooseDirectory" | "chooseTool") {
+    if matches!(
+        method.as_str(),
+        "chooseDirectory" | "chooseTool" | "chooseImportFiles" | "chooseImportDirectory"
+    ) {
         if state.closing.load(Ordering::SeqCst) {
             return Err("应用正在退出".into());
         }
         return tauri::async_runtime::spawn_blocking(move || {
             let dialog = rfd::FileDialog::new();
-            let path = if method == "chooseDirectory" {
-                dialog.set_title("选择项目目录").pick_folder()
+            if method == "chooseImportFiles" {
+                return Ok(json!(dialog
+                    .set_title("选择要导入的文件")
+                    .pick_files()
+                    .unwrap_or_default()));
+            }
+            let path = if matches!(method.as_str(), "chooseDirectory" | "chooseImportDirectory") {
+                let title = if method == "chooseImportDirectory" {
+                    "选择要导入的文件夹"
+                } else {
+                    "选择项目目录"
+                };
+                dialog.set_title(title).pick_folder()
             } else {
                 dialog.set_title("选择工具程序").pick_file()
             };
@@ -281,39 +353,15 @@ pub(crate) async fn call(
         .map_err(|error| error.to_string())?;
     }
     let backend = state.clone();
-    let changed = matches!(
-        method.as_str(),
-        "document.save"
-            | "project.import"
-            | "project.reassociate"
-            | "project.unregister"
-            | "project.create"
-            | "settings.save"
-            | "settings.importLocalCodex"
-            | "settings.clearKey"
-            | "task.rollback"
-            | "task.accept"
-            | "task.retryMerge"
-            | "project.blueprint.save"
-            | "project.overview.save"
-            | "task.create"
-            | "task.followup"
-            | "task.delegate"
-            | "task.dialogueRollback"
-            | "task.direction"
-            | "task.autonomy"
-            | "task.approval"
-            | "feature.add"
-    );
-    let notify = changed;
+    let effects = crate::business_effects::data_effects(&method);
     let result =
         tauri::async_runtime::spawn_blocking(move || data_dispatch::call(&backend, method, input))
             .await
             .map_err(|e| e.to_string())?;
-    if changed && result.is_ok() {
+    if effects.wake_scheduler && result.is_ok() {
         state.scheduler.wake()?;
     }
-    if notify && result.is_ok() {
+    if effects.notify && result.is_ok() {
         // Callback receipts are already committed. Notification failure must not
         // turn a successful mutation into an apparent retryable failure.
         let _ = app.emit("beaver:changed", ());

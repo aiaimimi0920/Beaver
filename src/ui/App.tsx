@@ -21,11 +21,16 @@ import { DocumentsView } from "./DocumentsView";
 import { TaskBoard } from "./TaskBoard";
 import { ExportGameDialog } from "./ExportGameDialog";
 import { ValidationView } from "./validation/ValidationView";
+import { ObjectCheckReportView } from "./validation/ObjectCheckReportView";
+import { ObjectCheckNavigation } from "./validation/object-check-navigation";
+import type { ObjectAttemptCheckRequest } from "../shared/object-attempt-checks";
 import { ObjectFrameworkWorkspace } from "./object-preview/ObjectFrameworkWorkspace";
 import "./object-preview/preview-shell.css";
 import "./object-preview/preview-embedded.css";
 import "./object-preview/preview-object-toolbar.css";
 import "./object-preview/object-framework-workspace.css";
+import "./object-tasks/object-tasks.css";
+import "./object-tasks/object-task-revisions.css";
 
 export function App() {
   const notify = useNotify();
@@ -52,7 +57,10 @@ export function App() {
   const [validationFocus, setValidationFocus] = useState<{
     taskId?: string;
     runId?: string;
+    objectCheck?: ObjectAttemptCheckRequest;
   }>({});
+  const [manufactureFocus, setManufactureFocus] =
+    useState<ObjectAttemptCheckRequest>();
   const [missingTools, setMissingTools] = useState<ToolStatus[]>([]);
   const [setup, setSetup] = useState(false);
   const refresh = useCallback(async () => {
@@ -89,6 +97,7 @@ export function App() {
     setRefs([]);
     setTaskFocus("");
     setValidationFocus({});
+    setManufactureFocus(undefined);
     setExporting(undefined);
   }, [projectId]);
   useEffect(() => {
@@ -117,7 +126,13 @@ export function App() {
     setPage("validation");
   }
   return (
-    <>
+    <ObjectCheckNavigation.Provider
+      value={(request) => {
+        if (request.projectId !== projectId) return;
+        setValidationFocus({ objectCheck: request });
+        setPage("validation");
+      }}
+    >
       <DesktopShell
         page={page}
         navigate={setPage}
@@ -203,9 +218,16 @@ export function App() {
             <ObjectFrameworkWorkspace
               key={project?.id ?? "no-project"}
               project={project}
+              projects={state?.projects ?? []}
               loading={!state}
               page={page === "manufacture" ? "manufacture" : "objects"}
+              navigate={setPage}
               createProject={() => setCreate(true)}
+              initialCheck={
+                manufactureFocus?.projectId === projectId
+                  ? manufactureFocus
+                  : undefined
+              }
             />
           ) : !state ? (
             <div className="startup" role="status">
@@ -290,6 +312,19 @@ export function App() {
               features={state.features}
               openOverview={() => setPage("overview")}
               run={run}
+            />
+          ) : page === "validation" &&
+            validationFocus.objectCheck?.projectId === projectId ? (
+            <ObjectCheckReportView
+              key={`${projectId}:${validationFocus.objectCheck.requestId}`}
+              projectId={projectId}
+              request={validationFocus.objectCheck}
+              openWorkbench={() => setValidationFocus({})}
+              openManufacture={(request) => {
+                if (request.projectId !== projectId) return;
+                setManufactureFocus(request);
+                setPage("manufacture");
+              }}
             />
           ) : page === "validation" ? (
             <ValidationView
@@ -435,6 +470,6 @@ export function App() {
           </footer>
         </Dialog>
       )}
-    </>
+    </ObjectCheckNavigation.Provider>
   );
 }

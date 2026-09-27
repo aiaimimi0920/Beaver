@@ -38,12 +38,19 @@ pub fn engine_path(path: &Path) -> String {
 impl Sandbox {
     pub fn prepare(files: &Files, run: &Run) -> Result<Self> {
         let output = run_dir(files, &run.id)?;
+        Self::prepare_at(files, run, output)
+    }
+
+    pub(crate) fn prepare_at(files: &Files, run: &Run, output: PathBuf) -> Result<Self> {
         fs::create_dir_all(&output)?;
         let temporary = tempfile::Builder::new()
             .prefix("workspace-")
             .tempdir_in(&output)?;
         let project = temporary.path().join("project");
         files.restore_copy(&run.snapshot, &project)?;
+        if run.kind == "objectPreview" && !project.join("project.godot").exists() {
+            fs::write(project.join("project.godot"), "config_version=5\n")?;
+        }
         if !project.join("project.godot").is_file() {
             bail!("Godot project.godot is missing");
         }

@@ -12,6 +12,40 @@ Run `npm run check:effective-lines` with the relevant tests and formatter before
 delivery. Do not update the baseline to accept a changed oversized file. Give
 concurrent editors disjoint file ownership; keep integration under one owner.
 
+## Vertical-slice-first development
+
+Prioritize a complete, usable capability over isolated helpers or small safety
+patches. For continuation requests, recover the current plan and worktree, then
+choose the next bounded user workflow that closes an outstanding plan item or
+removes its concrete blocker. State the observable completion condition before
+implementation; do not expand the slice to unrelated features.
+
+Implement the necessary Core behavior, persistence/recovery boundaries, Desktop
+API, and production UI together when the workflow requires them. Reuse existing
+modules. Internal helpers, eligibility flags, scaffolding, and additional test
+evidence are intermediate steps; do not routinely stop and deliver after each
+one while the selected workflow remains unfinished. A backend-only capability
+is a valid slice when its actual consumer and acceptance condition are explicit.
+
+Batch related edits before verification. During implementation, use only the
+smallest compile, type, or focused regression check needed to resolve a concrete
+uncertainty. Do not repeat Core tests, Desktop tests, formatting, and structural
+checks after every helper, assertion, comment, or documentation edit.
+
+At the completion boundary, run one focused verification batch for the changed
+behavior and its direct dependencies, with the relevant compiler/type checker,
+formatter, and effective-line check. Add meaningful regression coverage for
+behavioral risks; avoid tests that merely duplicate implementation conditions.
+After success, rerun only checks invalidated by subsequent changes. Expand scope
+only for a failure or a specific unresolved integration risk. Documentation-only
+changes need document validation, not application builds or functional tests.
+
+Update the plan and evidence once per completed slice. Report the usable outcome,
+checks actually run, and remaining blockers. Mark a plan item complete only when
+its stated conditions are satisfied. If blocked, preserve the work and identify
+the exact missing dependency; do not substitute more helpers or repeated tests
+for closing the workflow. A user-requested checkpoint may report partial work.
+
 ## Beaver test workflow
 
 During development, run functional tests for the changed behavior and its direct

@@ -19,7 +19,15 @@ pub fn media_path(files: &Files, run: &Run, evidence_id: &str) -> Result<std::pa
 
 pub fn validate(files: &Files, run: &Run) -> Result<()> {
     ensure!(
-        run.kind == "visual"
+        run.kind == "visual",
+        "Only visual validation runs can be confirmed"
+    );
+    validate_capture(files, run)
+}
+
+pub fn validate_capture(files: &Files, run: &Run) -> Result<()> {
+    ensure!(
+        ["visual", "objectPreview"].contains(&run.kind.as_str())
             && run.status == "completed"
             && run.error.is_none()
             && !run.evidence.is_empty(),

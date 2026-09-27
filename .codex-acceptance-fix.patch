@@ -1,0 +1,12 @@
+*** Begin Patch
+*** Update File: native/core/src/object_version_acceptance.rs
+@@
+-        let changed = connection.execute(\n            "UPDATE entities SET value=? WHERE kind='object_version' AND id=?",\n            params![serde_json::to_string(&(object.id.clone(), &accepted))?, request.version_id],\n        )?;\n        ensure!(changed == 1, "OBJECT_VERSION_NOT_FOUND");\n        object_catalog::validate_write(connection, &object)?;\n        object_catalog::update_projection(connection, &object)?;
++        let changed = connection.execute(
++            "UPDATE entities SET value=? WHERE kind='object_version' AND id=?",
++            params![serde_json::to_string(&(object.id.clone(), &accepted))?, request.version_id],
++        )?;
++        ensure!(changed == 1, "OBJECT_VERSION_NOT_FOUND");
++        object_catalog::validate_write(connection, &object)?;
++        object_catalog::update_projection(connection, &object)?;
+*** End Patch

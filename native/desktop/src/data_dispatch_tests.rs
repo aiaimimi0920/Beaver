@@ -219,6 +219,8 @@ fn task_reveal_resolves_project_workspace_from_relative_record() -> anyhow::Resu
 fn task_actions_keep_legacy_host_tasks_available() -> anyhow::Result<()> {
     let temp = tempfile::tempdir()?;
     let host = host_store(temp.path())?;
+    let root = project_root(temp.path(), "legacy-project")?;
+    register_project(&host, "legacy-project", &root)?;
     let router = ProjectStorageRouter::new(host.clone());
     host.lock().unwrap().put(
         "task",
@@ -305,6 +307,8 @@ fn task_settings_use_project_store() -> anyhow::Result<()> {
 fn task_settings_keep_legacy_host_tasks_available() -> anyhow::Result<()> {
     let temp = tempfile::tempdir()?;
     let host = host_store(temp.path())?;
+    let root = project_root(temp.path(), "legacy-project")?;
+    register_project(&host, "legacy-project", &root)?;
     let router = ProjectStorageRouter::new(host.clone());
     host.lock().unwrap().put(
         "task",
@@ -499,3 +503,6 @@ mod task_tests;
 
 #[path = "data_dispatch_state_tests.rs"]
 mod state_tests;
+
+#[path = "data_dispatch_callback_tests.rs"]
+mod callback_tests;

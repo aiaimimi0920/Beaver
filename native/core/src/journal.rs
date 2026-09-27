@@ -72,7 +72,10 @@ impl<'a> Journal<'a> {
         Ok(())
     }
     pub fn blocked(&self, project: &str) -> Result<bool> {
-        Ok(self
+        Ok(crate::object_run_recovery::candidate::publication::blocked(
+            &self.store.connection,
+            project,
+        )? || self
             .store
             .list::<FileOperation>("operation")?
             .iter()

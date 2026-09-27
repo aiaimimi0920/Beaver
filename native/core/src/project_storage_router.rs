@@ -14,6 +14,8 @@ use std::{
 
 #[path = "project_derivation_registration.rs"]
 mod derivation_registration;
+#[path = "project_object_source.rs"]
+mod object_source;
 #[path = "project_reassociation.rs"]
 mod reassociation;
 #[path = "project_unregistration.rs"]

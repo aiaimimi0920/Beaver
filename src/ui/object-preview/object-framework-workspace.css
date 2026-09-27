@@ -68,6 +68,91 @@
   width: 32px;
   height: 32px;
 }
+.op-object-thumbnail {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  width: 100%;
+  padding: 8px;
+  box-sizing: border-box;
+}
+.op-object-thumbnail img {
+  display: block;
+  width: 100%;
+  min-height: 90px;
+  max-height: 180px;
+  object-fit: contain;
+}
+.op-object-thumbnail small {
+  overflow: hidden;
+  padding: 0;
+  color: var(--muted);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.op-object-cover-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-height: 90px;
+  width: 100%;
+  padding: 10px;
+  box-sizing: border-box;
+  overflow: hidden;
+  text-align: center;
+}
+.op-object-cover-placeholder code {
+  max-width: 100%;
+  overflow: hidden;
+  color: var(--muted);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.op-catalog-thumbnail {
+  display: grid;
+  place-items: center;
+  min-height: 90px;
+  max-height: 240px;
+  margin-top: 12px;
+  overflow: hidden;
+  background: #19232b;
+}
+.op-catalog-thumbnail img {
+  display: block;
+  max-width: 100%;
+  max-height: 220px;
+  object-fit: contain;
+}
+.op-catalog-thumbnail p {
+  margin: 0;
+  padding: 10px;
+  overflow-wrap: anywhere;
+  color: var(--muted);
+  text-align: center;
+}
+.op-catalog-version-select {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  color: var(--muted);
+}
+.op-catalog-version-select select {
+  min-width: 0;
+  max-width: 100%;
+}
+.op-catalog-details-columns .op-catalog-version-select + p {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin: 10px 0 0;
+}
+.op-catalog-details-columns .op-catalog-version-select + p .icon {
+  width: 14px;
+  height: 14px;
+}
 .op-catalog-details {
   margin: 0 20px 20px;
   border-top: 1px solid var(--line);
@@ -165,4 +250,29 @@
 .op-framework-up {
   display: inline-flex;
   transform: rotate(180deg);
+}
+.op-production-tasks header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.op-production-tasks ol {
+  display: grid;
+  gap: 12px;
+  padding-left: 24px;
+}
+.op-production-tasks small {
+  display: block;
+  color: var(--muted);
+  overflow-wrap: anywhere;
+}
+.op-production-tasks button[aria-pressed="true"] {
+  outline: 2px solid var(--accent);
+}
+.op-production-tasks article {
+  border-top: 1px solid var(--line);
+  margin-top: 16px;
+  padding-top: 12px;
+  overflow-wrap: anywhere;
 }

@@ -11,6 +11,8 @@ pub(crate) struct Backend {
     pub(crate) project_storage: Arc<beaver_core::project_storage_router::ProjectStorageRouter>,
     pub(crate) scheduler: beaver_core::scheduler::Scheduler,
     pub(crate) validation: beaver_core::validation::service::Service,
+    pub(crate) planning: beaver_core::object_task_planning_service::Service,
+    pub(crate) titles: beaver_core::object_task_title_service::Service,
     pub(crate) players: beaver_core::game_play::Players,
     pub(crate) root: PathBuf,
     pub(crate) closing: AtomicBool,

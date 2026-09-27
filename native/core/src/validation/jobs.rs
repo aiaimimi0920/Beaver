@@ -66,7 +66,11 @@ fn claim(state: &State, kind: &str) -> Result<Option<(Run, Arc<AtomicBool>, Stor
         let owned = owned_projects(&storage, &store, &project_ids)?;
         for run in store.list::<Run>("validationRun")? {
             let owned_by_storage = owned.contains(&run.project_id);
-            if owned_by_storage && run.managed && run.kind == kind && run.status == "queued" {
+            if owned_by_storage
+                && run.managed
+                && matches_lane(&run.kind, kind)
+                && run.status == "queued"
+            {
                 candidates.push((run, storage.clone()));
             }
         }
@@ -89,7 +93,7 @@ fn claim(state: &State, kind: &str) -> Result<Option<(Run, Arc<AtomicBool>, Stor
     let current: Run = repository::get(&store, "validationRun", &run.id)?;
     if !owned_projects(&storage, &store, &project_ids)?.contains(&current.project_id)
         || !current.managed
-        || current.kind != kind
+        || !matches_lane(&current.kind, kind)
         || current.status != "queued"
     {
         return Ok(None);
@@ -124,6 +128,10 @@ fn coordinate(storage: &Storage, local: &BTreeSet<String>) -> Result<bool> {
     super::coordinator::refresh_matching(&mut store, &storage.files, |id| owned.contains(id))
 }
 
+fn matches_lane(run: &str, lane: &str) -> bool {
+    run == lane || (lane == "visual" && run == "objectPreview")
+}
+
 fn execute(state: &State, storage: &Storage, run: &mut Run, cancelled: &AtomicBool) -> Result<()> {
     let context = {
         let store = storage
@@ -131,6 +139,7 @@ fn execute(state: &State, storage: &Storage, run: &mut Run, cancelled: &AtomicBo
             .lock()
             .map_err(|_| anyhow!("Database lock unavailable"))?;
         ToolContext {
+            engine: super::blender_preview::engine(run),
             project: repository::project(&store, &run.project_id)?,
             settings: settings::read(&store, &run.project_id)?,
         }
@@ -139,7 +148,7 @@ fn execute(state: &State, storage: &Storage, run: &mut Run, cancelled: &AtomicBo
     let persistence_failed = AtomicBool::new(false);
     runner::execute(
         &storage.files,
-        &tools.godot,
+        &tools.engine,
         tools.ffmpeg.as_deref(),
         run,
         cancelled,

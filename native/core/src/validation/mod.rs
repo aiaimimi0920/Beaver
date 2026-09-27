@@ -1,4 +1,6 @@
 mod automatic_repair;
+mod blender_live_preview;
+pub(crate) mod blender_preview;
 pub mod code;
 mod code_report;
 pub mod comparison;
@@ -11,9 +13,22 @@ mod feedback_context;
 pub mod flow;
 mod jobs;
 mod judgment;
+mod live_preview;
+mod live_preview_monitor;
+mod live_preview_pick;
+#[cfg(test)]
+mod live_preview_pick_tests;
+#[cfg(test)]
+mod live_preview_tests;
+mod live_preview_worker;
 pub mod manifest;
 pub mod model;
+pub mod object_report;
 pub mod operations;
+pub(crate) mod preview_frames;
+mod preview_selection;
+#[cfg(test)]
+mod preview_selection_tests;
 pub mod release;
 pub mod release_display;
 pub mod repository;

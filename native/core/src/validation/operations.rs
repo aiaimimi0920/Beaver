@@ -37,7 +37,7 @@ pub fn owned_run(store: &Store, input: &Value) -> Result<Run> {
 pub fn list(store: &Store, project: &str) -> Result<Value> {
     repository::project(store, project)?;
     let mut runs = store.list::<Run>("validationRun")?;
-    runs.retain(|r| r.project_id == project);
+    runs.retain(|r| r.project_id == project && r.kind != "objectPreview");
     runs.sort_by(|a, b| b.created_at.cmp(&a.created_at));
     let runs: Result<Vec<_>> = runs
         .into_iter()
@@ -149,11 +149,16 @@ pub fn enqueue(store: &mut Store, files: &Files, method: &str, input: &Value) ->
         !crate::journal::Journal::new(store, files).blocked(project)?,
         "Project has unfinished file recovery"
     );
-    let snapshot = repository::snapshot(store, files, project)?;
-    repository::import_manifest(store, files, project, &snapshot)?;
     let flows = match method {
         "validation.code.run" => vec![None],
-        "validation.run.rerun" => vec![owned_run(store, input)?.flow],
+        "validation.run.rerun" => {
+            let run = owned_run(store, input)?;
+            ensure!(
+                run.kind != "objectPreview",
+                "Use the frozen object preview operation to rerender"
+            );
+            vec![run.flow]
+        }
         "validation.flow.run" => {
             let flow: Flow = repository::get(store, "validationFlow", string(input, "flowId")?)?;
             ensure!(
@@ -176,6 +181,8 @@ pub fn enqueue(store: &mut Store, files: &Files, method: &str, input: &Value) ->
             .collect(),
         _ => bail!("Unknown run operation"),
     };
+    let snapshot = repository::snapshot(store, files, project)?;
+    repository::import_manifest(store, files, project, &snapshot)?;
     let task_id = input["taskId"].as_str().map(str::to_owned);
     if let Some(id) = &task_id {
         let task: Value = repository::get(store, "task", id)?;

@@ -1,62 +1,54 @@
-//! Read-only object catalog access for an unregistered Beaver project.
+//! Lease-backed catalog access without opening or modifying the source database.
 use crate::{
-    object_catalog::ObjectRecord, project_storage, project_storage_database,
+    object_source_snapshot::ObjectSourceSnapshot, project_storage, project_storage_database,
     project_storage_layout as layout,
 };
-use anyhow::{ensure, Result};
-use serde::Serialize;
-use serde_json::Value;
-use std::path::Path;
-
-#[derive(Debug, Clone, Serialize)]
-#[serde(rename_all = "camelCase")]
-pub struct ExternalObjectSnapshot {
-    pub project: Value,
-    pub objects: Vec<ObjectRecord>,
-}
+use anyhow::Result;
+use std::{
+    fs::File,
+    path::{Path, PathBuf},
+};
 
 pub fn read(
     project_root: &Path,
     project_id: &str,
     query: Option<&str>,
-) -> Result<ExternalObjectSnapshot> {
-    let root = layout::root(project_root)?;
-    let manifest = layout::manifest_in(&root, Some(project_id))?;
-    layout::validate_files(&root)?;
-    let directory = root.join(layout::CONTROL_DIR);
-    let _lock = project_storage::lock(&directory, false)?;
-    let snapshot = project_storage_database::snapshot(&directory, &manifest)?;
-    let project = snapshot
-        .project(project_id)?
-        .ok_or_else(|| anyhow::anyhow!("项目本地存储缺少项目实体"))?;
-    ensure!(project["id"] == project_id, "项目本地实体 ID 与清单不一致");
-    let objects = filter(snapshot.objects()?, project_id, query);
-    Ok(ExternalObjectSnapshot { project, objects })
+) -> Result<ObjectSourceSnapshot> {
+    Ok(ExternalSource::open(project_root, project_id)?
+        .snapshot()?
+        .inspect(project_id, query))
 }
 
-fn filter(objects: Vec<ObjectRecord>, project_id: &str, query: Option<&str>) -> Vec<ObjectRecord> {
-    let query = query
-        .map(str::trim)
-        .filter(|value| !value.is_empty())
-        .map(str::to_ascii_lowercase);
-    objects
-        .into_iter()
-        .filter(|object| {
-            object.project_id == project_id
-                && query.as_ref().map_or(true, |query| {
-                    object.id.to_ascii_lowercase().contains(query)
-                        || object.name.to_ascii_lowercase().contains(query)
-                        || object.components.iter().any(|component| {
-                            component.name.to_ascii_lowercase().contains(query)
-                                || component.kind.to_ascii_lowercase().contains(query)
-                        })
-                        || object
-                            .files
-                            .iter()
-                            .any(|file| file.path.to_ascii_lowercase().contains(query))
-                })
+pub(crate) struct ExternalSource {
+    root: PathBuf,
+    manifest: layout::Manifest,
+    _lock: File,
+}
+
+impl ExternalSource {
+    pub(crate) fn open(project_root: &Path, project_id: &str) -> Result<Self> {
+        let root = layout::root(project_root)?;
+        let directory = root.join(layout::CONTROL_DIR);
+        layout::ordinary(&directory, true)?;
+        layout::ordinary(&directory.join(layout::LOCK), false)?;
+        let lock = project_storage::lock(&directory, false)?;
+        let manifest = layout::manifest_in(&root, Some(project_id))?;
+        layout::validate_files(&root)?;
+        Ok(Self {
+            root,
+            manifest,
+            _lock: lock,
         })
-        .collect()
+    }
+
+    pub(crate) fn root(&self) -> &Path {
+        &self.root
+    }
+
+    pub(crate) fn snapshot(&self) -> Result<ObjectSourceSnapshot> {
+        project_storage_database::snapshot(&self.root.join(layout::CONTROL_DIR), &self.manifest)?
+            .object_catalog(&self.manifest.project_id)
+    }
 }
 
 #[cfg(test)]
@@ -89,6 +81,11 @@ mod tests {
                 id: "object-1".into(),
                 project_id: "external-1".into(),
                 name: "Hero".into(),
+                category: "其他".into(),
+                tags: vec![],
+                thumbnail_path: None,
+                parent_object_id: None,
+                revision: 0,
                 components: vec![],
                 files: vec![],
                 references: vec![],

@@ -6,6 +6,12 @@ use crate::{
 use serde_json::Value;
 use std::sync::atomic::Ordering;
 
+#[path = "data_dispatch_object_catalog.rs"]
+mod data_dispatch_object_catalog;
+#[path = "data_dispatch_object_import.rs"]
+mod data_dispatch_object_import;
+#[path = "data_dispatch_object_tasks.rs"]
+mod data_dispatch_object_tasks;
 #[path = "data_dispatch_projects.rs"]
 mod data_dispatch_projects;
 #[path = "data_dispatch_state.rs"]
@@ -78,112 +84,28 @@ pub(crate) fn call(
             .reassociate(id, expected, std::path::Path::new(directory), &backend.root)
             .map_err(|error| error.to_string());
     }
-    if method == "object.inspectExternal" {
-        let input = input.as_ref().ok_or("缺少外部项目参数")?;
-        let project_id = input["projectId"]
-            .as_str()
-            .filter(|id| !id.is_empty())
-            .ok_or("项目 ID 无效")?;
-        let path = input["path"]
-            .as_str()
-            .filter(|path| !path.is_empty() && path.len() <= 2000)
-            .ok_or("项目路径无效")?;
-        let path = std::path::Path::new(path);
-        if !path.is_absolute() {
-            return Err("项目路径必须是绝对路径".into());
-        }
-        return beaver_core::object_external_snapshot::read(
-            path,
-            project_id,
-            input.get("query").and_then(Value::as_str),
-        )
-        .and_then(|value| serde_json::to_value(value).map_err(Into::into))
-        .map_err(|error| error.to_string());
-    }
-    if matches!(
-        method.as_str(),
-        "object.prepareImport" | "object.getImportPreparation"
+    if let Some(result) = data_dispatch_object_import::dispatch(
+        &backend.project_storage,
+        &backend.store,
+        &backend.root,
+        &method,
+        input.as_ref(),
     ) {
-        let input = input.as_ref().ok_or("缺少对象导入参数")?;
-        let target_id = input["targetProjectId"]
-            .as_str()
-            .or_else(|| input["projectId"].as_str())
-            .filter(|id| !id.is_empty())
-            .ok_or("项目 ID 无效")?;
-        let handles = project_runtime_handles(
-            &backend.project_storage,
-            backend.store.clone(),
-            &backend.root,
-            target_id,
-        )?;
-        let mut store = handles.store.lock().map_err(|_| "数据库锁不可用")?;
-        if method == "object.getImportPreparation" {
-            let id = input["preparationId"]
-                .as_str()
-                .filter(|id| !id.is_empty())
-                .ok_or("准备 ID 无效")?;
-            let value = beaver_core::object_import_preparation::get(&store, id)
-                .map_err(|error| error.to_string())?
-                .filter(|item| item.target_project_id == target_id);
-            return serde_json::to_value(value).map_err(|error| error.to_string());
-        }
-        let source = input["source"].as_object().ok_or("source 参数无效")?;
-        let path = source["path"]
-            .as_str()
-            .filter(|path| std::path::Path::new(path).is_absolute())
-            .ok_or("源项目路径必须是绝对路径")?;
-        let source_project_id = source["projectId"]
-            .as_str()
-            .filter(|id| !id.is_empty())
-            .ok_or("源项目 ID 无效")?;
-        let object_id = input["objectId"]
-            .as_str()
-            .filter(|id| !id.is_empty())
-            .ok_or("对象 ID 无效")?;
-        let baseline: beaver_core::object_import_preparation::Baseline =
-            serde_json::from_value(input["baseline"].clone())
-                .map_err(|error| format!("baseline 参数无效: {error}"))?;
-        let request = beaver_core::object_import_preparation::Request {
-            target_project_id: target_id.to_owned(),
-            source_path: std::path::PathBuf::from(path),
-            source_project_id: source_project_id.to_owned(),
-            object_id: object_id.to_owned(),
-            baseline,
-        };
-        return beaver_core::object_import_preparation::prepare(&mut store, &request)
-            .and_then(|value| serde_json::to_value(value).map_err(Into::into))
-            .map_err(|error| error.to_string());
+        return result;
     }
-    if matches!(method.as_str(), "object.list" | "object.get") {
-        let input = input.as_ref().ok_or("缺少对象查询参数")?;
-        let project_id = input["projectId"]
-            .as_str()
-            .filter(|id| !id.is_empty())
-            .ok_or("项目 ID 无效")?;
-        let handles = project_runtime_handles(
-            &backend.project_storage,
-            backend.store.clone(),
-            &backend.root,
-            project_id,
-        )?;
-        let store = handles.store.lock().map_err(|_| "数据库锁不可用")?;
-        if method == "object.get" {
-            let object_id = input["objectId"]
-                .as_str()
-                .filter(|id| !id.is_empty())
-                .ok_or("对象 ID 无效")?;
-            return beaver_core::object_catalog::get(&store, object_id)
-                .map(|value| value.filter(|item| item.project_id == project_id))
-                .map(|value| serde_json::to_value(value).unwrap_or(Value::Null))
-                .map_err(|error| error.to_string());
-        }
-        return beaver_core::object_catalog::search(
-            &store,
-            project_id,
-            input.get("query").and_then(Value::as_str),
-        )
-        .and_then(|value| serde_json::to_value(value).map_err(Into::into))
-        .map_err(|error| error.to_string());
+    if let Some(result) = data_dispatch_object_catalog::dispatch(
+        &backend.project_storage,
+        &backend.store,
+        &backend.root,
+        &method,
+        input.as_ref(),
+    ) {
+        return result;
+    }
+    if let Some(result) =
+        data_dispatch_object_tasks::dispatch(&backend.project_storage, &method, input.as_ref())
+    {
+        return result;
     }
     if method == "task.create" {
         return create_project_task(&backend.project_storage, input)
@@ -380,19 +302,6 @@ pub(crate) fn call(
     let mut store = backend.store.lock().map_err(|_| "数据库锁不可用")?;
     let result = (|| -> anyhow_result::Result<Value> {
         match method.as_str() {
-            "task.callbackState" => Ok(beaver_core::task_callback::business(
-                &mut store,
-                &method,
-                input.as_ref().ok_or("Missing task callback input")?,
-            )?),
-            "project.create" => Ok(beaver_core::projects::create_project(
-                &store,
-                &backend.root,
-                input.ok_or("缺少项目参数")?,
-                &serde_json::from_str(include_str!("../../../dist-native/design-catalog.json"))?,
-                &serde_json::from_str(include_str!("../../../dist-native/blueprint-catalog.json"))?,
-                &serde_json::from_str(include_str!("../../../dist-native/templates.json"))?,
-            )?),
             "settings.save" => {
                 let _setup = backend
                     .setup_gate

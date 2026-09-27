@@ -1,4 +1,15 @@
 {
   "schemaVersion": 1,
-  "files": {}
+  "files": {
+    "src/main/api.ts": {
+      "effectiveLines": 641,
+      "sha256": "4ecbfe0ec3fee10669d4c68352bc4b7f8848dc769b07b4393e12ac65b92911d6",
+      "responsibility": "Electron API method dispatch and lifecycle integration",
+      "reason": "Keep the single API dispatch boundary cohesive while picker methods remain thin delegates; splitting would scatter method routing and lifecycle behavior.",
+      "tests": [
+        "npm run typecheck",
+        "npx tsx --test tests/object-import-file-contract.test.ts tests/object-import-file-session.test.ts"
+      ]
+    }
+  }
 }

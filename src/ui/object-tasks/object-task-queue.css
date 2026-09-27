@@ -1,0 +1,27 @@
+.object-task-queue {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 12px;
+  margin-block: 12px;
+}
+.object-task-queue header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.object-task-queue-list li {
+  padding: 8px;
+  border-bottom: 1px solid var(--line);
+}
+.object-task-queue button {
+  margin: 4px;
+}
+.object-task-queue-preview,
+.object-task-queue-drop {
+  padding: 8px;
+  border: 1px dashed currentColor;
+}
+.queue-insertion {
+  font-weight: 700;
+  text-decoration: underline;
+}

@@ -3,7 +3,7 @@ use beaver_core::{
     execution_settings::{self, ExecutionSettings},
     files::{safe_path, Files},
     launch::{self, Resources},
-    preferences,
+    object_attempt_launch, preferences,
     project_storage_router::ProjectStorageRouter,
     scheduler::{RuntimeFactory, Scheduler},
     scheduler_runtime::{RuntimeSource, TaskRuntime},
@@ -64,6 +64,7 @@ pub fn start(
         ))?,
     };
     let factory_host = host.clone();
+    let object_host = host.clone();
     let limit_host = host.clone();
     let files = Arc::new(Files::new(root.to_path_buf()));
     let source_store = store.clone();
@@ -152,9 +153,36 @@ pub fn start(
         })()
         .map_err(|error| error.to_string())
     });
-    Ok(Scheduler::start_with_runtimes(
+    let object_factory: object_attempt_launch::Factory = Arc::new(move |attempt, runtime| {
+        (|| -> anyhow::Result<_> {
+            let settings = {
+                let host = object_host
+                    .lock()
+                    .map_err(|_| anyhow::anyhow!("宿主数据库锁不可用"))?;
+                ExecutionSettings::read(
+                    &host,
+                    &preferences::SystemVault,
+                    serde_json::from_str(include_str!(
+                        "../../../dist-native/default-settings.json"
+                    ))?,
+                    Some("code"),
+                )?
+            };
+            let codex = tools::find("codex", settings.tools["codex"].as_str().unwrap_or(""))?;
+            object_attempt_launch::prepare(
+                runtime,
+                attempt,
+                &settings,
+                &codex,
+                std::env::vars_os().collect(),
+            )
+        })()
+        .map_err(|error| error.to_string())
+    });
+    Ok(Scheduler::start_with_objects(
         runtimes,
         factory,
+        object_factory,
         Arc::new(move || {
             let _ = app.emit("beaver:changed", ());
         }),

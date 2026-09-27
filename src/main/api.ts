@@ -27,6 +27,12 @@ import { ToolSetup } from "../core/tool-setup";
 import { managedCodex } from "../core/managed-codex";
 import type { ToolName, ToolSetupState } from "../shared/tool-setup";
 import { matchesToolVersion } from "../shared/tool-setup";
+import {
+  chooseDirectory,
+  chooseTool,
+  chooseImportFiles,
+  chooseImportDirectory,
+} from "./import-dialog";
 
 const idSchema = z.object({ id: z.string().uuid() });
 const assetSchema = z.object({
@@ -143,18 +149,14 @@ export class Api {
           settings: this.prefs.read(),
           features: await this.projects.features(),
         };
-      case "chooseDirectory": {
-        const result = await dialog.showOpenDialog({
-          properties: ["openDirectory", "createDirectory"],
-        });
-        return result.canceled ? null : result.filePaths[0];
-      }
-      case "chooseTool": {
-        const result = await dialog.showOpenDialog({
-          properties: ["openFile"],
-        });
-        return result.canceled ? null : result.filePaths[0];
-      }
+      case "chooseDirectory":
+        return chooseDirectory();
+      case "chooseTool":
+        return chooseTool();
+      case "chooseImportFiles":
+        return chooseImportFiles();
+      case "chooseImportDirectory":
+        return chooseImportDirectory();
       case "project.import":
         return this.projects.import(
           z.object({ path: z.string().min(1) }).parse(input).path,
@@ -220,11 +222,8 @@ export class Api {
       }
       case "asset.import": {
         const { id } = idSchema.parse(input);
-        const result = await dialog.showOpenDialog({
-          properties: ["openFile", "multiSelections"],
-        });
-        if (!result.canceled)
-          await this.projects.importAssets(id, result.filePaths);
+        const paths = await chooseImportFiles();
+        if (paths.length) await this.projects.importAssets(id, paths);
         return null;
       }
       case "task.create": {

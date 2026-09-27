@@ -174,12 +174,19 @@ pub fn start(
                     ))?,
                 )?
             };
-            let configured = beaver_core::workflows::configured_engine(
-                &context.project,
-                preferences["tools"]["godot"].as_str().unwrap_or(""),
-            )?;
+            let configured = if context.engine == "godot" {
+                beaver_core::workflows::configured_engine(
+                    &context.project,
+                    preferences["tools"]["godot"].as_str().unwrap_or(""),
+                )?
+            } else {
+                preferences["tools"]["blender"]
+                    .as_str()
+                    .unwrap_or("")
+                    .to_owned()
+            };
             Ok(validation::service::Tools {
-                godot: tools::find("godot", &configured)?,
+                engine: tools::find(context.engine, &configured)?,
                 ffmpeg: ffmpeg(&context.settings.ffmpeg),
             })
         }),
@@ -201,6 +208,9 @@ pub fn call(backend: &Backend, method: &str, input: Value, source: &str) -> Resu
         );
         if method == "validation.run.cancel" {
             return backend.validation.cancel(&input);
+        }
+        if method.starts_with("validation.preview.") {
+            return backend.validation.preview(method, &input);
         }
         if is_query(method) {
             return query(backend, method, &input);
@@ -269,12 +279,27 @@ pub fn is_query(method: &str) -> bool {
         "validation.list"
             | "validation.flow.list"
             | "validation.run.get"
+            | "validation.objectReport.get"
             | "validation.source"
             | "validation.release.get"
     )
 }
 
+pub(crate) fn object_report(
+    router: &beaver_core::project_storage_router::ProjectStorageRouter,
+    input: &Value,
+) -> Result<Value> {
+    let request: validation::object_report::Request = serde_json::from_value(input.clone())?;
+    let runtime = router.runtime_for_project(&request.project_id)?;
+    Ok(serde_json::to_value(validation::object_report::get(
+        &runtime, &request,
+    )?)?)
+}
+
 fn query(backend: &Backend, method: &str, input: &Value) -> Result<Value> {
+    if method == "validation.objectReport.get" {
+        return object_report(&backend.project_storage, input);
+    }
     let project = operations::string(input, "projectId")?;
     let handles = handles(backend, project)?;
     let files = handles.files;

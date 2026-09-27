@@ -5,6 +5,8 @@ import { ObjectLibrary } from "./ObjectLibrary";
 import { DemoActionDialog } from "./PreviewControls";
 import { TaskDetail } from "./TaskDetail";
 import { TaskLanes } from "./TaskLanes";
+import type { ObjectTaskSnapshot } from "../../shared/object-tasks";
+import { previewTasksFromSnapshot } from "./object-task-preview-adapter";
 import { objectById, type PreviewPage } from "./mock-objects";
 import { resetMockIterations } from "./mock-iterations";
 import "./preview-shell.css";
@@ -35,11 +37,13 @@ export function ObjectFrameworkPreview({
   showPanelTabs = true,
   activePage,
   onPageChange,
+  taskSnapshot,
 }: {
   embedded?: boolean;
   showPanelTabs?: boolean;
   activePage?: PreviewPage;
   onPageChange?: (page: PreviewPage) => void;
+  taskSnapshot?: ObjectTaskSnapshot;
 }) {
   const [localPage, setLocalPage] = useState<PreviewPage>("objects");
   const page = activePage ?? localPage;
@@ -58,6 +62,9 @@ export function ObjectFrameworkPreview({
   const [notice, setNotice] = useState("");
   const [resetKey, setResetKey] = useState(0);
   const selected = objectById(objectId);
+  const previewTasks = taskSnapshot
+    ? previewTasksFromSnapshot(taskSnapshot)
+    : undefined;
   const openObject = (id: string) => {
     setObjectId(id);
     setPage("objects");
@@ -190,12 +197,14 @@ export function ObjectFrameworkPreview({
                 select={setObjectId}
                 openCreation={openCreation}
                 notify={setNotice}
+                taskSnapshot={taskSnapshot}
               />
             ) : page === "tasks" ? (
               <TaskLanes
                 openTask={setTaskId}
                 openCreation={openCreation}
                 action={action}
+                tasks={previewTasks}
               />
             ) : (
               <ManufactureView

@@ -20,6 +20,10 @@ pub fn confirm(
         bail!("Human confirmation is only available through the Beaver user interface");
     }
     let mut run: Run = repository::get(store, "validationRun", run_id)?;
+    anyhow::ensure!(
+        run.kind != "objectPreview",
+        "Object previews are not acceptance evidence"
+    );
     if run.snapshot_id != snapshot_id {
         bail!("Snapshot changed; refresh the evidence being reviewed");
     }

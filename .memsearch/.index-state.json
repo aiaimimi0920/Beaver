@@ -1,0 +1,16 @@
+{
+  "collection": "ms_beaver_570f033c",
+  "failed_files": [],
+  "last_completed_at": "2026-09-20T15:17:18.803040Z",
+  "last_error": "MilvusException: <MilvusException: (code=2, message=Fail connecting to server on 127.0.0.1:19532, illegal connection params or server unavailable)>",
+  "last_failed_at": "2026-09-20T15:17:18.803040Z",
+  "last_started_at": "2026-09-20T15:17:10.487573Z",
+  "milvus_uri": "http://127.0.0.1:19532",
+  "operation": "watch",
+  "paths": [
+    "C:/Users/Public/nas_home/Beaver/.memsearch/memory"
+  ],
+  "schema_version": 1,
+  "status": "error",
+  "updated_at": "2026-09-20T15:17:18.803040Z"
+}

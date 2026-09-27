@@ -13,10 +13,11 @@ use std::{
 };
 
 pub struct Tools {
-    pub godot: PathBuf,
+    pub engine: PathBuf,
     pub ffmpeg: Option<PathBuf>,
 }
 pub struct ToolContext {
+    pub engine: &'static str,
     pub project: Value,
     pub settings: Settings,
 }
@@ -51,6 +52,7 @@ pub(crate) struct State {
 pub struct Service {
     state: Arc<State>,
     workers: Mutex<Vec<JoinHandle<()>>>,
+    previews: super::live_preview::Sessions,
 }
 
 impl Service {
@@ -95,6 +97,7 @@ impl Service {
                 active: Mutex::new(BTreeMap::new()),
             }),
             workers: Mutex::new(vec![]),
+            previews: super::live_preview::Sessions::default(),
         };
         for kind in ["code", "visual"] {
             let state = service.state.clone();
@@ -148,8 +151,17 @@ impl Service {
         Ok(result)
     }
 
+    pub fn preview(&self, method: &str, input: &Value) -> Result<Value> {
+        anyhow::ensure!(
+            !self.state.stop.load(Ordering::SeqCst),
+            "PREVIEW_SERVICE_CLOSED"
+        );
+        self.previews.call(&self.state, method, input)
+    }
+
     pub fn shutdown(&self) -> Result<()> {
         self.state.stop.store(true, Ordering::SeqCst);
+        self.previews.shutdown()?;
         for token in self
             .state
             .active

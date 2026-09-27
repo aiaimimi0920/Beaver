@@ -46,6 +46,39 @@ pub struct PreparedHome {
     pub blender: Option<crate::blender_session::Request>,
 }
 
+pub(crate) fn isolated_environment(
+    home: &Path,
+    inherited: BTreeMap<OsString, OsString>,
+) -> BTreeMap<OsString, OsString> {
+    let mut environment: BTreeMap<_, _> = inherited
+        .into_iter()
+        .filter(|(key, _)| {
+            let key = key.to_string_lossy().to_ascii_uppercase();
+            !key.starts_with("CODEX_")
+                && !key.starts_with("OPENAI_")
+                && !key.starts_with("BEAVER_")
+                && key != "ELECTRON_RUN_AS_NODE"
+        })
+        .collect();
+    environment.insert("CODEX_HOME".into(), home.as_os_str().to_owned());
+    environment
+}
+
+pub(crate) fn provider_config(
+    provider: &crate::preferences::Provider,
+    sandbox: &str,
+) -> serde_json::Value {
+    let mut config = json!({
+        "model":provider.model,"model_provider":"beaver","approval_policy":"never","sandbox_mode":sandbox,
+        "model_auto_compact_token_limit":AUTO_COMPACT_TOKENS,"tool_output_token_limit":TOOL_OUTPUT_TOKENS,
+        "model_providers":{"beaver":{"name":"Beaver configured AI","base_url":provider.base_url,"wire_api":"responses","request_max_retries":PROVIDER_RETRIES,"stream_max_retries":PROVIDER_RETRIES,"stream_idle_timeout_ms":STREAM_IDLE_MS}}
+    });
+    if !provider.key.is_empty() {
+        config["model_providers"]["beaver"]["env_key"] = json!("BEAVER_CODEX_KEY");
+    }
+    config
+}
+
 fn atomic_write(path: &Path, bytes: &[u8]) -> Result<()> {
     let parent = path.parent().context("配置路径无效")?;
     let mut temp = tempfile::NamedTempFile::new_in(parent)?;
@@ -97,17 +130,7 @@ pub fn prepare(
     }
     fs::create_dir_all(&home)?;
     let home = fs::canonicalize(home)?;
-    let mut env: BTreeMap<OsString, OsString> = inherited
-        .into_iter()
-        .filter(|(key, _)| {
-            let key = key.to_string_lossy().to_ascii_uppercase();
-            !key.starts_with("CODEX_")
-                && !key.starts_with("OPENAI_")
-                && !key.starts_with("BEAVER_")
-                && key != "ELECTRON_RUN_AS_NODE"
-        })
-        .collect();
-    env.insert("CODEX_HOME".into(), home.clone().into_os_string());
+    let mut env = isolated_environment(&home, inherited);
     let baseline = crate::code_structure::snapshot_baseline(files, request.baseline)?;
     let baseline_path = safe_path(&home, "code-structure-baseline.json")?;
     atomic_write(&baseline_path, &serde_json::to_vec(&baseline)?)?;
@@ -142,15 +165,8 @@ pub fn prepare(
             env.insert(path_key, std::env::join_paths(paths)?);
         }
     }
-    let mut config = json!({
-        "model":provider.model,"model_provider":"beaver","approval_policy":"never","sandbox_mode":"danger-full-access",
-        "model_auto_compact_token_limit":AUTO_COMPACT_TOKENS,"tool_output_token_limit":TOOL_OUTPUT_TOKENS,
-        "model_providers":{"beaver":{"name":"Beaver configured AI","base_url":provider.base_url,"wire_api":"responses","request_max_retries":PROVIDER_RETRIES,"stream_max_retries":PROVIDER_RETRIES,"stream_idle_timeout_ms":STREAM_IDLE_MS}},
-        "mcp_servers":{"beaver_media":{"command":fs::canonicalize(request.media_executable)?,"args":request.media_args,"env_vars":["BEAVER_PROJECT_ROOT","BEAVER_MEDIA_PROVIDERS",crate::code_structure::BASELINE_ENV],"tool_timeout_sec":600}}
-    });
-    if !provider.key.is_empty() {
-        config["model_providers"]["beaver"]["env_key"] = json!("BEAVER_CODEX_KEY");
-    }
+    let mut config = provider_config(provider, "danger-full-access");
+    config["mcp_servers"] = json!({"beaver_media":{"command":fs::canonicalize(request.media_executable)?,"args":request.media_args,"env_vars":["BEAVER_PROJECT_ROOT","BEAVER_MEDIA_PROVIDERS",crate::code_structure::BASELINE_ENV],"tool_timeout_sec":600}});
     if settings.mcp["godot"] == true {
         config["mcp_servers"]["godot"] =
             json!({"command":"npx","args":["--yes","@coding-solo/godot-mcp@0.1.1"]});

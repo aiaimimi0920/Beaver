@@ -12,6 +12,8 @@ import { SelectablePreview } from "./SelectablePreview";
 import { PreviewInspectDialog } from "./PreviewInspectDialog";
 import { TaskWorkflowView } from "./TaskWorkflowView";
 import type { DemoTask } from "./mock-tasks";
+import type { ObjectTaskSnapshot } from "../../shared/object-tasks";
+import { previewIterationsFromSnapshot } from "./object-task-preview-adapter";
 import {
   mainPreview,
   type PreviewFeedback,
@@ -24,11 +26,13 @@ export function ObjectLibrary({
   select,
   openCreation,
   notify,
+  taskSnapshot,
 }: {
   selected: DemoObject;
   select: (id: string) => void;
   openCreation: (id: string, stage?: number, version?: string) => void;
   notify: (message: string) => void;
+  taskSnapshot?: ObjectTaskSnapshot;
 }) {
   const [filter, setFilter] = useState<ObjectType | "全部">("全部");
   const [search, setSearch] = useState("");
@@ -43,6 +47,9 @@ export function ObjectLibrary({
     (object) => object.id === workflowTask?.objectId,
   );
   const navigation = useObjectTaskNavigation(selected, select);
+  const persistedIterations = taskSnapshot
+    ? previewIterationsFromSnapshot(taskSnapshot, selected.id)
+    : undefined;
   const iteration = useIterationDraft();
   const preview = useObjectPreview(
     navigation.inspectorObject ?? selected,
@@ -192,6 +199,7 @@ export function ObjectLibrary({
               setWorkflowTask(task);
             }}
             notify={notify}
+            iterations={persistedIterations}
           />
           <ObjectTaskRail
             expanded={inspectorExpanded}

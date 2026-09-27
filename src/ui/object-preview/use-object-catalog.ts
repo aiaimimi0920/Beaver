@@ -1,80 +1,21 @@
 import { useEffect, useState } from "react";
 import { call } from "../api";
-
-export interface ObjectCatalogRecord {
-  id: string;
-  projectId: string;
-  name: string;
-  components: Array<{ id: string; kind: string; name: string }>;
-  files: Array<{ path: string; role: string }>;
-  references: Array<{
-    projectId: string;
-    objectId: string;
-    versionId?: string;
-  }>;
-  versions: Array<{ versionId: string; manifest: unknown }>;
-}
+import {
+  parseObjectCatalog,
+  type ObjectCatalogRecord,
+} from "../../shared/object-catalog";
+export type { ObjectCatalogRecord } from "../../shared/object-catalog";
 
 export type ObjectCatalogQuery =
   | { kind: "loading" }
   | { kind: "ready"; objects: ObjectCatalogRecord[] }
   | { kind: "error"; message: string };
 
-function validate(value: unknown): ObjectCatalogRecord[] {
-  if (!Array.isArray(value)) throw new Error("对象查询返回格式无效");
-  return value.map((item) => {
-    if (!item || typeof item !== "object") throw new Error("对象记录无效");
-    const record = item as Partial<ObjectCatalogRecord>;
-    if (
-      typeof record.id !== "string" ||
-      typeof record.projectId !== "string" ||
-      typeof record.name !== "string" ||
-      !Array.isArray(record.components) ||
-      !Array.isArray(record.files) ||
-      !Array.isArray(record.references) ||
-      !Array.isArray(record.versions)
-    ) {
-      throw new Error("对象记录字段不完整");
-    }
-    if (
-      !record.components.every(
-        (component) =>
-          component &&
-          typeof component === "object" &&
-          typeof component.id === "string" &&
-          typeof component.kind === "string" &&
-          typeof component.name === "string",
-      ) ||
-      !record.files.every(
-        (file) =>
-          file &&
-          typeof file === "object" &&
-          typeof file.path === "string" &&
-          typeof file.role === "string",
-      ) ||
-      !record.references.every(
-        (reference) =>
-          reference &&
-          typeof reference === "object" &&
-          typeof reference.projectId === "string" &&
-          typeof reference.objectId === "string" &&
-          (reference.versionId === undefined ||
-            typeof reference.versionId === "string"),
-      ) ||
-      !record.versions.every(
-        (version) =>
-          version &&
-          typeof version === "object" &&
-          typeof version.versionId === "string",
-      )
-    ) {
-      throw new Error("对象目录项字段无效");
-    }
-    return record as ObjectCatalogRecord;
-  });
-}
-
-export function useObjectCatalog(projectId: string | undefined, query: string) {
+export function useObjectCatalog(
+  projectId: string | undefined,
+  query: string,
+  reload = 0,
+) {
   const [state, setState] = useState<ObjectCatalogQuery>({ kind: "loading" });
   useEffect(() => {
     if (!projectId) {
@@ -88,7 +29,11 @@ export function useObjectCatalog(projectId: string | undefined, query: string) {
       query: query.trim() || undefined,
     })
       .then((value) => {
-        if (active) setState({ kind: "ready", objects: validate(value) });
+        if (active)
+          setState({
+            kind: "ready",
+            objects: parseObjectCatalog(value, projectId),
+          });
       })
       .catch((error: unknown) => {
         if (active) {
@@ -101,6 +46,6 @@ export function useObjectCatalog(projectId: string | undefined, query: string) {
     return () => {
       active = false;
     };
-  }, [projectId, query]);
+  }, [projectId, query, reload]);
   return state;
 }

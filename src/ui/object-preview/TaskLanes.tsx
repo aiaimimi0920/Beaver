@@ -71,16 +71,18 @@ export function TaskLanes({
   openTask,
   openCreation,
   action,
+  tasks = demoTasks,
 }: {
   openTask: (id: string) => void;
   openCreation: (id: string, stage?: number) => void;
   action: DemoAction;
+  tasks?: DemoTask[];
 }) {
   const [scope, setScope] = useState("all");
   const [level, setLevel] = useState("全部层级");
   const [search, setSearch] = useState("");
   const [expanded, setExpanded] = useState(true);
-  const visible = demoTasks.filter((task) => {
+  const visible = tasks.filter((task) => {
     const inScope =
       scope === "all" ||
       (scope === "T-100"
@@ -116,7 +118,7 @@ export function TaskLanes({
           >
             <Icon name="tasks" />
             <strong>全部任务</strong>
-            <span>{demoTasks.length}</span>
+            <span>{tasks.length}</span>
           </button>
           <div className="op-tree-heading">
             <span>任务分解</span>
@@ -139,7 +141,7 @@ export function TaskLanes({
           </button>
           {expanded && (
             <div className="op-tree-children">
-              {demoTasks
+              {tasks
                 .filter((task) => task.parentId === "T-100")
                 .map((task) => (
                   <div key={task.id}>
@@ -155,7 +157,7 @@ export function TaskLanes({
                         <small>{task.id} · 中修</small>
                       </span>
                     </button>
-                    {demoTasks
+                    {tasks
                       .filter((child) => child.parentId === task.id)
                       .map((child) => (
                         <button

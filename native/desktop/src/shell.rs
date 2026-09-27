@@ -92,11 +92,22 @@ pub(crate) fn run() {
                 project_storage.clone(),
                 scheduler.clone(),
             )?;
+            let planning = crate::object_task_planning_runtime::start(
+                store.clone(),
+                Arc::new({
+                    let app = app.handle().clone();
+                    move |project_id| {
+                        let _ = app.emit("beaver:changed", json!({"projectId": project_id}));
+                    }
+                }),
+            );
             let backend = Arc::new(Backend {
                 store,
                 project_storage,
                 scheduler,
                 validation,
+                planning,
+                titles: beaver_core::object_task_title_service::Service::default(),
                 players: beaver_core::game_play::Players::default(),
                 root,
                 closing: AtomicBool::new(false),
@@ -131,11 +142,17 @@ pub(crate) fn run() {
                             tauri::async_runtime::spawn(async move {
                                 let _ = backend.setup.cancel();
                                 let _ = template_runtime::cancel(&backend);
+                                if let Err(error) = backend.titles.shutdown().await {
+                                    let _ = app.emit("beaver:shutdown-error", error);
+                                }
                                 if let Err(error) = backend.players.shutdown().await {
                                     let _ = app.emit("beaver:shutdown-error", error.to_string());
                                 }
                                 if let Err(error) = backend.scheduler.shutdown().await {
                                     let _ = app.emit("beaver:shutdown-error", error);
+                                }
+                                if let Err(error) = backend.planning.shutdown().await {
+                                    let _ = app.emit("beaver:shutdown-error", error.to_string());
                                 }
                                 if let Err(error) =
                                     beaver_core::framework::shutdown(&backend.store).await

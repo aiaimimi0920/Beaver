@@ -14,6 +14,7 @@ export function IterationComposer({
   toggle,
   openWorkflow,
   dragHandle,
+  readOnly = false,
 }: {
   submit: () => void;
   iteration: IterationDraftState;
@@ -22,13 +23,14 @@ export function IterationComposer({
   toggle?: () => void;
   openWorkflow?: () => void;
   dragHandle?: IterationDragHandle;
+  readOnly?: boolean;
 }) {
   const detailsId = useId();
   const { draft, cancel, setPrompt, toggleMode, edit, remove } = iteration;
   const editingDraft =
     draft && (task ? draft.taskId === task.id : !draft.taskId) ? draft : null;
   const editing = !!editingDraft;
-  const locked = !!task && !editing;
+  const locked = readOnly || (!!task && !editing);
   const content =
     editingDraft ??
     (task && {
@@ -135,7 +137,7 @@ export function IterationComposer({
             <Icon name="grip" />
           </button>
         )}
-        {task && (
+        {task && !readOnly && (
           <button
             type="button"
             className="op-iteration-lock"

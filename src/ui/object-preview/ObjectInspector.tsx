@@ -20,6 +20,7 @@ export function ObjectInspector({
   expanded,
   openWorkflow,
   notify,
+  iterations,
 }: {
   object: DemoObject | null;
   task: DemoTask | null;
@@ -31,6 +32,7 @@ export function ObjectInspector({
   expanded: boolean;
   openWorkflow: (task: DemoTask) => void;
   notify: (message: string) => void;
+  iterations?: DemoTask[];
 }) {
   const { tab, feedback } = preview;
   return (
@@ -56,6 +58,7 @@ export function ObjectInspector({
                 activeTask={task}
                 iteration={iteration}
                 openWorkflow={openWorkflow}
+                iterations={iterations}
               />
             ) : tab === "预览与反馈" ? (
               <ObjectInspectorPreview

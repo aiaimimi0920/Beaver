@@ -18,6 +18,9 @@ pub fn execute(
     run.phase = "preparing".into();
     progress(run);
     let result = (|| -> Result<()> {
+        if super::blender_preview::engine(run) == "blender" {
+            return super::blender_preview::execute(files, engine, run, cancelled, &progress);
+        }
         let sandbox = Sandbox::prepare(files, run)?;
         let version = sandbox.execute(engine, &["--version"], 15, cancelled)?;
         run.engine_version = version.text.trim().into();

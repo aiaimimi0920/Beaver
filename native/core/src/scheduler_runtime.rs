@@ -1,4 +1,6 @@
-use crate::{files::Files, project_work_gate::ProjectWorkGate, store::Store};
+use crate::{
+    files::Files, project_runtime::ProjectRuntime, project_work_gate::ProjectWorkGate, store::Store,
+};
 use std::sync::{Arc, Mutex};
 
 #[derive(Clone, Debug, Eq, PartialEq)]
@@ -14,6 +16,7 @@ pub struct TaskRuntime {
     pub(crate) owner: RuntimeOwner,
     pub(crate) draining: bool,
     pub(crate) work_gate: ProjectWorkGate,
+    pub(crate) project: Option<ProjectRuntime>,
 }
 
 pub type RuntimeSource = Arc<dyn Fn() -> Result<Vec<TaskRuntime>, String> + Send + Sync>;
@@ -26,6 +29,7 @@ impl TaskRuntime {
             owner: RuntimeOwner::Host,
             draining: false,
             work_gate: ProjectWorkGate::default(),
+            project: None,
         }
     }
 
@@ -40,11 +44,19 @@ impl TaskRuntime {
             owner: RuntimeOwner::Project(project_id.into()),
             draining: false,
             work_gate: ProjectWorkGate::default(),
+            project: None,
         }
     }
 
     pub fn store(&self) -> Arc<Mutex<Store>> {
         self.store.clone()
+    }
+
+    pub fn from_project(runtime: ProjectRuntime) -> Self {
+        let mut task_runtime =
+            Self::project(runtime.project_id(), runtime.store(), runtime.files());
+        task_runtime.project = Some(runtime);
+        task_runtime
     }
 
     pub fn with_work_gate(mut self, gate: ProjectWorkGate) -> Self {

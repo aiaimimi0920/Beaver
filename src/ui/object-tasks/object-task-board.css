@@ -1,0 +1,44 @@
+.object-task-board {
+  margin: 18px 0;
+}
+.object-task-board > p {
+  color: var(--muted);
+}
+.object-task-lanes {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(230px, 1fr));
+  align-items: start;
+  gap: 12px;
+  overflow-x: auto;
+}
+.object-task-lane {
+  min-width: 0;
+}
+.object-task-lane > h4 {
+  position: sticky;
+  top: 0;
+  background: var(--panel);
+  padding: 10px;
+  border-bottom: 1px solid var(--line);
+}
+.object-task-lane .object-task-record {
+  margin: 8px 0;
+}
+.object-task-lane button {
+  margin-top: 8px;
+}
+.object-board-children {
+  margin-top: 12px;
+}
+.object-board-children ul {
+  padding-left: 16px;
+}
+.object-board-children li {
+  border-left: 1px solid var(--line);
+  padding-left: 8px;
+  margin-top: 12px;
+}
+.object-task-board summary {
+  cursor: pointer;
+  margin-top: 8px;
+}

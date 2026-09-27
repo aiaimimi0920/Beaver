@@ -39,12 +39,8 @@ pub(crate) fn scheduler_runtimes(router: &ProjectStorageRouter) -> Result<Vec<Ta
     Ok(runtimes
         .into_iter()
         .map(|runtime| {
-            let task_runtime = TaskRuntime::project(
-                runtime.project_id().to_owned(),
-                runtime.store(),
-                runtime.files(),
-            )
-            .with_work_gate(router.work_gate(runtime.project_id()));
+            let task_runtime = TaskRuntime::from_project(runtime.clone())
+                .with_work_gate(router.work_gate(runtime.project_id()));
             if registered.iter().any(|id| id == runtime.project_id()) {
                 task_runtime
             } else {

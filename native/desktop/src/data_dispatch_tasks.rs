@@ -352,8 +352,12 @@ pub(super) fn task_callback_state(
     host_root: &Path,
     input: Option<Value>,
 ) -> anyhow::Result<Value> {
-    let input = input.ok_or_else(|| anyhow::anyhow!("缺少任务回调参数"))?;
-    let task_id = input_task_id(&input)?;
+    let input = input.unwrap_or_else(|| json!({}));
+    crate::business_catalog::validate("task.callbackState", &input)
+        .map_err(|(_, message)| anyhow::Error::msg(message))?;
+    let task_id = input["id"]
+        .as_str()
+        .ok_or_else(|| anyhow::anyhow!("Missing task ID"))?;
     let handles =
         task_runtime_handles(router, host_store, host_root, task_id).map_err(anyhow::Error::msg)?;
     let mut store = handles

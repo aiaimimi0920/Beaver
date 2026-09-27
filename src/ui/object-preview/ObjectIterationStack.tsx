@@ -18,15 +18,18 @@ export function ObjectIterationStack({
   activeTask,
   iteration,
   openWorkflow,
+  iterations: providedIterations,
 }: {
   objectId: string;
   activeTask: DemoTask | null;
   iteration: IterationDraftState;
   openWorkflow: (task: DemoTask) => void;
+  iterations?: DemoTask[];
 }) {
   const [expanded, setExpanded] = useState<string[]>([]);
   const draft = iteration.draft?.objectId === objectId ? iteration.draft : null;
-  const iterations = objectIterations(objectId);
+  const readOnly = providedIterations !== undefined;
+  const iterations = providedIterations ?? objectIterations(objectId);
   const reorder = useIterationReorder(objectId, iteration.stopAnnotating);
   const dragging = iterations.find(
     (task) => task.id === reorder.preview?.taskId,
@@ -102,12 +105,12 @@ export function ObjectIterationStack({
       className={`op-iteration-stack${dragging ? " is-reordering" : ""}`}
       aria-label="迭代栈"
     >
-      {renderInsertion(iterations[0]!, true)}
+      {!readOnly && renderInsertion(iterations[0]!, true)}
       {iterations.map((task) => {
         const isExpanded = expanded.includes(task.id);
         return (
           <Fragment key={task.id}>
-            {renderDropPreview(task.id)}
+            {!readOnly && renderDropPreview(task.id)}
             <li
               className={`op-iteration-item${current?.id === task.id ? " is-current" : ""}${dragging?.id === task.id ? " is-dragging" : ""}`}
               data-iteration-id={task.id}
@@ -117,8 +120,9 @@ export function ObjectIterationStack({
                 task={task}
                 iteration={iteration}
                 expanded={isExpanded}
-                openWorkflow={() => openWorkflow(task)}
-                dragHandle={reorder.handle(task.id)}
+                openWorkflow={readOnly ? undefined : () => openWorkflow(task)}
+                dragHandle={readOnly ? undefined : reorder.handle(task.id)}
+                readOnly={readOnly}
                 toggle={() =>
                   setExpanded((value) =>
                     isExpanded
@@ -132,11 +136,11 @@ export function ObjectIterationStack({
                 }}
               />
             </li>
-            {renderInsertion(task)}
+            {!readOnly && renderInsertion(task)}
           </Fragment>
         );
       })}
-      {renderDropPreview(null)}
+      {!readOnly && renderDropPreview(null)}
     </ol>
   );
 }

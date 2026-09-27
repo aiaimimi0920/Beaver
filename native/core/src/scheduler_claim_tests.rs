@@ -1,4 +1,5 @@
 use super::*;
+use crate::scheduler_runtime_ops::claim_next_runtimes;
 
 fn registered_host(root: &Path) -> Result<TaskRuntime> {
     let host = host_runtime(root)?;

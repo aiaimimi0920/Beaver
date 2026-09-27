@@ -1,10 +1,9 @@
-use crate::scheduler_runtime_ops::{
-    claim_next_runtimes, close_sessions, interrupt_all, interrupt_task,
-};
+use crate::scheduler_runtime_ops::{close_sessions, interrupt_all, interrupt_task};
 use crate::{
     executor::{Control, Outcome},
     files::Files,
     scheduler_runtime::{RuntimeSource, TaskRuntime},
+    scheduler_work::{self, Finished},
     store::Store,
     task_finish,
 };
@@ -22,6 +21,12 @@ use tokio::{
     task::JoinSet,
 };
 
+#[path = "scheduler_object_control.rs"]
+mod object_control;
+#[path = "scheduler_object_resume.rs"]
+mod object_resume;
+pub use object_control::{Availability as ObjectAvailability, Execution as ObjectExecution};
+
 pub struct Launch {
     pub command: Option<Command>,
     pub model: String,
@@ -38,6 +43,8 @@ pub type ParallelLimit = Arc<dyn Fn() -> Result<usize, String> + Send + Sync>;
 type Reply = oneshot::Sender<Result<(), String>>;
 enum Message {
     Wake,
+    Object(object_control::ObjectMessage),
+    Resume(object_resume::Request),
     Interrupt(String, Reply),
     Synchronize(String, Reply),
     Steer(String, String, Reply),
@@ -45,6 +52,7 @@ enum Message {
 }
 struct Active {
     runtime: TaskRuntime,
+    object: Option<crate::object_run_preparation::Preparation>,
     worker: Option<tokio::task::Id>,
     controls: mpsc::Sender<Control>,
     cancelled: Arc<AtomicBool>,
@@ -65,25 +73,35 @@ impl Scheduler {
         changed: Arc<dyn Fn() + Send + Sync>,
         parallel_limit: ParallelLimit,
     ) -> Self {
-        let (sender, receiver) = mpsc::unbounded_channel();
-        let sessions = crate::asset_sessions::Sessions::default();
         let runtime = TaskRuntime::host(store, files);
         let runtimes: RuntimeSource = Arc::new(move || Ok(vec![runtime.clone()]));
         let factory: RuntimeFactory = Arc::new(move |task, _| factory(task));
-        tokio::spawn(run(
-            runtimes,
-            factory,
-            changed,
-            receiver,
-            sessions.clone(),
-            parallel_limit,
-        ));
-        Self { sender, sessions }
+        Self::start_with_runtimes(runtimes, factory, changed, parallel_limit)
     }
 
     pub fn start_with_runtimes(
         runtimes: RuntimeSource,
         factory: RuntimeFactory,
+        changed: Arc<dyn Fn() + Send + Sync>,
+        parallel_limit: ParallelLimit,
+    ) -> Self {
+        Self::start_all(runtimes, factory, None, changed, parallel_limit)
+    }
+
+    pub fn start_with_objects(
+        runtimes: RuntimeSource,
+        factory: RuntimeFactory,
+        objects: crate::object_attempt_launch::Factory,
+        changed: Arc<dyn Fn() + Send + Sync>,
+        parallel_limit: ParallelLimit,
+    ) -> Self {
+        Self::start_all(runtimes, factory, Some(objects), changed, parallel_limit)
+    }
+
+    fn start_all(
+        runtimes: RuntimeSource,
+        factory: RuntimeFactory,
+        objects: Option<crate::object_attempt_launch::Factory>,
         changed: Arc<dyn Fn() + Send + Sync>,
         parallel_limit: ParallelLimit,
     ) -> Self {
@@ -96,6 +114,7 @@ impl Scheduler {
             receiver,
             sessions.clone(),
             parallel_limit,
+            objects,
         ));
         Self { sender, sessions }
     }
@@ -111,6 +130,7 @@ impl Scheduler {
             .map_err(|_| "任务调度器已关闭")?;
         receiver.await.map_err(|_| "任务调度器已关闭".to_string())?
     }
+
     pub async fn steer(&self, id: String, text: String) -> Result<(), String> {
         let (reply, receiver) = oneshot::channel();
         self.sender
@@ -157,6 +177,7 @@ async fn run(
     mut receiver: mpsc::UnboundedReceiver<Message>,
     sessions: crate::asset_sessions::Sessions,
     parallel_limit: ParallelLimit,
+    objects: Option<crate::object_attempt_launch::Factory>,
 ) {
     let mut active: HashMap<String, Active> = HashMap::new();
     let mut jobs = JoinSet::new();
@@ -164,25 +185,38 @@ async fn run(
     let mut shutdown: Vec<Reply> = Vec::new();
     let mut failure: Option<String> = None;
     let mut drained = false;
+    let owner = uuid::Uuid::new_v4().to_string();
     loop {
         if receiver.is_closed() && receiver.is_empty() {
             closing.store(true, Ordering::SeqCst);
         }
         if !closing.load(Ordering::SeqCst) {
-            let claimed = runtimes()
-                .and_then(|visible| claim_next_runtimes(&visible, active.len(), &parallel_limit));
+            let claimed = runtimes().and_then(|visible| {
+                scheduler_work::claim(
+                    &visible,
+                    active.len(),
+                    &parallel_limit,
+                    objects.is_some(),
+                    &owner,
+                )
+            });
             match claimed {
-                Ok(tasks) => {
-                    for claimed in tasks {
-                        let task = claimed.task;
-                        let runtime = claimed.runtime;
-                        let id = task["id"].as_str().unwrap().to_string();
+                Ok(batch) => {
+                    for claimed in batch.claimed {
+                        let runtime = claimed.runtime.clone();
+                        let id = claimed.work.id();
                         let (controls, input) = mpsc::channel(16);
                         let cancelled = Arc::new(AtomicBool::new(false));
                         active.insert(
                             id.clone(),
                             Active {
                                 runtime: runtime.clone(),
+                                object: match &claimed.work {
+                                    scheduler_work::Work::Object(claim) => {
+                                        Some(claim.record().clone())
+                                    }
+                                    scheduler_work::Work::Legacy(_) => None,
+                                },
                                 worker: None,
                                 controls,
                                 cancelled: cancelled.clone(),
@@ -191,10 +225,10 @@ async fn run(
                         );
                         let factory = factory.clone();
                         let active_id = id.clone();
-                        let worker = jobs.spawn(crate::scheduler_worker::execute(
-                            task,
-                            runtime,
+                        let worker = jobs.spawn(scheduler_work::execute(
+                            claimed,
                             factory,
+                            objects.clone(),
                             sessions.clone(),
                             cancelled,
                             input,
@@ -202,6 +236,10 @@ async fn run(
                         ));
                         active.get_mut(&active_id).unwrap().worker = Some(worker.id());
                         changed();
+                    }
+                    if let Some(error) = batch.failure {
+                        failure = Some(error);
+                        closing.store(true, Ordering::SeqCst);
                     }
                 }
                 Err(error) => {
@@ -235,6 +273,9 @@ async fn run(
                 match result {
                     Some(Ok((id, outcome))) => {
                         if let Some(entry) = active.remove(&id) {
+                            let finalized = match outcome {
+                            Finished::Object(result) => result,
+                            Finished::Legacy(outcome) => {
                             let outcome = if entry.cancelled.load(Ordering::SeqCst) { Outcome::Interrupted } else { outcome };
                             let db = entry.runtime.store(); let files = entry.runtime.files(); let finish_closing = closing.clone();
                             let finish_id = id.clone();
@@ -246,6 +287,9 @@ async fn run(
                             let retained = db.lock().ok().and_then(|db| db.get::<Value>("task", &id).ok().flatten())
                                 .is_some_and(|task| matches!(task["status"].as_str(), Some("awaitingInput" | "queued")));
                             if !retained { sessions.close(&id).await; }
+                            finalized
+                            }
+                            };
                             for reply in entry.waiters { let _ = reply.send(finalized.clone()); }
                             if let Err(error) = finalized { failure = Some(error); closing.store(true,Ordering::SeqCst); }
                             changed();
@@ -263,6 +307,11 @@ async fn run(
             message = receiver.recv(), if !receiver.is_closed() || !receiver.is_empty() => {
                 match message {
                     Some(Message::Wake) => {},
+                    Some(Message::Object(message)) => object_control::handle(message, &mut active),
+                    Some(Message::Resume(message)) => object_resume::handle(message, object_resume::Context {
+                        active: &mut active, jobs: &mut jobs, runtimes: &runtimes, objects: &objects,
+                        limit: &parallel_limit, closing: &closing, changed: &changed,
+                    }),
                     Some(Message::Synchronize(id, reply)) => {
                         if let Some(entry) = active.get_mut(&id) { entry.waiters.push(reply); }
                         else { let _ = reply.send(Ok(())); }

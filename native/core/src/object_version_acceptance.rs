@@ -1,0 +1,102 @@
+//! Promote one captured version to accepted without copying or publishing it.
+use crate::{
+    object_catalog::{self, ObjectVersion},
+    object_command_receipt::{Command, CommandResult},
+    object_registration,
+    object_version_manifest::{self, VersionStatus},
+    project_runtime::ProjectRuntime,
+};
+use anyhow::{bail, ensure, Context, Result};
+use rusqlite::{params, Connection, OptionalExtension};
+use serde::{Deserialize, Serialize};
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase", deny_unknown_fields)]
+pub struct AcceptanceRequest {
+    pub project_id: String,
+    pub request_id: String,
+    pub object_id: String,
+    pub version_id: String,
+    pub expected_revision: u64,
+}
+
+fn saved_version(connection: &Connection, version_id: &str) -> Result<(String, ObjectVersion)> {
+    let json: Option<String> = connection
+        .query_row(
+            "SELECT value FROM entities WHERE kind='object_version' AND id=?",
+            [version_id],
+            |row| row.get(0),
+        )
+        .optional()?;
+    serde_json::from_str(&json.context("OBJECT_VERSION_NOT_FOUND")?)
+        .context("OBJECT_VERSION_INVALID")
+}
+
+pub fn accept(runtime: &ProjectRuntime, request: &AcceptanceRequest) -> Result<CommandResult> {
+    let command = Command::new(
+        runtime,
+        &request.project_id,
+        &request.request_id,
+        "accept",
+        request,
+    )?;
+    let store = runtime.store();
+    let mut store = store
+        .lock()
+        .map_err(|_| anyhow::anyhow!("object store lock poisoned"))?;
+    store.transaction(|connection| {
+        if let Some(receipt) = command.replay(connection)? {
+            return Ok(receipt);
+        }
+        let mut object = object_registration::current(
+            connection,
+            &request.project_id,
+            &request.object_id,
+            request.expected_revision,
+        )?;
+        let index = object
+            .versions
+            .iter()
+            .position(|version| version.version_id == request.version_id)
+            .context("OBJECT_VERSION_NOT_FOUND")?;
+        let version = object.versions[index].clone();
+        let saved = saved_version(connection, &request.version_id)?;
+        ensure!(
+            saved.0 == object.id && saved.1 == version,
+            "OBJECT_VERSION_MISMATCH"
+        );
+        let mut manifest = object_version_manifest::read_version(&object, &version)?;
+        if manifest.status == VersionStatus::Accepted {
+            bail!("OBJECT_VERSION_ALREADY_ACCEPTED");
+        }
+        ensure!(
+            manifest.status == VersionStatus::Captured,
+            "OBJECT_VERSION_NOT_CAPTURABLE"
+        );
+        manifest.status = VersionStatus::Accepted;
+        let accepted = ObjectVersion {
+            version_id: version.version_id,
+            manifest: serde_json::to_value(manifest)?,
+        };
+        object.versions[index] = accepted.clone();
+        object.revision = object
+            .revision
+            .checked_add(1)
+            .context("INVALID_OBJECT_REVISION")?;
+        let changed = connection.execute(
+            "UPDATE entities SET value=? WHERE kind='object_version' AND id=?",
+            params![
+                serde_json::to_string(&(object.id.clone(), &accepted))?,
+                request.version_id
+            ],
+        )?;
+        ensure!(changed == 1, "OBJECT_VERSION_NOT_FOUND");
+        object_catalog::validate_write(connection, &object)?;
+        object_catalog::update_projection(connection, &object)?;
+        command.save(connection, object, Some(request.version_id.clone()))
+    })
+}
+
+#[cfg(test)]
+#[path = "object_version_acceptance_tests.rs"]
+mod tests;

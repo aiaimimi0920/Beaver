@@ -1,0 +1,181 @@
+.task-source-tabs {
+  display: flex;
+  flex-shrink: 0;
+  gap: 8px;
+  padding: 12px 18px;
+  border-bottom: 1px solid var(--line);
+}
+.task-source-tabs [aria-pressed="true"] {
+  color: var(--yellow);
+  border-color: var(--yellow);
+}
+.task-source-panel {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+}
+.object-tasks-panel {
+  flex: 1;
+  min-width: 0;
+  overflow: auto;
+  padding: 18px;
+}
+.object-tasks-toolbar,
+.object-task-record header {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+.object-tasks-toolbar > div,
+.object-task-record h3 {
+  flex: 1;
+}
+.object-tasks-toolbar h2,
+.object-task-record h3 {
+  margin: 0;
+}
+.object-tasks-toolbar p,
+.object-tasks-summary,
+.object-task-record dt,
+.object-task-status {
+  color: var(--muted);
+}
+.object-task-tree {
+  list-style: none;
+  padding: 0;
+  margin: 12px 0;
+}
+.object-task-tree .object-task-tree {
+  margin-left: 16px;
+  padding-left: 12px;
+  border-left: 1px solid var(--line);
+}
+.object-task-record {
+  padding: 14px;
+  margin: 10px 0;
+  border: 1px solid var(--line);
+  border-radius: 5px;
+  background: var(--panel);
+  overflow-wrap: anywhere;
+}
+.object-task-layer {
+  color: var(--yellow);
+}
+.object-task-record dl {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 24px;
+}
+.object-task-record dd {
+  margin: 4px 0 0;
+}
+.object-task-prompt {
+  white-space: pre-wrap;
+}
+.object-task-dependency + .object-task-dependency {
+  margin-left: 10px;
+}
+.object-task-editor {
+  padding: 16px;
+  margin: 16px 0;
+  border: 1px solid var(--line);
+  border-radius: 5px;
+  background: var(--panel);
+}
+.object-task-editor-heading,
+.object-task-editor-task > header,
+.object-task-editor-row,
+.object-task-editor-actions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+.object-task-editor-heading > div,
+.object-task-editor-row > label,
+.object-task-editor-task > label {
+  flex: 1 1 180px;
+}
+.object-task-editor-heading h3,
+.object-task-editor-task h4 {
+  margin: 0;
+}
+.object-task-editor-heading p,
+.object-task-conflict {
+  color: var(--muted);
+}
+.object-task-editor-fields,
+.object-task-editor-task {
+  min-width: 0;
+  padding: 12px;
+  margin: 12px 0;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+}
+.object-task-editor-task > label {
+  display: grid;
+  gap: 4px;
+  margin: 10px 0;
+}
+.object-task-assumption {
+  padding: 12px;
+  margin: 12px 0;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+}
+.object-task-assumption > header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  overflow-wrap: anywhere;
+}
+.object-task-assumption > label {
+  display: grid;
+  gap: 4px;
+  margin: 10px 0;
+}
+.object-task-assumption-history {
+  padding: 12px;
+  margin: 12px 0;
+  border-left: 3px solid var(--yellow);
+  background: var(--panel);
+}
+.object-task-assumption-history h4,
+.object-task-assumption-history p {
+  margin: 6px 0;
+}
+.object-task-assumption-history li {
+  margin: 12px 0;
+}
+.object-task-editor input,
+.object-task-editor textarea,
+.object-task-editor select {
+  min-width: 0;
+  width: 100%;
+}
+.object-task-editor textarea {
+  min-height: 72px;
+  resize: vertical;
+}
+.object-task-conflict {
+  padding: 8px 12px;
+  margin: 12px 0;
+  border-left: 3px solid var(--yellow);
+  background: var(--panel);
+}
+.object-task-editor-actions {
+  margin: 12px 0;
+}
+.object-task-cancel-dialog {
+  overflow-wrap: anywhere;
+}
+.object-task-cancel-scope {
+  max-height: 240px;
+  overflow: auto;
+  padding-left: 24px;
+}
+.object-task-cancel-scope li {
+  margin: 8px 0;
+}

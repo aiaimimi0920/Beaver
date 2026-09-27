@@ -1,0 +1,97 @@
+.object-task-revision-dialog {
+  width: 900px;
+  overflow-wrap: anywhere;
+}
+.object-task-definition-editor {
+  min-width: 0;
+  margin: 16px 0;
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+}
+.object-task-definition-editor > label {
+  display: grid;
+  gap: 6px;
+  margin: 12px 0;
+}
+.object-task-definition-editor > label > input,
+.object-task-definition-editor > label > textarea {
+  min-width: 0;
+  width: 100%;
+}
+.object-task-definition-editor textarea {
+  min-height: 80px;
+  resize: vertical;
+}
+.object-task-definition-editor > p,
+.object-task-definition-view dt {
+  color: var(--muted);
+}
+.object-task-revision-dependencies {
+  min-width: 0;
+  max-height: 220px;
+  overflow: auto;
+  border: 1px solid var(--line);
+}
+.object-task-revision-dependencies > label {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin: 8px 0;
+}
+.object-task-definition-comparison {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  margin: 12px 0;
+}
+.object-task-definition-view {
+  min-width: 0;
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+}
+.object-task-definition-view h4 {
+  margin: 0 0 12px;
+  color: var(--yellow);
+}
+.object-task-definition-view dd {
+  margin: 4px 0 12px;
+  white-space: pre-wrap;
+}
+.object-task-definition-view ul,
+.object-task-revision-history ul {
+  padding-left: 20px;
+}
+.object-task-revision-reason {
+  white-space: pre-wrap;
+}
+.object-task-revision-impact > ul {
+  max-height: 180px;
+  overflow: auto;
+}
+.object-task-revision-history {
+  margin-top: 20px;
+  border-top: 1px solid var(--line);
+}
+.object-task-revision-history > header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.object-task-revision-history > ol {
+  padding-left: 24px;
+}
+.object-task-revision-history > ol > li {
+  margin: 16px 0;
+}
+.object-task-revision-history summary {
+  cursor: pointer;
+}
+@media (max-width: 700px) {
+  .object-task-definition-comparison {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

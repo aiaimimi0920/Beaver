@@ -6,6 +6,8 @@ use crate::{
 use anyhow::Result;
 use serde_json::{json, Value};
 
+#[path = "project_migration_reopen_tests.rs"]
+mod reopen;
 #[path = "project_migration_routing_tests.rs"]
 mod routing;
 

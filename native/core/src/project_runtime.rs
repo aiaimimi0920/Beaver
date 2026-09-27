@@ -12,6 +12,8 @@ pub struct ProjectRuntime {
     files: Arc<Files>,
     root: PathBuf,
     project_id: String,
+    pub(crate) recovery_verification: Arc<Mutex<()>>,
+    pub(crate) materialization: Arc<Mutex<()>>,
 }
 
 impl ProjectRuntime {
@@ -22,6 +24,8 @@ impl ProjectRuntime {
             files,
             root,
             project_id,
+            recovery_verification: Arc::new(Mutex::new(())),
+            materialization: Arc::new(Mutex::new(())),
         }
     }
 

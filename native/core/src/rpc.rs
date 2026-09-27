@@ -17,6 +17,10 @@ use tokio::{
 
 type Reply = Result<Value, String>;
 
+#[path = "rpc_process_tree.rs"]
+pub(crate) mod process_tree;
+use process_tree::ProcessTree;
+
 #[derive(Clone, Debug)]
 pub enum Event {
     Notification {
@@ -35,6 +39,7 @@ pub enum Event {
 struct Inner {
     input: AsyncMutex<ChildStdin>,
     child: AsyncMutex<Child>,
+    process_tree: Option<ProcessTree>,
     pending: Mutex<HashMap<u64, oneshot::Sender<Reply>>>,
     sequence: AtomicU64,
     closed: AtomicBool,
@@ -120,7 +125,20 @@ pub struct Rpc {
 impl Rpc {
     /// `command` is the resolved executable with explicit environment and cwd.
     /// Callers must continuously consume events, including interactive requests.
-    pub fn spawn(mut command: Command) -> Result<(Self, broadcast::Receiver<Event>), String> {
+    pub fn spawn(command: Command) -> Result<(Self, broadcast::Receiver<Event>), String> {
+        Self::spawn_inner(command, None)
+    }
+
+    pub(crate) fn spawn_owned(
+        command: Command,
+    ) -> Result<(Self, broadcast::Receiver<Event>), String> {
+        Self::spawn_inner(command, Some(ProcessTree::new()?))
+    }
+
+    fn spawn_inner(
+        mut command: Command,
+        process_tree: Option<ProcessTree>,
+    ) -> Result<(Self, broadcast::Receiver<Event>), String> {
         command
             .stdin(Stdio::piped())
             .stdout(Stdio::piped())
@@ -130,9 +148,15 @@ impl Rpc {
         command.creation_flags(0x08000000); // CREATE_NO_WINDOW
         #[cfg(unix)]
         command.process_group(0);
+        if let Some(tree) = &process_tree {
+            tree.configure(&mut command);
+        }
         let mut child = command
             .spawn()
             .map_err(|e| format!("无法启动 Codex：{e}"))?;
+        if let Some(tree) = &process_tree {
+            tree.attach(&child)?;
+        }
         let stdout = child.stdout.take().ok_or("缺少 Codex 输出管道")?;
         let stderr = child.stderr.take().ok_or("缺少 Codex 日志管道")?;
         let input = child.stdin.take().ok_or("缺少 Codex 输入管道")?;
@@ -140,6 +164,7 @@ impl Rpc {
         let inner = Arc::new(Inner {
             input: AsyncMutex::new(input),
             child: AsyncMutex::new(child),
+            process_tree,
             pending: Mutex::new(HashMap::new()),
             sequence: AtomicU64::new(0),
             closed: AtomicBool::new(false),
@@ -230,9 +255,30 @@ impl Rpc {
             .await
     }
 
+    pub(crate) async fn wait_for_exit(&self) -> Result<(), String> {
+        // Descendants may retain pipe handles after the root process exits.
+        // The caller drops this cancellation-safe wait before closing the tree.
+        self.inner
+            .child
+            .lock()
+            .await
+            .wait()
+            .await
+            .map(|_| ())
+            .map_err(|error| error.to_string())
+    }
+
     pub async fn close(&self) -> Result<(), String> {
         self.inner.fail("Codex 连接已关闭");
         let mut child = self.inner.child.lock().await;
+        if let Some(tree) = &self.inner.process_tree {
+            tree.close().await?;
+            timeout(Duration::from_secs(5), child.wait())
+                .await
+                .map_err(|_| "OBJECT_ATTEMPT_ROOT_CLOSE_TIMEOUT")?
+                .map_err(|error| error.to_string())?;
+            return Ok(());
+        }
         if child.try_wait().map_err(|e| e.to_string())?.is_some() {
             return Ok(());
         }

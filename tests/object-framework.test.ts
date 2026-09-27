@@ -85,6 +85,7 @@ test("production pages have honest project/loading states and disabled unsupplie
         loading: false,
         page,
         createProject: () => {},
+        navigate: () => {},
       }),
     );
     assert.match(empty, /尚未选择项目/);
@@ -103,6 +104,7 @@ test("production pages have honest project/loading states and disabled unsupplie
         loading: true,
         page,
         createProject: () => {},
+        navigate: () => {},
       }),
     );
     assert.match(loading, /正在打开本地工作室/);

@@ -173,16 +173,11 @@ impl Snapshot {
         .collect()
     }
 
-    pub(crate) fn objects(&self) -> Result<Vec<crate::object_catalog::ObjectRecord>> {
-        let mut statement = self
-            .connection
-            .prepare("SELECT value FROM entities WHERE kind='object' ORDER BY id")?;
-        let rows = statement.query_map([], |row| row.get::<_, String>(0))?;
-        rows.map(|row| {
-            let json = row?;
-            Ok(serde_json::from_str(&json)?)
-        })
-        .collect()
+    pub(crate) fn object_catalog(
+        &self,
+        project_id: &str,
+    ) -> Result<crate::object_source_snapshot::ObjectSourceSnapshot> {
+        crate::object_source_snapshot::ObjectSourceSnapshot::read(&self.connection, project_id)
     }
 }
 

@@ -221,6 +221,49 @@ pub(crate) fn call_log_context(
     method: &str,
     input: &Value,
 ) -> Result<CallLogContext, String> {
+    if method.starts_with("objectTask.") {
+        let project_id = input["projectId"]
+            .as_str()
+            .filter(|id| !id.is_empty())
+            .ok_or("INVALID_INPUT: projectId")?;
+        let runtime = router
+            .runtime_for_project(project_id)
+            .map_err(|error| format!("{error:#}"))?;
+        return Ok(CallLogContext {
+            handles: TaskRuntimeHandles {
+                store: runtime.store(),
+                files: runtime.files(),
+                project_routed: true,
+            },
+            task_id: input["taskId"].as_str().map(str::to_owned),
+            project_id: Some(project_id.into()),
+        });
+    }
+    // Source inspection logs belong to the host, even when the source is already open.
+    if matches!(method, "object.inspectExternal" | "object.inspectFiles") {
+        return Ok(CallLogContext {
+            handles: legacy_task_handles(host_store, host_root),
+            task_id: None,
+            project_id: None,
+        });
+    }
+    if matches!(
+        method,
+        "object.prepareImport" | "object.prepareFileImport" | "object.getFileImportPreparation"
+    ) {
+        let target = input["targetProjectId"]
+            .as_str()
+            .filter(|id| !id.is_empty())
+            .ok_or("项目 ID 无效")?;
+        if method == "object.prepareImport" && input["source"]["projectId"] == target {
+            return Err("IMPORT_TARGET_EQUALS_SOURCE".into());
+        }
+        return Ok(CallLogContext {
+            handles: project_runtime_handles(router, host_store, host_root, target)?,
+            task_id: None,
+            project_id: Some(target.into()),
+        });
+    }
     let task_id = if method.starts_with("task.") || method.starts_with("assetTask.") {
         input["id"].as_str()
     } else {
@@ -317,3 +360,11 @@ mod tests;
 #[cfg(test)]
 #[path = "project_registration_routing_tests.rs"]
 mod registration_tests;
+
+#[cfg(test)]
+#[path = "object_import_routing_tests.rs"]
+mod object_import_tests;
+
+#[cfg(test)]
+#[path = "object_task_routing_tests.rs"]
+mod object_task_tests;

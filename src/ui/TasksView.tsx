@@ -6,6 +6,7 @@ import { TaskBoard } from "./TaskBoard";
 import { TaskConversation } from "./TaskConversation";
 import { Field } from "./components";
 import { PagedEditor } from "./PagedEditor";
+import { ObjectTasksPanel } from "./object-tasks/ObjectTasksPanel";
 
 const presets = [
   {
@@ -58,6 +59,7 @@ export function TasksView({
   openValidation?: (taskId: string) => void;
 }) {
   const [selected, setSelected] = useState(initialTaskId);
+  const [taskSource, setTaskSource] = useState<"legacy" | "object">("legacy");
   const [composing, setComposing] = useState(false);
   const [dismissedRefs, setDismissedRefs] = useState(false);
   useEffect(() => setDismissedRefs(false), [refs]);
@@ -268,11 +270,37 @@ export function TasksView({
     );
   return (
     <div className="task-page task-board-page">
-      <TaskBoard
-        tasks={tasks}
-        open={setSelected}
-        create={() => setComposing(true)}
-      />
+      {"__TAURI__" in window && (
+        <div className="task-source-tabs" role="group" aria-label="任务类型">
+          <button
+            type="button"
+            aria-pressed={taskSource === "legacy"}
+            aria-controls="task-source-panel"
+            onClick={() => setTaskSource("legacy")}
+          >
+            普通任务
+          </button>
+          <button
+            type="button"
+            aria-pressed={taskSource === "object"}
+            aria-controls="task-source-panel"
+            onClick={() => setTaskSource("object")}
+          >
+            对象任务
+          </button>
+        </div>
+      )}
+      <div className="task-source-panel" id="task-source-panel">
+        {taskSource === "object" ? (
+          <ObjectTasksPanel projectId={projectId} />
+        ) : (
+          <TaskBoard
+            tasks={tasks}
+            open={setSelected}
+            create={() => setComposing(true)}
+          />
+        )}
+      </div>
     </div>
   );
 }

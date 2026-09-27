@@ -55,16 +55,41 @@ fn claim(
     prepare_claims(store, files, selected)
 }
 
+#[cfg(test)]
 pub(crate) fn claim_next_runtimes(
     runtimes: &[TaskRuntime],
     active: usize,
     parallel_limit: &ParallelLimit,
 ) -> Result<Vec<ClaimedTask>, String> {
+    claim_batch(runtimes, active, parallel_limit).map(|(claimed, _)| claimed)
+}
+
+pub(crate) fn claim_batch(
+    runtimes: &[TaskRuntime],
+    active: usize,
+    parallel_limit: &ParallelLimit,
+) -> Result<(Vec<ClaimedTask>, usize), String> {
     let limit = parallel_limit()?.clamp(1, 6);
     let mut snapshots = Vec::new();
+    let mut object_running = 0;
+    let mut object_projects = HashSet::new();
     for runtime in runtimes {
         let store = runtime.store();
         let store = store.lock().map_err(|_| "数据库锁不可用".to_string())?;
+        if let Some(project) = &runtime.project {
+            if object_projects.insert(project.project_id().to_owned()) {
+                object_running += store
+                    .list::<crate::object_task_queue::QueueEntry>(
+                        crate::object_task_queue::QUEUE_KIND,
+                    )
+                    .map_err(|error| error.to_string())?
+                    .into_iter()
+                    .filter(|entry| {
+                        entry.project_id == project.project_id() && entry.state == "running"
+                    })
+                    .count();
+            }
+        }
         let tasks: Vec<Value> = store.list("task").map_err(|error| error.to_string())?;
         snapshots.push((runtime.clone(), tasks));
     }
@@ -114,7 +139,7 @@ pub(crate) fn claim_next_runtimes(
                 .count()
         })
         .sum::<usize>();
-    let mut remaining = limit.saturating_sub(running.max(active));
+    let mut remaining = limit.saturating_sub((running + object_running).max(active));
     let mut claimed = Vec::new();
     let mut claimed_ids = HashSet::new();
     for (runtime, tasks) in snapshots {
@@ -174,7 +199,7 @@ pub(crate) fn claim_next_runtimes(
             });
         }
     }
-    Ok(claimed)
+    Ok((claimed, remaining))
 }
 
 fn project_ids(snapshots: &[(TaskRuntime, Vec<Value>)]) -> HashSet<String> {

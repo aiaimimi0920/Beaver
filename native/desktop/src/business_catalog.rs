@@ -15,9 +15,28 @@ pub fn tools() -> Vec<Value> {
         ("objectFramework.status", "Read project storage readiness and object framework blockers without opening or migrating project storage.", "projectId:s", "", true),
         ("object.list", "List project-owned registered objects, optionally filtered by object name, component kind or file path.", "projectId:s", "query:s", true),
         ("object.get", "Read one project-owned object registration and its immutable version manifest.", "projectId:s,objectId:s", "", true),
-        ("object.inspectExternal", "Read an unregistered Beaver project object catalog without registering, migrating or opening it in the host runtime.", "path:s,projectId:s", "query:s", true),
-        ("object.prepareImport", "Prepare a read-only object import closure and file hash manifest. Does not modify the target object catalog.", "targetProjectId:s,source:o,objectId:s,baseline:o", "", false),
+        ("object.attemptScenePreview.get", "Read the durable frozen attempt checkpoint capture.", "projectId:s,runId:s,attemptId:s,checkpoint:s,path:s,sha256:s", "", true),
+        ("object.attemptScenePreview.run", "Render a frozen attempt checkpoint. Optional resolution: 540p, 720p, 1080p. Reuse requestId after response loss. Not acceptance evidence.", "projectId:s,requestId:s,target:o", "resolution:s", false),
+        ("object.scenePreview.get", "Read the latest durable frozen Godot scene or Blender Workbench preview capture for an exact version member.", "projectId:s,objectId:s,versionId:s,path:s,sha256:s", "", true),
+        ("object.scenePreview.run", "Render a frozen Godot scene or Blender Workbench preview and pinned dependencies using the managed visual queue. Optional resolution: 540p, 720p, 1080p. Reuse requestId after response loss. Not acceptance evidence.", "projectId:s,requestId:s,target:o", "resolution:s", false),
+        ("object.versionFile", "Read a frozen version member from verified project-local content. Supports text, image and audio up to 8 MiB; never reads live project files. Larger files return metadata without content verification.", "projectId:s,objectId:s,versionId:s,path:s,sha256:s", "", true),
+        ("object.register", "Register an object in an open project. Empty objects are allowed. Reuse requestId to retry; no tasks or accepted versions are created.", "projectId:s,requestId:s,name:s", "components:a,files:a,references:a,category:s,tags:a,thumbnailPath:n,parentObjectId:n", false),
+        ("object.updateRegistration", "Replace object metadata and writable ownership with expectedRevision checking. References must pin accepted versions in this project. Preserves version history; retries reuse requestId.", "projectId:s,requestId:s,objectId:s,expectedRevision:i,name:s,components:a,files:a,references:a", "category:s,tags:a,thumbnailPath:n,parentObjectId:n", false),
+        ("object.captureVersion", "Freeze registered files and metadata into an immutable, unaccepted version. Does not accept, publish or start a task. Reuse requestId after a lost response.", "projectId:s,requestId:s,objectId:s,expectedRevision:i", "", false),
+        ("object.acceptVersion", "Accept one captured project-owned version without copying content, publishing the object or starting a task. Reuse requestId for retries; expectedRevision protects concurrent changes.", "projectId:s,requestId:s,objectId:s,versionId:s,expectedRevision:i", "", false),
+        ("object.inspectExternal", "Discover Beaver project identity from its directory and read accepted-version digests or blockers. Optional projectId must match the source identity. Reuse an open runtime snapshot or inspect a closed project without registration, migration or activation. Blob verification occurs during preparation.", "path:s", "projectId:s,query:s", true),
+        ("object.inspectFiles", "Read ordinary files and folders as a read-only import snapshot. Does not copy, register or modify the selected source.", "paths:a", "", true),
+        ("object.prepareImport", "Verify a frozen accepted version closure against sourceDigest from inspection and save a requestId-scoped retry receipt with new identities. Does not modify the target object catalog or commit an import.", "requestId:s,targetProjectId:s,source:o,objectId:s,baseline:o,sourceDigest:s", "", false),
         ("object.getImportPreparation", "Read a previously prepared object import receipt.", "projectId:s,preparationId:s", "", true),
+        ("object.commitImport", "Import a prepared Beaver object and its frozen dependency closure. Preserve asset paths; never overwrite target files. Retry the same preparationId; versions remain pending validation.", "projectId:s,preparationId:s", "", false),
+        ("object.importOperation", "Read project-source import progress without source access or automatic recovery.", "projectId:s,preparationId:s", "", true),
+        ("object.abortImport", "Abort an uncommitted project-source import; only remove matching journaled writes and preserve external edits.", "projectId:s,preparationId:s", "", false),
+        ("object.importPreparations", "List target-owned durable import preparations without accessing any source. Cursor pagination; preparation does not mean import committed.", "projectId:s", "after:s", true),
+        ("object.prepareFileImport", "Verify an unchanged ordinary-file snapshot and save a request-scoped preparation receipt. Does not copy, register or commit files.", "requestId:s,targetProjectId:s,snapshot:o,groups:a", "", false),
+        ("object.getFileImportPreparation", "Read a previously prepared ordinary-file import receipt.", "targetProjectId:s,preparationId:s", "", true),
+        ("object.commitFileImport", "Explicitly commit an ordinary-file preparation. Reuse preparationId after failure or response loss; frozen content and durable write intent support recovery. Imported versions remain pending validation.", "projectId:s,preparationId:s", "", false),
+        ("object.fileImportOperation", "Read ordinary-file import progress without source access or automatic recovery.", "projectId:s,preparationId:s", "", true),
+        ("object.abortFileImport", "Abort an uncommitted ordinary-file import, removing only matching journaled writes. External changes block cleanup and remain intact.", "projectId:s,preparationId:s", "", false),
         ("project.storage.status", "Inspect the registered project location and manifest without opening or modifying project storage; detected does not imply database readiness.", "id:s", "", true),
         ("project.create", "Create a Godot project. Optional npr={godot: absolute editor path or directory} installs/enables the NPR package.", "parent:s,name:s,template:s", "design:o,blueprint:o,npr:o", false),
         ("project.npr.install", "Install/repair NPR on a project with no active tasks; never overwrites customized addon files.", "id:s,godot:s", "", false),
@@ -39,6 +58,12 @@ pub fn tools() -> Vec<Value> {
         ("task.continue", "Continue a stopped task or steer running work. freshContext starts a new AI session for failed/interrupted tasks while retaining workspace, history and rollback baseline. Poll state/events.", "id:s,text:s", "freshContext:b", false),
         ("task.interrupt", "Interrupt task execution, preserving history and working files.", "id:s", "", false),
         ("task.answer", "Answer pending questions. Optional automatic lists IDs explicitly filled using the current policy and exact recommended labels.", "id:s,questionId:s,answers:o", "automatic:a", false),
+        ("objectTaskPlanning.start", "Start a read-only Codex planning round for the current object-task draft. It may ask questions or submit a proposal; it never executes tasks.", "projectId:s,requestId:s,draftId:s,expectedDraftRevision:i,expectedPlanRevision:i,goal:s,acceptance:s,askRatio:i", "", false),
+        ("objectTaskPlanning.get", "Read the current Codex planning session for a project draft.", "projectId:s,draftId:s", "", true),
+        ("objectTask.suggestTitle", "Request a read-only Codex title suggestion from supplied draft text. Returns a candidate only; explicit user acceptance and draft saving remain separate.", "projectId:s,prompt:s,acceptance:s", "", true),
+        ("objectTaskPlanning.answer", "Answer the current Codex planning questions and resume the round.", "projectId:s,sessionId:s,requestId:s,expectedRevision:i,answers:o", "", false),
+        ("objectTaskPlanning.cancel", "Cancel a running or awaiting Codex planning round.", "projectId:s,sessionId:s,requestId:s,expectedRevision:i", "", false),
+        ("objectTaskPlanning.adopt", "Explicitly adopt a reviewed Codex proposal into the object-task draft; execution remains a separate commit.", "projectId:s,sessionId:s,requestId:s,expectedRevision:i", "", false),
         ("task.accept", "Accept a completed task and its feature baseline.", "id:s", "", false),
         ("task.retryMerge", "Retry a file-conflicted task's recorded output without running AI. Matching project content is preserved; genuine conflicts still block the entire merge.", "id:s", "", false),
         ("task.rollback", "Revert task changes with conflict checks; keep lists relative paths to preserve.", "id:s,keep:a", "", false),
@@ -105,6 +130,11 @@ pub fn tools() -> Vec<Value> {
                     schema["required"] = json!(["codex","godot","blender","node"]);
                     schema["additionalProperties"] = json!(false);
                 }
+                "components" if name.starts_with("object.") => schema = json!({"type":"array","maxItems":256,"items":{"type":"object","properties":{"id":{"type":"string"},"kind":{"type":"string"},"name":{"type":"string"}},"required":["id","kind","name"],"additionalProperties":false}}),
+                "files" if name.starts_with("object.") => schema = json!({"type":"array","maxItems":1024,"items":{"type":"object","properties":{"path":{"type":"string"},"role":{"type":"string"}},"required":["path","role"],"additionalProperties":false}}),
+                "references" if name.starts_with("object.") => schema = json!({"type":"array","maxItems":256,"items":{"type":"object","properties":{"projectId":{"type":"string"},"objectId":{"type":"string"},"versionId":{"type":"string"}},"required":["projectId","objectId","versionId"],"additionalProperties":false}}),
+                "tags" if name.starts_with("object.") => schema = json!({"type":"array","maxItems":64,"items":{"type":"string"}}),
+                "category" if name.starts_with("object.") => schema = json!({"type":"string","minLength":1,"maxLength":128}),
                 "references" => schema["items"] = json!({"type":"object","properties":{"path":{"type":"string"},"note":{"type":"string"},"region":{"type":"object","properties":{"x":{"type":"number","minimum":0,"maximum":1},"y":{"type":"number","minimum":0,"maximum":1},"w":{"type":"number","minimum":0,"maximum":1},"h":{"type":"number","minimum":0,"maximum":1}},"required":["x","y","w","h"]}},"required":["path","note"]}),
                 _ => {}
             }
@@ -112,7 +142,7 @@ pub fn tools() -> Vec<Value> {
         }
         let required: Vec<_> = required.split(',').filter(|v| !v.is_empty()).map(|v| v.split(':').next().unwrap()).collect();
         json!({"name":name,"description":description,"inputSchema":{"type":"object","properties":properties,"required":required,"additionalProperties":false},"annotations":{"readOnlyHint":read,"destructiveHint":!read,"openWorldHint":true}})
-    }).chain(crate::validation_catalog::tools()).chain(beaver_core::task_callback_contract::business_tools()).chain(beaver_core::framework_contract::business_tools()).collect()
+    }).chain(crate::object_task_catalog::tools()).chain(crate::validation_catalog::tools()).chain(beaver_core::task_callback_contract::business_tools()).chain(beaver_core::framework_contract::business_tools()).collect()
 }
 
 pub fn validate(method: &str, input: &Value) -> Result<(), (&'static str, String)> {
@@ -171,12 +201,74 @@ pub fn validate(method: &str, input: &Value) -> Result<(), (&'static str, String
     {
         return Err(fail("paths must contain 1..100 absolute file paths".into()));
     }
+    if method == "object.inspectFiles"
+        && !input["paths"].as_array().is_some_and(|paths| {
+            !paths.is_empty()
+                && paths.len() <= 100
+                && paths.iter().all(|path| {
+                    path.as_str().is_some_and(|path| {
+                        !path.is_empty()
+                            && path.len() <= 2_000
+                            && std::path::Path::new(path).is_absolute()
+                    })
+                })
+        })
+    {
+        return Err(fail("paths must contain 1..100 absolute paths".into()));
+    }
     Ok(())
 }
 
 #[cfg(test)]
+#[path = "object_catalog_contract_tests.rs"]
+mod object_catalog_tests;
+
+#[cfg(test)]
 mod tests {
     use super::*;
+    #[test]
+    fn object_import_discovery_accepts_path_only_and_optional_expected_identity() {
+        let path = std::env::temp_dir().join("beaver-external-project");
+        assert!(validate("object.inspectExternal", &json!({"path":path})).is_ok());
+        assert!(validate(
+            "object.inspectExternal",
+            &json!({
+                "path":path, "projectId":"source-1", "query":"hero"
+            })
+        )
+        .is_ok());
+        for invalid in [
+            json!({}),
+            json!({"projectId":"source-1"}),
+            json!({"path":path, "projectId":null}),
+            json!({"path":path, "projectId":1}),
+            json!({"path":path, "register":true}),
+        ] {
+            assert!(validate("object.inspectExternal", &invalid).is_err());
+        }
+        let tool = tools()
+            .into_iter()
+            .find(|tool| tool["name"] == "object.inspectExternal")
+            .unwrap();
+        assert_eq!(tool["annotations"]["readOnlyHint"], true);
+        assert_eq!(tool["inputSchema"]["required"], json!(["path"]));
+    }
+
+    #[test]
+    fn object_import_requires_request_identity_and_inspected_digest() {
+        let input = json!({"requestId":"r1","targetProjectId":"target","source":{},
+            "objectId":"object","baseline":{"kind":"pinnedVersion","versionId":"v1"},
+            "sourceDigest":"a".repeat(64)});
+        assert!(validate("object.prepareImport", &input).is_ok());
+        for field in ["requestId", "sourceDigest", "targetProjectId"] {
+            let mut invalid = input.clone();
+            invalid.as_object_mut().unwrap().remove(field);
+            assert!(validate("object.prepareImport", &invalid).is_err());
+        }
+        let mut invalid = input;
+        invalid["force"] = json!(true);
+        assert!(validate("object.prepareImport", &invalid).is_err());
+    }
     #[test]
     fn delivery_approval_requires_integer_cas_and_has_no_force_override() {
         let input = json!({"id":"task","requestId":"decision","expectedRevision":2,"candidateId":"candidate","decision":"approve","note":""});
@@ -204,12 +296,33 @@ mod tests {
         assert!(validate("asset.import", &json!({"id":"x","paths":[]})).is_err());
         assert!(validate("game.importTemplates", &json!({})).is_err());
         assert!(validate("chooseDirectory", &json!({})).is_err());
+        assert!(validate("object.inspectFiles", &json!({})).is_err());
+        assert!(validate("object.inspectFiles", &json!({"paths":[]})).is_err());
         assert!(validate("state", &json!({"typo":true})).is_err());
         assert!(validate(
             "document.save",
             &json!({"id":"x","path":"a.md","text":"a","revision":null})
         )
         .is_ok());
+    }
+
+    #[test]
+    fn ordinary_file_inspection_is_read_only_and_strict() {
+        let path = std::env::temp_dir().join("beaver-object-import-file");
+        assert!(validate("object.inspectFiles", &json!({"paths":[path]})).is_ok());
+        let tool = tools()
+            .into_iter()
+            .find(|tool| tool["name"] == "object.inspectFiles")
+            .unwrap();
+        assert_eq!(tool["annotations"]["readOnlyHint"], true);
+        for invalid in [
+            json!({"paths":["relative"]}),
+            json!({"paths":[1]}),
+            json!({"paths":[path,"relative"]}),
+            json!({"paths":[path],"extra":true}),
+        ] {
+            assert!(validate("object.inspectFiles", &invalid).is_err());
+        }
     }
     #[test]
     fn merge_retry_has_no_force_override() {
@@ -269,5 +382,21 @@ mod tests {
             &json!({"projectId":"project","prompt":"Legacy","assetTask":true})
         )
         .is_ok());
+    }
+}
+
+#[cfg(test)]
+mod planning_contract_tests {
+    use super::*;
+    #[test]
+    fn object_planning_contract_requires_explicit_identity_and_strict_revisions() {
+        let start = json!({"projectId":"p","requestId":"r","draftId":"d","expectedDraftRevision":0,"expectedPlanRevision":0,"goal":"g","acceptance":"a","askRatio":30});
+        assert!(validate("objectTaskPlanning.start", &start).is_ok());
+        let mut invalid = start.clone();
+        invalid["askRatio"] = json!(31);
+        assert!(validate("objectTaskPlanning.start", &invalid).is_ok());
+        invalid["expectedDraftRevision"] = json!("0");
+        assert!(validate("objectTaskPlanning.start", &invalid).is_err());
+        assert!(validate("objectTaskPlanning.get", &json!({"projectId":"p"})).is_err());
     }
 }
