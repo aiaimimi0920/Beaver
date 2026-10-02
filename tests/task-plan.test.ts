@@ -38,6 +38,8 @@ test("workflow selection is explicit, bounded and never defaults all steps to NP
     summary: "mixed workflow",
     steps: [step, npr],
   });
+  assert.ok(result.steps[0]);
+  assert.ok(result.steps[1]);
   assert.equal(result.steps[0].workflow, "general");
   assert.equal(result.steps[1].workflow, "npr-character");
   assert.equal(
