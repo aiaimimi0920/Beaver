@@ -98,6 +98,7 @@ fn cancelled_import_keeps_diagnostics_and_repair_log_reference() -> Result<()> {
     assert!(!output.join("gut.log").exists());
     assert_eq!(f.files.capture(&f.project)?, original);
     let repair = f._temp.path().join("repair");
+    fs::create_dir_all(&repair)?;
     super::feedback_context::freeze_repair(&f.files, &repair, &run, &serde_json::json!({}))?;
     let frozen = repair.join(format!(
         ".beaver-context/validation/repairs/{}/run.log",
