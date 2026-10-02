@@ -25,7 +25,7 @@ async fn malformed_and_oversized_lines_do_not_desynchronize_or_execute() -> Resu
     let (client, server) = tokio::io::duplex(2 * protocol::MAX_REQUEST_BYTES);
     let (reader, writer) = tokio::io::split(server);
     let serving = tokio::spawn(protocol::serve(host.clone(), reader, writer, stop));
-    let (mut input, output) = tokio::io::split(client);
+    let (output, mut input) = tokio::io::split(client);
     let mut output = BufReader::new(output).lines();
     let mut responses = Vec::new();
     for frame in inputs {
