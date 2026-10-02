@@ -60,6 +60,8 @@ jobs:
           cargo test --locked -j1 -p beaver-core --lib task_plan
           cargo test --locked -j1 -p beaver-core --lib blender_session::addon
           cargo test --locked -j1 -p beaver-core --lib external
+          cargo test --locked -j1 -p beaver-core --lib process::tests
+          cargo test --locked -j1 -p beaver-core --lib validation::sandbox_tests
           cargo test --locked -j1 -p beaver-core --test object_framework_boundary --test project_task_storage
           npm run check:effective-lines
       - name: Package checked headless host

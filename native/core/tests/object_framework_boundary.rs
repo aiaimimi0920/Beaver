@@ -10,8 +10,13 @@ fn marker() -> Value {
     json!({"schemaVersion":1,"layer":"coarse"})
 }
 
+#[track_caller]
 fn disabled<T: std::fmt::Debug>(result: Result<T>) {
-    assert!(format!("{:#}", result.unwrap_err()).contains("OBJECT_FRAMEWORK_DISABLED"));
+    let error = format!("{:#}", result.unwrap_err());
+    assert!(
+        error.contains("OBJECT_FRAMEWORK_DISABLED"),
+        "Expected object-framework rejection at this call site, got: {error}"
+    );
 }
 
 #[test]

@@ -111,24 +111,42 @@ impl Sandbox {
         seconds: u64,
         cancelled: &AtomicBool,
     ) -> Result<process::Output> {
-        process::run_cancellable_env(
+        self.execute_logged(
+            engine,
+            args,
+            seconds,
+            cancelled,
+            &format!("process-{}.log", uuid::Uuid::new_v4()),
+        )
+    }
+
+    fn execute_logged(
+        &self,
+        engine: &Path,
+        args: &[&str],
+        seconds: u64,
+        cancelled: &AtomicBool,
+        log: &str,
+    ) -> Result<process::Output> {
+        process::run_cancellable_env_logged(
             engine,
             args,
             Some(&self.project),
             Duration::from_secs(seconds),
             cancelled,
             &self.environment,
+            &self.output.join(log),
         )
     }
 
     pub fn import(&self, engine: &Path, cancelled: &AtomicBool) -> Result<String> {
-        let output = self.execute(
+        let output = self.execute_logged(
             engine,
             &["--headless", "--path", ".", "--import"],
             180,
             cancelled,
+            "import.log",
         )?;
-        fs::write(self.output.join("import.log"), &output.text)?;
         check_output(&output)?;
         Ok(output.text)
     }
