@@ -240,3 +240,36 @@ fn missing_plan_and_conflicts_never_create_or_approve_children() -> Result<()> {
     assert_eq!(store.list::<Value>("task")?.len(), 1);
     Ok(())
 }
+
+#[test]
+fn marked_plan_submission_rejects_before_mode_and_rpc_identity_checks() -> Result<()> {
+    let (_temp, store, files, mut parent) = setup()?;
+    parent["objectFramework"] = json!({"schemaVersion":1,"layer":"coarse"});
+    parent.as_object_mut().unwrap().remove("threadId");
+    parent.as_object_mut().unwrap().remove("turnId");
+    let id = parent["id"].as_str().unwrap().to_owned();
+    let before_events = store.events(&id)?;
+    for mode in ["responses", "external-agent"] {
+        parent["executionMode"] = json!(mode);
+        store.put("task", &id, &parent)?;
+        for (entry, result) in [
+            (
+                "legacy submit",
+                task_plan::submit(&store, &files, &id, &json!({})),
+            ),
+            (
+                "external submit",
+                task_plan::submit_external(&store, &files, &id, &json!({})),
+            ),
+        ] {
+            let error = format!("{:#}", result.unwrap_err());
+            assert!(
+                error.contains("OBJECT_FRAMEWORK_DISABLED"),
+                "{entry}, mode={mode}: {error}"
+            );
+        }
+        assert_eq!(store.get::<Value>("task", &id)?, Some(parent.clone()));
+        assert_eq!(store.events(&id)?, before_events);
+    }
+    Ok(())
+}

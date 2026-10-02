@@ -80,6 +80,7 @@ pub fn tool() -> Value {
 }
 pub fn submit(store: &Store, files: &Files, id: &str, params: &Value) -> Result<()> {
     let task: Value = store.get("task", id)?.context("任务不存在")?;
+    crate::object_framework::require_legacy(&task)?;
     anyhow::ensure!(
         !crate::external_run_contract::enabled(&task),
         "External plans require the host run contract"
@@ -100,6 +101,7 @@ pub(crate) fn submit_external(
     arguments: &Value,
 ) -> Result<()> {
     let task: Value = store.get("task", id)?.context("Task missing")?;
+    crate::object_framework::require_legacy(&task)?;
     anyhow::ensure!(
         crate::external_run_contract::enabled(&task),
         "External execution mode required"
