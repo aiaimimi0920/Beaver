@@ -16,6 +16,7 @@ async fn publication_routes_accept_and_retain_history_without_redispatch() -> Re
     object_tasks::enqueue(&runtime, "p", &["medium".into()])?;
     let scheduler = successful_scheduler(&f)?;
     let views = finished(&scheduler, &f, &run, 1).await?;
+    assert_eq!(views[0]["attempt"]["state"], "awaitingGate", "{views:#}");
     let target = views[0]["attempt"]["target"].clone();
     call(
         &scheduler,
@@ -151,6 +152,36 @@ async fn publication_routes_accept_and_retain_history_without_redispatch() -> Re
     request["confirmFiles"] = json!(true);
     request["confirmReplacement"] = json!(true);
     request["feedback"] = json!([{"requestId":preview["feedback"][0]["requestId"],"resolution":"deferred","note":"Schedule after publication"}]);
+    let mut unexpected_final = request.clone();
+    unexpected_final["feedback"][0]["finalRelocation"] = json!({
+        "sourceDigest":"c".repeat(64),"confirmed":true,
+        "targetFrame":{"runId":"missing","frameId":"missing"},
+        "regions":[{"status":"absent","sourceRegion":0,"note":"No counterpart"}]
+    });
+    assert!(call(
+        &scheduler,
+        &f.router,
+        "objectTask.publishCandidate",
+        unexpected_final
+    )
+    .await
+    .unwrap_err()
+    .to_string()
+    .contains("OBJECT_PUBLICATION_RELOCATION_SOURCE_CHANGED"));
+    assert_eq!(
+        serde_json::to_value(object_tasks::snapshot(&runtime, "p")?)?,
+        before
+    );
+    assert_eq!(
+        call(
+            &scheduler,
+            &f.router,
+            "objectTask.publications",
+            query.clone()
+        )
+        .await?,
+        json!([])
+    );
     let published = call(
         &scheduler,
         &f.router,
@@ -169,6 +200,17 @@ async fn publication_routes_accept_and_retain_history_without_redispatch() -> Re
         .await?,
         json!([])
     );
+    assert!(call(
+        &scheduler,
+        &f.router,
+        "objectTask.publicationFrames",
+        json!({"projectId":"p","publicationRequestId":"publish",
+            "previewFrame":{"runId":"missing","frameId":"missing"}})
+    )
+    .await
+    .unwrap_err()
+    .to_string()
+    .contains("PREVIEW_SAVED_NOT_FOUND"));
     let planned = call(
         &scheduler,
         &f.router,

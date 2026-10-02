@@ -122,7 +122,8 @@ test("import dialog labels preparation honestly and requires a bound target", ()
     }),
   );
   assert.match(markup, /尚未选择项目/);
-  assert.match(markup, /正式复制与导入提交仍待后续流程接通/);
+  assert.match(markup, /目标对象目录尚不改变/);
+  assert.match(markup, /再确认正式导入/);
   assert.match(markup, /type="submit"[^>]*disabled=""/);
   assert.doesNotMatch(markup, /type="file"|标签|补充说明/);
 });

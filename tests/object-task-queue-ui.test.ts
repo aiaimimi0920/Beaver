@@ -57,8 +57,8 @@ test("queue lifecycle snapshots accept held states while fine tasks remain plann
   }
 });
 
-test("unimplemented execution and acceptance states are not silently parsed", () => {
-  for (const status of ["paused", "completed", "succeeded", "accepted"]) {
+test("unknown lifecycle states are not silently parsed", () => {
+  for (const status of ["paused", "completed", "succeeded"]) {
     const snapshot = heldSnapshot("queued");
     Object.assign(
       snapshot.tasks.find((task) => task.id === "medium")!,
@@ -67,6 +67,15 @@ test("unimplemented execution and acceptance states are not silently parsed", ()
     Object.assign(snapshot.runs[0]!, { status });
     assert.throws(() => parseObjectTaskSnapshot(snapshot, "p"));
   }
+});
+
+test("accepted publication state remains readable with released ownership", () => {
+  const snapshot = heldSnapshot("awaitingAcceptance");
+  for (const task of snapshot.tasks) {
+    if (task.runId === snapshot.runs[0]!.id) task.status = "accepted";
+  }
+  snapshot.runs[0]!.status = "accepted";
+  assert.deepEqual(parseObjectTaskSnapshot(snapshot, "p"), snapshot);
 });
 
 test("task and run labels reflect queue state and revisions stay read-only across responsibility", () => {

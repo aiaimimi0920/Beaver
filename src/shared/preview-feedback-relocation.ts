@@ -41,3 +41,10 @@ export const feedbackRelocationSchema = z.strictObject({
   confirmed: z.literal(true),
 });
 export type FeedbackRelocation = z.infer<typeof feedbackRelocationSchema>;
+export const finalRelocationSchema = feedbackRelocationSchema
+  .omit({ sourceAttemptId: true, sourceFrame: true })
+  .extend({
+    sourceDigest: z.string().regex(/^[a-f0-9]{64}$/),
+    targetFrame: previewFrameReferenceSchema,
+  });
+export type FinalRelocation = z.infer<typeof finalRelocationSchema>;

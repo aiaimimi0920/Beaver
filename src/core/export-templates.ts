@@ -11,7 +11,7 @@ const limit = 2 * 1024 ** 3;
 
 export function templateVersion(output: string): string {
   const match =
-    /^(4\.\d+(?:\.\d+)?)\.(stable|rc\d+|beta\d+|dev\d+)(?:\.|$)/.exec(
+    /^(4\.\d+(?:\.\d+)?)\.(stable|rc\d+|beta\d+|dev\d*)(?:\.|$)/.exec(
       output.trim(),
     );
   if (!match) throw new Error("无法识别 Godot 4 导出模板版本");

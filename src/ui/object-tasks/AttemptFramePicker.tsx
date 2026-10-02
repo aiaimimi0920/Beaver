@@ -50,6 +50,7 @@ export function AttemptFramePicker({
   onLoaded,
   label = "候选输出的编号存档帧",
   disabled = false,
+  sourceRunId = session.review.target.runId,
 }: {
   session: ObjectPublication;
   attemptId: string;
@@ -58,6 +59,7 @@ export function AttemptFramePicker({
   onLoaded?: (frame: SavedPreviewFrame | undefined) => void;
   label?: string;
   disabled?: boolean;
+  sourceRunId?: string;
 }) {
   const [frames, setFrames] = useState<SavedPreviewFrame[]>([]);
   const [error, setError] = useState("");
@@ -68,6 +70,7 @@ export function AttemptFramePicker({
   const scope = JSON.stringify([
     session.review,
     attemptId,
+    sourceRunId,
     runId,
     frameId,
     revision,
@@ -83,7 +86,7 @@ export function AttemptFramePicker({
       parseAttemptFrames(
         raw,
         session.review.projectId,
-        session.review.target.runId,
+        sourceRunId,
         attemptId,
         ref,
       );
@@ -115,7 +118,16 @@ export function AttemptFramePicker({
     return () => {
       active = false;
     };
-  }, [session, attemptId, runId, frameId, editable, revision, scope]);
+  }, [
+    session,
+    attemptId,
+    sourceRunId,
+    runId,
+    frameId,
+    editable,
+    revision,
+    scope,
+  ]);
   const visible = loadedScope === scope ? frames : [];
   const selected = visible.find(
     (item) => item.id === frameId && item.runId === runId,

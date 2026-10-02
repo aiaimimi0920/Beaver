@@ -170,6 +170,7 @@ export class ObjectGenerationSession {
               id: `${id}.medium`,
               position: 0,
               granularity: "medium",
+              baseline: { basePolicy: "empty" },
             },
             {
               ...common,

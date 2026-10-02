@@ -58,9 +58,14 @@ pub(crate) async fn call(
                 .as_str()
                 .ok_or_else(|| anyhow!("Missing publicationRequestId"))?
                 .to_owned();
+            let reference = input
+                .get("previewFrame")
+                .cloned()
+                .map(serde_json::from_value)
+                .transpose()?;
             tokio::task::spawn_blocking(move || {
-                Ok(serde_json::to_value(beaver_core::object_run_recovery::candidate::publication::followup::frames::list(
-                    &runtime, &project, &publication)?)?)
+                Ok(serde_json::to_value(beaver_core::object_run_recovery::candidate::publication::followup::frames::list_exact(
+                    &runtime, &project, &publication, reference.as_ref())?)?)
             }).await?
         }
         "objectTask.publicationFollowups" => {

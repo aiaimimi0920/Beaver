@@ -89,7 +89,7 @@ pub fn tools() -> Vec<Value> {
         ("game.presets", "List export presets for a project.", "id:s", "", true),
         ("game.export", "Export a project; formal exports require an exact green release candidate. Internal exports remain available for development.", "id:s,destination:s,preset:s", "purpose:s,releaseCheckId:s,snapshotId:s,scopeId:s", false),
         ("game.verifyExport", "Verify an exported bundle and record the matching project's delivery status.", "path:s", "", false),
-        ("game.prepareTemplates", "Download official Godot export templates.", "", "", false),
+        ("game.prepareTemplates", "Prepare matching editor-sibling templates, or official stable templates for an official editor.", "", "", false),
         ("game.importTemplates", "Import a trusted local Godot template archive without a file picker.", "path:s", "", false),
         ("game.cancelTemplates", "Cancel export template preparation.", "", "", false),
         ("screenshots", "List capturable windows on the host desktop.", "", "", true),

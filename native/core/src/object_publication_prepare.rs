@@ -24,6 +24,7 @@ pub(super) fn validate_target(
 }
 
 pub(super) fn load(
+    runtime: &crate::project_runtime::ProjectRuntime,
     db: &Connection,
     request: &ReviewTarget,
 ) -> Result<(super::Source, super::Report, Preview)> {
@@ -70,9 +71,10 @@ pub(super) fn load(
         &request.project_id,
         &request.target.task_id,
     )?);
+    feedback.extend(super::feedback::inherited(db, request)?);
     feedback.sort_by(|a, b| a.request_id.cmp(&b.request_id));
-    for item in &feedback {
-        validate_feedback_evidence(db, request, item).map_err(|error| {
+    for item in &mut feedback {
+        super::feedback::prepare(runtime, db, request, item).map_err(|error| {
             anyhow::anyhow!(
                 "OBJECT_PUBLICATION_FEEDBACK_EVIDENCE: {}: {error:#}",
                 item.request_id
@@ -81,38 +83,6 @@ pub(super) fn load(
     }
     let preview = build(&source, &report, feedback)?;
     Ok((source, report, preview))
-}
-
-fn validate_feedback_evidence(
-    db: &Connection,
-    request: &ReviewTarget,
-    item: &Feedback,
-) -> Result<()> {
-    ensure!(
-        item.relocation.is_none() || item.preview_frame.is_some(),
-        "PREVIEW_RELOCATION_TARGET_REQUIRED"
-    );
-    let Some(reference) = &item.preview_frame else {
-        return Ok(());
-    };
-    ensure!(item.image.is_none(), "PREVIEW_FEEDBACK_IMAGE_CONFLICT");
-    let attempt = crate::object_attempt_view::read(db, &request.project_id, &item.attempt_id)?;
-    ensure!(
-        attempt.preparation.run.id == request.target.run_id
-            && attempt.preparation.run.object_id == request.target.object_id,
-        "PREVIEW_FEEDBACK_SOURCE_MISMATCH"
-    );
-    if let Some(confirmation) = &item.relocation {
-        super::super::super::resume::rework::relocation::resolve(
-            db,
-            &attempt,
-            reference,
-            confirmation,
-        )?;
-    } else {
-        super::deferred::frames::resolve(db, &attempt, reference)?;
-    }
-    Ok(())
 }
 
 pub(super) fn build(
@@ -320,5 +290,6 @@ pub(super) fn approve(request: &Request, preview: &Preview) -> Result<()> {
                 .all(|f| !f.note.trim().is_empty() && f.note.len() <= 4000),
         "OBJECT_PUBLICATION_FEEDBACK_UNRESOLVED"
     );
+    super::relocation::approve(request, preview)?;
     Ok(())
 }

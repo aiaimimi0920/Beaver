@@ -25,6 +25,9 @@ pub(crate) async fn conversation(
         "sandbox":"workspace-write","config":restrictions(),"dynamicTools":[crate::object_attempt_callback::definition()],
         "developerInstructions":format!("{INSTRUCTIONS}\n{}", crate::code_structure::INSTRUCTIONS)
     })), rpc, events, &mut pending).await?;
+    if thread["sandbox"]["type"] != "workspaceWrite" {
+        return Err("OBJECT_ATTEMPT_WORKSPACE_SANDBOX_UNAVAILABLE".into());
+    }
     let thread = identifier(&thread, "thread")?;
     object_attempt::bind(runtime, lease, &thread, None).map_err(|error| error.to_string())?;
     let context = crate::object_attempt_callback::context(runtime, lease)

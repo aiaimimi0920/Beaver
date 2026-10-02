@@ -98,6 +98,17 @@ impl Prepared {
         self.provenance = provenance;
         self
     }
+
+    fn bind_bundle(&mut self, bundle: &crate::godot_bundle::Bundle) -> Result<()> {
+        let config = bundle.preset(
+            &config(self.workspace.path())?,
+            &self.target.name,
+            self.workspace.path(),
+        )?;
+        fs::write(self.workspace.path().join("export_presets.cfg"), config)?;
+        self.template_directory = Some(bundle.directory.clone());
+        Ok(())
+    }
 }
 
 fn custom_template(config: &str, preset: &str) -> Result<Option<String>> {
@@ -216,10 +227,20 @@ pub fn prepare_snapshot(
         provenance: json!({"purpose":"internal"}),
     })
 }
-pub fn execute(job: Prepared, godot: &Path, cancelled: &AtomicBool) -> Result<Value> {
+pub fn execute(mut job: Prepared, godot: &Path, cancelled: &AtomicBool) -> Result<Value> {
     if cancelled.load(Ordering::SeqCst) {
         bail!("应用正在退出");
     }
+    let toolchain = if job.target.platform == "Windows Desktop" {
+        if let Some(bundle) = crate::godot_bundle::discover(godot, cancelled)? {
+            job.bind_bundle(&bundle)?;
+            Some(bundle.receipt(godot))
+        } else {
+            None
+        }
+    } else {
+        None
+    };
     let folder = tempfile::Builder::new()
         .prefix("Beaver-game-")
         .tempdir_in(&job.parent)?
@@ -279,7 +300,7 @@ pub fn execute(job: Prepared, godot: &Path, cancelled: &AtomicBool) -> Result<Va
         .iter()
         .find(|file| file.path == job.target.entry)
         .context("导出产物缺少入口程序")?;
-    let manifest = json!({"version":2,"project":job.project,"preset":job.target.name,"platform":job.target.platform,"entry":job.target.entry,"sha256":file.sha256,"files":files,"exportedAt":chrono::Utc::now().to_rfc3339_opts(chrono::SecondsFormat::Millis,true),"runtimeVerified":false,"validation":job.provenance});
+    let manifest = json!({"version":2,"project":job.project,"preset":job.target.name,"platform":job.target.platform,"entry":job.target.entry,"sha256":file.sha256,"files":files,"exportedAt":chrono::Utc::now().to_rfc3339_opts(chrono::SecondsFormat::Millis,true),"runtimeVerified":false,"validation":job.provenance,"toolchain":toolchain});
     fs::write(
         folder.join("export-manifest.json"),
         serde_json::to_vec_pretty(&manifest)?,
@@ -289,7 +310,7 @@ pub fn execute(job: Prepared, godot: &Path, cancelled: &AtomicBool) -> Result<Va
         return Err(error);
     }
     Ok(
-        json!({"path":folder,"log":result.text,"bundleVerified":true,"runtimeVerified":false,"validation":job.provenance}),
+        json!({"path":folder,"log":result.text,"bundleVerified":true,"runtimeVerified":false,"validation":job.provenance,"toolchain":toolchain}),
     )
 }
 

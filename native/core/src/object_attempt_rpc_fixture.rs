@@ -91,7 +91,14 @@ fn fake_server() -> Result<()> {
         let method = input["method"].as_str().unwrap_or("");
         let result = match method {
             "initialize" => Some(json!({})),
-            "thread/start" => Some(json!({"thread":{"id":"thread"}})),
+            "thread/start" => Some(json!({"thread":{"id":"thread"},"sandbox":{
+                "type":match mode.as_str() {
+                    "read-only" => "readOnly",
+                    "full-access" => "dangerFullAccess",
+                    "missing-sandbox" => "",
+                    _ => "workspaceWrite",
+                }
+            }})),
             "turn/start" => Some(json!({"turn":{"id":"turn"}})),
             _ => None,
         };
@@ -179,7 +186,12 @@ fn fake_server() -> Result<()> {
                         input["result"]["contentItems"][0]["text"].as_str().unwrap(),
                     )?;
                     // A later workspace write must not replace the frozen feedback PNG.
-                    fs::write("preview.png", "changed workspace image")?;
+                    if mode == "feedback-image-callback" {
+                        image::RgbaImage::from_pixel(20, 10, image::Rgba([0, 0, 255, 255]))
+                            .save("preview.png")?;
+                    } else {
+                        fs::write("preview.png", "changed workspace image")?;
+                    }
                     let arguments = if mode == "feedback-image-callback" {
                         assert!(context["feedbackImage"].is_object());
                         json!({"operation":"feedbackImage"})

@@ -167,7 +167,8 @@ pub(crate) fn tools() -> Vec<Value> {
                 "confirmFiles":{"type":"boolean","enum":[true]},"confirmReplacement":{"type":"boolean"},
                 "feedback":{"type":"array","maxItems":500,"items":schema(json!({
                     "requestId":id(),"resolution":{"type":"string","enum":["resolved","waived","deferred"]},
-                    "note":{"type":"string","minLength":1,"maxLength":4000}
+                    "note":{"type":"string","minLength":1,"maxLength":4000},
+                    "finalRelocation":relocation::final_schema()
                 }), &["requestId", "resolution", "note"])}
             }), &["projectId", "requestId", "target", "reviewRequestId", "previewDigest", "acceptanceNote", "confirmFiles", "confirmReplacement", "feedback"]),
             false,
@@ -207,7 +208,9 @@ pub(crate) fn tools() -> Vec<Value> {
         (
             "objectTask.publicationFrames",
             "Read immutable numbered Godot frames belonging to this exact published object version for explicit follow-up feedback. Never starts a preview or task.",
-            query(Some("publicationRequestId")),
+            schema(json!({"projectId":id(),"publicationRequestId":id(),
+                "previewFrame":schema(json!({"runId":id(),"frameId":id()}), &["runId", "frameId"])
+            }), &["projectId", "publicationRequestId"]),
             true,
         ),
         (

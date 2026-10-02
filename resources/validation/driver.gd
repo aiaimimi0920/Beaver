@@ -9,11 +9,16 @@ var held_keys: Array[int] = []
 
 
 func _enter_tree() -> void:
-	spec = JSON.parse_string(FileAccess.get_file_as_string("res://beaver_validation_runtime/run.json"))
+	spec = JSON.parse_string(
+		FileAccess.get_file_as_string("res://beaver_validation_runtime/run.json")
+	)
 	seed(int(spec.config.seed))
 	TranslationServer.set_locale(spec.config.locale)
 	Engine.max_fps = int(spec.config.fps)
-	get_tree().root.size = Vector2i(spec.config.width, spec.config.height)
+	var viewport_size := Vector2i(spec.config.width, spec.config.height)
+	var window := get_tree().root
+	# Resize the output window without replacing the game's logical design canvas.
+	window.size = viewport_size
 	for path in spec.config.saves:
 		var destination := "user://" + str(path)
 		DirAccess.make_dir_recursive_absolute(destination.get_base_dir())
@@ -62,6 +67,7 @@ func run_flow() -> void:
 
 
 func execute_step(step: Dictionary) -> String:
+	var error := ""
 	match step.kind:
 		"wait":
 			for index in int(step.frames):
@@ -98,7 +104,8 @@ func execute_step(step: Dictionary) -> String:
 			var node := get_node_or_null(NodePath(step.node))
 			if not node is Control or not node.is_visible_in_tree():
 				return "Click requires a visible Control: " + str(step.node)
-			var location: Vector2 = node.get_global_rect().get_center()
+			var canvas_position: Vector2 = node.get_global_transform_with_canvas() * (node.size / 2)
+			var location: Vector2 = get_viewport().get_final_transform() * canvas_position
 			var motion := InputEventMouseMotion.new()
 			motion.position = location
 			Input.parse_input_event(motion)
@@ -119,10 +126,10 @@ func execute_step(step: Dictionary) -> String:
 					await captures.capture(step, "waiting-" + str(index))
 			return "State wait timed out: " + str(step.node) + ":" + str(step.property)
 		"capture":
-			return await captures.capture(step, "capture")
+			error = await captures.capture(step, "capture")
 		_:
-			return "Unknown flow step"
-	return ""
+			error = "Unknown flow step"
+	return error
 
 
 func finish(success: bool) -> void:

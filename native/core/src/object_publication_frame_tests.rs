@@ -8,6 +8,9 @@ use serde_json::{json, Value};
 mod fixture;
 use fixture::{archive, attach, start_followup};
 
+#[path = "object_publication_final_workflow_tests.rs"]
+mod final_workflow;
+
 #[test]
 fn publication_frame_picker_bounds_recent_history_but_old_references_still_resolve() -> Result<()> {
     let f = fixture()?;
@@ -36,6 +39,15 @@ fn publication_frame_picker_bounds_recent_history_but_old_references_still_resol
     assert_eq!(recent[0]["runId"], "preview-run-10");
     assert_eq!(recent[7]["runId"], "preview-run-3");
     let request = attach(&op, &original);
+    assert_eq!(
+        followup::frames::list_exact(
+            &f.runtime,
+            "project-1",
+            "publish",
+            request.preview_frame.as_ref()
+        )?,
+        vec![original]
+    );
     assert_eq!(followup::create(&f.runtime, &request)?.request, request);
     Ok(())
 }

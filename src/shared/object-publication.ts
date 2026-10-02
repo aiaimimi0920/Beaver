@@ -4,6 +4,7 @@ import { objectCandidateRequestSchema } from "./object-candidate-review";
 import {
   previewFrameReferenceSchema,
   feedbackRelocationSchema,
+  finalRelocationSchema,
 } from "./preview-feedback-relocation";
 export {
   previewFrameReferenceSchema,
@@ -29,6 +30,7 @@ export const publicationDecisionSchema = z.strictObject({
   requestId: id,
   resolution: z.enum(["resolved", "waived", "deferred"]),
   note,
+  finalRelocation: finalRelocationSchema.optional(),
 });
 export const publicationPreviewSchema = z.strictObject({
   review: publicationReviewSchema,
@@ -57,6 +59,20 @@ export const publicationPreviewSchema = z.strictObject({
         image: objectReworkImageSchema.optional(),
         previewFrame: previewFrameReferenceSchema.optional(),
         relocation: feedbackRelocationSchema.optional(),
+        origin: z
+          .strictObject({
+            publicationRequestId: id,
+            versionId: id,
+            runId: id,
+            publishedFrame: z.boolean(),
+          })
+          .optional(),
+        relocationRequirement: z
+          .strictObject({
+            sourceDigest: digest,
+            regionCount: z.number().int().min(1).max(8),
+          })
+          .optional(),
         later: z
           .strictObject({ title: z.string(), acceptance: z.string() })
           .optional(),

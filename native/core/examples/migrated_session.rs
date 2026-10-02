@@ -19,6 +19,7 @@ use std::{
 
 #[tokio::main]
 async fn main() -> Result<()> {
+    let upgrade = std::env::args().nth(3).as_deref() == Some("upgrade");
     let root = fs::canonicalize(PathBuf::from(
         std::env::args_os()
             .nth(1)
@@ -110,8 +111,12 @@ async fn main() -> Result<()> {
         files: files.clone(),
         task_id: id.clone(),
         model: launch.model,
-        prompt: "BEAVER_RELOCATED_TURN. Continue the previous session in this working directory."
-            .into(),
+        prompt: if upgrade {
+            "BEAVER_UPGRADE_TURN. Reply without editing any files."
+        } else {
+            "BEAVER_RELOCATED_TURN. Continue the previous session in this working directory."
+        }
+        .into(),
         ask_user_tool: launch.ask_user_tool,
         max_minutes: 2,
         secrets: launch.secrets,
@@ -131,17 +136,28 @@ async fn main() -> Result<()> {
         outcome,
         &AtomicBool::new(false),
     )?;
-    ensure!(
-        task["threadId"] == original_thread,
-        "resume replaced the old thread"
-    );
+    if upgrade {
+        ensure!(
+            task["threadId"] != original_thread,
+            "tool upgrade reused incompatible thread"
+        );
+        ensure!(
+            task["priorCallbackThreadId"] == original_thread,
+            "legacy thread identity lost"
+        );
+    } else {
+        ensure!(
+            task["threadId"] == original_thread,
+            "resume replaced the compatible thread"
+        );
+    }
     ensure!(
         task["status"] == "completed",
         "resumed result not committed"
     );
     println!(
         "{}",
-        json!({"passed":true,"threadId":original_thread,"status":task["status"],"workspace":task["workspace"]})
+        json!({"passed":true,"threadId":task["threadId"],"priorCallbackThreadId":task["priorCallbackThreadId"],"status":task["status"],"workspace":task["workspace"]})
     );
     Ok(())
 }

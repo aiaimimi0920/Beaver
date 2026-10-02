@@ -8,6 +8,8 @@ use serde::{Deserialize, Serialize};
 mod commit;
 #[path = "object_publication_deferred.rs"]
 pub mod deferred;
+#[path = "object_publication_feedback.rs"]
+mod feedback;
 #[path = "object_publication_files.rs"]
 mod files;
 #[path = "object_publication_followup.rs"]
@@ -18,6 +20,8 @@ mod history;
 mod integrity;
 #[path = "object_publication_prepare.rs"]
 mod prepare;
+#[path = "object_publication_relocation.rs"]
+pub mod relocation;
 #[path = "object_publication_store.rs"]
 mod storage;
 use super::super::transact;
@@ -47,6 +51,10 @@ pub struct Feedback {
     pub relocation: Option<super::super::resume::rework::relocation::Confirmation>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub later: Option<deferred::Later>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub origin: Option<feedback::Origin>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub relocation_requirement: Option<relocation::Requirement>,
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
@@ -63,6 +71,8 @@ pub struct FeedbackDecision {
     pub request_id: String,
     pub resolution: Resolution,
     pub note: String,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub final_relocation: Option<relocation::Confirmation>,
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
@@ -157,7 +167,7 @@ pub fn preview(runtime: &ProjectRuntime, request: &ReviewTarget) -> Result<Previ
     prepare::validate_target(runtime, request)?;
     transact(runtime, |db| {
         storage::require_task_idle(db, &request.project_id, &request.target.task_id)?;
-        Ok(prepare::load(db, request)?.2)
+        Ok(prepare::load(runtime, db, request)?.2)
     })
 }
 
@@ -189,8 +199,9 @@ pub(crate) fn execute_with(
         Some(saved) => saved,
         None => {
             let (source, review, preview) =
-                transact(runtime, |db| prepare::load(db, &request.review()))?;
+                transact(runtime, |db| prepare::load(runtime, db, &request.review()))?;
             prepare::approve(request, &preview)?;
+            transact(runtime, |db| relocation::validate(db, request, &preview))?;
             let manifest = files::freeze(runtime, &source, &preview)?;
             let saved = Stored {
                 operation: Operation {
@@ -220,11 +231,11 @@ pub(crate) fn execute_with(
     );
     let result = (|| {
         checkpoint("prepared")?;
-        transact(runtime, |db| storage::validate_current(db, &saved))?;
+        transact(runtime, |db| storage::validate_current(runtime, db, &saved))?;
         files::apply(runtime, &mut saved, &checkpoint)?;
         checkpoint("beforeCommit")?;
         transact(runtime, |db| {
-            storage::validate_current(db, &saved)?;
+            storage::validate_current(runtime, db, &saved)?;
             files::verify_applied(runtime, &saved)?;
             commit::commit(runtime, db, saved.clone())
         })

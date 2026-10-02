@@ -36,9 +36,14 @@ pub mod requests;
 pub mod roaming;
 pub mod runner;
 pub mod sandbox;
+#[cfg(test)]
+mod sandbox_tests;
 pub mod service;
 pub mod settings;
+mod video_presentation;
 pub mod visual;
+#[cfg(test)]
+mod visual_viewport_tests;
 
 #[cfg(test)]
 mod approval_tests;
@@ -55,7 +60,7 @@ mod task_integration_tests;
 #[cfg(test)]
 mod test_support;
 
-pub const RUNNER_VERSION: &str = "beaver-validation-1";
+pub const RUNNER_VERSION: &str = "beaver-validation-2";
 pub const GUT_VERSION: &str = "9.4.0";
 pub mod task_completion;
 pub mod task_control;

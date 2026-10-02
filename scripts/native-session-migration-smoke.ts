@@ -83,7 +83,7 @@ async function main() {
         tools?: { name?: string }[];
       };
       const history = JSON.stringify(request.input).includes(
-        "BEAVER_LEGACY_HISTORY",
+        "BEAVER_NATIVE_HISTORY",
       );
       const toolNames =
         request.tools?.map((tool) => tool.name ?? "").filter(Boolean) ?? [];
@@ -92,7 +92,7 @@ async function main() {
       if (stage === "relocated" && !toolCalled) {
         assert.ok(
           history,
-          "old assistant message must survive real thread resume",
+          "compatible native assistant history must survive real thread resume",
         );
         assert.ok(
           toolNames.includes("exec_command"),
@@ -133,7 +133,9 @@ async function main() {
               text:
                 stage === "legacy"
                   ? "BEAVER_LEGACY_HISTORY"
-                  : "BEAVER_RELOCATED_OK",
+                  : stage === "upgrade"
+                    ? "BEAVER_NATIVE_HISTORY"
+                    : "BEAVER_RELOCATED_OK",
               annotations: [],
             },
           ],
@@ -199,6 +201,7 @@ async function main() {
     const task = await tasks.create({
       projectId: project.id,
       prompt: "BEAVER_LEGACY_TURN. Reply without editing any files.",
+      decompose: false,
     });
     const deadline = Date.now() + 120_000;
     while (
@@ -216,6 +219,31 @@ async function main() {
     );
     store.close();
     sourceClosed = true;
+    const legacySessions = (await inventory(source)).filter((entry) =>
+      entry.path.endsWith(`${old.threadId}.jsonl`),
+    );
+    assert.equal(
+      legacySessions.length,
+      1,
+      "legacy transcript must be retained",
+    );
+    stage = "upgrade";
+    const upgraded = JSON.parse(
+      await run(probe, [source, beaver, "upgrade"]),
+    ) as {
+      passed: boolean;
+      threadId: string;
+      priorCallbackThreadId: string;
+    };
+    assert.equal(upgraded.passed, true);
+    assert.notEqual(upgraded.threadId, old.threadId);
+    assert.equal(upgraded.priorCallbackThreadId, old.threadId);
+    assert.deepEqual(
+      (await inventory(source)).filter((entry) =>
+        entry.path.endsWith(`${old.threadId}.jsonl`),
+      ),
+      legacySessions,
+    );
     const sourceBefore = await inventory(source),
       projectBefore = await inventory(project.path);
     const backup = path.join(root, "backup"),
@@ -241,7 +269,7 @@ async function main() {
       status: string;
     };
     assert.equal(result.passed, true);
-    assert.equal(result.threadId, old.threadId);
+    assert.equal(result.threadId, upgraded.threadId);
     assert.equal(result.status, "completed");
     assert.ok(sawWorkingDirectory);
     assert.equal(
@@ -321,14 +349,16 @@ async function main() {
       beaver,
       codex: settings.tools.codex,
       codexVersion: (await run(settings.tools.codex, ["--version"])).trim(),
-      threadId: old.threadId,
+      legacyThreadId: old.threadId,
+      threadId: upgraded.threadId,
       dataDirectory: data,
       activation,
       checks: [
         "real legacy Codex session persisted",
+        "native tool upgrade starts compatible thread and preserves legacy identity and transcript",
         "full bundle import while old roots unavailable",
-        "native launch and executor resume identical real thread",
-        "old assistant history reaches next Responses request",
+        "native launch and executor resume identical compatible thread",
+        "native assistant history reaches relocated Responses request",
         "real exec_command runs at relocated workspace",
         "native result merged only into relocated project",
         "archive and old source bytes unchanged",

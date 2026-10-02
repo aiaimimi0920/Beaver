@@ -169,20 +169,5 @@ pub(super) fn assert_delivery(
 }
 
 pub(super) fn approve(f: &Fixture, publish: &mut Request) -> Result<()> {
-    let preview = publication::preview(&f.runtime, &review(publish))?;
-    publish.preview_digest = preview.digest;
-    publish.feedback = preview
-        .feedback
-        .iter()
-        .map(|item| FeedbackDecision {
-            request_id: item.request_id.clone(),
-            resolution: if item.later.is_some() {
-                Resolution::Deferred
-            } else {
-                Resolution::Resolved
-            },
-            note: "Reviewed both immutable frames".into(),
-        })
-        .collect();
-    Ok(())
+    super::super::frames::approve(f, publish)
 }

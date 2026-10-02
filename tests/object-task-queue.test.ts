@@ -225,6 +225,53 @@ test("old reads and mutation completions are ignored after disposal", async () =
   assert.equal(writer.getSnapshot().receipt, null);
 });
 
+test("published tasks reload as accepted history while waiting tasks remain reorderable", async () => {
+  const current = view();
+  const published = {
+    taskId: "published",
+    objectId: "crate",
+    title: "Published crate",
+    state: "awaitingAcceptance" as QueueView["items"][number]["state"],
+    blockers: [],
+  };
+  current.items.unshift(published);
+  const session = new ObjectTaskQueueSession("p", async (method) => {
+    assert.equal(method, "objectTask.queueView");
+    return structuredClone(current);
+  });
+  await session.refresh();
+  assert.equal(session.getSnapshot().phase, "ready");
+  published.state = "accepted";
+  current.version = "b".repeat(64);
+  await session.refresh();
+  const state = session.getSnapshot();
+  assert.equal(state.phase, "ready");
+  assert.equal(state.error, "");
+  assert.deepEqual(state.view, current);
+  assert(state.view);
+  const html = renderToStaticMarkup(
+    createElement(ObjectTaskQueueList, {
+      items: state.view.items,
+      disabled: false,
+      dragId: null,
+      start: () => {},
+      preview: session.preview,
+      drop: () => {},
+      end: () => {},
+    }),
+  );
+  assert.match(html, /Published crate · 已验收/);
+  assert.doesNotMatch(html, /aria-label="(?:上移|下移) Published crate"/);
+  assert.equal((html.match(/draggable="true"/g) ?? []).length, 3);
+  session.preview("published", 0);
+  assert.equal(session.getSnapshot().proposal, null);
+  assert.match(session.getSnapshot().error, /只能移动待执行任务/);
+  session.preview("c", 0);
+  assert.equal(session.getSnapshot().error, "");
+  assert.equal(session.getSnapshot().proposal?.previousTaskId, null);
+  assert.equal(session.getSnapshot().proposal?.nextTaskId, "a");
+});
+
 test("enqueue has its own exact retry and suppresses double submission", async () => {
   const sent: unknown[] = [];
   const pending = deferred<unknown>();

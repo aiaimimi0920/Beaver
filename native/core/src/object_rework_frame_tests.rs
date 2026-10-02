@@ -183,11 +183,7 @@ async fn candidate_rework_frame_reopens_retries_delivers_rpc_and_retains_publica
         preview.feedback[0].attempt_id,
         feedback.review.target.attempt_id
     );
-    publish.feedback = vec![FeedbackDecision {
-        request_id: "rework-frame".into(),
-        resolution: Resolution::Resolved,
-        note: "Verified original frame".into(),
-    }];
+    super::frames::approve(&f, &mut publish)?;
     assert_eq!(
         publication::publish(&f.runtime, &publish)?.state,
         State::Published

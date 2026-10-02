@@ -501,6 +501,9 @@ mod project_tests;
 #[path = "data_dispatch_task_tests.rs"]
 mod task_tests;
 
+#[path = "data_dispatch_task_lock_tests.rs"]
+mod task_lock_tests;
+
 #[path = "data_dispatch_state_tests.rs"]
 mod state_tests;
 

@@ -18,12 +18,21 @@ func _enter_tree() -> void:
 	config = JSON.parse_string(
 		FileAccess.get_file_as_string("res://beaver_live_preview/config.json")
 	)
-	get_tree().root.size = Vector2i(int(config.width), int(config.height))
+	resize_viewport()
 	Engine.max_fps = 30
 
 
 func _ready() -> void:
 	call_deferred("run_preview")
+
+
+func resize_viewport() -> void:
+	var viewport_size := Vector2i(int(config.width), int(config.height))
+	var window := get_tree().root
+	# The view owns capture dimensions, including the project's stretch base size.
+	window.content_scale_size = viewport_size
+	window.content_scale_factor = 1.0
+	window.size = viewport_size
 
 
 func run_preview() -> void:
@@ -50,7 +59,7 @@ func run_preview() -> void:
 				revision = int(command.revision)
 				config.width = int(command.width)
 				config.height = int(command.height)
-				get_tree().root.size = Vector2i(config.width, config.height)
+				resize_viewport()
 				controller.apply_view(command.camera)
 				await get_tree().process_frame
 				await RenderingServer.frame_pre_draw

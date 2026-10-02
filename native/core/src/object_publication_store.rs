@@ -76,12 +76,17 @@ pub(super) fn replay(db: &Connection, request: &Request) -> Result<Option<Stored
     Ok(saved)
 }
 
-pub(super) fn validate_current(db: &Connection, saved: &Stored) -> Result<()> {
-    let (source, review, preview) = prepare::load(db, &saved.operation.request.review())?;
+pub(super) fn validate_current(
+    runtime: &ProjectRuntime,
+    db: &Connection,
+    saved: &Stored,
+) -> Result<()> {
+    let (source, review, preview) = prepare::load(runtime, db, &saved.operation.request.review())?;
     ensure!(
         source == saved.source && review == saved.review && preview == saved.operation.preview,
         "OBJECT_PUBLICATION_SOURCE_CHANGED"
     );
+    super::relocation::validate(db, &saved.operation.request, &preview)?;
     commit::validate_headroom(db, saved)
 }
 
@@ -100,7 +105,7 @@ pub(super) fn begin(runtime: &ProjectRuntime, db: &Connection, saved: &Stored) -
             )),
         "OBJECT_PUBLICATION_PROJECT_RECOVERY_PENDING"
     );
-    validate_current(db, saved)?;
+    validate_current(runtime, db, saved)?;
     integrity::validate(db, saved)?;
     ensure!(
         commit::command(runtime, saved)?.replay(db)?.is_none(),

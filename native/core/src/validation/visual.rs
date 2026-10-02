@@ -91,10 +91,10 @@ pub fn execute(
             .join()
             .map_err(|_| anyhow::anyhow!("Visual process worker failed"))?
     });
-    collect(sandbox, run)?;
     let output = result?;
     fs::write(sandbox.output.join("visual.log"), &output.text)?;
     run.log.push_str(&output.text);
+    collect(sandbox, run)?;
     check_output(&output)?;
     let record: Value = serde_json::from_slice(&fs::read(sandbox.output.join("record.json"))?)?;
     if record["complete"] != true
@@ -176,6 +176,7 @@ fn encode(
     progress(run);
     let source = engine_path(&sandbox.output.join("recording.avi"));
     let target = engine_path(&sandbox.output.join("recording.webm"));
+    let filter = super::video_presentation::filter(ffmpeg, sandbox, record, cancelled)?;
     let output = sandbox.execute(
         ffmpeg,
         &[
@@ -183,6 +184,8 @@ fn encode(
             "-y",
             "-i",
             &source,
+            "-vf",
+            &filter,
             "-c:v",
             "libvpx-vp9",
             "-deadline",

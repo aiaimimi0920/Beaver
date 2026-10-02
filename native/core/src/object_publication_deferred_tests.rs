@@ -47,6 +47,7 @@ fn publication_deferred_requires_fresh_approval_and_commits_once_with_acceptance
         request_id: preview.feedback[0].request_id.clone(),
         resolution: Resolution::Resolved,
         note: "Do later".into(),
+        final_relocation: None,
     }];
     assert!(publication::publish(&f.runtime, &publish)
         .unwrap_err()
@@ -95,6 +96,7 @@ fn publication_deferred_requires_fresh_approval_and_commits_once_with_acceptance
 mod delivery;
 #[path = "object_deferred_frame_tests.rs"]
 mod frames;
+pub(super) use frames::approve as approve_final_frames;
 #[path = "object_feedback_relocation_tests.rs"]
 mod relocation;
 #[path = "object_rework_frame_tests.rs"]
@@ -156,7 +158,13 @@ fn publication_deferred_validates_png_and_retains_historical_regions() -> Result
         request_id: preview.feedback[0].request_id.clone(),
         resolution: Resolution::Deferred,
         note: "Accept current appearance".into(),
+        final_relocation: None,
     }];
+    assert!(publication::publish(&f.runtime, &publish)
+        .unwrap_err()
+        .to_string()
+        .contains("FINAL_RELOCATION_REQUIRED"));
+    frames::approve(&f, &mut publish)?;
     publication::publish(&f.runtime, &publish)?;
     let receipts = followup::list(&f.runtime, "project-1", "publish")?;
     let fine = task_record(&f, &receipts[0].fine_task_id)?;

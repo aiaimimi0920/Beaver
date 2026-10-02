@@ -72,7 +72,9 @@ pub fn create(runtime: &ProjectRuntime, request: &Request) -> Result<Request> {
         ensure!(saved == *request, "OBJECT_TASK_REQUEST_ID_CONFLICT");
         return Ok(saved);
     }
-    let source = transact(runtime, |db| Ok(prepare::load(db, &request.review)?.0))?;
+    let source = transact(runtime, |db| {
+        Ok(prepare::load(runtime, db, &request.review)?.0)
+    })?;
     if let Some(image) = &request.image {
         image.verify(
             runtime,
@@ -89,7 +91,7 @@ pub fn create(runtime: &ProjectRuntime, request: &Request) -> Result<Request> {
             return Ok(saved);
         }
         storage::require_task_idle(db, &request.project_id, &request.review.target.task_id)?;
-        let (current, _, _) = prepare::load(db, &request.review)?;
+        let (current, _, _) = prepare::load(runtime, db, &request.review)?;
         ensure!(current == source, "OBJECT_CANDIDATE_RECORD_CHANGED");
         if let Some(reference) = &request.preview_frame {
             if let Some(relocation) = &request.relocation {
@@ -135,6 +137,8 @@ pub(super) fn feedback(db: &Connection, project: &str, task: &str) -> Result<Vec
                 preview_frame: r.preview_frame,
                 relocation: r.relocation,
                 later: Some(r.later),
+                origin: None,
+                relocation_requirement: None,
             })
         })
         .collect()

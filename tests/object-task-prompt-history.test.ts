@@ -109,6 +109,8 @@ test("historical prompts load locally, preserve target identity and persist only
     prompt: entry.definition.prompt,
     acceptance: "",
     dependsOn: fine.dependsOn,
+    requirement: fine.requirement,
+    pendingPlanning: fine.pendingPlanning,
   });
   assert.equal(session.getSnapshot().reason, "Reuse controls");
   assert.deepEqual(entry, original);

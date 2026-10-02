@@ -12,6 +12,7 @@ const states: Record<QueueItem["state"], string> = {
   claimed: "准备中",
   running: "执行中",
   awaitingAcceptance: "等待验收",
+  accepted: "已验收",
   failed: "等待恢复",
   cancelled: "已取消",
 };

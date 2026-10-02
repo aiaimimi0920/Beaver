@@ -3,6 +3,36 @@ use crate::{project_runtime::ProjectRuntime, project_storage::ProjectStore};
 
 const PRESETS: &str = "[preset.0]\nname=\"Desktop\"\nplatform=\"Windows Desktop\"\n";
 
+#[test]
+fn sibling_binding_changes_only_execution_copy_and_retains_dependency_directory() -> Result<()> {
+    let fixture = Fixture::new()?;
+    let files = fixture.runtime.files();
+    let snapshot = files.capture(&fixture.root)?;
+    let bundle = crate::godot_bundle::Bundle {
+        directory: fixture._temp.path().to_owned(),
+        debug: fixture._temp.path().join(crate::godot_bundle::DEBUG),
+        release: fixture._temp.path().join(crate::godot_bundle::RELEASE),
+        version: "4.8.dev.custom_build.38b6ddee7".into(),
+    };
+    let mut job = fixture.prepare(&snapshot)?;
+    job.bind_bundle(&bundle)?;
+    assert!(
+        fs::read_to_string(job.workspace.path().join("export_presets.cfg"))?
+            .contains(crate::godot_bundle::RELEASE)
+    );
+    assert_eq!(job.template_directory, Some(bundle.directory.clone()));
+    assert_eq!(
+        fs::read_to_string(fixture.root.join("export_presets.cfg"))?,
+        PRESETS
+    );
+    assert_eq!(files.capture(&fixture.root)?, snapshot);
+    assert_eq!(
+        fs::read_to_string(files.blob(&snapshot["export_presets.cfg"])?)?,
+        PRESETS
+    );
+    Ok(())
+}
+
 struct Fixture {
     runtime: ProjectRuntime,
     root: PathBuf,

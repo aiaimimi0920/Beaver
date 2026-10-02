@@ -92,10 +92,10 @@ export function ExportGameDialog({
       <div className="tools-toolbar">
         <button
           disabled={working}
-          title="从 Godot 官方下载并校验当前稳定版的模板包（可能超过 1 GB），安装 Windows x86_64 模板"
+          title="优先校验并复用编辑器旁的本地配套模板；官方稳定版无本地配套时下载并校验模板包（可能超过 1 GB）"
           onClick={() => prepareTemplates(false)}
         >
-          {preparingTemplates ? "准备模板中…" : "下载 Windows 模板"}
+          {preparingTemplates ? "准备模板中…" : "准备 Windows 模板"}
         </button>
         <button
           disabled={working}

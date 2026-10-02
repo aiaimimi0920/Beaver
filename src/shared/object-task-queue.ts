@@ -15,6 +15,7 @@ export const queueItemSchema = z.strictObject({
     "claimed",
     "running",
     "awaitingAcceptance",
+    "accepted",
     "failed",
     "cancelled",
   ]),

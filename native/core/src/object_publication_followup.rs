@@ -12,7 +12,7 @@ use crate::{
 use anyhow::{ensure, Context, Result};
 use serde::{Deserialize, Serialize};
 
-const KIND: &str = "object_publication_followup";
+pub(super) const KIND: &str = "object_publication_followup";
 
 #[path = "object_publication_frames.rs"]
 pub mod frames;

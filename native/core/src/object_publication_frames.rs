@@ -72,6 +72,15 @@ pub(crate) fn load(db: &Connection, project: &str, reference: &Reference) -> Res
 }
 
 pub fn list(runtime: &ProjectRuntime, project: &str, publication: &str) -> Result<Vec<Value>> {
+    list_exact(runtime, project, publication, None)
+}
+
+pub fn list_exact(
+    runtime: &ProjectRuntime,
+    project: &str,
+    publication: &str,
+    reference: Option<&Reference>,
+) -> Result<Vec<Value>> {
     super::validate(runtime, project, publication)?;
     transact(runtime, |db| {
         let saved =
@@ -82,6 +91,9 @@ pub fn list(runtime: &ProjectRuntime, project: &str, publication: &str) -> Resul
         );
         let object = &saved.operation.request.target.object_id;
         let version = &saved.operation.version_id;
+        if let Some(reference) = reference {
+            return Ok(vec![resolve(db, project, object, version, reference)?]);
+        }
         // Select only references before decoding PNGs; never materialize all archived images.
         let mut query = db.prepare(
             "SELECT json_extract(frame.value, '$.runId'), json_extract(frame.value, '$.id')

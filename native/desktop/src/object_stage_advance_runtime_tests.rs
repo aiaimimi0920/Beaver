@@ -26,7 +26,9 @@ fn successful_rpc() -> Result<()> {
         let method = input["method"].as_str().unwrap_or("");
         let result = match method {
             "initialize" => Some(json!({})),
-            "thread/start" => Some(json!({"thread":{"id":"thread"}})),
+            "thread/start" => Some(json!({
+                "thread":{"id":"thread"},"sandbox":{"type":"workspaceWrite"}
+            })),
             "turn/start" => Some(json!({"turn":{"id":"turn"}})),
             _ => None,
         };

@@ -93,6 +93,11 @@ fn isolated_launch_preserves_project_personal_home_and_existing_attempt_sessions
     let config_text = fs::read_to_string(home.join("config.toml"))?;
     let config: Value = toml::from_str(&config_text)?;
     assert_eq!(config["sandbox_mode"], "workspace-write");
+    if cfg!(windows) {
+        assert_eq!(config["windows"]["sandbox"], "unelevated");
+    } else {
+        assert!(config.get("windows").is_none());
+    }
     assert_eq!(config["approval_policy"], "never");
     assert_eq!(config["web_search"], "disabled");
     assert_eq!(config["project_doc_max_bytes"], 0);

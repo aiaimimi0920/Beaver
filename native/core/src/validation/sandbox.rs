@@ -96,6 +96,11 @@ impl Sandbox {
             fs::create_dir_all(path.parent().context("Archive member parent missing")?)?;
             std::io::copy(&mut entry, &mut fs::File::create(path)?)?;
         }
+        // Apply the tracked compatibility overlay only to this disposable copy.
+        fs::write(
+            self.project.join("addons/gut/gut_loader.gd"),
+            include_str!("../../../../resources/validation/gut_loader.gd"),
+        )?;
         Ok(())
     }
 

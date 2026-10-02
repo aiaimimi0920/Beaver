@@ -55,6 +55,23 @@ pub fn read(runtime: &ProjectRuntime, request: &Request) -> Result<Response> {
             .map_err(|_| anyhow::anyhow!("attempt file store lock poisoned"))?;
         object_attempt_view::read(&store.connection, &request.project_id, &request.attempt_id)?
     };
+    read_resolved(runtime, request, &attempt)
+}
+
+/// Use the caller's authoritative record while it already owns the database transaction.
+pub(crate) fn read_resolved(
+    runtime: &ProjectRuntime,
+    request: &Request,
+    attempt: &crate::object_attempt::Attempt,
+) -> Result<Response> {
+    ensure!(
+        request.project_id == runtime.project_id(),
+        "PROJECT_RUNTIME_MISMATCH"
+    );
+    ensure!(
+        attempt.id == request.attempt_id,
+        "OBJECT_ATTEMPT_FILE_ID_MISMATCH"
+    );
     ensure!(
         attempt.preparation.run.id == request.run_id,
         "OBJECT_ATTEMPT_FILE_RUN_MISMATCH"

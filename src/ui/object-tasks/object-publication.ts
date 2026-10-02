@@ -14,6 +14,7 @@ import { ObjectPublicationFollowup } from "./object-publication-followup";
 import { ObjectPublicationDeferred } from "./object-publication-deferred";
 import { ObjectCandidateFeedbackDraft } from "./object-candidate-feedback-draft";
 import { ObjectPublicationApprovalDraft } from "./object-publication-approval-draft";
+import { validateFinalRelocations } from "./final-relocation-draft";
 import {
   followupBrowserStorage,
   type FollowupDraftStorage,
@@ -146,11 +147,21 @@ export class ObjectPublication {
     return new ObjectAttemptFile(
       {
         projectId: this.review.projectId,
-        runId: this.review.target.runId,
+        runId: feedback.origin?.runId ?? this.review.target.runId,
         attemptId: feedback.attemptId,
       },
       this.api,
     );
+  }
+  publicationFrames(
+    publicationRequestId: string,
+    previewFrame: import("../../shared/object-publication").PreviewFrameReference,
+  ) {
+    return this.api("objectTask.publicationFrames", {
+      projectId: this.review.projectId,
+      publicationRequestId,
+      previewFrame,
+    });
   }
   subscribe = (listener: () => void) => {
     this.listeners.add(listener);
@@ -296,6 +307,7 @@ export class ObjectPublication {
           )
         )
           throw new Error("请处置每条返工反馈");
+        validateFinalRelocations(preview, approval.feedback);
         this.request = publicationRequestSchema.parse({
           ...this.review,
           ...approval,

@@ -65,7 +65,7 @@ test("object import UI exposes file pickers and honest manual grouping boundarie
     "选择文件",
     "选择文件夹",
     "不会按目录、扩展名或相近名称自动归组",
-    "普通文件来源目前支持只读预览、人工归组和准备回执",
+    "普通文件可先预览和人工归组；保存准备后，在下方历史中打开记录并确认正式导入。",
     'type="submit"',
   ])
     assert.match(

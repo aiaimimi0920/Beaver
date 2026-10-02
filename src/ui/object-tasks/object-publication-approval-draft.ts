@@ -1,5 +1,9 @@
 import { z } from "zod";
 import {
+  finalRelocationDraftSchema,
+  updateFinalRelocation,
+} from "./final-relocation-draft";
+import {
   publicationReviewSchema,
   type PublicationPreview,
 } from "../../shared/object-publication";
@@ -15,6 +19,7 @@ const fields = z.strictObject({
     z.strictObject({
       resolution: z.enum(["", "resolved", "waived", "deferred"]),
       note: z.string(),
+      finalRelocation: finalRelocationDraftSchema.optional(),
     }),
   ),
 });
@@ -68,12 +73,22 @@ export class ObjectPublicationApprovalDraft {
             );
             return (
               !feedback ||
+              (decision.finalRelocation &&
+                (!feedback.relocationRequirement ||
+                  decision.finalRelocation.sourceDigest !==
+                    feedback.relocationRequirement.sourceDigest ||
+                  decision.finalRelocation.regions.length >
+                    feedback.relocationRequirement.regionCount)) ||
               (decision.resolution !== "" &&
                 !!feedback.later !== (decision.resolution === "deferred"))
             );
           })
         )
           throw new Error("发布草稿与当前审阅或反馈不一致");
+        for (const decision of Object.values(saved.draft.decisions)) {
+          if (decision.finalRelocation)
+            decision.finalRelocation.confirmed = false;
+        }
         this.set({ draft: saved.draft, restored: true });
       }
       this.set({ blocked: false, error: "" });
@@ -86,6 +101,27 @@ export class ObjectPublicationApprovalDraft {
   };
   edit = (patch: Partial<PublicationApprovalDraft>) => {
     if (this.state.blocked) return;
+    if (patch.decisions) {
+      patch = {
+        ...patch,
+        decisions: Object.fromEntries(
+          Object.entries(patch.decisions).map(([id, decision]) => [
+            id,
+            {
+              ...decision,
+              ...(decision.finalRelocation
+                ? {
+                    finalRelocation: updateFinalRelocation(
+                      this.state.draft.decisions[id]?.finalRelocation,
+                      decision.finalRelocation,
+                    ),
+                  }
+                : {}),
+            },
+          ]),
+        ),
+      };
+    }
     this.set({ draft: { ...this.state.draft, ...patch } });
     this.persist();
   };

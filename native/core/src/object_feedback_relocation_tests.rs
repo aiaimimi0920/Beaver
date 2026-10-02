@@ -16,6 +16,9 @@ use fixture::*;
 #[path = "object_publication_evidence_tests.rs"]
 mod publication_evidence;
 
+#[path = "object_publication_final_relocation_tests.rs"]
+mod final_relocation;
+
 #[test]
 fn feedback_relocation_rejects_incomplete_foreign_and_stale_without_mutation() -> Result<()> {
     let f = fixture()?;

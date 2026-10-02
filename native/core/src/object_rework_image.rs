@@ -78,17 +78,35 @@ impl Feedback {
 
     pub(crate) fn verify(&self, runtime: &ProjectRuntime, attempt: &Attempt) -> Result<()> {
         self.require_source(attempt)?;
-        let response = file::read(
+        self.verify_response(file::read(runtime, &self.file_request(runtime, attempt))?)
+    }
+
+    /// Avoid relocking the store when publication already holds its transaction.
+    pub(crate) fn verify_resolved(
+        &self,
+        runtime: &ProjectRuntime,
+        attempt: &Attempt,
+    ) -> Result<()> {
+        self.require_source(attempt)?;
+        self.verify_response(file::read_resolved(
             runtime,
-            &file::Request {
-                project_id: runtime.project_id().into(),
-                run_id: attempt.preparation.run.id.clone(),
-                attempt_id: attempt.id.clone(),
-                checkpoint: file::Checkpoint::Output,
-                path: self.path.clone(),
-                sha256: self.sha256.clone(),
-            },
-        )?;
+            &self.file_request(runtime, attempt),
+            attempt,
+        )?)
+    }
+
+    fn file_request(&self, runtime: &ProjectRuntime, attempt: &Attempt) -> file::Request {
+        file::Request {
+            project_id: runtime.project_id().into(),
+            run_id: attempt.preparation.run.id.clone(),
+            attempt_id: attempt.id.clone(),
+            checkpoint: file::Checkpoint::Output,
+            path: self.path.clone(),
+            sha256: self.sha256.clone(),
+        }
+    }
+
+    fn verify_response(&self, response: file::Response) -> Result<()> {
         let file::Content::Image { mime, base64 } = response.content else {
             anyhow::bail!("OBJECT_REWORK_IMAGE_UNAVAILABLE");
         };

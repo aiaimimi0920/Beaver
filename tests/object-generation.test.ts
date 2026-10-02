@@ -133,12 +133,14 @@ for (const phase of ["save", "commit"]) {
     assert.match(session.getSnapshot().error, /response lost/);
     const frozen = session.getSnapshot().saved.pending;
     assert.ok(frozen);
+    assert.deepEqual(frozen.plan.tasks[0]?.baseline, { basePolicy: "empty" });
     const reopened = f.session();
     reopened.edit({ prompt: "不得修改冻结内容" });
     assert.equal(reopened.getSnapshot().saved.fields.prompt, "制作场景");
     await reopened.submit();
     assert.equal(reopened.getSnapshot().error, "");
     assert.equal(f.creations(), 1);
+    assert.deepEqual(reopened.getSnapshot().saved.pending?.plan, frozen.plan);
     assert.equal(
       f.calls.filter((call) => call.method === "objectTask.saveDraft").length,
       1,

@@ -19,16 +19,19 @@ pub(super) fn create_project_task(
     let runtime = router.runtime_for_project(project_id)?;
     let store_handle = runtime.store();
     let files = runtime.files();
-    let mut store = store_handle
-        .lock()
-        .map_err(|_| anyhow::anyhow!("项目数据库锁不可用"))?;
-    let task = beaver_core::task_create::create(
-        &mut store,
-        files.as_ref(),
-        input,
-        &serde_json::from_str(include_str!("../../../dist-native/design-catalog.json"))?,
-        &serde_json::from_str(include_str!("../../../dist-native/blueprint-catalog.json"))?,
-    )?;
+    let task = {
+        let mut store = store_handle
+            .lock()
+            .map_err(|_| anyhow::anyhow!("项目数据库锁不可用"))?;
+        beaver_core::task_create::create(
+            &mut store,
+            files.as_ref(),
+            input,
+            &serde_json::from_str(include_str!("../../../dist-native/design-catalog.json"))?,
+            &serde_json::from_str(include_str!("../../../dist-native/blueprint-catalog.json"))?,
+        )?
+    };
+    // Registry refresh takes registry -> Store; release Store before indexing.
     router.index_task(&task)?;
     Ok(task)
 }
@@ -162,17 +165,19 @@ pub(super) fn feature_add_operation(
     match router.runtime_for_project(project_id) {
         Ok(runtime) => {
             let store_handle = runtime.store();
-            let mut store = store_handle
-                .lock()
-                .map_err(|_| anyhow::anyhow!("项目数据库锁不可用"))?;
-            let task = beaver_core::feature_tasks::create(
-                &mut store,
-                runtime.files().as_ref(),
-                input,
-                &sources,
-                &designs,
-                &blueprints,
-            )?;
+            let task = {
+                let mut store = store_handle
+                    .lock()
+                    .map_err(|_| anyhow::anyhow!("项目数据库锁不可用"))?;
+                beaver_core::feature_tasks::create(
+                    &mut store,
+                    runtime.files().as_ref(),
+                    input,
+                    &sources,
+                    &designs,
+                    &blueprints,
+                )?
+            };
             router.index_task(&task)?;
             return Ok(task);
         }

@@ -74,20 +74,7 @@ fn historical_with_frame(
             target,
         },
     )?;
-    let preview = publication::preview(&f.runtime, &review(&publish))?;
-    publish.feedback = preview
-        .feedback
-        .iter()
-        .map(|item| FeedbackDecision {
-            request_id: item.request_id.clone(),
-            resolution: if item.later.is_some() {
-                Resolution::Deferred
-            } else {
-                Resolution::Resolved
-            },
-            note: "Reviewed".into(),
-        })
-        .collect();
+    super::frames::approve(f, &mut publish)?;
     publication::publish(&f.runtime, &publish)?;
     let receipt = followup::list(&f.runtime, "project-1", "publish")?.remove(0);
     assert_ne!(receipt.source.attempt_id, feedback.review.target.attempt_id);

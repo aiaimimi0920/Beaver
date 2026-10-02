@@ -200,6 +200,7 @@ fn publication_requires_recorded_disposition_of_rework_feedback() -> Result<()> 
         request_id: rework.request_id,
         resolution: publication::Resolution::Resolved,
         note: "Confirmed speed reduced to 1".into(),
+        final_relocation: None,
     });
     let published = publication::publish(&f.runtime, &req)?;
     assert_eq!(published.state, State::Published);

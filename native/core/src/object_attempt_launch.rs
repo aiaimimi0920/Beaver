@@ -100,10 +100,15 @@ pub fn prepare(
 }
 
 pub(crate) fn restrictions() -> Value {
-    json!({
+    let mut config = json!({
         "approval_policy":"never","sandbox_mode":"workspace-write","web_search":"disabled",
         "mcp_servers":{},"project_doc_max_bytes":0,
         "features":{"multi_agent":false,"multi_agent_v2":false,"image_generation":false,
             "skill_search":false,"skip_host_skill_discovery":true}
-    })
+    });
+    if cfg!(windows) {
+        // An isolated HOME has no sandbox setup; keep execution restricted without UAC setup.
+        config["windows"] = json!({"sandbox":"unelevated"});
+    }
+    config
 }

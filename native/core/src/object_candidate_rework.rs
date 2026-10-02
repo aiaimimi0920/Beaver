@@ -183,6 +183,8 @@ pub(crate) fn feedback(
                 preview_frame: approval.preview_frame,
                 relocation: approval.relocation,
                 later: None,
+                origin: None,
+                relocation_requirement: None,
             });
         }
     }

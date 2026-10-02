@@ -52,6 +52,7 @@ mod frozen_media;
 mod frozen_scene_preview;
 pub mod game_export;
 pub mod game_play;
+pub mod godot_bundle;
 pub mod journal;
 pub mod launch;
 pub mod legacy_vault;

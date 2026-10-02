@@ -2,7 +2,11 @@
 
 **通过对话制作 Godot 游戏的本地工作室。** 你安排目标、审阅素材、试玩游戏；Codex 自行决定如何使用 Godot、Blender 和 AI 服务。Beaver 不要求你编排 AI 的内部步骤。
 
-**最新开发交付（2026-09-11）**：原生 Tauri/Rust 预览位于 `release/Beaver-native-0.1.19-preview-r19-win32-x64/Beaver.exe`，完整目录 16.23 MiB。R19 保留五官与颊颌、发根、阴影诊断、拓扑与法线检查等 NPR 人物制作提示词，并修复内容相同的文件被判为合入冲突的问题，提供无需重新运行 AI 的 `task.retryMerge` API。原生编译、回归测试、包完整性和全新空白工程启动检查通过；原角色的四个子任务及父任务已全部完成并验收，见 [R19 验收记录](docs/R19-ACCEPTANCE.md)和 [R16 角色精修记录](docs/R16-ACCEPTANCE.md)。
+**最新开发检查点（2026-10-01）**：当前原生 Tauri/Rust 开发版为 `0.1.19.43`。已接通最终候选逐区重新确认、独立冻结 PNG 来源及显式接受/发布门禁，并完成定向回归、原生构建、固定包校验和保留轮次的真实 WebView2 只读核对。**全部开发计划和整体验收尚未完成**；当前候选仍需用户保存最终 output 编号帧并自行决定是否接受、发布。状态及手测入口见 [手工测试说明](docs/MANUAL-TEST-READINESS.md)，剩余条件见 [框架计划](docs/FRAMEWORK-IMPLEMENTATION-PLAN.md)。
+
+GitHub 仓库保存源码、测试、资源和文档，不包含本机 `release/`、`output/`、测试凭据或运行数据。文档中的本机证据与手测启动器链接仅在原开发环境可用，不是仓库内的下载入口。克隆后可用 `npm ci`、`npm run build:native` 构建原生开发版；Windows 需要 Rust/MSVC 和 WebView2，实际创作、预览还需配置可用的 Codex、模型服务及 Godot/Blender。构建成功不等于游戏创作或发布验收通过。
+
+历史 R19 预览保留五官与颊颌、发根、阴影诊断、拓扑与法线检查等 NPR 人物制作提示词，并修复内容相同的文件被判为合入冲突的问题，提供无需重新运行 AI 的 `task.retryMerge` API。原角色的四个子任务及父任务已全部完成并验收，见 [R19 验收记录](docs/R19-ACCEPTANCE.md)和 [R16 角色精修记录](docs/R16-ACCEPTANCE.md)；该历史结果不代表当前完整计划已验收。
 
 创作任务的拆分、审批、中断恢复及标准导出流程见 [R13 验收记录](docs/R13-ACCEPTANCE.md)和[任务执行契约](docs/TASK-EXECUTION-PLAN.md)。以下部分界面介绍保留旧 Electron 原型的历史说明；默认 Electron 构建入口尚未切换。
 
@@ -10,7 +14,7 @@
 
 ## 直接使用
 
-当前 Windows 原生构建位于 `release/Beaver-native-0.1.19-preview-r19-win32-x64/Beaver.exe`。先从托盘退出旧版，再打开新版。保留完整发布目录及许可证文件。预览包未签名；旧版发布目录未覆盖。
+当前本机固定的 Windows 原生开发包位于 `release/Beaver-native-0.1.19.43-win32-x64/Beaver.exe`，未随源码提交到 GitHub。先从托盘退出旧版，再按 [手工测试说明](docs/MANUAL-TEST-READINESS.md)打开新版；关闭主窗口只会隐藏到托盘。保留完整发布目录及许可证文件。开发包未签名；旧版发布目录未覆盖。
 
 本轮白发草帽角色及 NPR 实验室交付位于 `release/Beaver-game-DlYQUM/Game.exe`。请保留整个目录，包括 `spoutlibrary.dll`。标准导出包已通过完整性校验、内容一致性检查及真实窗口交互验证；角色仍有简化，尚未达到银狼参考的完成度。
 

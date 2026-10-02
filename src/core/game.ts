@@ -13,6 +13,11 @@ import { captureExportBundle, verifyExportBundle } from "./export-bundle";
 import type { Project } from "../shared/types";
 import { findTool, runCommand, terminate } from "./process";
 import { Preferences } from "./settings";
+import { bundleReceipt, discoverGodotBundle } from "./godot-bundle";
+import {
+  copyBundleLibraries,
+  prepareBundleWorkspace,
+} from "./game-export-workspace";
 
 export class Games {
   private running = new Set<ChildProcessWithoutNullStreams>();
@@ -20,9 +25,12 @@ export class Games {
   private closing = false;
   private templateSetup?: AbortController;
   constructor(private prefs: Preferences) {}
-  async prepareTemplates(
-    archive?: string,
-  ): Promise<{ directory: string; version: string; reused: boolean }> {
+  async prepareTemplates(archive?: string): Promise<{
+    directory: string;
+    version: string;
+    reused: boolean;
+    toolchain?: ReturnType<typeof bundleReceipt>;
+  }> {
     if (this.closing) throw new Error("应用正在退出");
     if (this.templateSetup) throw new Error("导出模板正在准备中");
     if (process.platform !== "win32")
@@ -32,6 +40,17 @@ export class Games {
     let temporary: string | undefined;
     try {
       const executable = await findTool("godot", this.prefs.read().tools.godot);
+      const bundle = await discoverGodotBundle(executable, controller.signal);
+      if (bundle) {
+        if (archive)
+          throw new Error("本地引擎已锚定配套模板，不接受其他模板包");
+        return {
+          directory: bundle.directory,
+          version: bundle.version,
+          reused: true,
+          toolchain: bundleReceipt(bundle, executable),
+        };
+      }
       const result = await runCommand(
         executable,
         ["--version"],
@@ -193,10 +212,22 @@ export class Games {
     if (this.closing) throw new Error("应用正在退出");
     const controller = new AbortController();
     this.exports.add(controller);
+    let workspace: string | undefined;
     try {
+      const bundle =
+        target.platform === "Windows Desktop"
+          ? await discoverGodotBundle(godot, controller.signal)
+          : undefined;
+      if (bundle) {
+        workspace = await fs.mkdtemp(
+          path.join(os.tmpdir(), "beaver-export-workspace-"),
+        );
+        await prepareBundleWorkspace(project.path, workspace, bundle, preset);
+      }
+      const exportRoot = workspace ?? project.path;
       await this.importProject(
         godot,
-        project.path,
+        exportRoot,
         path.join(folder, "import.log"),
         controller.signal,
       );
@@ -205,12 +236,12 @@ export class Games {
         [
           "--headless",
           "--path",
-          project.path,
+          exportRoot,
           "--export-release",
           preset,
           executable,
         ],
-        project.path,
+        exportRoot,
         180000,
         controller.signal,
       );
@@ -219,6 +250,7 @@ export class Games {
         throw new Error(
           `导出失败，未生成可运行交付。检查导出模板与预设。\n${result.output.slice(-6000)}`,
         );
+      if (bundle) await copyBundleLibraries(bundle, folder);
       const files = await captureExportBundle(folder);
       const entry = files.find((file) => file.path === target.entry);
       if (!entry || entry.bytes < 1024) throw new Error("导出产物无效");
@@ -235,6 +267,7 @@ export class Games {
             files,
             exportedAt: new Date().toISOString(),
             runtimeVerified: false,
+            toolchain: bundle ? bundleReceipt(bundle, godot) : null,
           },
           null,
           2,
@@ -244,6 +277,7 @@ export class Games {
       return { path: folder, log: result.output };
     } finally {
       this.exports.delete(controller);
+      if (workspace) await fs.rm(workspace, { recursive: true, force: true });
     }
   }
   async presets(project: Project): Promise<string[]> {

@@ -246,6 +246,51 @@ async fn wrong_rpc_identities_cannot_complete_and_steer_cannot_change_definition
 }
 
 #[tokio::test]
+async fn unavailable_workspace_sandbox_fails_before_model_turn_without_advancing_queue(
+) -> Result<()> {
+    use fs2::FileExt;
+    for mode in ["read-only", "full-access", "missing-sandbox"] {
+        let fixture = fixture()?;
+        queue_fixture::enqueue(&fixture, &["head", "next"])?;
+        let claim =
+            object_run_preparation::claim_next(&fixture.runtime, "project-1", "worker")?.unwrap();
+        let root = fixture.temp.path().join("rpc");
+        let (_controls, receiver) = mpsc::channel(16);
+        object_attempt_worker::execute(
+            fixture.runtime.clone(),
+            claim,
+            factory(root.clone(), mode, Duration::from_secs(10)),
+            Arc::new(AtomicBool::new(false)),
+            receiver,
+            Arc::new(|| {}),
+        )
+        .await
+        .map_err(anyhow::Error::msg)?;
+        std::fs::OpenOptions::new()
+            .read(true)
+            .write(true)
+            .open(root.join("lease"))?
+            .try_lock_exclusive()?;
+        let attempt = attempts(&fixture, "head")?.remove(0);
+        assert_eq!(attempt.state, State::Failed, "{mode}");
+        assert_eq!(
+            attempt.error.as_deref(),
+            Some("OBJECT_ATTEMPT_WORKSPACE_SANDBOX_UNAVAILABLE")
+        );
+        assert!(!workspace(&fixture, &attempt)?.join("result.txt").exists());
+        assert!(!root.join("child-ready").exists());
+        assert!(!rpc::transcript(&root)?
+            .iter()
+            .any(|message| message["method"] == "turn/start"));
+        assert_eq!(task_record(&fixture, "next")?.status, "planned");
+        assert!(
+            object_run_preparation::claim_next(&fixture.runtime, "project-1", "restart")?.is_none()
+        );
+    }
+    Ok(())
+}
+
+#[tokio::test]
 async fn startup_failure_does_not_claim_writer_stopped_or_capture_output() -> Result<()> {
     let fixture = fixture()?;
     queue_fixture::enqueue(&fixture, &["head"])?;
