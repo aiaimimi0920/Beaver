@@ -44,6 +44,10 @@ impl Fixture {
             None,
             Arc::new(AtomicBool::new(false)),
         )?;
+        // Registration persists the host-minted run identity in the task record.
+        // Tests that adjust task fields must retain that authoritative identity.
+        let task: Value = store.lock().unwrap().get("task", &live.task_id)?.unwrap();
+        assert_eq!(task["externalRunId"], live.run_id);
         Ok(Self {
             _temp: temp,
             store,
