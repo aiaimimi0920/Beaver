@@ -14,7 +14,7 @@ pub fn immutable(path: &str, bytes: &[u8]) -> bool {
     let relative = path
         .strip_prefix("resources/packages/npr-characters/")
         .unwrap_or(path);
-    let Some(name) = relative.strip_prefix("addons/npr_characters/") else {
+    let Some(name) = relative.strip_prefix("addons/npr_character_frame/") else {
         return false;
     };
     NPR_HASHES

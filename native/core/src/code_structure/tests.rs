@@ -187,8 +187,8 @@ fn scan_excludes_build_output_but_not_user_addons() -> Result<()> {
 
 #[test]
 fn bundled_dependency_exemption_is_pinned_to_path_and_bytes() {
-    let bytes = include_bytes!("../../../../resources/packages/npr-characters/addons/npr_characters/runtime/npr_multiview_transport.gd");
-    let path = "addons/npr_characters/runtime/npr_multiview_transport.gd";
+    let bytes = include_bytes!("../../../../resources/packages/npr-characters/addons/npr_character_frame/runtime/npr_multiview_transport.gd");
+    let path = "addons/npr_character_frame/runtime/npr_multiview_transport.gd";
     assert!(vendor::immutable(path, bytes));
     assert!(vendor::immutable(
         &format!("resources/packages/npr-characters/{path}"),

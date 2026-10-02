@@ -1,0 +1,78 @@
+name: Headless NPR integration checks
+
+on:
+  pull_request:
+    paths:
+      - '.github/workflows/headless-npr.yml'
+      - '.gitattributes'
+      - 'Cargo.toml'
+      - 'Cargo.lock'
+      - 'native/core/**'
+      - 'native/headless/**'
+      - 'native/desktop/src/task_runtime.rs'
+      - 'resources/**'
+      - 'scripts/**'
+      - 'src/shared/**'
+      - 'tests/**'
+      - 'package*.json'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: headless-npr-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  focused-checks:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    env:
+      ELECTRON_SKIP_BINARY_DOWNLOAD: '1'
+      CARGO_INCREMENTAL: '0'
+      CARGO_BUILD_JOBS: '1'
+      CARGO_PROFILE_DEV_DEBUG: '0'
+      CARGO_PROFILE_TEST_DEBUG: '0'
+      RUSTUP_TOOLCHAIN: 1.95.0
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: '24.19.0'
+      - name: Prepare locked dependencies and generated native resources
+        run: |
+          rustup toolchain install 1.95.0 --profile minimal --component rustfmt
+          npm ci --include=dev --ignore-scripts --no-audit --no-fund
+          node --import tsx scripts/build-native.ts
+      - name: Check formatting and shared contracts
+        run: |
+          cargo fmt --all -- --check
+          npm run typecheck
+          node --import tsx --test tests/task-plan.test.ts tests/vendor-npr.test.ts
+      - name: Exercise focused native regressions
+        run: |
+          cargo test --locked -j1 -p beaver-headless
+          cargo test --locked -j1 -p beaver-core --lib workflows
+          cargo test --locked -j1 -p beaver-core --lib task_plan
+          cargo test --locked -j1 -p beaver-core --lib blender_session::addon
+          cargo test --locked -j1 -p beaver-core --lib external
+          cargo test --locked -j1 -p beaver-core --test object_framework_boundary --test project_task_storage
+          npm run check:effective-lines
+      - name: Package checked headless host
+        run: |
+          cargo build --locked -j1 -p beaver-headless
+          mkdir -p output/headless-artifact
+          cp target/debug/beaver-headless output/headless-artifact/
+          git rev-parse HEAD > output/headless-artifact/SOURCE_COMMIT
+          (cd output/headless-artifact && sha256sum beaver-headless SOURCE_COMMIT > SHA256SUMS)
+          tar -C output/headless-artifact -czf output/beaver-headless-linux-x86_64.tar.gz .
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: beaver-headless-linux-x86_64-${{ github.run_id }}
+          path: output/beaver-headless-linux-x86_64.tar.gz
+          if-no-files-found: error
+          retention-days: 7

@@ -38,20 +38,25 @@ fn setup() -> Result<(tempfile::TempDir, Store, Files, Value)> {
     store.put("task", parent["id"].as_str().unwrap(), &parent)?;
     Ok((temp, store, files, parent))
 }
-fn submit(store: &Store, parent: &Value) -> Result<()> {
+fn submit(store: &Store, files: &Files, parent: &Value) -> Result<()> {
     task_plan::submit(
         store,
+        files,
         parent["id"].as_str().unwrap(),
         &json!({"threadId":"thread","turnId":"turn","arguments":plan()}),
     )
 }
 #[test]
 fn rejects_stale_duplicate_and_incomplete_plans() -> Result<()> {
-    let (_temp, store, _files, parent) = setup()?;
+    let (_temp, store, files, parent) = setup()?;
     let id = parent["id"].as_str().unwrap();
-    assert!(
-        task_plan::submit(&store, id, &json!({"threadId":"other","arguments":plan()})).is_err()
-    );
+    assert!(task_plan::submit(
+        &store,
+        &files,
+        id,
+        &json!({"threadId":"other","arguments":plan()})
+    )
+    .is_err());
     let mut bad = plan();
     bad["steps"] = json!([]);
     assert!(task_plan::validate(bad).is_err());
@@ -61,16 +66,46 @@ fn rejects_stale_duplicate_and_incomplete_plans() -> Result<()> {
     let mut pending = parent.clone();
     pending["clarifications"] = json!([{"id":"q"}]);
     store.put("task", id, &pending)?;
-    assert!(submit(&store, &parent).is_err());
+    assert!(submit(&store, &files, &parent).is_err());
     store.put("task", id, &parent)?;
-    submit(&store, &parent)?;
-    assert!(submit(&store, &parent).is_err());
+    submit(&store, &files, &parent)?;
+    assert!(submit(&store, &files, &parent).is_err());
+    Ok(())
+}
+
+#[test]
+fn explicit_workflow_choices_are_frozen_only_on_selected_children() -> Result<()> {
+    let (_temp, mut store, files, parent) = setup()?;
+    let mut chosen = plan();
+    chosen["steps"][0]["workflow"] = json!("general");
+    assert!(task_plan::validate(chosen.clone()).is_err());
+    chosen["steps"][1]["workflow"] = json!("not-a-workflow");
+    assert!(task_plan::validate(chosen.clone()).is_err());
+    chosen["steps"][1]["workflow"] = json!("general");
+    let id = parent["id"].as_str().unwrap();
+    task_plan::submit(
+        &store,
+        &files,
+        id,
+        &json!({"threadId":"thread","turnId":"turn","arguments":chosen}),
+    )?;
+    let parent = task_finish::finish(
+        &mut store,
+        &files,
+        id,
+        Outcome::Completed,
+        &AtomicBool::new(false),
+    )?;
+    for child in parent["subtaskIds"].as_array().unwrap() {
+        let task: Value = store.get("task", child.as_str().unwrap())?.unwrap();
+        assert_eq!(task["productionWorkflow"], json!({"id":"general"}));
+    }
     Ok(())
 }
 #[test]
 fn plan_creates_real_children_once_and_uses_latest_approved_files() -> Result<()> {
     let (_temp, mut store, files, parent) = setup()?;
-    submit(&store, &parent)?;
+    submit(&store, &files, &parent)?;
     let id = parent["id"].as_str().unwrap();
     let parent = task_finish::finish(
         &mut store,
@@ -131,7 +166,7 @@ fn manual_approval_blocks_dependents_and_restart_preserves_plan() -> Result<()> 
     let (_temp, mut store, files, parent) = setup()?;
     let id = parent["id"].as_str().unwrap();
     task_plan::approval(&store, id, false)?;
-    submit(&store, &parent)?;
+    submit(&store, &files, &parent)?;
     let parent = task_finish::finish(
         &mut store,
         &files,
@@ -183,7 +218,7 @@ fn missing_plan_and_conflicts_never_create_or_approve_children() -> Result<()> {
     assert_eq!(failed["status"], "failed");
     assert_eq!(store.list::<Value>("task")?.len(), 1);
     store.put("task", id, &parent)?;
-    submit(&store, &parent)?;
+    submit(&store, &files, &parent)?;
     fs::write(
         Path::new(parent["workspace"].as_str().unwrap()).join("before.txt"),
         "ai",

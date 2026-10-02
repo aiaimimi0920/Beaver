@@ -1,6 +1,6 @@
 [workspace]
 resolver = "2"
-members = ["native/core", "native/desktop"]
+members = ["native/core", "native/desktop", "native/headless"]
 
 [profile.release]
 lto = true

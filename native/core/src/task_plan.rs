@@ -6,7 +6,7 @@ use crate::{
 use anyhow::{bail, Context, Result};
 use serde::{Deserialize, Serialize};
 use serde_json::{json, Value};
-use std::{collections::HashSet, fs};
+use std::{collections::HashSet, fs, path::Path};
 
 #[derive(Deserialize, Serialize)]
 #[serde(deny_unknown_fields)]
@@ -15,6 +15,8 @@ pub struct Step {
     prompt: String,
     direction: String,
     acceptance: String,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    workflow: Option<String>,
 }
 #[derive(Deserialize, Serialize)]
 #[serde(deny_unknown_fields)]
@@ -35,7 +37,22 @@ pub fn validate(value: Value) -> Result<Plan> {
     text(&mut plan.summary, 2000)?;
     anyhow::ensure!((2..=12).contains(&plan.steps.len()), "请提交 2-12 个子任务");
     let mut titles = HashSet::new();
+    let selected = plan
+        .steps
+        .iter()
+        .filter(|step| step.workflow.is_some())
+        .count();
+    anyhow::ensure!(
+        selected == 0 || selected == plan.steps.len(),
+        "Choose a workflow for every step or retain the legacy plan format"
+    );
     for step in &mut plan.steps {
+        anyhow::ensure!(
+            step.workflow
+                .as_deref()
+                .is_none_or(|id| ["general", "npr-character"].contains(&id)),
+            "Unknown production workflow"
+        );
         text(&mut step.title, 120)?;
         text(&mut step.prompt, 6000)?;
         text(&mut step.acceptance, 2000)?;
@@ -61,18 +78,46 @@ pub fn tool() -> Value {
     serde_json::from_str(include_str!("../../../dist-native/plan-tool.json"))
         .expect("embedded plan tool")
 }
-pub fn submit(store: &Store, id: &str, params: &Value) -> Result<()> {
-    let mut task: Value = store.get("task", id)?.context("任务不存在")?;
-    crate::object_framework::require_legacy(&task)?;
+pub fn submit(store: &Store, files: &Files, id: &str, params: &Value) -> Result<()> {
+    let task: Value = store.get("task", id)?.context("任务不存在")?;
     anyhow::ensure!(
-        task["status"] == "running" && task["decompose"] == true && task["parentTaskId"].is_null(),
-        "当前任务不能提交计划"
+        !crate::external_run_contract::enabled(&task),
+        "External plans require the host run contract"
     );
     anyhow::ensure!(
         task["threadId"].is_string()
             && params["threadId"] == task["threadId"]
             && (!task["turnId"].is_string() || params["turnId"] == task["turnId"]),
         "过期的计划请求"
+    );
+    submit_validated(store, files, id, task, &params["arguments"])
+}
+
+pub(crate) fn submit_external(
+    store: &Store,
+    files: &Files,
+    id: &str,
+    arguments: &Value,
+) -> Result<()> {
+    let task: Value = store.get("task", id)?.context("Task missing")?;
+    anyhow::ensure!(
+        crate::external_run_contract::enabled(&task),
+        "External execution mode required"
+    );
+    submit_validated(store, files, id, task, arguments)
+}
+
+fn submit_validated(
+    store: &Store,
+    files: &Files,
+    id: &str,
+    mut task: Value,
+    arguments: &Value,
+) -> Result<()> {
+    crate::object_framework::require_legacy(&task)?;
+    anyhow::ensure!(
+        task["status"] == "running" && task["decompose"] == true && task["parentTaskId"].is_null(),
+        "当前任务不能提交计划"
     );
     anyhow::ensure!(
         !task["clarifications"]
@@ -81,7 +126,25 @@ pub fn submit(store: &Store, id: &str, params: &Value) -> Result<()> {
         "请先回答未完成的问题"
     );
     anyhow::ensure!(!task["plan"].is_object(), "计划已经提交");
-    task["plan"] = serde_json::to_value(validate(params["arguments"].clone())?)?;
+    let plan = validate(arguments.clone())?;
+    let mut bindings = serde_json::Map::new();
+    for step in &plan.steps {
+        if let Some(id) = &step.workflow {
+            let root = files.resolve_workspace(
+                task["id"].as_str().context("Task ID missing")?,
+                Path::new(
+                    task["workspace"]
+                        .as_str()
+                        .context("Task workspace missing")?,
+                ),
+            )?;
+            bindings.insert(id.clone(), crate::task_workflows::selection(&root, id)?);
+        }
+    }
+    if !bindings.is_empty() {
+        task["workflowBindings"] = Value::Object(bindings);
+    }
+    task["plan"] = serde_json::to_value(plan)?;
     task["report"] = task["plan"]["summary"].clone();
     store.put("task", id, &task)?;
     Ok(())
@@ -111,7 +174,11 @@ pub fn expand(store: &mut Store, files: &Files, parent: &mut Value) -> Result<()
           "direction":step.direction,"capability":"code","decompose":false,"autoAccept":parent["autoAccept"].as_bool().unwrap_or(true),
           "workspace":files.workspace_location(&ids[i])?,"workspacePrepared":false,"baseline":{},"changes":[],"conflicts":[],
           "status":"queued","createdAt":now,"updatedAt":now,"dependsOn":if i == 0 { vec![] } else { vec![ids[i-1].clone()] }});
-        for key in ["askRatio","references","stopConditions","maxMinutes","projectContext","design","validationVersion"] { if let Some(v) = parent.get(key) { child[key] = v.clone(); } }
+        for key in ["askRatio","references","stopConditions","maxMinutes","projectContext","design","validationVersion","executionMode"] { if let Some(v) = parent.get(key) { child[key] = v.clone(); } }
+        if let Some(workflow) = &step.workflow {
+            let binding = parent["workflowBindings"].get(workflow).context("Plan workflow binding missing")?;
+            child["productionWorkflow"] = binding.clone();
+        }
         Ok(child)
     }).collect::<Result<Vec<_>>>()?;
     parent["subtaskIds"] = json!(ids);
@@ -142,6 +209,9 @@ pub fn expand(store: &mut Store, files: &Files, parent: &mut Value) -> Result<()
 }
 
 pub fn eligible(task: &Value, tasks: &[Value]) -> bool {
+    if crate::external_run_recovery::blocked(task) {
+        return false;
+    }
     // Legacy history retained by a partition activation is never scheduled until converted.
     if crate::object_framework::marked(task) || task.get("migrationRetained").is_some() {
         return false;
@@ -174,6 +244,7 @@ pub fn eligible(task: &Value, tasks: &[Value]) -> bool {
 /// Freeze the latest integrated files only when dependencies have passed approval.
 pub fn prepare(store: &mut Store, files: &Files, task: &mut Value) -> Result<()> {
     crate::object_framework::require_legacy(task)?;
+    crate::external_run_recovery::require_clear(store, task)?;
     if task["workspacePrepared"] != false {
         return Ok(());
     }

@@ -247,6 +247,19 @@ dependencies = [
 ]
 
 [[package]]
+name = "beaver-headless"
+version = "0.1.19"
+dependencies = [
+ "anyhow",
+ "beaver-core",
+ "fs2",
+ "serde",
+ "serde_json",
+ "tempfile",
+ "tokio",
+]
+
+[[package]]
 name = "bit-set"
 version = "0.8.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"

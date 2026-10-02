@@ -84,7 +84,7 @@ fn marked_tasks_cannot_continue_approve_merge_or_expand() -> Result<()> {
     disabled(task_actions::accept(&mut store, "task"));
     disabled(task_actions::rollback(&mut store, &files, "task", vec![]));
     disabled(task_plan::approval(&store, "task", true));
-    disabled(task_plan::submit(&store, "task", &json!({})));
+    disabled(task_plan::submit(&store, &files, "task", &json!({})));
     disabled(task_plan::expand(&mut store, &files, &mut task.clone()));
     disabled(task_plan::prepare(&mut store, &files, &mut task.clone()));
     disabled(task_finish::finish(

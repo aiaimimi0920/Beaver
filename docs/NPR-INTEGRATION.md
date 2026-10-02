@@ -1,3 +1,50 @@
+# Current pinned NPR integration
+
+The native/headless integration now targets `NPRCharacterFrame` commit
+`a08b47a6cc229b6978afda26d74d13af690a67ba`, with model contract **1.1.0** and
+plugin metadata **1.3.0**. These are separate versions. The older RoleNPR/R15
+records below are historical evidence, not acceptance of this new package.
+
+- The distribution includes 344 byte-pinned framework, authoring, and checker
+  files. Silver Wolf sample assets and their sample-only launchers are excluded.
+  The sample editor menu is not enabled; runtime installation still configures
+  shader globals and Forward+.
+- The compiled provenance is authoritative. Install, discovery, inspection,
+  validation and preview reject missing, modified or linked framework files;
+  editing the project's copy of the provenance cannot authorize altered code.
+- Existing `npr_characters` projects retain their selected engine but require an
+  explicit migration before the new workflow can run. Installation never silently
+  replaces user changes or installs two addons with duplicate global classes.
+- Native planning can select `general` or `npr-character` per step. New explicit
+  choices freeze the source/version/contract identity on the child and are checked
+  again before execution. A general task is not forced to use NPR. The Electron
+  prototype retains its older schema and rejects the native-only field.
+- `validate` invokes the official `check_model.gd` with an explicit definition.
+  Its raw report remains separate from Beaver's envelope. A structural pass is
+  not a rendered-image or artistic-quality pass. Preview preserves fixed-camera
+  and grayscale options and executes only after the official check passes.
+- Definition/model hashes and framework hashes have explicit coverage fields.
+  External character textures, material profiles and feature-data dependencies
+  are not claimed to have complete hash coverage by those fields.
+
+The opt-in headless host and its external-agent execution contract are documented
+in [the headless README](../native/headless/README.md). External-agent mode uses
+real Beaver task/run/tool records and does not impersonate a Codex session or
+export an assistant's API credentials. Blender Python is trusted code with host
+OS access; path and staging rules are not an OS sandbox. Final completion still
+requires the normal validation and merge/approval path.
+
+## Verification boundary
+
+The focused CI workflow checks the host, run protocol, tools and package adapter.
+These tests do not establish character-creation or MiDot Forward+ acceptance.
+That acceptance requires a new project, actual agent-selected task steps,
+Beaver-owned Blender output, the pinned framework's official report, and actual
+MiDot-rendered views of the newly authored character. Stock Godot, a sample
+character, a fixture response, or a Blender beauty render cannot replace it.
+
+---
+
 # NPR package integration and call analysis
 
 Implementation contract, 2026-09-10. R15 positive character acceptance passed;

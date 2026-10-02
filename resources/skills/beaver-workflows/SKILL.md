@@ -12,7 +12,14 @@ Call `beaver_workflow_list` to discover enabled workflows. Read
 stock Godot download or change package requirements to hide failed validation.
 
 For NPR character work, call `beaver_workflow_run` with workflow `npr-character`
-and action `inspect`. Read the returned guide and contract before modeling.
+and action `inspect`. Read the returned docs/model_authoring guide, contract and all three prompts
+(geometry, textures, feature_data) before modeling. The pinned package lives at
+addons/npr_character_frame; contract 1.1.0 and plugin 1.3.0 are separate versions.
+Old addons/npr_characters projects require an explicit migration decision; never
+install both packages because their class_name registrations conflict.
+The Silver Wolf sample and its showcase launchers are not distributed. Beaver
+installs shader settings directly; it does not enable the upstream editor demo
+menu. The production actor, runtime, validators and authoring resources are retained.
 For character appearance work, also read blender-production's authored-character
 and reference-to-construction guidance before planning or making detailed geometry.
 Use Blender MCP for actual modeling, saving editable `.blend` and exported GLB.
@@ -53,9 +60,21 @@ Record feedback before advancing reusable artistic guidance from proposed to
 confirmed; this opt-in review cadence does not limit ordinary autonomous tasks.
 
 Call the standard workflow with action `validate` and the project-relative
-`definition` path; read errors and decide how to repair. Then use `preview` to
+`definition` path; this argument is mandatory, as the upstream checker otherwise
+defaults to its Silver Wolf sample. Read status, compliance_errors,
+visual_suggestions, measurements and not_evaluated, then decide how to repair.
+The official .ci_script/model/check_model.gd exits 0 for structural pass, 1 for
+compliance failure and 2 for report I/O failure. Its unmodified report remains at
+artifacts/npr/<run>/model_check/report.json; Beaver saves a separate report.json
+envelope with process diagnostics, definition/model-source hashes, and verified
+pinned framework hashes. definitionAndModelHashesVerified covers only those two
+character source files; external textures, materials, profiles and feature-data
+dependencies are not covered (assetDependencyHashesVerified remains false). There is no
+initialized field in the official report. Then use `preview` to
 render front/side/back PNGs and inspect them. Both actions run the project's
-bound engine. Reports contain actual validation and logs; `ok:false` requires
+bound engine. Preview first runs the same official compliance checker, and only
+renders on a verified structural pass. A rendered image is not visual acceptance;
+visualAcceptance remains not_evaluated until a human or external visual review. Reports contain actual validation and logs; `ok:false` requires
 repair or an explicit unfinished report. Preserve reported artifact paths in
 your delivery summary so Beaver's asset UI can display them. Subjective artistic
 acceptance still requires visual inspection. Do not add unrequested documents

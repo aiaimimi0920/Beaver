@@ -4,6 +4,7 @@ pub fn prompt(task: &Value, catalog: &Value) -> String {
     let stop = text(&task["stopConditions"]);
     [
         text(&task["prompt"]).to_owned(),
+        task.get("productionWorkflow").map(|value| format!("本子任务冻结的制作工作流：{value}。仅 npr-character 选择要求遵循该合同；general 不强制 NPR。先读取对应真实工具的 inspect，不把技术校验当成视觉验收。" )).unwrap_or_default(),
         "资料使用可人工阅读和编辑的 Markdown，按需归档到 docs/world（世界观）、docs/characters（人物）、docs/mechanics（玩法）、docs/art（美术规范）、docs/audio（声音规范）、docs/production（制作计划）、docs/decisions（用户确认）。沿用已有项目的有效分类，不为凑目录生成空文档。由你自行检索并选择上下文。".to_owned(),
         "先阅读项目资料。缺少必须由用户决定的创作意图或知识时，调用 beaver_ask_user 提问；任务会等待回答，不要自行假设用户决定。收到回答后，将确认的设定归档到项目 docs/decisions 下的 Markdown 文档（仅审查任务不得写入）。".to_owned(),
         format(task, catalog),

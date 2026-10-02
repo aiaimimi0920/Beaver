@@ -5,3 +5,9 @@ output/
 *.log
 .beaver/
 .env
+
+# Native/headless build products are generated from the tracked inputs.
+/dist-native/
+/target/
+__pycache__/
+*.pyc
