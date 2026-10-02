@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { requestPreviewPick } from "./preview-picking";
+import { beforeCloseDeadline, confirmPreviewClosed } from "./preview-close";
 import {
   previewPickSchema,
   type PreviewRectangle,
@@ -77,6 +78,8 @@ export class LiveScenePreview {
     frozen: boolean;
     capturePending: boolean;
     pickPending: boolean;
+    closeStatus: "idle" | "pending" | "failed" | "confirmed";
+    closeError: string;
     resolution: keyof typeof resolutions | null;
   } = {
     status: "idle",
@@ -86,13 +89,17 @@ export class LiveScenePreview {
     frozen: false,
     capturePending: false,
     pickPending: false,
+    closeStatus: "idle",
+    closeError: "",
     resolution: null,
   };
   private listeners = new Set<() => void>();
   private sessionId: string | null = null;
   private requestId = crypto.randomUUID();
   private closed = false;
-  private reading = false;
+  private reading: Promise<void> | null = null;
+  private openRequested = false;
+  private closeWork: Promise<boolean> | null = null;
   private sending = false;
   private acknowledged = 0;
   private viewError = "";
@@ -106,6 +113,7 @@ export class LiveScenePreview {
     if (this.state.pickPending) throw new Error("PREVIEW_PICK_PENDING");
     if (
       this.closed ||
+      this.state.closeStatus !== "idle" ||
       !this.sessionId ||
       this.state.status !== "ready" ||
       this.state.frame?.revision !== this.state.revision
@@ -162,7 +170,8 @@ export class LiveScenePreview {
       this.state.revision !== frame.revision ||
       this.state.pickPending ||
       this.state.capturePending ||
-      this.closed
+      this.closed ||
+      this.state.closeStatus !== "idle"
     )
       throw new Error("PREVIEW_PICK_FRAME_MISMATCH");
     this.update({ pickPending: true });
@@ -174,6 +183,7 @@ export class LiveScenePreview {
         point,
         () =>
           !this.closed &&
+          this.state.closeStatus === "idle" &&
           this.state.revision === frame.revision &&
           this.state.frame?.sha256 === frame.sha256 &&
           this.state.frame?.sequence === frame.sequence,
@@ -195,78 +205,86 @@ export class LiveScenePreview {
     this.state = { ...this.state, ...value };
     this.listeners.forEach((listener) => listener());
   }
-  async refresh() {
-    if (this.closed || this.reading || this.state.status === "closed") return;
-    this.reading = true;
-    try {
-      const raw = await this.call(
-        this.sessionId ? "validation.preview.read" : "validation.preview.open",
-        this.sessionId
-          ? { projectId: this.projectId, sessionId: this.sessionId }
-          : {
-              projectId: this.projectId,
-              runId: this.runId,
-              requestId: this.requestId,
-            },
-      );
-      const result = responseSchema.parse(raw);
-      if (
-        result.projectId !== this.projectId ||
-        result.runId !== this.runId ||
-        result.snapshotId !== this.snapshotId ||
-        (this.sessionId && result.sessionId !== this.sessionId)
-      )
-        throw new Error("PREVIEW_SESSION_MISMATCH");
-      this.sessionId = result.sessionId;
-      if (this.closed) {
-        await this.release();
-        return;
-      }
-      let frame = result.frame;
-      if (frame && frame.sessionId !== result.sessionId)
-        throw new Error("PREVIEW_FRAME_SESSION_MISMATCH");
-      if (
-        frame &&
-        this.state.frame &&
-        frame.sequence < this.state.frame.sequence
-      )
-        throw new Error("PREVIEW_STALE_FRAME");
-      const size = this.state.resolution && resolutions[this.state.resolution];
-      if (
-        frame &&
-        (frame.revision !== this.state.revision ||
-          frame.frozen !== this.state.frozen ||
-          (size &&
-            (frame.width !== size.width || frame.height !== size.height)))
-      )
-        frame = this.state.frame;
-      const resolution =
-        this.state.resolution ??
-        (Object.keys(resolutions) as (keyof typeof resolutions)[]).find(
-          (key) =>
-            resolutions[key].width === frame?.width &&
-            resolutions[key].height === frame?.height,
-        ) ??
-        null;
-      this.update({
-        status: result.status,
-        error: result.error || this.viewError,
-        frame,
-        resolution,
-      });
-      if (result.status === "ready" && this.acknowledged < this.state.revision)
-        void this.sendView();
-    } catch (error) {
-      this.update({ error: String(error) });
-    } finally {
-      this.reading = false;
+  refresh(): Promise<void> {
+    if (
+      this.closed ||
+      this.state.closeStatus !== "idle" ||
+      this.state.status === "closed"
+    )
+      return Promise.resolve();
+    return (this.reading ?? this.beginRead()).catch((error: unknown) => {
+      if (this.state.closeStatus === "idle")
+        this.update({ error: String(error) });
+    });
+  }
+  private beginRead() {
+    this.reading = this.read().finally(() => {
+      this.reading = null;
+    });
+    return this.reading;
+  }
+  private async read() {
+    if (!this.sessionId) this.openRequested = true;
+    const raw = await this.call(
+      this.sessionId ? "validation.preview.read" : "validation.preview.open",
+      this.sessionId
+        ? { projectId: this.projectId, sessionId: this.sessionId }
+        : {
+            projectId: this.projectId,
+            runId: this.runId,
+            requestId: this.requestId,
+          },
+    );
+    const result = responseSchema.parse(raw);
+    if (
+      result.projectId !== this.projectId ||
+      result.runId !== this.runId ||
+      result.snapshotId !== this.snapshotId ||
+      (this.sessionId && result.sessionId !== this.sessionId)
+    )
+      throw new Error("PREVIEW_SESSION_MISMATCH");
+    this.sessionId = result.sessionId;
+    if (this.closed) {
+      await this.release();
+      return;
     }
+    if (this.state.closeStatus !== "idle") return;
+    let frame = result.frame;
+    if (frame && frame.sessionId !== result.sessionId)
+      throw new Error("PREVIEW_FRAME_SESSION_MISMATCH");
+    if (frame && this.state.frame && frame.sequence < this.state.frame.sequence)
+      throw new Error("PREVIEW_STALE_FRAME");
+    const size = this.state.resolution && resolutions[this.state.resolution];
+    if (
+      frame &&
+      (frame.revision !== this.state.revision ||
+        frame.frozen !== this.state.frozen ||
+        (size && (frame.width !== size.width || frame.height !== size.height)))
+    )
+      frame = this.state.frame;
+    const resolution =
+      this.state.resolution ??
+      (Object.keys(resolutions) as (keyof typeof resolutions)[]).find(
+        (key) =>
+          resolutions[key].width === frame?.width &&
+          resolutions[key].height === frame?.height,
+      ) ??
+      null;
+    this.update({
+      status: result.status,
+      error: result.error || this.viewError,
+      frame,
+      resolution,
+    });
+    if (result.status === "ready" && this.acknowledged < this.state.revision)
+      void this.sendView();
   }
   setCamera(camera: CameraView) {
     if (
       this.state.capturePending ||
       this.state.frozen ||
       this.closed ||
+      this.state.closeStatus !== "idle" ||
       this.state.status !== "ready" ||
       !this.sessionId ||
       !this.state.frame
@@ -281,6 +299,7 @@ export class LiveScenePreview {
       this.state.capturePending ||
       this.state.frozen ||
       this.closed ||
+      this.state.closeStatus !== "idle" ||
       this.state.status !== "ready" ||
       !this.sessionId ||
       !Object.hasOwn(resolutions, resolution) ||
@@ -295,6 +314,7 @@ export class LiveScenePreview {
       this.state.capturePending ||
       this.state.pickPending ||
       this.closed ||
+      this.state.closeStatus !== "idle" ||
       this.state.status !== "ready" ||
       !this.sessionId ||
       !this.state.frame ||
@@ -305,7 +325,8 @@ export class LiveScenePreview {
     void this.sendView();
   }
   private async sendView() {
-    if (this.sending || this.closed) return;
+    if (this.sending || this.closed || this.state.closeStatus !== "idle")
+      return;
     this.sending = true;
     try {
       let revision: number;
@@ -326,11 +347,16 @@ export class LiveScenePreview {
         });
         this.acknowledged = revision;
         this.viewError = "";
-        this.update({ error: "" });
-      } while (!this.closed && revision !== this.state.revision);
+        if (this.state.closeStatus === "idle") this.update({ error: "" });
+      } while (
+        !this.closed &&
+        this.state.closeStatus === "idle" &&
+        revision !== this.state.revision
+      );
     } catch (error) {
       this.viewError = String(error);
-      this.update({ error: this.viewError });
+      if (this.state.closeStatus === "idle")
+        this.update({ error: this.viewError });
     } finally {
       this.sending = false;
     }
@@ -342,9 +368,45 @@ export class LiveScenePreview {
         sessionId: this.sessionId,
       });
   }
+  requestClose(): Promise<boolean> {
+    if (this.closed) return Promise.resolve(false);
+    if (this.state.closeStatus === "confirmed") return Promise.resolve(true);
+    if (this.closeWork) return this.closeWork;
+    this.update({ closeStatus: "pending", closeError: "" });
+    this.closeWork = this.confirmClose().finally(() => {
+      this.closeWork = null;
+    });
+    return this.closeWork;
+  }
+  private async confirmClose() {
+    const deadline = Date.now() + 10_000;
+    try {
+      if (this.reading)
+        await beforeCloseDeadline(
+          this.reading.catch(() => undefined),
+          deadline,
+        );
+      // Recover only an open that was already sent, using its original request.
+      if (!this.sessionId && this.openRequested)
+        await beforeCloseDeadline(this.beginRead(), deadline);
+      if (this.sessionId)
+        await confirmPreviewClosed(
+          this.call,
+          this.projectId,
+          this.sessionId,
+          deadline,
+        );
+      this.update({ closeStatus: "confirmed", status: "closed", error: "" });
+      return !this.closed;
+    } catch (error) {
+      this.update({ closeStatus: "failed", closeError: String(error) });
+      return false;
+    }
+  }
   close() {
     this.closed = true;
     this.listeners.clear();
-    void this.release().catch(() => undefined);
+    if (this.state.closeStatus !== "confirmed")
+      void this.release().catch(() => undefined);
   }
 }

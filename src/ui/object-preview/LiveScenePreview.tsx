@@ -54,6 +54,7 @@ export function LiveScenePreview({
     };
   }, [session]);
   const frame = state.frame;
+  const closing = state.closeStatus !== "idle";
   const clamp = (value: number, limit: number) =>
     Math.max(-limit, Math.min(limit, value));
   return (
@@ -66,13 +67,38 @@ export function LiveScenePreview({
           : "需要场景中已有 Camera3D。"}
         隐藏后停止取帧，15 秒无读取自动关闭，不影响制作任务。
       </p>
-      <button type="button" onClick={onClose}>
-        关闭交互预览
+      <button
+        type="button"
+        disabled={
+          saving || state.pickPending || state.closeStatus === "pending"
+        }
+        onClick={() => {
+          drag.current = null;
+          void session.requestClose().then((confirmed) => {
+            if (confirmed) onClose();
+          });
+        }}
+      >
+        {state.closeStatus === "pending"
+          ? "正在关闭交互预览…"
+          : state.closeStatus === "failed"
+            ? "重试关闭交互预览"
+            : "关闭交互预览"}
       </button>
+      {state.closeStatus === "pending" && (
+        <p role="status">正在等待当前预览会话收尾，尚未确认关闭。</p>
+      )}
+      {state.closeError && (
+        <p role="alert">
+          关闭尚未确认，已保留原会话身份。可重试关闭；不会关闭其他会话。
+          {state.closeError}
+        </p>
+      )}
       <button
         type="button"
         disabled={
           saving ||
+          closing ||
           state.pickPending ||
           state.status !== "ready" ||
           !frame ||
@@ -97,6 +123,7 @@ export function LiveScenePreview({
         type="button"
         disabled={
           state.capturePending ||
+          closing ||
           state.pickPending ||
           state.status !== "ready" ||
           !frame ||
@@ -111,7 +138,7 @@ export function LiveScenePreview({
       </button>
       <button
         type="button"
-        disabled={state.status !== "ready" || state.frozen}
+        disabled={closing || state.status !== "ready" || state.frozen}
         onClick={() => {
           camera.current = initialCamera();
           session.setCamera(camera.current);
@@ -124,7 +151,7 @@ export function LiveScenePreview({
         <select
           aria-label="预览分辨率"
           value={state.resolution ?? ""}
-          disabled={state.status !== "ready" || state.frozen}
+          disabled={closing || state.status !== "ready" || state.frozen}
           onChange={(event) =>
             session.setResolution(
               event.target.value as keyof typeof resolutions,
@@ -165,7 +192,9 @@ export function LiveScenePreview({
               ? (point, rectangle) => session.pick(point, rectangle)
               : undefined
           }
-          disabled={saving || state.capturePending || state.pickPending}
+          disabled={
+            closing || saving || state.capturePending || state.pickPending
+          }
         />
       ) : (
         frame && (
@@ -186,6 +215,7 @@ export function LiveScenePreview({
             onPointerDown={(event) => {
               if (
                 event.button !== 0 ||
+                closing ||
                 state.status !== "ready" ||
                 state.frozen
               )
@@ -199,7 +229,7 @@ export function LiveScenePreview({
             }}
             onPointerMove={(event) => {
               const previous = drag.current;
-              if (!previous || state.frozen) return;
+              if (!previous || closing || state.frozen) return;
               const bounds = event.currentTarget.getBoundingClientRect();
               if (!bounds.width || !bounds.height) return;
               const dx = (event.clientX - previous.x) / bounds.width;
@@ -231,7 +261,7 @@ export function LiveScenePreview({
               drag.current = null;
             }}
             onWheel={(event) => {
-              if (state.status !== "ready" || state.frozen) return;
+              if (closing || state.status !== "ready" || state.frozen) return;
               camera.current = {
                 ...camera.current,
                 zoom: clamp(camera.current.zoom + event.deltaY * 0.001, 4),

@@ -64,7 +64,30 @@ struct Session {
     snapshot: String,
     stop: Arc<AtomicBool>,
     view: Arc<Mutex<View>>,
-    worker: JoinHandle<()>,
+    worker: Option<JoinHandle<()>>,
+    close_error: Option<String>,
+}
+
+impl Session {
+    fn confirm_finished(&mut self) -> Result<bool> {
+        if let Some(error) = &self.close_error {
+            anyhow::bail!("{error}");
+        }
+        if self
+            .worker
+            .as_ref()
+            .is_some_and(|worker| !worker.is_finished())
+        {
+            return Ok(false);
+        }
+        if let Some(worker) = self.worker.take() {
+            if worker.join().is_err() {
+                self.close_error = Some("PREVIEW_WORKER_FAILED".into());
+                anyhow::bail!("PREVIEW_WORKER_FAILED");
+            }
+        }
+        Ok(true)
+    }
 }
 #[derive(Default)]
 pub(super) struct Sessions(Mutex<Option<Session>>);
@@ -72,6 +95,9 @@ pub(super) struct Sessions(Mutex<Option<Session>>);
 impl Sessions {
     pub fn call(&self, state: &State, method: &str, input: &Value) -> Result<Value> {
         let project = operations::string(input, "projectId")?;
+        if method == "validation.preview.close" {
+            return self.close(project, operations::string(input, "sessionId")?);
+        }
         if matches!(
             method,
             "validation.preview.capture" | "validation.preview.saved"
@@ -88,15 +114,12 @@ impl Sessions {
             let run_id = operations::string(input, "runId")?;
             let request = operations::string(input, "requestId")?;
             ensure!(!request.is_empty(), "PREVIEW_REQUEST_REQUIRED");
-            if let Some(session) = slot.as_ref() {
+            if let Some(session) = slot.as_mut() {
                 if session.project == project && session.run == run_id && session.request == request
                 {
                     return response(session, true);
                 }
-                ensure!(session.worker.is_finished(), "PREVIEW_SESSION_LIMIT");
-            }
-            if let Some(old) = slot.take() {
-                let _ = old.worker.join();
+                ensure!(session.confirm_finished()?, "PREVIEW_SESSION_LIMIT");
             }
             let storage = (state.storage)(project)?;
             ensure!(!storage.draining, "PROJECT_UNAVAILABLE");
@@ -176,14 +199,12 @@ impl Sessions {
                 snapshot,
                 stop,
                 view,
-                worker,
+                worker: Some(worker),
+                close_error: None,
             });
             return response(slot.as_ref().unwrap(), true);
         }
         let id = operations::string(input, "sessionId")?;
-        if method == "validation.preview.close" && slot.as_ref().is_none_or(|s| s.id != id) {
-            return Ok(json!({"closed":true}));
-        }
         let session = slot.as_ref().context("PREVIEW_SESSION_NOT_FOUND")?;
         ensure!(
             session.id == id && session.project == project,
@@ -273,28 +294,48 @@ impl Sessions {
                 view.height = height as u32;
                 Ok(json!({"revision":revision}))
             }
-            "validation.preview.close" => {
-                session.stop.store(true, Ordering::SeqCst);
-                Ok(json!({"closed":true}))
-            }
             _ => anyhow::bail!("Unknown preview operation"),
         }
+    }
+    fn close(&self, project: &str, id: &str) -> Result<Value> {
+        let mut slot = self
+            .0
+            .lock()
+            .map_err(|_| anyhow::anyhow!("Preview lock unavailable"))?;
+        let closed = match slot.as_mut().filter(|session| session.id == id) {
+            Some(session) => {
+                ensure!(session.project == project, "PREVIEW_SESSION_MISMATCH");
+                session.stop.store(true, Ordering::SeqCst);
+                session.confirm_finished()?
+            }
+            // An old retry cannot stop the replacement session.
+            None => true,
+        };
+        Ok(json!({"closed":closed,"projectId":project,"sessionId":id}))
     }
     pub fn shutdown(&self) -> Result<()> {
         let mut slot = self
             .0
             .lock()
             .map_err(|_| anyhow::anyhow!("Preview lock unavailable"))?;
-        if let Some(session) = slot.take() {
+        if let Some(mut session) = slot.take() {
             session.stop.store(true, Ordering::SeqCst);
-            session
-                .worker
-                .join()
-                .map_err(|_| anyhow::anyhow!("Preview worker failed"))?;
+            if let Some(worker) = session.worker.take() {
+                worker
+                    .join()
+                    .map_err(|_| anyhow::anyhow!("PREVIEW_WORKER_FAILED"))?;
+            }
+            if let Some(error) = session.close_error {
+                anyhow::bail!("{error}");
+            }
         }
         Ok(())
     }
 }
+
+#[cfg(test)]
+#[path = "live_preview_close_tests.rs"]
+mod close_tests;
 fn response(session: &Session, touch: bool) -> Result<Value> {
     let mut view = session
         .view
