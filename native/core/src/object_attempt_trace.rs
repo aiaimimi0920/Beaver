@@ -67,6 +67,11 @@ fn load(connection: &rusqlite::Connection, request: &Request) -> Result<Trace> {
         entries: Vec::new(),
         truncated: false,
     });
+    validate_trace(&trace, request)?;
+    Ok(trace)
+}
+
+pub(crate) fn validate_trace(trace: &Trace, request: &Request) -> Result<()> {
     ensure!(
         trace.request == *request
             && trace.entries.len() <= LIMIT
@@ -77,7 +82,7 @@ fn load(connection: &rusqlite::Connection, request: &Request) -> Result<Trace> {
                 .all(|(index, entry)| entry.sequence == index + 1),
         "OBJECT_ATTEMPT_TRACE_IDENTITY_MISMATCH"
     );
-    Ok(trace)
+    Ok(())
 }
 
 pub(crate) fn append(

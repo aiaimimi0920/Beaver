@@ -93,15 +93,19 @@ fn definition(
             previous.id, serde_json::to_string(image)?
         ));
     }
-    fine.prompt.push_str(&format!(
-        "\n\nOwner rework feedback (candidate review {}, attempt {}):\n{}",
-        approval.review_request_id, approval.attempt_id, approval.feedback
-    ));
+    fine.prompt.push_str(&text_suffix(approval));
     ensure!(
         fine.prompt.len() <= 20_000,
         "OBJECT_CANDIDATE_REWORK_PROMPT_TOO_LONG"
     );
     Ok(fine)
+}
+
+pub(super) fn text_suffix(approval: &Approval) -> String {
+    format!(
+        "\n\nOwner rework feedback (candidate review {}, attempt {}):\n{}",
+        approval.review_request_id, approval.attempt_id, approval.feedback
+    )
 }
 
 pub(super) fn select(

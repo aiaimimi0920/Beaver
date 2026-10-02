@@ -592,3 +592,127 @@ Validation 的项目 Storage 现绑定同一 `ProjectWorkGate`。候选扫描、
 补齐桌面侧 `migration.registerAssembly` 的回归覆盖。测试验证显式激活要求、登记提交与 Runtime 恢复分离、恢复失败后的可重试语义、重复登记幂等，以及源项目和准备副本的文件清单保持不变；非法相对路径、缺失激活回执和额外参数均在业务目录层拒绝。
 
 `cargo test --locked -p beaver-core --lib` 通过（274 项），`cargo check --locked -p beaver-desktop --tests` 通过；`cargo fmt --all -- --check` 通过。为支持桌面回归的只读清单比较，将 `data_backup::inventory` 暴露为只读公共诊断 API，备份写入与校验逻辑未改变。HTTP `/v1/call` 端到端、真实工具绑定和原生发布验收仍未完成，F1.3/F1.4 保持进行中。
+
+## 2026-10-01：受支持旧项目的独立派生 API 与正式 UI
+
+已复用既有准备、组装、启用和登记内核，闭合“离线源检查 → 新身份准备 → 新目录组装与核验 → 二次确认启用 → 显式登记/恢复 → 打开派生项目”。正式入口为设置中的“数据迁移 → 派生独立项目副本”。准备及组装失败保留目录；响应丢失可以核验磁盘回执，已尝试登记的副本则使用原路径重试登记，不比较已经使用过的项目与旧文件清单。源检查不写源，准备时重新验证离线约束。
+
+本批 Core 派生定向测试 47 项、Desktop 迁移定向测试 8 项、两套真实组件 UI 交互夹具、TypeScript 和原生前端构建通过；格式、编码及有效行检查通过。具体命令、恢复边界和证据见 [独立派生 API/UI 证据](FRAMEWORK-F1-DERIVATION-UI-EVIDENCE.md)。当前白名单仍不支持 `object_*` 新对象工作流记录，源检查会明确拒绝且保留数据；F1.4 和 F1 不标记完成。本批未构建新 EXE、未运行原生全流程或发布验收，旧 `0.1.19.43` 手测包不包含本批源码。
+
+## 2026-10-01：对象目录、固定版本与接受历史的独立派生
+
+沿用正式“数据迁移 → 派生独立项目副本”入口，新增 `object`、`object_version`、`object_command_receipt` 三类转换。对象、版本、组件和命令请求使用独立身份，父子关系、固定版本引用及历史回执同步映射；使用真实 typed request 验证原输入摘要并重算新摘要。文件路径、blob hash 和不透明文件内容不改写，当前工作文件不必与历史快照相同；源检查、准备、准备副本核验及组装均检查冻结 blob 的存在性、长度和内容摘要。
+
+派生校验区分当前对象图与冻结历史，不把历史当成新写入。父对象在被固定引用后修改分类/标签仍可派生，当前元数据与旧版本元数据分别保留；接受历史按回执 revision 确定真实顺序，不按版本数组顺序推断。校验继续拒绝悬空或跨项目引用、错误版本归属、篡改回执、当前组件/文件重复归属和父子环。未放宽共享旧迁移 ownership 或全局对象写入规则，不宣称修复其他编辑/导入流程。
+
+Core 通过完整准备、组装、启用、登记/打开、更新/捕获/接受、幂等重试和关闭重开流程，证明源及准备副本不变、使用后的派生项目能再次派生。Desktop 公共迁移 API 定向用例证明新目录可读取、继续捕获、重试登记及关闭重开。五组定向测试共 90 项通过（派生 52、接受 4、运行基线 5、恢复 20、Desktop 迁移 9）；TypeScript、定向格式及有效行检查通过，结构结果为 1246 个源码、17 个未变动历史文件、0 个违规，未更新 baseline。详细命令、异常说明和证据见 [对象目录与历史派生证据](FRAMEWORK-F1-OBJECT-DERIVATION-EVIDENCE.md)。
+
+本批 UI 只更新支持范围说明，复用上批正式组件交互证据，未重跑 UI smoke 或前端构建。对象制造任务、运行尝试、导入/发布操作记录仍在复制前拒绝，F1.4、F1 及整体开发未完成；原生 WebView、HTTP/MCP 传输、真实工具绑定和整体验收仍未执行。本批未构建新 EXE、未递增版本、未提交或推送，`package.json` 保持 `version: 0.1.19`、`beaverBuild: 44`，没有替换已交付包。
+
+## 2026-10-01：未入队手工制造计划的独立派生
+
+沿用正式“设置 → 数据迁移 → 派生独立项目副本”入口，新增未入队手工任务、未执行 run、计划状态、草稿，以及提交、取消、定义修订和草稿解锁回执的身份转换。保留层级、依赖、固定版本、assumptions 与执行前取消历史；对象、任务、run 和请求使用一致新身份，尚未提交的 proposal 同步映射，草稿 `object-task-plan`、stage 和 assumption 的项目内语义键保持不变。派生后正式草稿仍可读取、保存、提交、解锁，计划可继续修订和取消，关闭重开后状态保留且不会自动派发。
+
+校验区分历史记录与当前新写入，固定版本读取冻结历史，不因父对象当前元数据变化误拒，也不放宽正常 pinned 编辑规则。typed schema、task/run identity、依赖环、草稿/回执引用和 revision 来源均检查；真实 no-op commit、级联取消与历史回执幂等得到保留。已入队、执行准备、运行尝试、AI 规划/声明和其他未知记录仍在创建准备副本前整体拒绝，源数据不变，不静默丢弃记录。
+
+Core 派生 57 项及 Desktop 迁移 10 项定向测试通过（包含既有回归，合计 67 项），覆盖继续编辑、历史重放、关闭重开、再次派生和拒绝前无写入；Desktop 使用正式 object task dispatcher，验证 UI 草稿可继续操作且队列为空。TypeScript、定向格式和有效行检查通过：1255 个源码、17 个未变动历史文件、0 个违规，未更新 baseline。详细范围、首轮失败原因和最终日志见 [手工制造计划派生证据](FRAMEWORK-F1-PLAN-DERIVATION-EVIDENCE.md)。
+
+F1.4、F1 及整体开发仍未完成。本批未重跑 UI smoke 或全量原生验收，未构建新 EXE、未递增版本、未提交或推送；版本仍为 `0.1.19.44`，新编译包尚未交付。
+
+## 2026-10-01：非运行中 AI 规划会话的独立派生
+
+沿用正式“设置 → 数据迁移 → 派生独立项目副本”入口，新增 `object_task_planning`、`object_task_planning_head` 和 `object_task_planning_receipt` 转换。支持 AwaitingInput、Proposed、Adopted、Cancelled、Failed 和 Interrupted；Running 仍在准备前拒绝。会话及全部规划请求采用同一新身份 namespace，轮次另行转换；草稿、decision、question 和 assumption 的语义键保持原样，只重写 typed assumption 的 planning 来源引用，不全局替换用户叙述。
+
+副本中的 Proposed 可通过正式 API 显式采纳，再继续编辑、保存和提交草稿；AwaitingInput 可显式回答，生成 fresh round 并清除旧 thread/turn。真实 Desktop migration dispatcher、planning Service 和任务 dispatcher 证明：读取、重开和历史请求重放不启动 AI，新 answer/start 各只调度一次，重试不重复，队列为空；源和 preparation inventory 保持不变。冻结 context 按历史 revision 校验完整任务/run/assumption 集合，answer 回执按轮次恰好消费对应 User decisions，不借用 Automatic，也不禁止跨轮复用 question ID。
+
+最终 Core 派生 70 项、Core AI 规划 14 项及 Desktop 迁移 11 项定向测试通过；TypeScript、定向 Rustfmt、UI Prettier 和有效行检查通过。结构结果为 1266 个源码、17 个未变动历史文件、0 个违规，未更新 baseline。两次首轮失败分别修正负控的实际优先错误预期与测试夹具的正式问题协议，未放宽生产校验。证据、模块责任及边界见 [AI 规划会话派生证据](FRAMEWORK-F1-PLANNING-DERIVATION-EVIDENCE.md)。
+
+本批不包含规划完成声明、入队、执行准备/尝试和导入/发布记录，不补接 Running 的生产恢复，也不交付完整历史详情 UI。F1.4、F1 及整体开发仍未完成；未重跑 UI smoke、前端构建或全量原生验收，未构建新 EXE、递增版本、提交或推送，版本仍为 `0.1.19.44`。
+
+## 2026-10-01：规划完成声明的独立派生
+
+沿用正式“设置 → 数据迁移 → 派生独立项目副本”入口，新增 `object_task_planning_declaration` 和 `object_task_planning_declaration_receipt` 转换。保留 Owner、原因、时间、历史任务范围和不可变 request 回执；按已验证的计划起源、定义修订与取消边界重建历史快照，重写 typed task/run/对象身份后，重新排序目标任务并复用生产 scope/hash 算法。current/stale/cancelled 语义保留；无关计划 revision 增长不会误使声明失效，定义变更再恢复可令原声明重新 current。
+
+严格核对 schema、key、身份、RFC3339 时间、历史范围及 fingerprint，head 必须与其对应 receipt 完全一致；允许同 root/revision 多份合法声明和时间倒退，不按 wall-clock 或 hash 去重。正式 Desktop migration 与 object task dispatcher 覆盖查看、历史 request 重放/冲突、关闭重开、独立编辑后显式重新确认及重复登记。声明不是任务接受，不改变任务/run/计划 revision，不入队或执行；源和准备副本保持不变。
+
+Core 派生 75 项、Core AI 规划 14 项、Desktop 迁移 12 项以及正式声明 dispatcher 3 项定向测试通过；TypeScript、17 个相关 Rust 文件定向格式、UI Prettier 和有效行检查通过。结构结果为 1271 个源码、17 个未变动历史文件、0 个违规，未更新 baseline。命令、日志、模块责任及交付边界见 [规划完成声明派生证据](FRAMEWORK-F1-DECLARATION-DERIVATION-EVIDENCE.md)。本次收取已运行检查的结果，没有重复测试或放宽断言。
+
+已入队、执行准备/尝试、Running AI 规划及导入/发布操作仍不支持派生，F1.4、F1 和整体开发保持未完成。本批未重跑 UI smoke、前端构建或原生全流程验收，未构建新 EXE、递增版本、提交或推送；版本仍为 `0.1.19.44`，新编译包尚未交付。
+
+## 2026-10-02：从未领取执行的队列计划独立派生
+
+沿用正式“设置 → 数据迁移 → 派生独立项目副本”入口，新增队列、排序 revision/receipt、medium/coarse 暂停 control/receipt 七类记录转换。保留定义修订、执行前取消、源队列全序和不可变请求历史；组装目标事务复用生产暂停业务，为仍为 queued 的 medium 追加独立安全暂停回执，已暂停任务不叠加 revision，不覆盖旧历史。相同 position 按源完整排序转成目标连续 position，避免身份重映射改变对象队首。
+
+旧 reorder receipt 缺少历史 hash 输入，历史 version 使用 provenance-scoped CAS alias，保留相邻 token 的链式相等关系，不声称重算历史 snapshot fingerprint；当前 queueView 仍走正常生产 hash。control revision 链、head、请求身份、task revision 单调性、reorder anchors/blockers 及严格 schema 均验证。读取、重开、登记重试和旧请求 replay 不解除副本暂停，不领取或生成 preparation；新的正式恢复请求后，production preparation claim 才领取预期任务。再次派生已暂停副本不叠加暂停，源和准备副本 inventory 保持不变。
+
+Core 派生 84 项、队列 18 项、排序 6 项、medium 暂停 10 项、coarse 暂停 5 项及 Desktop 迁移 13 项定向测试通过；各 filter 非零测试，包含新增 Core 9 项和 Desktop 正式消费者集成 1 项。TypeScript、22 个 Rust 文件定向格式、UI Prettier 和有效行检查通过：1281 个源码、17 个未变动历史文件、0 个违规，未更新 baseline。保留两次测试夹具失败和一次 Desktop 私有测试方法编译失败的日志；仅纠正夹具定位/输入及测试可见性，未放宽断言或生产校验。详细命令、模块责任与失败证据见 [队列计划派生证据](FRAMEWORK-F1-QUEUE-DERIVATION-EVIDENCE.md)。
+
+已领取或曾领取、已有执行准备/attempt、Running AI 规划、导入/发布和未知记录仍在准备目录创建前整体拒绝。F1.4、F1 与整体开发保持未完成。UI 本批仅更新支持说明，未重跑交互 smoke、前端构建、真实 WebView、HTTP/MCP 或全量原生验收；未构建新 EXE、递增版本、提交或推送，版本仍为 `0.1.19.44`，新编译包尚未交付。
+
+## 2026-10-02：首次停止执行历史的独立派生与显式恢复
+
+沿用正式“设置 → 数据迁移 → 派生独立项目副本”入口，新增 execution preparation、attempt、trace、check report 和 interrupt receipt 五类转换。严格支持 Ready、generation 1、唯一真实首个 fine 的首次 Failed / Interrupted 且输出已捕获的历史，没有 recovery/successor；全实体及 source-lock inventory 校验冻结内容、工作区、检查和中断终态，拒绝孤立/损坏证据及未知/歧义 namespace。claim-point acceptance 从 committed receipt revision 恢复，允许停止后的合法对象历史变化；映射后的 frozen versions 重新 canonical sort 再重算身份相关 digest，没有放宽 recovery 比较。
+
+副本保留终态、revisions、generation、输入/输出与历史 thread/turn，映射 owner/claim 身份但不构造旧 lease；目标事务复用生产业务追加安全暂停，已暂停不叠加 revision，不覆盖历史回执。派生、启用、登记、重开、登记重试及旧暂停/解除暂停/检查请求重放均不自动执行。解除暂停也不能 claim，stale verification 不授权；只有 fresh `objectTask.verifyRecovery` 后 explicit `objectTask.resumeRecovery` 才创建唯一新 attempt，输入等于旧输出，thread/turn 为空，同请求重试不再启动。正式 Desktop dispatcher 与全新活动 Scheduler 验证该闭环及宿主/其他项目隔离，计数 factory 不调用外部 AI、Godot 或 Blender；源、preparation 和其他项目 offline inventory 不变。
+
+最终 Core 派生 92 项、Core 直接依赖 67 项、Desktop 迁移 14 项及恢复/继续 5 项、TS 恢复消费者 29 项通过；各 filter 均非零测试，数量包括既有回归。TypeScript、34 个 Rust 文件定向 Rustfmt、UI Prettier 和有效行检查通过：1291 个源码、17 个未变动历史文件、0 个违规，未更新 baseline。原批 Core 88 passed / 4 failed 及此前编译、夹具和 SQLite inventory 失败日志保留；四项旧负控改为真实 typed schema/unknown-kind/提前拒绝语义，保留目标不创建和源不变断言，未改生产逻辑。只重跑受这些 test-only 修正影响的派生、格式和结构检查。详细命令、模块责任、失败证据及交付边界见 [首次停止执行派生证据](FRAMEWORK-F1-EXECUTION-DERIVATION-EVIDENCE.md)。
+
+仅领取但无停止 attempt、Running / AwaitingGate、多次恢复/后继尝试、并列首个 fine、含 failed / objectHeld 的 reorder 历史、处置/导入/发布、Running AI 规划及未知记录仍在准备前整体拒绝。F1.4、F1 和整体开发保持未完成。UI 本批仅更新支持与恢复说明、复用既有正式 recovery 消费者，未进行真实 WebView、HTTP/MCP 或完整原生验收；未构建新 EXE、递增版本、提交或推送，版本仍为 `0.1.19.44`，新编译包尚未交付。
+
+## 2026-10-02：同一首个细修的纯 retry 链独立派生
+
+接续首次停止执行切片，现已支持同一首个 fine 的完整 plain retry 停止链：所有 attempt 均为 Failed / Interrupted、输出已捕获，保留 attempt、verification、resume、head、successor、check、interrupt 和 trace。新增五类 recovery 实体的 closed-world 校验与 typed 身份转换；pending、孤立、错误业务键、历史前缀/快照、head/generation/edge 损坏和非 retry 用途在准备前拒绝。历史 Records 按生产推进与不可变命令回执锚定，允许 retry 之间的合法元数据变化及 verifier 之后新增的 completed interrupt，不拿当前状态代替历史；原始 `resume.started` Running 快照和历史 revisions 不改写为终态。
+
+沿用正式派生 UI 与 recovery API/UI。旧核验和恢复请求只重放回执，不重构 lease；派生、启用、登记、重开、登记重试和解除暂停均不启动任务。只有 fresh `objectTask.verifyRecovery` 后的新 explicit `objectTask.resumeRecovery` 才创建唯一新 attempt，输入等于 terminal output，不复用旧 thread/turn。Core 覆盖 Empty / Latest / Pinned、多对象闭包、三个 stopped attempts、历史重放、第四次显式恢复和再次派生不叠加暂停；Desktop 正式 dispatcher 与活动 Scheduler 覆盖重开、过期 verifier 拒绝、同请求并发只启动一次及宿主/其他项目隔离，计数 factory 不调用外部工具。
+
+最终 Core 派生 97 项、恢复 20 项、Desktop 派生 8 项及恢复/继续 5 项通过；TypeScript、19 个 Rust 文件定向 Rustfmt、UI Prettier 和有效行检查通过：1300 个源码、17 个未变动历史文件、0 个违规，未更新 baseline。保留本轮 96 passed / 1 failed 的旧负控错误预期日志；仅将 typed wrapper 顶层 `projectId` 的预期改为精确 `unknown field`，保留源不变和目标不创建断言，未放宽生产校验。详细命令、模块责任、早期失败证据和完整性核对见[纯 retry 链派生证据](FRAMEWORK-F1-RETRY-DERIVATION-EVIDENCE.md)。
+
+本段取代前段“多次恢复/后继尝试一律不支持”的当前范围，不改写历史验收记录。仅领取但无停止 attempt、Running / AwaitingGate、跨 fine 推进、返工、并列首个 fine、failed / objectHeld 排序历史、处置/导入/发布、Running AI 规划及未知记录仍不支持；F1.4、F1 和整体开发保持未完成。UI 本轮仅更新支持说明，未进行真实 WebView、HTTP/MCP、外部工具或完整原生验收；未构建新 EXE、递增版本、提交或推送，源码版本仍为 `0.1.19.44`。
+
+## 2026-10-02：首个细修待验收的安全派生与显式推进/返工
+
+接续纯 retry 停止链，现允许同一首个 fine 的 terminal attempt 为 AwaitingGate，此前 attempt 仍只能为 Failed / Interrupted，输出、冻结内容、工作区及回执必须完整。历史 verifier 的 medium/run/fine 和 queue 状态按各自 attempt 重建，不能用 terminal 的 awaitingAcceptance 代替此前 failed 快照；源已有候选审阅、advance/rework、处置或发布记录仍在准备前拒绝。目标事务将 awaitingAcceptance 纳入追加安全暂停，已暂停的副本再次派生不叠加 revision，不构造旧 lease。
+
+正式入口仍为“设置 → 数据迁移 → 派生独立项目副本”。登记、重开、登记重试、全部旧 verify/resume/control/check 请求重放和解除暂停均为零启动；解除暂停后重新核验和检查，多 fine 计划通过 `objectTask.advanceAttempt` 显式接受首 fine 并推进，单 fine 最终候选通过 `objectTask.prepareCandidateReview` 新建审阅后 `objectTask.reworkCandidate` 显式返工。正式 Desktop dispatcher 与活动 Scheduler 覆盖两条路径：重复及并发相同请求仅启动一次，新输入等于 terminal output，无旧 thread/turn，反馈 `Reduce movement speed` 实际进入新产物；关闭重开后幂等、源/准备副本/宿主/其他项目隔离均有断言。RPC 使用测试子进程，不调用外部 AI、Godot 或 Blender。
+
+Core 派生首轮 101 passed / 1 failed；失败负控篡改已被 retry 消费的 verifier fine，被不可变 successor 快照提前拒绝。按真实拒绝层修正精确错误预期，并增加未消费 verifier 的四类状态负控后，仅该失败测试复测 1 passed；没有放宽生产校验，也没有把结果写成整组重跑 102/102。Core 恢复 20 项、Desktop 派生 10 项及推进/审阅 3 项、UI 消费者 9 项通过；TypeScript、14 个 Rust 文件定向 Rustfmt、UI Prettier 和有效行检查通过：1304 个源码、17 个未变动历史文件、0 个违规，本批源码均不超过 250 有效行，未更新 baseline 或新增 exception。Rustfmt 首次空输出导致日志写入错误，检查 exit 0；已单独复跑并保存完整退出记录。详细命令、失败证据、模块责任和完整性核对见[待验收安全派生证据](FRAMEWORK-F1-GATE-DERIVATION-EVIDENCE.md)。
+
+本段仅取代“terminal AwaitingGate 一律不支持”的当前范围，不改写旧批次记录。源中已有候选审阅、跨 fine 推进或返工、非末尾 AwaitingGate、Running、仅领取无停止 attempt、并列首 fine、failed / objectHeld 排序历史、处置/导入/发布、Running AI 规划及未知记录仍不支持。F1.4、F1 和整体开发保持未完成；未运行真实 WebView、HTTP/MCP transport、外部工具或完整原生验收，未构建新 EXE、递增版本、提交或推送，源码版本仍为 `0.1.19.44`。
+
+## 2026-10-02：已有最终候选审阅的安全派生与重新授权
+
+现支持唯一首个 fine 同时为最终 fine、terminal AwaitingGate 且已有整体候选审阅的源项目，允许此前完整的同 fine Failed / Interrupted plain retry 链。历史审阅的对象目录成员必须与当前集合一致，metadata revision 漂移必须有唯一不可变回执精确证明；不把当前对象、控制状态或技术检查结果替换进旧 Source。新增 typed 转换映射 review/check request、target、Records、fine 与对象身份，恢复 canonical 排序后用原 Source、rules、time 和 schema 重建摘要、references 与 owners，保留 schema 1 / 2 的历史语义、blockers、时间、文件内容摘要和所有文案。
+
+复用既有准备、组装、启用、登记与安全暂停链。读取、旧请求重放、登记重试、重开、解除暂停和新建审阅不启动执行；原 `saved.source.records == *records` 及 current Source 精确比较保持不变。旧审阅在副本中被 `OBJECT_CANDIDATE_REWORK_SOURCE_MISMATCH` 拒绝，必须解除安全暂停、fresh verify/check/review 后显式确认返工。正式 Desktop dispatcher 与活动 Scheduler 证明相同请求并发、重放、关闭重开均只产生一次新执行，terminal output 成为新输入，不复用旧 thread/turn，反馈实际进入 `result.txt`；源、准备副本、宿主和其他项目保持隔离。RPC 为测试子进程，不代表外部 AI 验收。
+
+正式派生入口和候选面板同步说明历史证据与新授权的区别；schema 1 / 2 UI 回归覆盖真实 session 的只读刷新、旧授权错误、fresh review 确认和唯一提交，以及新旧审阅同时展示。UI API 使用 fixture、面板为 SSR；本批未运行真实 WebView。
+
+本批 Core 派生 107 项、恢复 20 项、candidate 过滤器 22 个单元及 2 个集成测试、技术检查 3 项，Desktop 派生 11 项及候选消费者 1 项通过；过滤器间有交集，不合计独立测试数。UI 消费者 15 项通过；新增测试随后出现 TypeScript TS2532，增加显式存在性断言后仅该文件 2 项及 typecheck 复测通过，失败日志保留。19 个 Rust 与 5 个 TS/TSX 文件格式检查、有效行检查通过：1311 个源码、17 个未变动历史文件、0 个违规，本批源码最大 247 有效行，未更新 baseline 或新增 exception。详情见[已有候选审阅派生证据](FRAMEWORK-F1-CANDIDATE-DERIVATION-EVIDENCE.md)，不改写前批 gate 的失败/单项复测历史。
+
+本段取代“已有候选审阅一律不支持”的当前范围；已有跨 fine 推进、返工、处置/导入/发布及其他未支持状态仍在准备前拒绝。副本显式返工后不能因此再次派生该返工历史。F1.4、F1 和整体开发保持未完成；未进行真实 HTTP/MCP、WebView、外部工具或完整原生验收，未构建新 EXE、递增版本、提交或推送，源码版本保持 `0.1.19.44`。
+
+## 2026-10-02：已有跨 fine 阶段历史的安全派生
+
+现支持完整的同 fine Failed / Interrupted retry 与有序跨 fine 推进链，末尾可以为 Failed、Interrupted 或 AwaitingGate。副本保留 accepted 前置阶段、推进回执、原 revisions、冻结输入输出和历史检查；最终 fine 的 schema 1 / 2 候选审阅可带 accepted 前置阶段，必须精确匹配 canonical 阶段历史。中间 AwaitingGate 仅在完整回执证明其推进到不同 fine 时允许，同 fine 返工历史仍拒绝。
+
+历史选择从各 distinct fine 的首次 planned 快照重建，按回执位置投影 accepted 前缀并复用生产阶段选择器，拒绝跳阶段、伪造 next/dependency/check、歧义 position 和不完整 journal。工作区清单使用真实 resume chain 终点，不再以不同 fine 的最大 revision 判断末次执行，覆盖首阶段 retry revision 高于后续阶段的情况。旧候选授权精确比较保持；安全暂停使旧授权过期，派生、登记、重开、历史重放及解除暂停不执行。停止链需 fresh verify 后显式 resume；待验收阶段需 fresh verify/check 后显式 advance，最终候选需另做 fresh review 后显式 rework，才创建唯一新执行。生成审阅本身不执行。
+
+正式 Desktop migration API、ProjectStorageRouter 和活动 Scheduler 覆盖带跨阶段历史的推进与最终候选返工：重复/并发请求只启动一次，accepted 前置阶段不变，不复用旧 thread/turn，返工反馈实际进入新产物，源/准备副本/宿主/其他项目保持隔离。RPC 为测试子进程，UI 为生产 session 加 API fixture 与 SSR，不是外部 AI 或真实 WebView 验收。
+
+本批 Core 派生首轮 111 passed / 1 failed，按真实 read-back 拒绝合同修正伪造 advance 的旧错误预期后，整组 112 passed / 0 failed；Core 恢复 20 项、阶段推进 4 项、候选过滤器 23 个单元及 2 个集成测试通过。Desktop 派生 13 项、推进 2 项、候选 1 项，UI 消费者 17 项及版本元数据 6 项通过；过滤器有交集，不累计独立总数。TypeScript、23 个 Rust 文件定向 Rustfmt、2 个 TS/TSX 文件 Prettier 和结构检查通过：1316 个源码、17 个未变动历史文件、0 个违规。三个凝聚测试套件为 274/278/285 有效行，处于规范允许的 cohesion 范围；未更新 baseline 或新增 exception。
+
+新增跨阶段回归位于独立的 `project_derivation_stage_history_tests.rs`，既有 `project_derivation_stage_tests.rs` 已逐字节恢复并在交付审计中固定 SHA-256；其四项原 identity-stage 回归保留。Desktop 夹具改为按真实链尾 attempt ID 而非 fine ID 选择当前 Gate。首轮失败、修复和完整性证据见[跨阶段历史安全派生证据](FRAMEWORK-F1-STAGE-DERIVATION-EVIDENCE.md)，旧批次结果不改写。
+
+本段取代“已有跨 fine 推进一律不支持”的当前范围。已有返工、处置/导入/发布、运行中及其他未支持历史仍拒绝；副本显式返工成功不赋予该返工历史再次派生的能力。F1.4、F1 和整体开发保持未完成。本批内部源码版本为 `0.1.19.45`，公开基础版本仍为 `0.1.19`；未构建新 EXE、替换运行包、运行完整原生验收、提交或推送。
+
+## 2026-10-02：已有纯文本返工历史的安全派生与再次派生
+
+现支持最终 fine 已有一次或多次纯文本候选返工，允许此前完整的同 fine retry 和有序跨 fine 推进，链尾为 Failed、Interrupted 或 AwaitingGate。副本保留 accepted 前置阶段、全部冻结输入输出、Blocked / Started 回执、schema 1 / 2 历史候选和反馈原文；派生副本可再次派生。中间 Gate 的同 fine 后继必须有完整真实返工回执，非纯文本附件和未知历史仍不放开。
+
+`object_candidate_rework::text_suffix` 供生产和派生共用。新的 `object_recovery_derivation_rework::Prompts` 在完整源校验后按 recovery generation 读取回执，精确证明完整 next.prompt 的生成关系，再只映射系统尾缀中的 review / attempt 身份。映射按源 task ID 和完整 prompt 匹配，覆盖全部 live / frozen copies 及嵌套历史；用户反馈中的旧身份、中文、伪造尾缀和换行不替换，保留 20 KB 限制。历史审阅由真实链前缀和 canonical accepted 阶段验证，不要求其 attempt 是最终链尾，也不以当前状态改写历史依据；原 current Source 精确授权校验保持不变。
+
+派生、登记、重开、旧请求重放、解除暂停和新审阅本身均不启动。Failed / Interrupted 仍需 fresh verify 后显式 resume；最终 Gate 仍需 fresh verify/check/review 后显式 rework。Core 矩阵连续派生两次并核对全部历史重放、反馈逐字保留和旧 verification 拒绝。正式 Desktop API、ProjectStorageRouter 与活动 Scheduler 覆盖两次源返工、单/多阶段、关闭重开、同请求并发唯一启动和 accepted 前缀不变；输入等于 terminal output，不复用旧 thread/turn，反馈实际进入 `result.txt`，源/准备副本/宿主/其他项目隔离。RPC 使用测试子进程，不调用外部 AI。UI 以生产 session、API fixture 和 SSR 覆盖同 attempt 多个历史报告与 fresh 报告的展示、只读重开及显式唯一提交，不是 WebView 验收。
+
+集中验证：Core 派生 117 项、恢复 20 项、推进 4 项、候选 23 个单元及 2 个集成测试，Desktop 派生 15 项及推进/候选 3 项，UI 消费者 17 项和版本元数据 6 项全部通过；过滤器有交集，不累计独立总数。TypeScript、21 个 Rust 文件定向 Rustfmt、2 个 TS/TSX 文件 Prettier 和结构检查通过：1321 个源码、17 个未变动历史文件、0 个违规。四个凝聚测试文件为 263/284/285/304 有效行，生产模块均不超过 250；未更新 baseline 或新增 exception。早期测试编译失败与两项负控错误预期失败已修正，完整日志保留，未放宽生产校验；详细合同、失败记录和完整性证据见[纯文本返工历史安全派生证据](FRAMEWORK-F1-REWORK-DERIVATION-EVIDENCE.md)。
+
+本段取代旧批次“已有返工一律拒绝、返工后不能再次派生”的当前范围，旧批次结果不改写。含图片、预览帧或区域重定位返工，以及处置/导入/发布等未支持历史仍拒绝。F1.4、F1 和整体开发保持未完成。本批内部源码版本为 `0.1.19.46`，公开基础版本仍为 `0.1.19`；未构建新 EXE、替换运行包、运行真实 HTTP/MCP、WebView、外部工具或完整原生验收，未提交或推送。

@@ -12,6 +12,7 @@ use std::sync::atomic::{AtomicBool, Ordering};
 
 #[path = "object_attempt_store.rs"]
 mod storage;
+pub(crate) use storage::select_fine;
 
 pub(crate) const KIND: &str = "object_attempt";
 

@@ -44,7 +44,7 @@ pub struct State {
     pub current: bool,
 }
 
-fn scope<'a>(tasks: &'a [TaskRecord], root: &TaskRecord) -> Vec<&'a TaskRecord> {
+pub(crate) fn scope<'a>(tasks: &'a [TaskRecord], root: &TaskRecord) -> Vec<&'a TaskRecord> {
     let mut ids = BTreeSet::from([root.id.clone()]);
     loop {
         let count = ids.len();
@@ -67,7 +67,7 @@ fn scope<'a>(tasks: &'a [TaskRecord], root: &TaskRecord) -> Vec<&'a TaskRecord> 
     result
 }
 
-fn project(connection: &Connection, tasks: &[TaskRecord], root: &TaskRecord) -> Result<State> {
+pub(crate) fn scope_state(tasks: &[TaskRecord], root: &TaskRecord) -> Result<State> {
     let members = scope(tasks, root);
     // Ignore execution revisions and non-cancellation status transitions.
     let definitions: Vec<_> = members
@@ -96,20 +96,25 @@ fn project(connection: &Connection, tasks: &[TaskRecord], root: &TaskRecord) -> 
             blockers.push(format!("{}：尚无有效子任务", task.id));
         }
     }
-    let declaration: Option<Declaration> = storage::read(connection, KIND, &root.id)?;
-    let current = declaration.as_ref().is_some_and(|value| {
-        value.request.project_id == root.project_id
-            && value.request.task_id == root.id
-            && value.request.expected_scope_hash == scope_hash
-            && blockers.is_empty()
-    });
     Ok(State {
         task_id: root.id.clone(),
         scope_hash,
         blockers,
-        declaration,
-        current,
+        declaration: None,
+        current: false,
     })
+}
+
+fn project(connection: &Connection, tasks: &[TaskRecord], root: &TaskRecord) -> Result<State> {
+    let mut state = scope_state(tasks, root)?;
+    state.declaration = storage::read(connection, KIND, &root.id)?;
+    state.current = state.declaration.as_ref().is_some_and(|value| {
+        value.request.project_id == root.project_id
+            && value.request.task_id == root.id
+            && value.request.expected_scope_hash == state.scope_hash
+            && state.blockers.is_empty()
+    });
+    Ok(state)
 }
 
 pub(crate) fn snapshot_in(connection: &Connection, tasks: &[TaskRecord]) -> Result<Vec<State>> {

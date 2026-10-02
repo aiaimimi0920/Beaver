@@ -5,6 +5,8 @@ use serde::{Deserialize, Serialize};
 
 #[path = "object_candidate_review.rs"]
 pub mod candidate;
+#[path = "object_recovery_derivation.rs"]
+pub(crate) mod derivation;
 #[path = "object_recovery_disposition.rs"]
 pub mod disposition;
 #[path = "object_recovery_files.rs"]

@@ -1,7 +1,7 @@
 {
   "name": "beaver-studio",
   "version": "0.1.19",
-  "beaverBuild": 44,
+  "beaverBuild": 46,
   "private": true,
   "description": "Local conversation-driven Godot game studio",
   "main": "dist/main.cjs",

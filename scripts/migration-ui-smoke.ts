@@ -4,10 +4,16 @@ import path from "node:path";
 import { spawnSync } from "node:child_process";
 
 async function main() {
-  const output = path.resolve("output/migration-ui");
+  const fixture = process.argv[2] ?? "migration-flow";
+  if (!["migration-flow", "project-derivation-flow"].includes(fixture))
+    throw new Error(`Unknown migration fixture: ${fixture}`);
+  const output = path.resolve(
+    process.env.BEAVER_UI_SMOKE_OUTPUT ?? "output/migration-ui",
+    fixture,
+  );
   await mkdir(output, { recursive: true });
   await build({
-    entryPoints: ["tests/fixtures/migration-flow.tsx"],
+    entryPoints: [`tests/fixtures/${fixture}.tsx`],
     bundle: true,
     outfile: path.join(output, "fixture.js"),
     platform: "browser",
@@ -15,7 +21,7 @@ async function main() {
   });
   await writeFile(
     path.join(output, "index.html"),
-    '<div id="root"></div><script src="fixture.js"></script>',
+    '<meta charset="utf-8"><link rel="stylesheet" href="fixture.css"><div id="root"></div><script src="fixture.js"></script>',
   );
   await writeFile(
     path.join(output, "runner.cjs"),

@@ -358,5 +358,14 @@ pub(crate) fn call(
 }
 
 #[cfg(test)]
+pub(crate) fn call_object_tasks_for_test(
+    router: &beaver_core::project_storage_router::ProjectStorageRouter,
+    method: &str,
+    input: Value,
+) -> Result<Value, String> {
+    data_dispatch_object_tasks::dispatch(router, method, Some(&input)).expect("object task method")
+}
+
+#[cfg(test)]
 #[path = "data_dispatch_tests.rs"]
 mod tests;

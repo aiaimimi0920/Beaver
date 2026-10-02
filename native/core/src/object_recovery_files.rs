@@ -60,7 +60,7 @@ pub(super) fn verify(runtime: &ProjectRuntime, records: &Records, live: bool) ->
     report
 }
 
-fn valid_snapshot(snapshot: &Snapshot) -> Result<()> {
+pub(super) fn valid_snapshot(snapshot: &Snapshot) -> Result<()> {
     let mut paths = BTreeSet::new();
     ensure!(
         snapshot.iter().all(|(path, hash)| valid_asset_path(path)
@@ -71,7 +71,7 @@ fn valid_snapshot(snapshot: &Snapshot) -> Result<()> {
     Ok(())
 }
 
-fn content(runtime: &ProjectRuntime, records: &Records) -> Result<Snapshot> {
+pub(super) fn baseline_input(project: &str, records: &Records) -> Result<Snapshot> {
     let baseline = records
         .preparation
         .baseline
@@ -91,7 +91,7 @@ fn content(runtime: &ProjectRuntime, records: &Records) -> Result<Snapshot> {
     if let Some(version) = &baseline.resolved_version_id {
         let selected = object_import_snapshot::select(
             &records.baseline_sources,
-            runtime.project_id(),
+            project,
             &records.object.id,
             version,
         )?;
@@ -110,8 +110,18 @@ fn content(runtime: &ProjectRuntime, records: &Records) -> Result<Snapshot> {
         object_import_snapshot::digest(&baseline.versions)? == baseline.content_digest,
         "OBJECT_RECOVERY_BASELINE_DIGEST_MISMATCH"
     );
-    let mut input = object_run_baseline::snapshot(&baseline.versions)?;
+    let input = object_run_baseline::snapshot(&baseline.versions)?;
     valid_snapshot(&input)?;
+    Ok(input)
+}
+
+fn content(runtime: &ProjectRuntime, records: &Records) -> Result<Snapshot> {
+    let mut input = baseline_input(runtime.project_id(), records)?;
+    let baseline = records
+        .preparation
+        .baseline
+        .as_ref()
+        .context("OBJECT_RUN_BASELINE_MISSING")?;
     object_import_content::verify(runtime.project_root(), &baseline.versions)?;
     for attempt in records.history.iter().chain(records.attempt.iter()) {
         ensure!(attempt.input == input, "OBJECT_RECOVERY_INPUT_MISMATCH");

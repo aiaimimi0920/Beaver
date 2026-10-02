@@ -10,6 +10,8 @@ use std::sync::atomic::{AtomicBool, Ordering};
 
 #[path = "object_stage_advance.rs"]
 pub mod advance;
+#[path = "object_recovery_derivation_receipts.rs"]
+pub(crate) mod derivation;
 #[path = "object_recovery_attempt_history.rs"]
 mod history;
 #[path = "object_candidate_rework.rs"]

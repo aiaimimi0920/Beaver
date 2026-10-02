@@ -132,6 +132,11 @@ pub(crate) struct Snapshot {
 }
 
 impl Snapshot {
+    pub(crate) fn derivation_blobs(&self, entries: &[crate::data_backup::Entry]) -> Result<()> {
+        crate::project_derivation_object_validation::blobs(&self.connection, entries)?;
+        crate::project_derivation_execution_inventory::validate(&self.connection, entries)
+    }
+
     pub(crate) fn derive(
         &self,
         prepared: &crate::project_derivation_copy::Prepared,

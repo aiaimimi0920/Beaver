@@ -68,7 +68,11 @@ fn entity_map(entities: &[Entity], request: &Request) -> Result<Vec<EntityIdenti
         let target = keys::target(entity, request, &flows)?;
         if let Target::Remap { key } = &target {
             ensure!(
-                !source_keys.contains(&(key.kind.as_str(), key.id.as_str())),
+                !source_keys.contains(&(key.kind.as_str(), key.id.as_str()))
+                    // Draft IDs are project-local consumer keys, including the production UI's
+                    // "object-task-plan", also used by the planning head. Only these validated
+                    // semantic namespaces stay unchanged.
+                    || (matches!(entity.kind.as_str(), "object_task_draft" | "object_task_planning_head") && key.kind == entity.kind && key.id == entity.id),
                 "derivation target collides with source {}/{}",
                 key.kind,
                 key.id
@@ -93,7 +97,15 @@ fn entity_map(entities: &[Entity], request: &Request) -> Result<Vec<EntityIdenti
 
 pub(crate) fn build(connection: &Connection, request: &Request) -> Result<IdentityMap> {
     let entities = project_derivation_validation::validate(connection, &request.source_project_id)?;
-    let entities = entity_map(&entities, request)?;
+    build_validated(connection, request, &entities)
+}
+
+pub(crate) fn build_validated(
+    connection: &Connection,
+    request: &Request,
+    entities: &[Entity],
+) -> Result<IdentityMap> {
+    let entities = entity_map(entities, request)?;
     let mut statement = connection.prepare("SELECT id FROM calls ORDER BY id")?;
     let ids = statement
         .query_map([], |row| row.get::<_, String>(0))?

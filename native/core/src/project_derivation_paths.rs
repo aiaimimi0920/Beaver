@@ -8,7 +8,40 @@ use std::collections::BTreeSet;
 
 pub(crate) struct Paths<'a>(pub(crate) &'a IdentityMap);
 
+pub(crate) fn valid_relative_path(path: &str) -> bool {
+    !path.is_empty()
+        && !path.contains(['\\', ':', '\0'])
+        && path
+            .split('/')
+            .all(|part| !part.is_empty() && part != "." && part != "..")
+}
+
 impl Paths<'_> {
+    fn workspace_identity(&self, id: &str, codex: bool) -> Result<String> {
+        let kinds = [
+            "task",
+            if codex {
+                "object_attempt"
+            } else {
+                "object_run"
+            },
+        ];
+        let matches: Vec<_> = kinds
+            .into_iter()
+            .filter(|kind| {
+                self.0
+                    .entities
+                    .iter()
+                    .any(|e| e.source.kind == *kind && e.source.id == id)
+            })
+            .collect();
+        ensure!(
+            matches.len() == 1,
+            "ambiguous or unknown workspace identity"
+        );
+        self.identity(matches[0], id)
+    }
+
     fn identity(&self, kind: &str, id: &str) -> Result<String> {
         let key = Rewrite(self.0).key(kind, id)?;
         ensure!(key.kind == kind, "filesystem identity kind mismatch");
@@ -18,11 +51,7 @@ impl Paths<'_> {
 
     pub(crate) fn relative(&self, path: &str) -> Result<String> {
         ensure!(
-            !path.is_empty()
-                && !path.contains(['\\', ':', '\0'])
-                && path
-                    .split('/')
-                    .all(|part| !part.is_empty() && part != "." && part != ".."),
+            valid_relative_path(path),
             "invalid derivation relative path"
         );
         let mut parts: Vec<String> = path.split('/').map(str::to_owned).collect();
@@ -33,7 +62,7 @@ impl Paths<'_> {
             Some("workspaces") if parts.len() >= 3 => {
                 let slot = if parts[2] == ".codex" { 3 } else { 2 };
                 if parts.len() > slot {
-                    parts[slot] = self.identity("task", &parts[slot])?;
+                    parts[slot] = self.workspace_identity(&parts[slot], slot == 3)?;
                 }
             }
             Some("evidence") if parts.len() >= 3 => {

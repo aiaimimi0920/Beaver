@@ -1,6 +1,7 @@
 //! Offline identity staging with inventory-checked paths for verified preparations.
 //! Runtime recovery, project metadata and activation remain separate stages.
 use crate::{
+    object_run_recovery::resume::derivation::rework::Prompts,
     project_derivation_asset_records as assets,
     project_derivation_copy::Request,
     project_derivation_framework_records as framework, project_derivation_history,
@@ -39,12 +40,39 @@ pub struct Staged {
 
 fn rewrite(
     db: &Connection,
+    plans: &crate::project_derivation_plan_validation::Plans,
+    prompts: &Prompts,
     map: &IdentityMap,
+    request: &Request,
     kind: &str,
     id: &str,
     value: &Value,
 ) -> Result<(Key, Value)> {
+    if crate::project_derivation_execution_validation::supports(kind) {
+        return crate::project_derivation_execution_records::rewrite(
+            db, map, request, prompts, kind, id, value,
+        );
+    }
+    if crate::project_derivation_queue_records::supports(kind) {
+        return crate::project_derivation_queue_records::rewrite(map, request, kind, id, value);
+    }
+    if crate::project_derivation_declaration_records::supports(kind) {
+        return crate::project_derivation_declaration_records::rewrite(
+            plans, map, request, kind, id, value,
+        );
+    }
+    if crate::project_derivation_planning_records::supports(kind) {
+        return crate::project_derivation_planning_records::rewrite(map, request, kind, id, value);
+    }
+    if crate::project_derivation_plan_records::supports(kind) {
+        return crate::project_derivation_plan_records::rewrite(
+            map, request, prompts, kind, id, value,
+        );
+    }
     match kind {
+        "object" | "object_version" | "object_command_receipt" => {
+            crate::project_derivation_object_records::rewrite(map, request, kind, id, value)
+        }
         "project" => {
             ensure!(
                 value.is_object() && value["id"] == id,
@@ -100,6 +128,8 @@ pub(crate) fn compose_prepared(
     prepared: &crate::project_derivation_copy::Prepared,
 ) -> Result<Staged> {
     crate::project_derivation_paths::Paths(&prepared.identities).entries(&prepared.entries)?;
+    crate::project_derivation_object_validation::blobs(source, &prepared.entries)?;
+    crate::project_derivation_execution_inventory::validate(source, &prepared.entries)?;
     compose_records(
         source,
         &prepared.request,
@@ -122,10 +152,16 @@ fn compose_records(
         "invalid derivation identity request"
     );
     let source = source.unchecked_transaction()?;
+    let entities = project_derivation_validation::validate(&source, &request.source_project_id)?;
     ensure!(
-        &project_derivation_identity::build(&source, request)? == map,
+        &project_derivation_identity::build_validated(&source, request, &entities)? == map,
         "derivation identity map changed"
     );
+    let plans = crate::project_derivation_plan_validation::Plans::from_entities(
+        &entities,
+        &request.source_project_id,
+    )?;
+    let prompts = Prompts::read(&source, request)?;
     let mut connection = Connection::open_in_memory()?;
     store_schema::initialize(&connection)?;
     let target = connection.transaction()?;
@@ -160,7 +196,10 @@ fn compose_records(
                 }
                 let (key, value) = rewrite(
                     &source,
+                    &plans,
+                    &prompts,
                     map,
+                    request,
                     &entry.source.kind,
                     &entry.source.id,
                     &original,
@@ -174,6 +213,7 @@ fn compose_records(
         }
     }
     project_derivation_history::copy(&source, map, &target)?;
+    crate::project_derivation_queue_records::stage_copied(&source, &target, request)?;
     project_derivation_validation::validate(&target, &request.target_project_id)?;
     target.commit()?;
     source.rollback()?;

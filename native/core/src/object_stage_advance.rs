@@ -39,6 +39,16 @@ pub(super) fn select(
     records: &Records,
     request: &Request,
 ) -> Result<TaskRecord> {
+    select_from_tasks(connection, records, request, &store::all_tasks(connection)?)
+}
+
+/// The same selection contract is used for live tasks and validated historical projections.
+pub(super) fn select_from_tasks(
+    connection: &Connection,
+    records: &Records,
+    request: &Request,
+    tasks: &[TaskRecord],
+) -> Result<TaskRecord> {
     let approval = request
         .advance
         .as_ref()
@@ -52,8 +62,8 @@ pub(super) fn select(
         "OBJECT_STAGE_SUCCESS_REQUIRED"
     );
     object_attempt_checks::require_passed(connection, previous, &approval.check_request_id)?;
-    let mut fines: Vec<_> = store::all_tasks(connection)?
-        .into_iter()
+    let mut fines: Vec<_> = tasks
+        .iter()
         .filter(|task| {
             task.parent_task_id.as_deref() == Some(&records.medium.id)
                 && task.granularity == Granularity::Fine
@@ -88,14 +98,16 @@ pub(super) fn select(
             continue;
         }
         ensure!(
-            store::read::<TaskRecord>(connection, TASK_KIND, id)?
+            tasks
+                .iter()
+                .find(|task| task.id == *id)
                 .is_some_and(|task| task.id == *id
                     && task.project_id == request.project_id
                     && task.status == "accepted"),
             "OBJECT_STAGE_DEPENDENCY_NOT_ACCEPTED"
         );
     }
-    Ok(next.clone())
+    Ok((**next).clone())
 }
 
 pub(crate) fn accepted(attempt: &Attempt) -> Result<TaskRecord> {

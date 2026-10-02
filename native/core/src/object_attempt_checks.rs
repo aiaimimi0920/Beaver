@@ -72,7 +72,16 @@ fn validate(runtime: &ProjectRuntime, request: &Request) -> Result<()> {
     Ok(())
 }
 
-fn verify_report(report: &Report, record: &Attempt) -> Result<()> {
+pub(crate) fn valid_rules(rules: &[Rule]) -> bool {
+    rules.len() == 2
+        && rules[0].id == "checkpoint-integrity"
+        && rules[1].id == "code-structure"
+        && rules
+            .iter()
+            .all(|rule| rule.version == 1 && (!rule.passed || rule.issues.is_empty()))
+}
+
+pub(crate) fn verify_report(report: &Report, record: &Attempt) -> Result<()> {
     ensure!(
         report.request.project_id == record.preparation.project_id
             && report.request.target == Target::from_record(record)
@@ -80,13 +89,7 @@ fn verify_report(report: &Report, record: &Attempt) -> Result<()> {
             && report.attempt_digest == crate::framework_checks::digest(record)?
             && report.input_digest == crate::framework_checks::digest(&record.input)?
             && report.output_digest == crate::framework_checks::digest(&record.output)?
-            && report.rules.len() == 2
-            && report.rules[0].id == "checkpoint-integrity"
-            && report.rules[1].id == "code-structure"
-            && report
-                .rules
-                .iter()
-                .all(|rule| rule.version == 1 && (!rule.passed || rule.issues.is_empty()))
+            && valid_rules(&report.rules)
             && report.passed == report.rules.iter().all(|rule| rule.passed),
         "OBJECT_CHECK_REPORT_MISMATCH"
     );

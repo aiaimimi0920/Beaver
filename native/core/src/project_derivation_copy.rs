@@ -34,6 +34,44 @@ pub struct Prepared {
     pub identities: crate::project_derivation_identity::IdentityMap,
 }
 
+#[derive(Debug, Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct SourceInspection {
+    pub request: Request,
+    pub entities: usize,
+    pub calls: usize,
+}
+
+/// Discover identity and reject unsupported history without opening the source database.
+/// The proposed identities are not reserved; preparation revalidates the offline source.
+pub fn inspect_source(source: &Path) -> Result<SourceInspection> {
+    let source = layout::root(source)?;
+    layout::read_manifest(&source, None)?;
+    layout::validate_files(&source)?;
+    let directory = source.join(layout::CONTROL_DIR);
+    let _lock = project_storage::lock(&directory, false)?;
+    let _database = data_backup::hold_named_database(&directory, layout::DATABASE)?;
+    let manifest = layout::manifest_in(&source, None)?;
+    layout::validate_files(&source)?;
+    let snapshot = database::snapshot(&directory, &manifest)?;
+    let request = Request {
+        request_id: uuid::Uuid::new_v4().to_string(),
+        source,
+        source_project_id: manifest.project_id,
+        target_project_id: uuid::Uuid::new_v4().to_string(),
+    };
+    validate_request(&request)?;
+    let identities = snapshot.derivation_identities(&request)?;
+    let entries = data_backup::inventory_without(&request.source, EXCLUDED)?;
+    crate::project_derivation_paths::Paths(&identities).entries(&entries)?;
+    snapshot.derivation_blobs(&entries)?;
+    Ok(SourceInspection {
+        request,
+        entities: identities.entities.len(),
+        calls: identities.calls.len(),
+    })
+}
+
 fn write_new(path: &Path, bytes: &[u8]) -> Result<()> {
     let mut file = OpenOptions::new().create_new(true).write(true).open(path)?;
     file.write_all(bytes)?;
@@ -80,6 +118,8 @@ pub fn prepare(request: Request, destination: &Path) -> Result<Prepared> {
         ..request
     };
     let entries = data_backup::inventory_without(&source, EXCLUDED)?;
+    crate::project_derivation_paths::Paths(&identities).entries(&entries)?;
+    snapshot.derivation_blobs(&entries)?;
     let destination = data_backup::new_destination(&source, destination)?;
     write_new(&destination.join(PENDING), &serde_json::to_vec(&request)?)?;
     let target = destination.join("project");
@@ -154,6 +194,7 @@ pub(crate) fn verified_snapshot(destination: &Path) -> Result<(Prepared, databas
     );
     let snapshot = database::snapshot(&target.join(layout::CONTROL_DIR), &manifest)?;
     let identities = snapshot.derivation_identities(&request)?;
+    snapshot.derivation_blobs(&prepared.entries)?;
     ensure!(
         identities == prepared.identities,
         "derivation identity map changed or is incomplete"

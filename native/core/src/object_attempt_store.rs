@@ -14,40 +14,9 @@ use rusqlite::Connection;
 
 pub(super) fn start(connection: &Connection, preparation: Preparation) -> Result<Option<Lease>> {
     object_run_preparation::require_ready(connection, &preparation)?;
-    let mut fines: Vec<_> = store::all_tasks(connection)?
-        .into_iter()
-        .filter(|task| {
-            task.parent_task_id.as_deref() == Some(&preparation.medium.id)
-                && task.granularity == Granularity::Fine
-                && task.status != "cancelled"
-        })
-        .collect();
-    fines.sort_by(|a, b| a.position.cmp(&b.position).then_with(|| a.id.cmp(&b.id)));
-    let Some(fine) = fines.into_iter().next() else {
+    let Some(fine) = select_fine(connection, &preparation, &store::all_tasks(connection)?)? else {
         return Ok(None);
     };
-    ensure!(
-        fine.project_id == preparation.project_id
-            && fine.object_id == preparation.medium.object_id
-            && fine.run_id.as_deref() == Some(&preparation.run.id)
-            && matches!(&fine.identity, Identity::Fine { schema_version, object_id, medium_task_id, run_id, stage_id }
-            if *schema_version == VERSION && object_id == &preparation.run.object_id
-                && medium_task_id == &preparation.medium.id && run_id == &preparation.run.id
-                && fine.stage_id.as_deref() == Some(stage_id.as_str())),
-        "OBJECT_ATTEMPT_IDENTITY_MISMATCH"
-    );
-    ensure!(
-        fine.status == "planned",
-        "OBJECT_ATTEMPT_CHECKPOINT_REQUIRED"
-    );
-    for id in &fine.depends_on {
-        let dependency = store::read::<TaskRecord>(connection, TASK_KIND, id)?;
-        if !dependency.is_some_and(|task| {
-            task.id == *id && task.project_id == fine.project_id && task.status == "accepted"
-        }) {
-            return Ok(None);
-        }
-    }
     let previous: Vec<Attempt> = store::read_all(connection, KIND)?;
     ensure!(
         !previous
@@ -83,6 +52,48 @@ pub(super) fn start(connection: &Connection, preparation: Preparation) -> Result
     transition(connection, &mut lease, "running", "running")?;
     store::insert(connection, KIND, &lease.record.id, &lease.record)?;
     Ok(Some(lease))
+}
+
+pub(crate) fn select_fine(
+    connection: &Connection,
+    preparation: &Preparation,
+    tasks: &[TaskRecord],
+) -> Result<Option<TaskRecord>> {
+    let mut fines: Vec<_> = tasks
+        .iter()
+        .filter(|task| {
+            task.parent_task_id.as_deref() == Some(&preparation.medium.id)
+                && task.granularity == Granularity::Fine
+                && task.status != "cancelled"
+        })
+        .collect();
+    fines.sort_by(|a, b| a.position.cmp(&b.position).then_with(|| a.id.cmp(&b.id)));
+    let Some(fine) = fines.into_iter().next() else {
+        return Ok(None);
+    };
+    ensure!(
+        fine.project_id == preparation.project_id
+            && fine.object_id == preparation.medium.object_id
+            && fine.run_id.as_deref() == Some(&preparation.run.id)
+            && matches!(&fine.identity, Identity::Fine { schema_version, object_id, medium_task_id, run_id, stage_id }
+            if *schema_version == VERSION && object_id == &preparation.run.object_id
+                && medium_task_id == &preparation.medium.id && run_id == &preparation.run.id
+                && fine.stage_id.as_deref() == Some(stage_id.as_str())),
+        "OBJECT_ATTEMPT_IDENTITY_MISMATCH"
+    );
+    ensure!(
+        fine.status == "planned",
+        "OBJECT_ATTEMPT_CHECKPOINT_REQUIRED"
+    );
+    for id in &fine.depends_on {
+        let dependency = store::read::<TaskRecord>(connection, TASK_KIND, id)?;
+        if !dependency.is_some_and(|task| {
+            task.id == *id && task.project_id == fine.project_id && task.status == "accepted"
+        }) {
+            return Ok(None);
+        }
+    }
+    Ok(Some(fine.clone()))
 }
 
 pub(super) fn current(connection: &Connection, lease: &Lease) -> Result<()> {

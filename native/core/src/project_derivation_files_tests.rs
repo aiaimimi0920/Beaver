@@ -182,15 +182,26 @@ fn missing_owners_aliases_and_target_collisions_fail_before_file_creation() -> R
     assert!(paths.entries(&entries).is_err());
     let source = temp.path().join("source");
     fs::create_dir_all(source.join(".beaver/workspaces/orphan"))?;
+    let before = data_backup::inventory(&source)?;
     let request = copy::Request {
         request_id: "again".into(),
-        source,
+        source: source.clone(),
         source_project_id: "original".into(),
         target_project_id: "derived".into(),
     };
     let orphan = temp.path().join("orphan-preparation");
-    copy::prepare(request, &orphan)?;
-    assert!(create(&orphan, "rejected").is_err());
-    assert!(!directory(&orphan, "rejected")?.exists());
+    for error in [
+        copy::inspect_source(&source).unwrap_err(),
+        copy::prepare(request, &orphan).unwrap_err(),
+    ] {
+        assert!(
+            error
+                .to_string()
+                .contains("ambiguous or unknown workspace identity"),
+            "{error:#}"
+        );
+    }
+    assert!(!orphan.exists());
+    assert_eq!(data_backup::inventory(&source)?, before);
     Ok(())
 }

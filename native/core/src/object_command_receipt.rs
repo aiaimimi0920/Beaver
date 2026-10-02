@@ -13,7 +13,7 @@ pub(crate) const MAX_REVISION: u64 = 9_007_199_254_740_991;
 
 #[path = "object_acceptance_history.rs"]
 mod history;
-pub(crate) use history::latest_accepted;
+pub(crate) use history::{accepted_at_revision, latest_accepted};
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 #[serde(rename_all = "camelCase", deny_unknown_fields)]
@@ -26,9 +26,9 @@ pub struct CommandResult {
 
 #[derive(Serialize, Deserialize)]
 #[serde(rename_all = "camelCase", deny_unknown_fields)]
-struct Receipt {
-    input_digest: String,
-    result: CommandResult,
+pub(crate) struct Receipt {
+    pub(crate) input_digest: String,
+    pub(crate) result: CommandResult,
 }
 
 pub(crate) struct Command {
@@ -38,7 +38,7 @@ pub(crate) struct Command {
     project_id: String,
 }
 
-fn digest(value: &impl Serialize) -> Result<String> {
+pub(crate) fn digest(value: &impl Serialize) -> Result<String> {
     Ok(format!("{:x}", Sha256::digest(serde_json::to_vec(value)?)))
 }
 

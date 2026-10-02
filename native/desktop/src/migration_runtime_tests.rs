@@ -25,6 +25,7 @@ fn snapshot(root: &Path) -> Result<BTreeMap<PathBuf, Vec<u8>>> {
 
 #[test]
 fn migration_requests_require_explicit_paths_and_reject_live_host_overlap() -> Result<()> {
+    let _test_operation = TEST_OPERATION.lock().unwrap();
     let temp = tempfile::tempdir()?;
     let host = temp.path().join("live");
     fs::create_dir(&host)?;

@@ -45,7 +45,40 @@ pub(crate) fn target(
     let value = entity.value.as_ref().context("invalid entity JSON")?;
     let kind = entity.kind.as_str();
     let id = entity.id.as_str();
+    if crate::project_derivation_execution_validation::supports(kind) {
+        return Ok(Target::Remap {
+            key: Key {
+                kind: kind.into(),
+                id: crate::project_derivation_execution_records::target_key(
+                    kind, id, value, request,
+                )?,
+            },
+        });
+    }
+    if crate::project_derivation_queue_records::supports(kind) {
+        return Ok(Target::Remap {
+            key: Key {
+                kind: kind.into(),
+                id: crate::project_derivation_queue_records::target_key(kind, value, request)?,
+            },
+        });
+    }
     let mapped = match kind {
+        "object" | "object_version" | "object_task" | "object_run" => generated(request, kind, id)?,
+        "object_task_draft" | "object_task_planning_head" => id.to_owned(),
+        "object_task_planning_declaration" => generated(request, "object_task", id)?,
+        "object_task_planning" | "object_task_planning_receipt" => {
+            generated(request, "object_planning_request", id)?
+        }
+        "object_task_plan_state" => request.target_project_id.clone(),
+        "object_task_commit_receipt"
+        | "object_task_cancel_receipt"
+        | "object_task_definition_revision"
+        | "object_task_planning_declaration_receipt"
+        | "object_task_draft_unlock_receipt" => generated(request, "object_task_request", id)?,
+        "object_command_receipt" => {
+            crate::project_derivation_object_receipts::target_key(value, request)?
+        }
         "project" | "validationSettings" | "validationManifest" => {
             request.target_project_id.clone()
         }

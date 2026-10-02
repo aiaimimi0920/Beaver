@@ -15,8 +15,15 @@ use std::{
 // Includes inspection so a second caller cannot race preparation or activation in this host.
 static OPERATION: Mutex<()> = Mutex::new(());
 
+// Public API tests share the process-wide migration gate without racing each other.
+#[cfg(test)]
+static TEST_OPERATION: Mutex<()> = Mutex::new(());
+
 #[path = "migration_registration.rs"]
 mod registration;
+
+#[path = "migration_derivation.rs"]
+mod derivation;
 
 pub(crate) struct Outcome {
     pub value: Value,
@@ -95,6 +102,16 @@ pub(crate) fn call(
 
 fn execute(host: &Path, method: &str, input: &Value) -> Result<Value> {
     let host = fs::canonicalize(host)?;
+    if matches!(
+        method,
+        "migration.inspectDerivationSource"
+            | "migration.prepareDerivation"
+            | "migration.inspectDerivation"
+            | "migration.assembleDerivation"
+            | "migration.inspectAssembly"
+    ) {
+        return derivation::execute(&host, method, input);
+    }
     if method == "migration.activateAssembly" {
         let preparation = path(input, "preparation", false, &host)?;
         let destination = path(input, "destination", false, &host)?;

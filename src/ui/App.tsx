@@ -372,7 +372,17 @@ export function App() {
           )}
         </div>
       </DesktopShell>
-      {migration && <MigrationDialog close={() => setMigration(false)} />}
+      {migration && (
+        <MigrationDialog
+          close={() => setMigration(false)}
+          openProject={async (id) => {
+            await refresh();
+            setProjectId(id);
+            setPage("overview");
+            setMigration(false);
+          }}
+        />
+      )}
       {create && (
         <CreateProjectDialog
           close={closeCreate}

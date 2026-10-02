@@ -182,3 +182,56 @@ fn refuses_tampered_identity_maps_without_rewriting_copy() -> Result<()> {
     assert!(target.join(PENDING).exists());
     Ok(())
 }
+
+#[test]
+fn source_inspection_discovers_identity_without_writes_and_requires_offline_storage() -> Result<()>
+{
+    let temp = tempfile::tempdir()?;
+    let root = temp.path().join("source");
+    source(&root)?;
+    let before = data_backup::inventory(&root)?;
+    let inspected = inspect_source(&root)?;
+    assert_eq!(inspected.request.source_project_id, "original");
+    assert_ne!(inspected.request.target_project_id, "original");
+    assert_eq!(inspected.entities, 2);
+    assert_eq!(inspected.calls, 0);
+    assert_eq!(data_backup::inventory(&root)?, before);
+    let owner = ProjectStore::open(&root, "original")?;
+    assert!(inspect_source(&root).is_err());
+    drop(owner);
+    let writer = OpenOptions::new()
+        .write(true)
+        .open(root.join(".beaver/project.sqlite"))?;
+    assert!(inspect_source(&root).is_err());
+    drop(writer);
+    let result = prepare(inspected.request, &temp.path().join("preparation"))?;
+    assert_eq!(result.identities.entities.len(), 2);
+    Ok(())
+}
+
+#[test]
+fn source_inspection_refuses_malformed_execution_records_without_discarding_them() -> Result<()> {
+    for (record, expected) in [
+        (json!({}), "missing field"),
+        (json!({"projectId":"original"}), "unknown field `projectId`"),
+    ] {
+        let temp = tempfile::tempdir()?;
+        let root = temp.path().join("source");
+        source(&root)?;
+        let owner = ProjectStore::open(&root, "original")?;
+        owner.store().put("object_attempt", "attempt", &record)?;
+        drop(owner);
+        let before = data_backup::inventory(&root)?;
+        let error = format!("{:#}", inspect_source(&root).unwrap_err());
+        assert!(
+            error.contains("derivation object_attempt/attempt") && error.contains(expected),
+            "{error}"
+        );
+        assert_eq!(data_backup::inventory(&root)?, before);
+        let destination = temp.path().join("preparation");
+        assert!(prepare(request(&root), &destination).is_err());
+        assert!(!destination.exists());
+        assert_eq!(data_backup::inventory(&root)?, before);
+    }
+    Ok(())
+}

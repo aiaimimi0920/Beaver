@@ -13,6 +13,8 @@ use anyhow::{ensure, Context, Result};
 use rusqlite::Connection;
 use serde::{Deserialize, Serialize};
 
+#[path = "object_candidate_derivation.rs"]
+pub(crate) mod derivation;
 #[path = "object_publication.rs"]
 pub mod publication;
 #[path = "object_candidate_summary.rs"]

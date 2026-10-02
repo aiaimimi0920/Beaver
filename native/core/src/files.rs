@@ -57,6 +57,21 @@ pub fn safe_path(root: &Path, relative: &str) -> Result<PathBuf> {
     Ok(current)
 }
 
+pub(crate) fn excluded_snapshot_name(name: &str) -> bool {
+    [
+        ".git",
+        ".godot",
+        ".beaver",
+        ".beaver-context",
+        "node_modules",
+        "target",
+        "release",
+        "exports",
+    ]
+    .contains(&name)
+        || name.starts_with(".beaver-write-")
+}
+
 pub fn list_files(root: &Path) -> Result<Vec<String>> {
     fn visit(root: &Path, relative: &str, output: &mut Vec<String>) -> Result<()> {
         let directory = if relative.is_empty() {
@@ -70,19 +85,7 @@ pub fn list_files(root: &Path) -> Result<Vec<String>> {
                 .file_name()
                 .into_string()
                 .map_err(|_| anyhow::anyhow!("文件名不是有效 UTF-8"))?;
-            if [
-                ".git",
-                ".godot",
-                ".beaver",
-                ".beaver-context",
-                "node_modules",
-                "target",
-                "release",
-                "exports",
-            ]
-            .contains(&name.as_str())
-                || name.starts_with(".beaver-write-")
-            {
+            if excluded_snapshot_name(&name) {
                 continue;
             }
             let file = if relative.is_empty() {

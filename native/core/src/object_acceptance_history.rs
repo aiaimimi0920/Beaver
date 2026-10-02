@@ -13,6 +13,52 @@ pub(crate) fn latest_accepted(
     connection: &Connection,
     object: &ObjectRecord,
 ) -> Result<Option<String>> {
+    latest_in(connection, object, false)
+}
+
+/// A frozen claim may precede later metadata or acceptance commands. Recover its
+/// exact projection from committed history without treating the current pointer as historical.
+pub(crate) fn accepted_at_revision(
+    connection: &Connection,
+    object: &ObjectRecord,
+    revision: u64,
+) -> Result<Option<String>> {
+    ensure!(
+        revision <= object.revision,
+        "OBJECT_BASELINE_CLAIM_REVISION_INVALID"
+    );
+    if revision == object.revision {
+        return latest_accepted(connection, object);
+    }
+    let mut statement = connection.prepare(
+        "SELECT value FROM entities WHERE kind=? AND json_extract(value,'$.result.object.id')=? AND json_extract(value,'$.result.object.revision')=?",
+    )?;
+    let sql_revision = i64::try_from(revision).context("OBJECT_BASELINE_CLAIM_REVISION_INVALID")?;
+    let projections = statement
+        .query_map(params![KIND, object.id, sql_revision], |row| {
+            row.get::<_, String>(0)
+        })?
+        .map(|row| Ok(serde_json::from_str::<Receipt>(&row?)?.result.object))
+        .collect::<Result<Vec<_>>>()?;
+    ensure!(
+        projections.len() == 1,
+        "OBJECT_BASELINE_CLAIM_HISTORY_MISSING"
+    );
+    let historical = &projections[0];
+    ensure!(
+        historical.id == object.id
+            && historical.project_id == object.project_id
+            && historical.revision == revision,
+        "OBJECT_BASELINE_CLAIM_HISTORY_INVALID"
+    );
+    latest_in(connection, historical, true)
+}
+
+fn latest_in(
+    connection: &Connection,
+    object: &ObjectRecord,
+    historical: bool,
+) -> Result<Option<String>> {
     let accepted = accepted_versions(object)?;
     let mut statement = connection.prepare(
         "SELECT id,value FROM entities WHERE kind=? AND json_extract(value,'$.result.object.id')=?",
@@ -32,6 +78,9 @@ pub(crate) fn latest_accepted(
                 && key == digest(&(&result.project_id, &result.request_id))?,
             "OBJECT_RECEIPT_IDENTITY_MISMATCH"
         );
+        if historical && result.object.revision > object.revision {
+            continue;
+        }
         let Some(version_id) = &result.version_id else {
             continue;
         };
@@ -87,7 +136,8 @@ fn accepted_versions(object: &ObjectRecord) -> Result<BTreeMap<&str, &ObjectVers
             ids.insert(&version.version_id),
             "OBJECT_ACCEPTANCE_HISTORY_INVALID"
         );
-        if object_version_manifest::read_version(object, version)?.status == VersionStatus::Accepted
+        if object_version_manifest::read_frozen_version(object, version)?.status
+            == VersionStatus::Accepted
         {
             accepted.insert(version.version_id.as_str(), version);
         }

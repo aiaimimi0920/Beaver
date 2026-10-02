@@ -43,8 +43,20 @@ pub(crate) fn validate(connection: &Connection, project: &str) -> Result<Vec<Ent
     );
     let ownership = Ownership::new([project.to_owned()].into(), &entities);
     for entity in &entities {
-        owned(ownership.entity(entity), project, &entity.kind, &entity.id)?;
+        if !crate::project_derivation_object_records::supports(&entity.kind)
+            && !crate::project_derivation_plan_records::supports(&entity.kind)
+            && !crate::project_derivation_planning_records::supports(&entity.kind)
+            && !crate::project_derivation_declaration_records::supports(&entity.kind)
+            && !crate::project_derivation_queue_records::supports(&entity.kind)
+            && !crate::project_derivation_execution_validation::supports(&entity.kind)
+        {
+            owned(ownership.entity(entity), project, &entity.kind, &entity.id)?;
+        }
     }
+    crate::project_derivation_object_validation::validate(connection, &entities, project)?;
+    crate::project_derivation_execution_validation::validate(connection, &entities, project)?;
+    crate::project_derivation_plan_validation::validate(&entities, project)?;
+    crate::project_derivation_queue_validation::validate(connection, &entities, project)?;
     let references = project_migration_references::inspect(&entities, &ownership);
     if let Some(issue) = references.issues.first() {
         bail!(

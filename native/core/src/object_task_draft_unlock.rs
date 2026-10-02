@@ -9,9 +9,9 @@ use serde::{Deserialize, Serialize};
 const RECEIPT_KIND: &str = "object_task_draft_unlock_receipt";
 
 #[derive(Serialize, Deserialize)]
-struct Receipt {
-    request: UnlockDraftRequest,
-    draft: Draft,
+pub(crate) struct Receipt {
+    pub(crate) request: UnlockDraftRequest,
+    pub(crate) draft: Draft,
 }
 
 /// Start an empty draft without modifying the already committed task definitions.

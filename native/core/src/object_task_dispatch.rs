@@ -12,7 +12,7 @@ use sha2::{Digest, Sha256};
 
 const KIND: &str = "object_task_dispatch_control";
 const RECEIPT_KIND: &str = "object_task_dispatch_receipt";
-const MAX_CONTROL_REVISION: u64 = 9_007_199_254_740_991;
+pub(crate) const MAX_CONTROL_REVISION: u64 = 9_007_199_254_740_991;
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase", deny_unknown_fields)]
@@ -94,6 +94,18 @@ pub fn set_paused(runtime: &ProjectRuntime, request: &SetPausedRequest) -> Resul
         request.project_id == runtime.project_id(),
         "PROJECT_RUNTIME_MISMATCH"
     );
+    let handle = runtime.store();
+    let mut store = handle
+        .lock()
+        .map_err(|_| anyhow::anyhow!("object task store lock poisoned"))?;
+    store.transaction(|connection| set_paused_in(connection, request))
+}
+
+/// Shared by runtime commands and offline derivation's transaction-local safety pause.
+pub(crate) fn set_paused_in(
+    connection: &Connection,
+    request: &SetPausedRequest,
+) -> Result<Receipt> {
     ensure!(
         [
             &request.project_id,
@@ -118,67 +130,61 @@ pub fn set_paused(runtime: &ProjectRuntime, request: &SetPausedRequest) -> Resul
             &request.request_id
         ))?)
     );
-    let handle = runtime.store();
-    let mut store = handle
-        .lock()
-        .map_err(|_| anyhow::anyhow!("object task store lock poisoned"))?;
-    store.transaction(|connection| {
-        if let Some(receipt) = storage::read::<Receipt>(connection, RECEIPT_KIND, &key)? {
-            ensure!(
-                receipt.request == *request,
-                "OBJECT_TASK_DISPATCH_REQUEST_CONFLICT"
-            );
-            ensure!(
-                receipt.result.schema_version == 1
-                    && receipt.result.project_id == request.project_id
-                    && receipt.result.task_id == request.task_id
-                    && receipt.result.object_id == request.object_id
-                    && receipt.result.run_id == request.run_id
-                    && receipt.result.paused == request.paused
-                    && receipt.result.revision == request.expected_control_revision + 1,
-                "OBJECT_TASK_DISPATCH_RECEIPT_MISMATCH"
-            );
-            return Ok(receipt);
-        }
-        let (task, run) = claim::read_medium(connection, &request.project_id, &request.task_id)?;
+    if let Some(receipt) = storage::read::<Receipt>(connection, RECEIPT_KIND, &key)? {
         ensure!(
-            run.id == request.run_id && run.object_id == request.object_id,
-            "OBJECT_TASK_DISPATCH_TARGET_MISMATCH"
+            receipt.request == *request,
+            "OBJECT_TASK_DISPATCH_REQUEST_CONFLICT"
         );
         ensure!(
-            task.revision == request.expected_task_revision,
-            "OBJECT_TASK_REVISION_CONFLICT"
+            receipt.result.schema_version == 1
+                && receipt.result.project_id == request.project_id
+                && receipt.result.task_id == request.task_id
+                && receipt.result.object_id == request.object_id
+                && receipt.result.run_id == request.run_id
+                && receipt.result.paused == request.paused
+                && receipt.result.revision == request.expected_control_revision + 1,
+            "OBJECT_TASK_DISPATCH_RECEIPT_MISMATCH"
         );
-        ensure!(
-            task.status == run.status
-                && matches!(
-                    task.status.as_str(),
-                    "planned" | "queued" | "running" | "awaitingAcceptance" | "failed"
-                ),
-            "OBJECT_TASK_DISPATCH_NOT_CONTROLLABLE"
-        );
-        let entry = queue::read_entry(connection, &request.project_id, &request.task_id)?;
-        if task.status != "planned" {
-            entry
-                .as_ref()
-                .context("OBJECT_TASK_QUEUE_ENTRY_NOT_FOUND")?;
-        }
-        if let Some(entry) = entry {
-            claim::validate_state(&entry, &task, &run)?;
-        }
-        let mut control = read_in(connection, &task, &run)?;
-        ensure!(
-            control.revision == request.expected_control_revision,
-            "OBJECT_TASK_DISPATCH_REVISION_CONFLICT"
-        );
-        control.paused = request.paused;
-        control.revision += 1;
-        storage::replace(connection, KIND, &run.id, &control)?;
-        let receipt = Receipt {
-            request: request.clone(),
-            result: control,
-        };
-        storage::insert(connection, RECEIPT_KIND, &key, &receipt)?;
-        Ok(receipt)
-    })
+        return Ok(receipt);
+    }
+    let (task, run) = claim::read_medium(connection, &request.project_id, &request.task_id)?;
+    ensure!(
+        run.id == request.run_id && run.object_id == request.object_id,
+        "OBJECT_TASK_DISPATCH_TARGET_MISMATCH"
+    );
+    ensure!(
+        task.revision == request.expected_task_revision,
+        "OBJECT_TASK_REVISION_CONFLICT"
+    );
+    ensure!(
+        task.status == run.status
+            && matches!(
+                task.status.as_str(),
+                "planned" | "queued" | "running" | "awaitingAcceptance" | "failed"
+            ),
+        "OBJECT_TASK_DISPATCH_NOT_CONTROLLABLE"
+    );
+    let entry = queue::read_entry(connection, &request.project_id, &request.task_id)?;
+    if task.status != "planned" {
+        entry
+            .as_ref()
+            .context("OBJECT_TASK_QUEUE_ENTRY_NOT_FOUND")?;
+    }
+    if let Some(entry) = entry {
+        claim::validate_state(&entry, &task, &run)?;
+    }
+    let mut control = read_in(connection, &task, &run)?;
+    ensure!(
+        control.revision == request.expected_control_revision,
+        "OBJECT_TASK_DISPATCH_REVISION_CONFLICT"
+    );
+    control.paused = request.paused;
+    control.revision += 1;
+    storage::replace(connection, KIND, &run.id, &control)?;
+    let receipt = Receipt {
+        request: request.clone(),
+        result: control,
+    };
+    storage::insert(connection, RECEIPT_KIND, &key, &receipt)?;
+    Ok(receipt)
 }

@@ -31,8 +31,8 @@ pub struct Receipt {
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase", deny_unknown_fields)]
 pub(crate) struct Pending {
-    request: InterruptRequest,
-    result: Option<View>,
+    pub(crate) request: InterruptRequest,
+    pub(crate) result: Option<View>,
 }
 
 fn validate(runtime: &ProjectRuntime, request: &InterruptRequest) -> Result<()> {
@@ -80,7 +80,7 @@ fn replay(connection: &Connection, request: &InterruptRequest) -> Result<Option<
     Ok(receipt)
 }
 
-fn validate_result(receipt: &Pending) -> Result<()> {
+pub(crate) fn validate_result(receipt: &Pending) -> Result<()> {
     if let Some(result) = &receipt.result {
         ensure!(
             result.project_id == receipt.request.project_id

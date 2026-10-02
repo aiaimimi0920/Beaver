@@ -31,7 +31,7 @@ pub struct Receipt {
     pub result: View,
 }
 
-fn move_ids(view: &View, request: &Request) -> Result<Vec<String>> {
+pub(crate) fn move_ids(view: &View, request: &Request) -> Result<Vec<String>> {
     let queued: Vec<_> = view
         .items
         .iter()
