@@ -48,9 +48,10 @@ jobs:
           rustup toolchain install 1.95.0 --profile minimal --component rustfmt
           npm ci --include=dev --ignore-scripts --no-audit --no-fund
           node --import tsx scripts/build-native.ts
-      - name: Check formatting and shared contracts
+      - name: Report Rust formatting
+        run: python scripts/development_quality.py rustfmt --output artifacts/quality/format -- cargo fmt --all -- --check
+      - name: Check shared contracts
         run: |
-          cargo fmt --all -- --check
           npm run typecheck
           node --import tsx --test tests/task-plan.test.ts tests/vendor-npr.test.ts
       - name: Exercise focused native regressions
@@ -65,7 +66,14 @@ jobs:
           cargo test --locked -j1 -p beaver-core --lib code_structure
           cargo test --locked -j1 -p beaver-core --test code_structure_contract
           cargo test --locked -j1 -p beaver-core --test object_framework_boundary --test project_task_storage
-          npm run check:effective-lines
+      - name: Compile the code-structure scanner (fail closed)
+        run: cargo build --locked -j1 -p beaver-core --bin beaver-code-structure
+      - name: Report effective-line findings
+        run: >-
+          python scripts/development_quality.py beaver-lines
+          --output artifacts/quality/lines --report output/effective-code-lines.json --
+          target/debug/beaver-code-structure --root . --repo
+          --baseline scripts/effective-code-lines-baseline.json --json output/effective-code-lines.json
       - name: Package checked headless host
         run: |
           cargo build --locked -j1 -p beaver-headless
@@ -80,3 +88,11 @@ jobs:
           path: output/beaver-headless-linux-x86_64.tar.gz
           if-no-files-found: error
           retention-days: 7
+
+      - name: Retain beaver quality evidence
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: quality-beaver-${{ github.run_id }}
+          path: artifacts/quality
+          if-no-files-found: error
