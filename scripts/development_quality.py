@@ -14,6 +14,9 @@ def require(condition, message):
 
 
 def classify(kind, code, stdout, stderr, report=None):
+    # rust-toolchain enables ANSI color in hosted CI; retain raw logs unchanged.
+    stdout = re.sub(r"\x1b\[[0-9;]*m", "", stdout)
+    stderr = re.sub(r"\x1b\[[0-9;]*m", "", stderr)
     if kind == "rustfmt":
         require(code in (0, 1), "rustfmt execution failed")
         require(not stderr.strip(), "rustfmt emitted diagnostics on stderr")
