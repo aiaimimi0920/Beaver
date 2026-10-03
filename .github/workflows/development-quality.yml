@@ -1,0 +1,83 @@
+name: Development Quality Reports
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  schedule:
+    - cron: '43 19 * * 0'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: development-quality-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  reports:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
+        with:
+          persist-credentials: false
+          fetch-depth: 1
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version: '22'
+      - uses: dtolnay/rust-toolchain@a5f673d0ba8626c3977bb416a1612774bc82181b # 1.95.0
+        with:
+          components: rustfmt, clippy
+      - name: Test report classification and real rustfmt errors
+        run: python scripts/test_development_quality.py -v
+      - name: Report root Rust formatting
+        run: python scripts/development_quality.py rustfmt --output artifacts/quality/format-root -- cargo fmt --all -- --check
+      - name: Retain development quality evidence
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: quality-development-${{ github.run_id }}
+          path: artifacts/quality
+          if-no-files-found: error
+
+
+  size-report:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 40
+    env:
+      ELECTRON_SKIP_BINARY_DOWNLOAD: '1'
+      CARGO_INCREMENTAL: '0'
+      CARGO_BUILD_JOBS: '1'
+      CARGO_PROFILE_DEV_DEBUG: '0'
+      RUSTUP_TOOLCHAIN: 1.95.0
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version: '24.19.0'
+      - uses: dtolnay/rust-toolchain@a5f673d0ba8626c3977bb416a1612774bc82181b # 1.95.0
+      - uses: Swatinem/rust-cache@6323deb102c322ba6fcbdcafc7e3dddab59af2b6 # v2
+      - name: Prepare locked scanner build inputs
+        run: |
+          npm ci --include=dev --ignore-scripts --no-audit --no-fund
+          node --import tsx scripts/build-native.ts
+      - name: Compile scanner (compiler failures remain blocking)
+        run: cargo build --locked -j1 -p beaver-core --bin beaver-code-structure
+      - name: Report effective-line findings
+        run: >-
+          python scripts/development_quality.py beaver-lines
+          --output artifacts/quality/lines --report output/effective-code-lines.json --
+          target/debug/beaver-code-structure --root . --repo
+          --baseline scripts/effective-code-lines-baseline.json --json output/effective-code-lines.json
+      - name: Retain size quality evidence
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: quality-size-${{ github.run_id }}
+          path: artifacts/quality
+          if-no-files-found: error
+
