@@ -51,5 +51,17 @@ cargo test --locked -p beaver-core visual_preserves_canvas_layout_and_clicks_at_
 ```
 
 All scripts here are Beaver source. The compressed, immutable upstream archive
-is a distributed dependency, not handwritten source or an exemption for modified
-GUT files in game projects.
+is a distributed dependency. Projects may retain its unchanged `addons/gut`
+contents, including the MIT and font licenses, as a development dependency so
+test scripts resolve when opened in the editor. The code-structure checker derives
+its trusted paths and SHA-256 identities only from this compiled-in archive after
+verifying the fixed archive hash above. New, moved or modified project files are
+not exempt, and project-owned provenance cannot change this trust list. The
+compatibility overlay remains sandbox-only and receives no new exemption.
+
+Focused dependency and gate regressions:
+
+```powershell
+cargo test --locked -p beaver-core --lib code_structure
+cargo test --locked -p beaver-core --test code_structure_contract
+```

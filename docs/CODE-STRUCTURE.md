@@ -43,7 +43,12 @@ Keep scripts external to serialized Godot scenes rather than embedding them.
 The RoleNPR package is a pinned dependency: only exact paths and byte hashes in
 its bundled provenance manifest are exempt. Newly added or modified files in
 `addons/npr_characters` are checked normally. No broad `addons` or `vendor`
-exclusion exists. Other immutable dependencies require an explicit reviewed
+exclusion exists. GUT 9.4.0 may be installed as a project development dependency
+at `addons/gut`: the checker derives exact file paths and byte hashes from the
+compiled-in `resources/validation/gut-9.4.0.zip`, after verifying its pinned
+SHA-256. Unknown files, changed bytes and alternate paths follow ordinary limits;
+a project manifest cannot expand this list. The archive and its MIT/font licenses
+remain unchanged. Other immutable dependencies require an explicit reviewed
 exclusion; a filename or a generated-code comment cannot grant one.
 
 ## Module ownership

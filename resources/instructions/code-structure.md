@@ -32,8 +32,11 @@ renames, extension changes, embedded scripts or code hidden in strings.
 
 Generated build output and immutable third-party sources require explicit
 exclusions. A folder named addons, vendor or generated is not an exemption.
-Beaver's bundled NPR package is exempt only at its published paths with its
-published content hashes. Modified package sources follow the ordinary limits.
+Beaver's bundled NPR package and pinned GUT 9.4.0 development dependency are
+exempt only at their published paths with exact upstream content hashes. GUT
+identities come from Beaver's compiled-in, checksum-verified validation archive
+and apply only under addons/gut. Modified package sources follow the ordinary
+limits; project-owned manifests cannot grant exclusions.
 Godot .tscn/.tres files are serialized scene/resource data; keep handwritten
 scripts in separate source files.
 

@@ -53,10 +53,13 @@ pub fn check_changes(files: &Files, baseline: &Snapshot, changes: &[Change]) -> 
         let stamp = measure(path, &bytes)?;
         if stamp.effective_lines > 500 {
             if let Some(old) = baseline.get(path) {
-                debt.files.insert(
-                    path.to_owned(),
-                    measure(path, &read(&files.blob(old)?, MAX_SOURCE_BYTES)?)?,
-                );
+                let old_bytes = read(&files.blob(old)?, MAX_SOURCE_BYTES)?;
+                // Vendor identity is byte-exact; canonical newline normalization
+                // must not turn modified dependencies into unchanged legacy debt.
+                if !vendor::immutable(path, &old_bytes) {
+                    debt.files
+                        .insert(path.to_owned(), measure(path, &old_bytes)?);
+                }
             }
         }
         sources.insert(path.to_owned(), (stamp, vendor::immutable(path, &bytes)));
