@@ -60,7 +60,7 @@ pub async fn dispatch(
     if method == "item/tool/call" && params["tool"] == "beaver_submit_plan" {
         let result = {
             let store = store.lock().map_err(|_| "数据库锁不可用")?;
-            crate::task_plan::submit(&store, task_id, params)
+            crate::task_plan::submit(&store, files, task_id, params)
         };
         match result {
             Ok(()) => {

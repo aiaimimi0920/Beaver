@@ -79,6 +79,7 @@ fn host_runtime(root: &Path) -> Result<TaskRuntime> {
 
 fn failed_launch() -> Launch {
     Launch {
+        external: None,
         command: None,
         model: String::new(),
         prompt: String::new(),

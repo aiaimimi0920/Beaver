@@ -7,7 +7,10 @@ import fs from "node:fs/promises";
 import path from "node:path";
 import { defaultSettings } from "../src/shared/types";
 import { askUserTool } from "../src/shared/clarifications";
-import { planTool, planningInstruction } from "../src/shared/task-plan";
+import {
+  nativePlanTool as planTool,
+  nativePlanningInstruction as planningInstruction,
+} from "../src/shared/task-plan";
 import { buildBrandAssets } from "./lib/branding";
 import { readProductVersion } from "./product-version";
 import { windowsToolHintsScript } from "../src/core/tool-discovery";

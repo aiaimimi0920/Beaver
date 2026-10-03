@@ -28,36 +28,8 @@ pub struct Request {
     pub port: u16,
 }
 
-fn addon() -> Result<PathBuf> {
-    let root = PathBuf::from(
-        std::env::var_os("APPDATA").context("Blender addon discovery requires APPDATA")?,
-    )
-    .join("Blender Foundation/Blender");
-    let mut candidates = Vec::new();
-    if root.is_dir() {
-        for entry in fs::read_dir(root)? {
-            let entry = entry?;
-            let version = entry
-                .file_name()
-                .to_string_lossy()
-                .split('.')
-                .map(str::parse::<u32>)
-                .collect::<std::result::Result<Vec<_>, _>>();
-            let path = entry.path().join("scripts/addons/blender_mcp.py");
-            if let Ok(version) = version {
-                if path.is_file() {
-                    candidates.push((version, path));
-                }
-            }
-        }
-    }
-    candidates.sort_by(|a, b| b.0.cmp(&a.0));
-    candidates
-        .into_iter()
-        .next()
-        .map(|(_, path)| path)
-        .context("Install the Blender MCP addon before starting NPR production")
-}
+#[path = "blender_addon.rs"]
+mod addon;
 
 impl Request {
     /// Reserve a distinct port while Codex configuration is prepared. No Blender starts here.
@@ -93,7 +65,7 @@ impl Request {
         fs::write(
             &request,
             serde_json::to_vec(
-                &json!({"addon":addon()?,"port":self.port,"ready":ready,"observer":observer,"restore":restore}),
+                &json!({"addon":addon::installed()?,"port":self.port,"ready":ready,"observer":observer,"restore":restore}),
             )?,
         )?;
         let script = self.directory.join("start.py");

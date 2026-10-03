@@ -11,7 +11,7 @@ func _initialize() -> void:
 		print("BEAVER_NPR_INCOMPATIBLE=" + JSON.stringify(missing))
 		quit(1)
 		return
-	var installer: Script = load("res://addons/npr_characters/config/install_settings.gd")
+	var installer: Script = load("res://addons/npr_character_frame/config/install_settings.gd")
 	var errors: PackedStringArray = installer.install()
 	if not errors.is_empty():
 		print("BEAVER_NPR_INSTALL_ERRORS=" + JSON.stringify(errors))
@@ -19,13 +19,8 @@ func _initialize() -> void:
 		return
 	ProjectSettings.set_setting("rendering/renderer/rendering_method", "forward_plus")
 	ProjectSettings.set_setting("rendering/renderer/rendering_method.mobile", "forward_plus")
-	var enabled: PackedStringArray = ProjectSettings.get_setting(
-		"editor_plugins/enabled", PackedStringArray()
-	)
-	var plugin := "res://addons/npr_characters/plugin.cfg"
-	if not enabled.has(plugin):
-		enabled.append(plugin)
-	ProjectSettings.set_setting("editor_plugins/enabled", enabled)
+	# The upstream editor menu launches its Silver Wolf sample showcase, which
+	# Beaver deliberately does not distribute. Runtime classes need no plugin enable.
 	var result := ProjectSettings.save()
 	if result != OK:
 		push_error("Cannot save NPR project settings: " + error_string(result))

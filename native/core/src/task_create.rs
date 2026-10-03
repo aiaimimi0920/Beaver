@@ -42,6 +42,7 @@ struct Input {
     auto_accept: Option<bool>,
     #[serde(default)]
     asset_task: bool,
+    execution_mode: Option<String>,
 }
 fn length(text: &str, min: usize, max: usize) -> bool {
     (min..=max).contains(&text.encode_utf16().count())
@@ -111,6 +112,19 @@ pub(crate) fn create_recorded(
     {
         bail!("任务输入超出允许范围");
     }
+    anyhow::ensure!(
+        input.execution_mode.as_deref().is_none_or(|mode| [
+            "responses",
+            crate::external_run_contract::MODE
+        ]
+        .contains(&mode)),
+        "Unknown execution mode"
+    );
+    anyhow::ensure!(
+        !(input.execution_mode.as_deref() == Some(crate::external_run_contract::MODE)
+            && input.asset_task),
+        "External execution does not use interactive asset sessions"
+    );
     let capability = input.capability.as_deref().unwrap_or("code");
     if !["code", "review"].contains(&capability) {
         bail!("任务能力无效");
@@ -198,6 +212,9 @@ pub(crate) fn create_recorded(
             .collect()
     });
     let mut task = json!({"id":id,"projectId":input.project_id,"title":title,"prompt":input.prompt,"stopConditions":input.stop_conditions,"references":input.references,"maxMinutes":input.max_minutes,"capability":capability,"status":"queued","createdAt":now,"updatedAt":now,"workspace":files.workspace_location(&id)?,"baseline":baseline,"changes":[],"conflicts":[]});
+    if let Some(mode) = input.execution_mode {
+        task["executionMode"] = json!(mode);
+    }
     if let Some(ref direction) = input.direction {
         task["direction"] = json!(direction);
     }

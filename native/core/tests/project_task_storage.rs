@@ -157,6 +157,7 @@ fn planned_children_prepare_from_the_previous_project_commit() -> Result<()> {
     store.put("task", &id, &parent)?;
     task_plan::submit(
         &store,
+        &files,
         &id,
         &json!({"threadId":"thread","arguments":{
             "summary":"Write and review", "steps":[

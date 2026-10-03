@@ -28,6 +28,7 @@ mod object_resume;
 pub use object_control::{Availability as ObjectAvailability, Execution as ObjectExecution};
 
 pub struct Launch {
+    pub external: Option<crate::external_execution::ExternalLaunch>,
     pub command: Option<Command>,
     pub model: String,
     pub prompt: String,

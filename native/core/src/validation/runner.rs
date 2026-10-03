@@ -54,7 +54,15 @@ pub fn execute(
             .into();
             run.phase = run.status.clone();
             run.verdict = "needsReview".into();
-            run.error = Some(error.to_string());
+            let message = error.to_string();
+            // Only this typed failure contains a host-generated reason/reference.
+            // Other errors can contain raw output and keep their previous contract.
+            if let Some(process) = error.downcast_ref::<crate::process::ProcessLogError>() {
+                run.log.push_str("\nValidation failed: ");
+                run.log.push_str(&process.to_string());
+                run.log.push('\n');
+            }
+            run.error = Some(message);
         }
     }
     progress(run);

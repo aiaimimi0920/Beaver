@@ -124,17 +124,17 @@ fn fake_server() -> Result<()> {
     let root = Path::new(&root);
     let lease = File::create(root.join("lease"))?;
     lease.lock_exclusive()?;
-    let mut transcript = OpenOptions::new()
-        .create(true)
-        .append(true)
-        .open(root.join("rpc.jsonl"))?;
+    let mut transcript = Vec::new();
+    publish_transcript(root, &transcript)?;
     let mode = std::env::var("BEAVER_PLANNING_FAKE_MODE")?;
     let mut messages = script(&mode).into_iter();
     let mut stdout = std::io::stdout().lock();
     for line in std::io::stdin().lock().lines() {
         let input: Value = serde_json::from_str(&line?)?;
-        writeln!(transcript, "{input}")?;
-        transcript.flush()?;
+        let mut frame = serde_json::to_vec(&input)?;
+        frame.push(b'\n');
+        transcript.extend_from_slice(&frame);
+        publish_transcript(root, &transcript)?;
         let method = input["method"].as_str().unwrap_or("");
         let result = match method {
             "initialize" if mode != "initialize-hang" => Some(json!({})),
@@ -154,6 +154,42 @@ fn fake_server() -> Result<()> {
         }
         stdout.flush()?;
     }
+    Ok(())
+}
+
+// The host deliberately kills the fixture immediately after its final reply.
+// Commit a same-directory snapshot so a kill during serialization or writing
+// cannot leave a torn JSONL tail in the transcript inspected by the parent.
+fn publish_transcript(root: &Path, bytes: &[u8]) -> Result<()> {
+    let mut staged = tempfile::NamedTempFile::new_in(root)?;
+    staged.write_all(bytes)?;
+    staged.flush()?;
+    staged
+        .persist(root.join("rpc.jsonl"))
+        .map_err(|error| error.error)?;
+    Ok(())
+}
+
+#[test]
+fn transcript_snapshots_survive_interrupted_staging_and_keep_strict_parsing() -> Result<()> {
+    let root = tempfile::tempdir()?;
+    let start = json!({"method":"thread/start","params":{"sandbox":"read-only"}});
+    let reply = json!({"id":100,"result":{"success":true}});
+    let mut committed = serde_json::to_vec(&start)?;
+    committed.push(b'\n');
+    publish_transcript(root.path(), &committed)?;
+    // Simulate termination between writing the staging file and atomic commit.
+    let mut interrupted = tempfile::NamedTempFile::new_in(root.path())?;
+    interrupted.write_all(b"{\"id\":100,\"result\":{\"content")?;
+    interrupted.flush()?;
+    assert_eq!(transcript(root.path())?, vec![start.clone()]);
+    committed.extend_from_slice(&serde_json::to_vec(&reply)?);
+    committed.push(b'\n');
+    publish_transcript(root.path(), &committed)?;
+    assert_eq!(transcript(root.path())?, vec![start, reply]);
+    // Never hide corruption in the authoritative, published transcript.
+    std::fs::write(root.path().join("rpc.jsonl"), b"{}\n{\"broken\":\"")?;
+    assert!(transcript(root.path()).is_err());
     Ok(())
 }
 

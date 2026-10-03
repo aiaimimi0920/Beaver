@@ -45,6 +45,11 @@ pub(crate) async fn execute(
         if cancelled.load(Ordering::SeqCst) {
             return Ok(Outcome::Interrupted);
         }
+        if !validate_only
+            && crate::external_run_contract::enabled(&task) != launch.external.is_some()
+        {
+            return Err("Execution mode does not match the configured scheduler backend".into());
+        }
         if let Some(request) = launch.blender.filter(|_| !validate_only) {
             if sessions.reserve(&id)?.is_some() {
                 return Err("Duplicate Blender launch refused".into());
@@ -78,6 +83,17 @@ pub(crate) async fn execute(
             Outcome::Interrupted
         } else if validate_only {
             Outcome::Completed
+        } else if let Some(external) = launch.external {
+            external
+                .run(
+                    &task,
+                    store.clone(),
+                    files.clone(),
+                    launch.prompt,
+                    cancelled.clone(),
+                    &mut input,
+                )
+                .await
         } else if let Some(command) = launch.command {
             Execution {
                 store: store.clone(),

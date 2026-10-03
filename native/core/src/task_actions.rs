@@ -14,6 +14,7 @@ pub fn continue_task(store: &mut Store, id: &str, text: &str, fresh_context: boo
     }
     let mut task: Value = store.get("task", id)?.context("任务不存在")?;
     crate::object_framework::require_legacy(&task)?;
+    crate::external_run_recovery::require_clear(store, &task)?;
     anyhow::ensure!(
         task.get("migrationRetained").is_none(),
         "任务保留自旧版数据且尚未转换，不能继续执行"
@@ -47,6 +48,13 @@ pub fn continue_task(store: &mut Store, id: &str, text: &str, fresh_context: boo
         );
     }
     if status == "waitingChildren" {
+        for child in store
+            .list::<Value>("task")?
+            .iter()
+            .filter(|child| child["parentTaskId"] == id)
+        {
+            crate::external_run_recovery::require_clear(store, child)?;
+        }
         anyhow::ensure!(text.is_empty(), "请打开具体子任务补充要求");
         task["planPaused"] = json!(false);
         store.put("task", id, &task)?;

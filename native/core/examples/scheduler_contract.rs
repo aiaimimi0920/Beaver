@@ -65,6 +65,7 @@ async fn main() -> Result<()> {
                 .current_dir(workspace)
                 .env("BEAVER_EXECUTOR_FIXTURE", workspace);
             Ok(Launch {
+                external: None,
                 command: Some(command),
                 model: "fixture".into(),
                 prompt: "wait".into(),

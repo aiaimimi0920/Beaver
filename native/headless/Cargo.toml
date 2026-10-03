@@ -1,0 +1,16 @@
+[package]
+name = "beaver-headless"
+version = "0.1.19"
+edition = "2021"
+publish = false
+
+[dependencies]
+beaver-core = { path = "../core" }
+anyhow = "1"
+fs2 = "0.4"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+tokio = { version = "1", features = ["rt-multi-thread", "macros", "io-std", "io-util", "sync", "time", "signal", "process"] }
+
+[dev-dependencies]
+tempfile = "3"

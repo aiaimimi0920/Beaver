@@ -119,7 +119,11 @@ pub fn start(
             if let Some(runtime) = beaver_core::workflows::runtime(&workspace)? {
                 settings.tools["godot"] = runtime["godot"].clone();
                 settings.mcp["godot"] = serde_json::json!(true);
-                settings.mcp["blender"] = serde_json::json!(task["decompose"] != true);
+                settings.mcp["blender"] =
+                    serde_json::json!(beaver_core::task_workflows::blender_enabled(
+                        task,
+                        settings.mcp["blender"] == true
+                    ));
             }
             let mut resolved = BTreeMap::new();
             let required: &[&str] = if validation_only {

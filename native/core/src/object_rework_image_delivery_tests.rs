@@ -1,16 +1,20 @@
 use super::*;
-use crate::{object_attempt_callback as callback, object_attempt_control, object_attempt_worker};
-use base64::Engine;
+use crate::{object_attempt_callback as callback, object_attempt_control};
 use serde_json::{json, Value};
-use std::sync::Arc;
 
 fn params(hash: &str) -> Value {
     json!({"tool":callback::TOOL,"threadId":"thread","turnId":"turn",
         "arguments":{"operation":"inputFile","path":"preview.png","sha256":hash}})
 }
 
+// Owned RPC execution requires the Windows-only process-tree fixture.
+#[cfg(windows)]
 #[tokio::test]
 async fn frozen_png_rework_delivers_actual_image_over_model_rpc() -> Result<()> {
+    use crate::object_attempt_worker;
+    use base64::Engine;
+    use std::sync::Arc;
+
     let f = fixture()?;
     let request = image_request(&f, true)?;
     let image = request.rework.as_ref().unwrap().image.as_ref().unwrap();
