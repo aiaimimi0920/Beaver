@@ -75,9 +75,12 @@ fn gut_identity_rejects_changed_bytes_versions_unknown_files_and_path_aliases() 
     ] {
         assert!(!immutable(fake, bytes), "Unexpected GUT identity: {fake}");
     }
-    let other_version = std::str::from_utf8(&files["addons/gut/plugin.cfg"])?
-        .replace("9.4.0", "9.3.0");
-    assert!(!immutable("addons/gut/plugin.cfg", other_version.as_bytes()));
+    let other_version =
+        std::str::from_utf8(&files["addons/gut/plugin.cfg"])?.replace("9.4.0", "9.3.0");
+    assert!(!immutable(
+        "addons/gut/plugin.cfg",
+        other_version.as_bytes()
+    ));
     assert!(!immutable(path, &files["addons/gut/gut.gd"]));
     Ok(())
 }
