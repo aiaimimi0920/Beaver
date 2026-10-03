@@ -1,10 +1,9 @@
 # Development security reports
 
-PRs, the default branch and weekly schedules keep complete CodeQL and OSV
-results. Findings remain advisory; scanner execution, selected-input coverage,
+PRs, the default branch and weekly schedules keep complete OSV reports. Findings remain advisory; scanner execution, selected-input coverage,
 JSON/SARIF validation and upload failures remain failing checks. OSV JSON and
 SARIF use one exact input list and validate package/version/location identities.
-GitHub code-scanning fingerprints deduplicate repeated findings; check summaries
+Stable OSV package/version/location fingerprints identify repeated findings; check summaries
 and retained artifacts are the PR report, not a claim of fixed vulnerabilities.
 No Issue-writing token or automatic dependency merge is introduced.
 
@@ -12,7 +11,9 @@ OSV inputs:
 - `Cargo.lock`
 - `package-lock.json`
 
-CodeQL languages: rust, javascript-typescript, python, actions.
+This is a private repository. Per owner policy, CodeQL and GitHub Code scanning
+uploads are not configured. No paid feature is enabled. Complete JSON/SARIF
+files remain ordinary Actions artifacts, not Code scanning uploads.
 GDScript and shaders are not supported by CodeQL; no coverage is claimed for them.
 
 Existing reviewed exceptions, tests, release signing and deployment gates are
