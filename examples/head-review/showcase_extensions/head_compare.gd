@@ -4,7 +4,7 @@ extends Control
 signal closed
 const PANE = preload("res://showcase_extensions/head_compare_pane.gd")
 var panes: Array = []
-var state := {"yaw": 0.0, "pitch": 0.0, "zoom": 1.8, "light": -45.0, "mode": "render", "hair": false, "body": false}
+var state := {"yaw": 0.0, "pitch": 0.0, "zoom": 1.8, "light": -45.0, "mode": "render", "hair": false, "body": false, "mouth": 0.0}
 var dragging := false
 var capture_pending := false
 var status: Label
@@ -57,6 +57,12 @@ func configure(candidate: NPRCharacterDefinition, reference: NPRCharacterDefinit
 	body.text = "身体"
 	body.toggled.connect(set_visibility.bind("body"))
 	controls.add_child(body)
+	var mouth_row := HBoxContainer.new()
+	column.add_child(mouth_row)
+	slider(mouth_row, "候选张嘴", 0.0, 1.0, 0.0, set_mouth)
+	var mouth_note := Label.new()
+	mouth_note.text = "仅驱动候选 MouthOpen；参考保持中立"
+	mouth_row.add_child(mouth_note)
 	var pair_row := HBoxContainer.new()
 	pair_row.add_theme_constant_override("separation", 12)
 	pair_row.size_flags_vertical = Control.SIZE_EXPAND_FILL
@@ -76,6 +82,7 @@ func configure(candidate: NPRCharacterDefinition, reference: NPRCharacterDefinit
 		box.add_child(pane)
 		var loaded: bool = pane.configure(entry[0], entry[2])
 		success = success and loaded
+		pane.drive_mouth = not entry[2]
 		pane.gui_input.connect(pane_input)
 		panes.append(pane)
 	status = Label.new()
@@ -132,6 +139,10 @@ func set_angle(yaw: float, pitch: float) -> void:
 
 func set_zoom(value: float) -> void:
 	state.zoom = value
+	apply()
+
+func set_mouth(value: float) -> void:
+	state.mouth = value
 	apply()
 
 func set_light(value: float) -> void:

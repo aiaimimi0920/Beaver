@@ -22,7 +22,7 @@ F12 saves a real viewport PNG and adjacent JSON with definition paths and shared
 
 Installed with Beaver job `992eafc7-dc81-4a99-a21d-18e558b45efe`, then opened in native MiDot on 2026-10-05. Verified candidate49/reference900 identities, equal-relative face height, shared zoom, front/oblique/profile controls, render/white/wire modes, reversed light, linked drag and close/reopen. Actual PNGs were inspected independently. No synthetic screenshots or browser substitute were used.
 
-This checkpoint is static-mouth tooling. Oral-cavity/morph generation and a candidate-only mouth control are later work and are intentionally not included until verified. Face aesthetics, dynamic facial acceptance and a full wardrobe are not passed by this tooling test.
+The candidate-only MouthOpen slider defaults to zero. Values 0, 0.5 and 1 were exercised against generated candidate50; the reference has no matching morph and deliberately stays neutral. White mode uses the real source mesh; the wire duplicate preserves blend-shape arrays and synchronizes weights. Neutral face framing uses base surface vertices, not the AABB expanded by morph motion. Reopened candidates51–53 confirmed morph discovery, default neutral state and normalized framing. This verifies the inspection tool, not artistic quality: oral rim artifacts and overall facial acceptance remain open.
 
 ## Ownership and publication
 
