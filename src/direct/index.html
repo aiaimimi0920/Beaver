@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="zh">
+  <meta charset="utf-8" /><title>Beaver · dot 恢复工作台</title>
+  <style>
+    body {
+      font: 16px system-ui;
+      background: #0d141d;
+      color: #edf1f4;
+      margin: 26px;
+    }
+    section {
+      border: 1px solid #3b4c60;
+      padding: 16px;
+      margin: 14px 0;
+    }
+    button,
+    select,
+    input,
+    textarea {
+      font: inherit;
+      background: #1b2a3b;
+      color: #edf1f4;
+      border: 1px solid #58738a;
+      border-radius: 5px;
+      padding: 9px;
+      margin: 5px;
+    }
+    textarea {
+      width: 94%;
+      height: 120px;
+    }
+    select {
+      min-width: 300px;
+    }
+    button {
+      cursor: pointer;
+    }
+    button:disabled {
+      opacity: 0.4;
+    }
+    pre {
+      white-space: pre-wrap;
+      overflow: auto;
+      max-height: 400px;
+      background: #101b28;
+      padding: 14px;
+      word-break: break-word;
+    }
+    .hint {
+      color: #b7c6d4;
+    }
+    h1 {
+      color: #b9e275;
+    }
+  </style>
+  <h1>Beaver · dot 直驱恢复工作台</h1>
+  <p class="hint">
+    恢复后的 Core 原生任务、计划、工具与回执。三个角色由同一个 dot
+    依次承担。此窗口不会启动 Codex 或外部 AI 请求。
+  </p>
+  <section>
+    <button id="setup">恢复已批准的旧工程</button
+    ><button id="refresh">读取当前工程与任务</button
+    ><select id="task"></select
+    ><button id="context">读取任务上下文</button
+    ><button id="history">读取任务历史</button>
+  </section>
+  <section>
+    <label
+      >当前角色
+      <select id="role">
+        <option value="user">使用者：输入自然语言目标</option>
+        <option value="planner">规划者：读取上下文并提交计划</option>
+        <option value="executor">执行者：完成步骤并交回结果</option>
+      </select></label
+    >
+    <textarea id="goal" placeholder="人类可读的目标"></textarea
+    ><button id="create">提交目标并建立 Beaver 内部计划</button
+    ><button id="continue">继续选中的任务</button>
+  </section>
+  <section>
+    <label
+      >工具
+      <select id="tool">
+        <option>file.read</option>
+        <option>file.write</option>
+        <option>blender.start</option>
+        <option>blender.poll</option>
+        <option>blender.cancel</option>
+        <option>workflow.list</option>
+        <option>workflow.run</option>
+      </select></label
+    >
+    <input id="file" type="file" accept=".json" /><textarea
+      id="args"
+      spellcheck="false"
+    >
+{}</textarea>
+    <button id="execute">执行一次工具</button><button id="plan">提交规划</button
+    ><button id="finish">提交当前步骤完成</button
+    ><button id="receipt">查询上次回执</button
+    ><button id="poll">使用上次作业轮询</button>
+  </section>
+  <label
+    >预览模型
+    <input
+      id="preview-definition"
+      value="assets/aster/head_recovery_05/aster_definition.tres"
+      style="width: 520px" /></label
+  ><br />
+  <button id="open-preview">打开头部审查展示台</button
+  ><button id="preview-status">读取展示台日志</button
+  ><button id="close-preview">关闭展示台</button>
+  <h2 id="status">尚未读取</h2>
+  <pre id="result"></pre>
+  <details>
+    <summary>任务上下文</summary>
+    <pre id="details"></pre>
+  </details>
+  <script src="renderer.js"></script>
+</html>
