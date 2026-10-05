@@ -37,8 +37,10 @@ def base_depth(x, y):
         section_x = q * points[-1][0]
         sections.append((height, curve(section_x, 1, points)))
     z = Z0 + H * curve(v, 1, sections) + nose(x, y)
-    lip = exp(-(x / 0.02) ** 4) * C['mouth_lip_relief'] * H
-    z += lip * (exp(-((y - 1.578) / 0.0025) ** 2) + 0.7 * exp(-((y - 1.584) / 0.002) ** 2))
+    lip = exp(-(x / 0.02) ** 4) * H
+    z += lip * C['lower_lip_relief'] * exp(-((y - Y0 - H * C['lower_lip_height']) / (H * C['lower_lip_width'])) ** 2)
+    z += lip * C['upper_lip_relief'] * exp(-((y - Y0 - H * C['upper_lip_height']) / (H * C['upper_lip_width'])) ** 2)
+    z -= lip * C['mouth_seam_recess'] * exp(-((y - Y0 - H * C['mouth_height']) / (H * C['mouth_seam_width'])) ** 2)
     return z
 
 def rim_depth(x, y):
@@ -163,6 +165,6 @@ def build_eyes():
                 t = i / 24
                 x = side * (0.018 + 0.064 * t)
                 y = Y0 + H * C['brow_height'] + STYLE['brow_arch_m'] * sin(pi * t * 0.88) - 0.003 * t
-                y += lane * 0.0032 * sin(pi * t) ** 0.7
+                y += lane * H * C['brow_thickness'] * sin(pi * t) ** 0.7
                 brow.append(coord(x, y, depth(x, y) + 0.001))
         mesh('Tapered brow ' + str(side), brow, grid_faces(2, 25, side < 0), (0.13, 0.105, 0.1))

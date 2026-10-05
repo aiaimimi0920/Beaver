@@ -1,25 +1,25 @@
 {
   "schema_version": 1,
-  "preset": "semantic_calibration_a_64",
+  "preset": "semantic_calibration_a_69",
   "note": "Explicit semantic calibration case; no character-name generation dependency.",
   "iris_half_width_m": 0.01534,
   "eye_lens_bulge_m": 0.0012,
   "upper_lash_thickness_m": 0.006608,
   "brow_arch_m": 0.0025,
   "iris_dark_rgb": [
+    0.11,
     0.1,
-    0.09,
     0.15
   ],
   "iris_light_rgb": [
-    0.53,
-    0.49,
-    0.6
+    0.44,
+    0.42,
+    0.49
   ],
   "iris_crescent_rgb": [
-    0.67,
+    0.64,
     0.62,
-    0.74
+    0.7
   ],
   "iris_rim_rgb": [
     0.028,
@@ -153,11 +153,11 @@
     "ear_half_width": 0.059,
     "ear_half_height": 0.126,
     "ear_depth": -0.31,
-    "ear_depth_tilt": -0.16,
+    "ear_depth_tilt": -0.8,
     "ear_concha_depth": 0.015,
     "ear_back_thickness": 0.035,
     "mouth_corner_lift": 0.003,
-    "mouth_lip_relief": 0.01,
+    "mouth_lip_relief": 0.012,
     "cross_sections": [
       [
         0,
@@ -168,11 +168,11 @@
           ],
           [
             0.018,
-            -0.006
+            -0.001
           ],
           [
             0.035,
-            -0.025
+            -0.006
           ]
         ]
       ],
@@ -425,7 +425,44 @@
         ]
       ]
     ],
-    "brow_height": 0.578
+    "brow_height": 0.578,
+    "ear_upper_outward": 0.035,
+    "chin_return_lift": 0.008,
+    "lower_lip_height": 0.13,
+    "upper_lip_height": 0.175,
+    "lower_lip_width": 0.015,
+    "upper_lip_width": 0.01,
+    "brow_thickness": 0.007,
+    "mouth_height": 0.15,
+    "mouth_seam_recess": 0.015,
+    "mouth_seam_width": 0.006,
+    "lower_lip_relief": 0.006,
+    "upper_lip_relief": 0.012,
+    "pocket_skin_clearance": 0.004,
+    "chin_front_lift": 0.007,
+    "chin_underside_stations": [
+      [
+        0.03,
+        0,
+        1.15
+      ],
+      [
+        0.07,
+        0.004,
+        1.5
+      ],
+      [
+        0.14,
+        0.015,
+        2.3
+      ],
+      [
+        0.2,
+        0.03,
+        3.2
+      ]
+    ],
+    "chin_return_boundary_inset": 0.9
   },
   "normal_policy": "actual_area_weighted_geometry",
   "surface_subdivision_levels": 1

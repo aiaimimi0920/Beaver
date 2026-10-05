@@ -1,6 +1,6 @@
 """A real lip opening, oral bag and thick tongue; deterministic jaw morph."""
 from face import *
-MOUTH_Y = 1.581
+MOUTH_Y = Y0 + H * C['mouth_height']
 
 def mouth_half_contour(a):
     return (0.0195 * cos(a), MOUTH_Y + H * C['mouth_corner_lift'] * cos(a) ** 2 + 0.00035 * sin(a))

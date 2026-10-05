@@ -5,7 +5,7 @@ from shell import build_face
 from mouth import store_mouth_deltas
 from glb_merge import merge_face
 ROOT = Path(beaver_input('project.godot')).parent
-OUT = 'assets/aster/head_recovery_64/'
+OUT = 'assets/aster/head_recovery_69/'
 BASE = 'assets/aster/head_recovery_49/'
 GUIDE = Path(beaver_input('authoring/head_generation_guide.md')).read_text()
 assert '去发侧脸轮廓检查' in GUIDE
@@ -27,12 +27,18 @@ for obj in PARTS:
         store_mouth_deltas(obj)
 shell = next((o for o in PARTS if o.name == 'Face shell editable half'))
 zero_faces = sum((p.area < 1e-12 for p in shell.data.polygons))
-reversed_faces = sum((p.normal.y >= -1e-08 for p in shell.data.polygons))
+front_count = shell.get('front_surface_face_count', len(shell.data.polygons))
+reversed_faces = sum((p.normal.y >= -1e-08 for p in list(shell.data.polygons)[:front_count]))
+under_count = shell.get('underside_face_count', len(shell.data.polygons) - front_count)
+bad_return = sum((p.normal.z >= 0 for p in list(shell.data.polygons)[front_count:front_count + under_count]))
+bad_side = sum((p.normal.x <= 0 for p in list(shell.data.polygons)[front_count + under_count:]))
+assert bad_side == 0, 'Chin side closure must face outward'
+assert bad_return == 0, 'Chin underside winding must face downward'
 if zero_faces or reversed_faces:
     print('INVALID_SHELL', json.dumps([{'index': p.index, 'area': p.area, 'normal': list(p.normal), 'vertices': [list(shell.data.vertices[i].co) for i in p.vertices]} for p in shell.data.polygons if p.area < 1e-12 or p.normal.y >= -1e-08]))
 assert zero_faces == 0 and reversed_faces == 0, 'Invalid facial shell winding/area'
 assert all((math.isfinite(c) for v in shell.data.vertices for c in v.co))
-report['shell_geometry_checks'] = {'zero_area_faces': zero_faces, 'reversed_front_faces': reversed_faces, 'finite_vertices': True}
+report['shell_geometry_checks'] = {'zero_area_faces': zero_faces, 'reversed_front_faces': reversed_faces, 'reversed_chin_underside_faces': bad_return, 'reversed_chin_side_faces': bad_side, 'finite_vertices': True}
 report['authoring_guide_sha256'] = hashlib.sha256(GUIDE.encode()).hexdigest()
 normal_checks = {}
 for obj in PARTS:
@@ -53,13 +59,15 @@ for edge in shell.data.edges:
     verts = [shell.data.vertices[i].co for i in edge.vertices]
     x = sum((v.x for v in verts)) / 2
     y = sum((v.z for v in verts)) / 2
-    aperture = 0.018 < x < 0.087 and 1.61 < y < 1.671 or (x > 1e-05 and x < 0.021 and (abs(y - 1.581) < 0.002))
+    aperture = 0.018 < x < 0.087 and 1.61 < y < 1.671 or (x > 1e-05 and x < 0.021 and (abs(y - Y0 - H * C['mouth_height']) < 0.002))
     crease.data[edge.index].value = 1.0 if aperture else 0.0
 sub = shell.modifiers.new('Semantic quad surface refinement', 'SUBSURF')
 sub.subdivision_type = 'CATMULL_CLARK'
 sub.levels = STYLE['surface_subdivision_levels']
 sub.render_levels = sub.levels
 report['surface_subdivision_levels'] = sub.levels
+from eye_socket import fit_pocket_clearance
+report['pocket_skin_clearance'] = fit_pocket_clearance(shell)
 report['face_atlas_layout'] = 'spatial_skin_eye_ear_flat_swatches_v2'
 assert body == {o.name: object_hash(o) for o in bpy.data.objects if o.name in body}
 for role in ['Face']:

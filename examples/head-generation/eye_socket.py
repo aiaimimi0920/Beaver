@@ -45,3 +45,52 @@ def build_socket(side):
     for loop in iris.data.loops:
         v = iris.data.vertices[loop.vertex_index].co
         uv.data[loop.index].uv = ((v.x - side * H * C['iris_center_x']) / (2 * STYLE['eye_half_width_m']) + 0.5, (v.z - Y0 - H * C['iris_center_y']) / 0.044 + 0.5)
+
+def fit_pocket_clearance(shell):
+    """Keep hidden walls inside the evaluated skin, including outline clearance."""
+    from mathutils.bvhtree import BVHTree
+    bpy.context.view_layer.update()
+    graph = bpy.context.evaluated_depsgraph_get()
+    evaluated = shell.evaluated_get(graph)
+    data = evaluated.to_mesh()
+    margin = H * C['pocket_skin_clearance']
+    count = 0
+    max_move = 0.0
+    minimum = H
+    try:
+        tree = BVHTree.FromPolygons([v.co.copy() for v in data.vertices], [tuple(p.vertices) for p in data.polygons])
+        for obj in PARTS:
+            if not obj.name.startswith('Expanding recessed eye pocket'):
+                continue
+            for vertex in obj.data.vertices:
+                if vertex.index < 48:
+                    continue
+                x, y = (abs(vertex.co.x), vertex.co.z)
+                t = (x / H - C['eye_center_x']) / C['eye_half_width']
+                cy = Y0 + H * (C['eye_corner_y'] + C['eye_corner_slope'] * t)
+                arch = C['eye_upper_arch'] if y >= cy else C['eye_lower_arch']
+                power = C['eye_upper_power'] if y >= cy else C['eye_lower_power']
+                radius = sqrt(t * t + abs((y - cy) / (H * arch)) ** (1 / power))
+                if radius <= 1.01:
+                    continue
+                old = vertex.co.copy()
+                for _ in range(3):
+                    point, normal, _, distance = tree.find_nearest(vertex.co)
+                    if point is None:
+                        break
+                    signed = (vertex.co - point).dot(normal)
+                    if signed <= -margin:
+                        break
+                    vertex.co -= normal * (signed + margin)
+                moved = (vertex.co - old).length
+                if moved > 1e-07:
+                    count += 1
+                    max_move = max(max_move, moved)
+                point, normal, _, distance = tree.find_nearest(vertex.co)
+                if point is not None:
+                    minimum = min(minimum, distance)
+            obj.data.update()
+        assert max_move < 0.04 * H, 'Pocket clearance needs a structural redesign'
+    finally:
+        evaluated.to_mesh_clear()
+    return {'adjusted_vertices': count, 'maximum_move_m': max_move, 'requested_margin_m': margin, 'minimum_sampled_distance_m': minimum}
