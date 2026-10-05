@@ -7,6 +7,8 @@ var camera: Camera3D
 var pivot: Node3D
 var display
 var source_path := ""
+var drive_mouth := false
+var mouth_index := -1
 var source_face_height := 0.0
 
 func configure(definition: NPRCharacterDefinition, neutralize_head: bool) -> bool:
@@ -54,7 +56,21 @@ func configure(definition: NPRCharacterDefinition, neutralize_head: bool) -> boo
 		if head != null:
 			head.rotation = Vector3.ZERO
 	var face: MeshInstance3D = actor.meshes[1]
-	var bounds: AABB = normalized.global_transform.affine_inverse() * face.global_transform * face.get_aabb()
+	mouth_index = face.find_blend_shape_by_name("MouthOpen")
+	print("MODEL_COMPARE_MORPH=" + JSON.stringify({"source": source_path, "MouthOpen": mouth_index, "count": face.mesh.get_blend_shape_count()}))
+	var base_bounds := AABB()
+	var has_vertex := false
+	for surface in face.mesh.get_surface_count():
+		var positions: PackedVector3Array = face.mesh.surface_get_arrays(surface)[Mesh.ARRAY_VERTEX]
+		for position in positions:
+			if not has_vertex:
+				base_bounds = AABB(position, Vector3.ZERO)
+				has_vertex = true
+			else:
+				base_bounds = base_bounds.expand(position)
+	if not has_vertex:
+		return false
+	var bounds: AABB = normalized.global_transform.affine_inverse() * face.global_transform * base_bounds
 	source_face_height = bounds.size.y
 	if not is_finite(source_face_height) or source_face_height <= 0.0:
 		return false
@@ -78,3 +94,7 @@ func apply_state(state: Dictionary) -> void:
 	actor.meshes[2].visible = state.hair
 	if display.mode != state.mode:
 		display.set_mode(state.mode)
+
+	if drive_mouth and mouth_index >= 0:
+		actor.meshes[1].set_blend_shape_value(mouth_index, state.get("mouth", 0.0))
+		display.sync_morphs()
