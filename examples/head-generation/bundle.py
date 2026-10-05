@@ -14,7 +14,7 @@ ASSET_FILES = [
     'aster_head.glb', 'aster_definition.tres', 'generation_report.json',
     'face_base.png', 'hair_base.png', 'face_ilm.png', 'face_map.png', 'hair_ilm.png',
 ]
-OUTPUT_PREFIX = 'assets/aster/head_recovery_64/'
+OUTPUT_PREFIX = 'assets/aster/head_recovery_69/'
 
 
 def build_request(source_dir=None):

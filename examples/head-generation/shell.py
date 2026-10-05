@@ -14,8 +14,8 @@ def build_face():
             x = width(y) * q
             top_blend = max(0, min(1, (y - 1.74) / 0.04))
             top_blend = top_blend * top_blend * (3 - 2 * top_blend)
-            yy = y - STYLE['forehead_edge_drop_m'] * q ** 4 * top_blend + 0.002 * q * q * exp(-(y - 1.544) / 0.008)
-            x = width(yy) * q
+            yy = y - STYLE['forehead_edge_drop_m'] * q ** 4 * top_blend + H * C['chin_return_lift'] * q * q * exp(-(y - 1.544) / 0.008) + H * C['chin_front_lift'] * exp(-(y - Y0) / (0.02 * H))
+            x = width(yy) * q if top_blend > 0 else x
             verts.append(coord(x, yy, depth(x, yy)))
     ej0 = levels.index(1.614)
     ej1 = levels.index(1.673)
@@ -72,9 +72,31 @@ def build_face():
     patch(eye_boundary, 'eye', True)
     mouth_boundary = [mj0 * cols + i for i in range(mi1 + 1)] + [j * cols + mi1 for j in range(mj0 + 1, mj1 + 1)] + [mj1 * cols + i for i in range(mi1 - 1, -1, -1)]
     patch(mouth_boundary, 'mouth', False)
+    front_count = len(shell_faces)
+    base = [verts[i] for i in range(cols)]
+    previous = list(range(cols))
+    side_path = [cols - 1]
+    for back, lift, spread in C['chin_underside_stations']:
+        current = []
+        for i, (x, negz, y) in enumerate(base):
+            q = i / (cols - 1)
+            current.append(len(verts))
+            half_width = min(base[-1][0] * spread, width(Y0 + H * lift) * C['chin_return_boundary_inset'])
+            verts.append((half_width * q, negz + H * back, Y0 + H * (lift + C['chin_return_lift'] * q * q)))
+        for i in range(cols - 1):
+            shell_faces.append((previous[i + 1], previous[i], current[i], current[i + 1]))
+        previous = current
+        side_path.append(current[-1])
+    underside_count = len(shell_faces) - front_count
+    outer = [j * cols + cols - 1 for j in range(len(side_path))]
+    shell_faces.append((outer[0], side_path[1], outer[1]))
+    for j in range(1, len(side_path) - 1):
+        shell_faces.append((side_path[j], side_path[j + 1], outer[j + 1], outer[j]))
     face = mesh('Face shell editable half', verts, shell_faces, SKIN, mirror=True)
+    face['front_surface_face_count'] = front_count
+    face['underside_face_count'] = underside_count
     group = face.vertex_groups.new(name='Continuous facial shell')
     group.add(list(range(len(verts))), 1.0, 'REPLACE')
     from ears import build_ears
     build_ears()
-    return {'face_authoring_quads': sum((len(q) == 4 for q in shell_faces)), 'face_authoring_triangles': sum((len(q) == 3 for q in shell_faces)), 'semantic_rows': levels}
+    return {'face_authoring_quads': sum((len(q) == 4 for q in shell_faces)), 'face_authoring_triangles': sum((len(q) == 3 for q in shell_faces)), 'semantic_rows': levels, 'chin_underside_quads': underside_count, 'chin_side_quads': len(side_path) - 2, 'chin_side_triangles': 1}

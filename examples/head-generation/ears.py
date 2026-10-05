@@ -12,7 +12,7 @@ def build_ears():
                 y = Y0 + H * (C['ear_center_y'] + C['ear_half_height'] * r * sin(a))
                 rootx = H * C['ear_center_x']
                 rootz = Z0 + H * C['ear_depth']
-                x = side * (rootx + H * C['ear_half_width'] * r * cos(a))
+                x = side * (rootx + H * (C['ear_half_width'] * r * cos(a) + C['ear_upper_outward'] * r * sin(a)))
                 z = rootz + relief + C['ear_depth_tilt'] * (abs(x) - rootx)
                 vs.append(coord(x, y, z))
         for j in range(4):
@@ -43,4 +43,7 @@ def build_ears():
         detail = obj.data.uv_layers.new(name='DetailUV')
         for loop in obj.data.loops:
             v = obj.data.vertices[loop.vertex_index].co
-            detail.data[loop.index].uv = (max(0, min(1, (abs(v.x) - 0.085) / 0.033)), max(0, min(1, (v.z - 1.609) / 0.052)))
+            span = sqrt(C['ear_half_width'] ** 2 + C['ear_upper_outward'] ** 2)
+            u = (abs(v.x) / H - C['ear_center_x']) / (2 * span) + 0.5
+            w = ((v.z - Y0) / H - C['ear_center_y']) / (2 * C['ear_half_height']) + 0.5
+            detail.data[loop.index].uv = (max(0.02, min(0.98, u)), max(0.02, min(0.98, w)))
