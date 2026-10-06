@@ -126,3 +126,17 @@ The exact-side black triangle persists on142. Read-only exported-triangle inspec
 
 ## Revision 145: oblique-view return containment
 144 clears the exact-side black wedge but a residual reverse-face patch is visible at45 degrees. Independent width/depth fraction limits still allow the return to sit in front of the curved basin. Retain at least80% of local posterior depth and50% of lateral span so the free return edge stays behind the front sheet across oblique viewing. These explicit bounded parameters remain configurable. Recheck both side and45-degree renders before acceptance.
+
+
+## Revision146: five scoped refinements after145 owner review
+The owner accepts the overall direction and asks for ears, eyes, brows, a localized concavity in the frontal facial silhouette, and nasal bridge-to-tip versus tip-to-lip slope calibration. Other accepted form, centerline, wrapped ear topology and small chin follow are frozen as targets. This is a new unaccepted candidate;145 is not a result of this new request.
+
+Sparse original/reference cross-section diagnostics show the candidate half-width is short by about0.014H at height0.15H while the nose-tip maximum at0.28H is already close. Apply limited lower-mid contour support, not global face inflation. Lift upper nasal ramp slightly at0.32–0.36H, pull the bridge shoulder back around0.40–0.45H, preserve the tip and lower lip system. Measure resulting profile after subdivision instead of treating requested steepness as an unspecified coordinate slope.
+
+Use a slightly fuller lower ear and deeper but bounded cup, keeping the corrected posterior sweep and contained return. Independently authored pigment has a lighter, broader upper arch and a restrained curled inner fold. Do not load reference texture or geometry. Refine eyebrow center/thickness toward the healthy sparse reference ribbon, excluding unpacked broken triangles. Replace detached outer lash triangles with a contiguous tapered four-corner wing; make the pupil smaller/rounder while keeping the accepted catchlight and shallow recessed eye. Check native views before any success claim.
+
+
+## Revision147: decouple side-jaw fairing from frontal width
+146 improves the measured nasal ramp but the frontal low-cheek transition still has a local inward step. Comparing136/145 at the same sections identifies side-boundary fairing as an additional cause: it reduced lateral width by0.006–0.008H around heights0.15–0.18H while fixing a SIDE silhouette corner. That side-view task only needs depth/height smoothing. Preserve lateral x during fairing, with a separately explicit lateral relaxation parameter default0, while retaining depth/height smoothing. Reduce the compensatory width increase at0.12H and add a gentle0.16H support station. Do not undo the accepted side-jaw smoothness or inflate the whole face. Verify actual frontal and exact-side curves after generation.
+
+The147 ear pigment also connects the upper arch and inner fold with a short, bounded, independently authored curved fork; this avoids the previous lone C-stroke appearance while preserving light lobe color. It is procedural color, not imported reference pixels.

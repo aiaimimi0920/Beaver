@@ -92,7 +92,13 @@ def fair_jaw_boundary(vertices, faces, config, height, origin, depth_origin):
                 continue
             target = tuple((old[a][j] * db + old[b][j] * da) / (da + db) for j in range(3))
             result[i] = tuple(
-                old[i][j] + config["jaw_border_relaxation"] * (target[j] - old[i][j])
+                old[i][j]
+                + (
+                    config["jaw_border_lateral_relaxation"]
+                    if j == 0
+                    else config["jaw_border_relaxation"]
+                )
+                * (target[j] - old[i][j])
                 for j in range(3)
             )
     maximum = max(

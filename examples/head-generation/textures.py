@@ -76,9 +76,16 @@ def iris_color(u, v):
     if r > 0.84:
         t = min(1, (r - 0.84) / 0.15)
         c = [c[i] * (1 - t) + STYLE["iris_rim_rgb"][i] * t for i in range(3)]
-    pupil = sqrt((x / 0.58) ** 2 + y * y)
-    if pupil < 0.3:
-        t = max(0, min(1, (pupil - 0.23) / 0.07))
+    pupil = sqrt((x / STYLE["iris_pupil_aspect"]) ** 2 + y * y)
+    if pupil < STYLE["iris_pupil_radius"]:
+        t = max(
+            0,
+            min(
+                1,
+                (pupil - STYLE["iris_pupil_radius"] + STYLE["iris_pupil_softness"])
+                / STYLE["iris_pupil_softness"],
+            ),
+        )
         c = [c[i] * t + [0.005, 0.014, 0.014][i] * (1 - t) for i in range(3)]
     for gx, gy, rad, strength in [(-0.2, 0.18, 0.047, 0.9), (0.27, -0.34, 0.024, 0.55)]:
         d = sqrt((x - gx) ** 2 + (y - gy) ** 2)
@@ -126,8 +133,15 @@ def ear_color(u, v):
         * exp(-(((u - fold_u) / STYLE["ear_fold_width"]) ** 2))
         * exp(-(((v - 0.57) / 0.18) ** 4))
     )
+    fork_t = max(0, min(1, (v - 0.62) / 0.18))
+    fork_u = STYLE["ear_fold_center_u"] + 0.18 * fork_t * fork_t
+    fork = (
+        STYLE["ear_inner_fork_strength"]
+        * exp(-(((u - fork_u) / 0.028) ** 2))
+        * exp(-(((v - 0.70) / 0.10) ** 4))
+    )
     lobe_mask = max(0, min(1, (v - 0.24) / 0.18))
-    strength = max(0, min(0.65, concha + helix + fold)) * lobe_mask
+    strength = max(0, min(0.65, concha + helix + fold + fork)) * lobe_mask
     pigment = (0.79, 0.43, 0.37)
     return tuple(SKIN[i] * (1 - strength) + pigment[i] * strength for i in range(3)) + (1,)
 

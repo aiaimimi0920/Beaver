@@ -1,6 +1,6 @@
 {
-  "candidate": 145,
-  "scope": "Calibration runtime consumers, including conditional keys; verified by test_parameter_contract.py",
+  "candidate": 147,
+  "scope": "Calibration runtime consumers including conditional keys",
   "calibration_keys": [
     "brow_height",
     "brow_inner_fullness",
@@ -78,6 +78,7 @@
     "iris_rim_depth",
     "jaw_border_back_threshold",
     "jaw_border_iterations",
+    "jaw_border_lateral_relaxation",
     "jaw_border_max_height",
     "jaw_border_relaxation",
     "jaw_normal_boundary_strength",
@@ -212,6 +213,7 @@
     "iris_rim_depth",
     "jaw_border_back_threshold",
     "jaw_border_iterations",
+    "jaw_border_lateral_relaxation",
     "jaw_border_max_height",
     "jaw_border_relaxation",
     "jaw_normal_boundary_strength",
@@ -271,5 +273,5 @@
   ],
   "unused": [],
   "missing": [],
-  "face_style_sha256": "d8bcd34a926d2d8676826c77e9b0765b789908bec16e2b97900ef89ff8b74b8e"
+  "face_style_sha256": "5c15a4e9c4b75b172d6d4ca66829da74fe766653d33eafbc473ffcb0434510f1"
 }

@@ -235,34 +235,20 @@ def build_eyes():
                 INK if upper else (0.12, 0.08, 0.075),
             )
             if upper:
-                x, y = eye_contour(side, 0.92, True)
-                tip = (x + side * 0.006, y + 0.0035)
-                wing = [
-                    coord(x, y, lash_depth(x, y)),
-                    coord(tip[0], tip[1], lash_depth(tip[0], y)),
-                    coord(x, y + 0.0025, lash_depth(x, y)),
-                ]
-                mesh(
-                    "Soft outer lash flick " + str(side),
-                    wing,
-                    [(0, 1, 2) if side > 0 else (2, 1, 0)],
-                    INK,
-                )
-        for upper, ts in [(True, [0.76])]:
-            for t in ts:
-                x, y = eye_contour(side, t, upper)
+                xa, ya = eye_contour(side, 0.68, True)
+                xb, yb = eye_contour(side, 0.98, True)
                 scale = STYLE["lash_fan_scale"]
-                direction = 1 if upper else -1
-                points = [
-                    (x - side * 0.0015, y),
-                    (x + side * 0.0015, y),
-                    (x + side * 0.004 * scale, y + direction * 0.0035 * scale),
+                wing_points = [
+                    (xa, ya),
+                    (xa, ya - STYLE["upper_lash_thickness_m"] * 0.62),
+                    (xb + side * 0.0045 * scale, yb + 0.0025 * scale),
+                    (xb, yb),
                 ]
-                vs = [coord(xx, yy, lash_depth(xx, y)) for xx, yy in points]
+                wing = [coord(x, y, lash_depth(x, y)) for x, y in wing_points]
                 mesh(
-                    "Attached lash accent " + str((side, upper, t)),
-                    vs,
-                    [(0, 1, 2) if (side > 0) == upper else (2, 1, 0)],
+                    "Attached outer lash wing " + str(side),
+                    wing,
+                    [(0, 1, 2, 3) if side > 0 else (3, 2, 1, 0)],
                     INK,
                 )
         liner = []
