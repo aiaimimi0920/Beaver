@@ -2,13 +2,13 @@
 
 This is a recoverable development example, not an accepted character asset or a finished general-purpose face generator. It preserves the specification → explicit parameters → Beaver generation → native comparison loop used in the Aster face calibration experiment.
 
-The executable modules and preset correspond to candidate 88. Python formatting was normalized with AST equivalence checked against the executed source. The portable bundler only packages source into a declared `blender.start` request; it does not launch Blender, call a model service, or create a coding task.
+The executable modules and preset correspond to candidate 89. Python formatting was normalized with AST equivalence checked against the executed source. The portable bundler only packages source into a declared `blender.start` request; it does not launch Blender, call a model service, or create a coding task.
 
 ## Inputs and execution
 
 The existing Beaver project must contain `project.godot`, `authoring/head_generation_guide.md`, and the frozen `assets/aster/head_recovery_49/` baseline with `aster_head_editable.blend`, `aster_head.glb`, `aster_definition.tres`, `hair_base.png`, and `hair_ilm.png`. These project assets are deliberately not published here. Restore the user's project checkpoint rather than substituting third-party geometry.
 
-Run `python3 examples/head-generation/bundle.py --output /tmp/head-recipe.json` to package the request. Load that JSON into the existing authorized Beaver external-agent workbench, execute `blender.start`, and poll the returned job until terminal. Output paths are creation-only under `assets/aster/head_recovery_88/`; an existing output is a conflict, not permission to overwrite. For a new candidate, change the output prefix consistently in `bundle.py` and `pipeline.py` before packaging.
+Run `python3 examples/head-generation/bundle.py --output /tmp/head-recipe.json` to package the request. Load that JSON into the existing authorized Beaver external-agent workbench, execute `blender.start`, and poll the returned job until terminal. Output paths are creation-only under `assets/aster/head_recovery_89/`; an existing output is a conflict, not permission to overwrite. For a new candidate, change the output prefix consistently in `bundle.py` and `pipeline.py` before packaging.
 
 Use Beaver's `npr-character` workflow validation and its native MiDot review to inspect the produced definition. The companion `examples/head-review` scripts provide synchronized comparison, white and wire views, and the candidate-only `MouthOpen` slider. The normal state is mouth closed (value 0).
 
@@ -53,3 +53,6 @@ Explicit normalized oral rings retain the neutral lip attachment while enlarging
 
 ## Candidate 88 paired eye alignment
 Raised, slightly shorter independent iris and coordinated lower eyelid preserve recess while avoiding the lower white crescent observed in the isolated87 trial.21 focused tests pass; see review-results.md for limited visual evidence and remaining work.
+
+## Candidate 89 uniform iris topology
+Each iris now uses 81 vertices and 64 quads without compressed pole rows.22 focused tests and limited native views are recorded; user feedback on ears, upper boundary, profiles, brows/lips and chin motion remains open.

@@ -12,6 +12,10 @@ def iris_depth(x, y):
     )
 
 
+def iris_grid_point(u, v):
+    return (u * sqrt(max(0, 1 - v * v / 2)), v * sqrt(max(0, 1 - u * u / 2)))
+
+
 def build_socket(side):
     n = 48
     vs = []
@@ -54,16 +58,14 @@ def build_socket(side):
     assert obj["rear_cap_planarity_before_m"] < 1e-8
     assert all(p.area > 1e-12 for p in obj.data.polygons), "Degenerate pocket face"
     iv = []
-    rows = 13
-    cols = 17
+    rows = cols = C["iris_grid_resolution"]
     for j in range(rows):
         sy = -1 + 2 * j / (rows - 1)
         for i in range(cols):
             tx = -1 + 2 * i / (cols - 1)
-            x = side * H * C["iris_center_x"] + H * C["iris_half_width"] * tx * sqrt(
-                max(0.002, 1 - sy * sy)
-            )
-            y = Y0 + H * (C["iris_center_y"] + C["iris_half_height"] * sy)
+            u, v = iris_grid_point(tx, sy)
+            x = side * H * C["iris_center_x"] + H * C["iris_half_width"] * u
+            y = Y0 + H * (C["iris_center_y"] + C["iris_half_height"] * v)
             iv.append(coord(x, y, iris_depth(x, y)))
     iris = mesh("Independent concave iris " + str(side), iv, grid_faces(rows, cols), WHITE)
     iris["iris_detail"] = True

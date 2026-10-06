@@ -29,3 +29,6 @@ Read-only connected-component bounds of the isolated reference iris suggest cent
 
 ## 88 paired lower-lid hypothesis
 Candidate87 was not retained as an isolated improvement because the unchanged lower lid exposed a narrow white crescent below the raised iris. Reduce lower arch from0.094H to0.088H while preserving corner height/slope and iris87. This lifts the central lower contour by1.416mm and rebuilds its pocket/shell boundary through the same shared contour function. Test corner continuity and central iris overlap; verify side view for protrusion.
+
+## 89 iris topology mapping before implementation
+The old 13 by17 iris grid scales a whole row by sqrt(max(0.002,1-v²)); its extreme rows compress many vertices into tiny spans. Replace it with a9 by9 quad grid mapped continuously from a square to a disk: x=u*sqrt(1-v²/2), y=v*sqrt(1-u²/2), then apply the existing ellipse radii. This keeps32 boundary edges,81 vertices and64 quads per iris without a center fan or collapsed pole rows. Use unchanged analytic depth/UV mapping. Validate positive projected cell area, finite samples, boundary ellipse and minimum edge spacing; native front and oblique views decide retention.

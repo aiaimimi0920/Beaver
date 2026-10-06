@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "preset": "semantic_calibration_a_88",
+  "preset": "semantic_calibration_a_89",
   "note": "Explicit semantic calibration case; no character-name generation dependency.",
   "iris_half_width_m": 0.01534,
   "eye_lens_bulge_m": 0.0012,
@@ -721,7 +721,8 @@
         0.08898305084745764,
         0.0805084745762712
       ]
-    ]
+    ],
+    "iris_grid_resolution": 9
   },
   "normal_policy": "actual_area_weighted_geometry",
   "surface_subdivision_levels": 1,

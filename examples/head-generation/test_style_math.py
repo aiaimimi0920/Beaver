@@ -21,6 +21,29 @@ def pure_function(module, name, extra):
 
 
 class StyleMathTests(unittest.TestCase):
+    def test_iris_grid_has_no_collapsed_poles(self):
+        fn, _ = pure_function("eye_socket.py", "iris_grid_point", {})
+        n = STYLE["calibration"]["iris_grid_resolution"]
+        self.assertEqual(n, 9)
+        points = [
+            [fn(-1 + 2 * i / (n - 1), -1 + 2 * j / (n - 1)) for i in range(n)] for j in range(n)
+        ]
+        shortest = 10
+        for j in range(n):
+            for i in range(n):
+                x, y = points[j][i]
+                self.assertTrue(math.isfinite(x) and math.isfinite(y))
+                if i in [0, n - 1] or j in [0, n - 1]:
+                    self.assertAlmostEqual(x * x + y * y, 1, places=10)
+                for jj, ii in [(j + 1, i), (j, i + 1)]:
+                    if jj < n and ii < n:
+                        shortest = min(shortest, math.dist(points[j][i], points[jj][ii]))
+                if i < n - 1 and j < n - 1:
+                    q = [points[j][i], points[j][i + 1], points[j + 1][i + 1], points[j + 1][i]]
+                    area = sum(a[0] * b[1] - b[0] * a[1] for a, b in zip(q, q[1:] + q[:1])) / 2
+                    self.assertGreater(area, 0.01)
+        self.assertGreater(shortest, 0.16)
+
     def test_eye_corners_join_and_lower_lid_covers_iris_base(self):
         c = STYLE["calibration"]
         h = c["height_m"]

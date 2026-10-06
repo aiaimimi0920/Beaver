@@ -1,5 +1,5 @@
 {
-  "candidate": 88,
+  "candidate": 89,
   "static_read_keys": {
     "STYLE": [
       "brow_arch_m",
@@ -65,6 +65,7 @@
       "iris_center_x",
       "iris_center_y",
       "iris_concavity",
+      "iris_grid_resolution",
       "iris_half_height",
       "iris_half_width",
       "iris_plane_slope",
