@@ -1,13 +1,9 @@
-# Reproducible head recipe, iteration 132
+# Reproducible head recipe, iteration 136
 
-Natural language constraints → explicit semantic style and topology parameters → Beaver blender.start → native MiDot/NPR validation and same-camera comparison. No character-name prompt dependency or reference mesh/texture input to generation.
+Natural-language specification → semantic parameters and original procedural topology → Beaver generation → native MiDot/NPR comparison. No character-name generation dependency or reference geometry/texture loaded by the generator.
 
-132 replaces the full-area 0.2 mm reverse-ear duplicate with a single wrapped membrane, a shallow cup and a wider inward rim return with an open inner edge. Non-ear geometry remains at 131. Reference ear connectivity and silhouette are read-only diagnostics, not imported generated geometry.
+This iteration keeps the 132 open wrapped ear and calibrates the complete side envelope. The old rear-bottom spur was caused by the underside endpoint extending beyond the adjoining side boundary. 135 corrected that endpoint; 136 improves the underside arc length while preserving a smooth join. Front lip support and glabella/nasal transition were calibrated independently of the already-close nose tip.
 
-Local pure tests: 54 pass. Beaver generation succeeded. Native NPR validation passed; side and rear white-model views inspected. Overall visual acceptance remains pending. Latest full project aggregate passed at 120; later source tests and native asset validation do not replace it. 133 side-profile calibration is a separate in-progress candidate.
+55 pure Python tests pass. Native asset validation passes. Actual left side, right white model, frontal MouthOpen and 45-degree render inspected. Overall likeness remains subject to visual review. Candidate 136 project aggregate is pending until an actual validation receipt is recorded. Body/Hair and the pinned framework/runtime remain unchanged.
 
-## Reproduce
-Run Python unittest discovery in this directory. Use bundle.py --output request.json to package the recipe, then submit through Beaver blender.start. Do not run Blender out of the workflow. Body and Hair primitives and the pinned framework/runtime are preserved.
-
-## Boundaries
-PR remains draft. Hosted CI previously failed before runner allocation. No merge, production deployment, release, or final artistic acceptance is claimed.
+Run unittest discovery in this directory; use bundle.py --output request.json to package for Beaver blender.start. The bundler does not execute Blender. PR is draft; no final product acceptance, merge, release or production deployment is claimed.

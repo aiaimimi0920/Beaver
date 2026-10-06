@@ -3,13 +3,13 @@
   "eye_socket.py": "81c61ef535a79a1f9e18068fd97e86fa77cfebd11aa4e6ff490d8a0042b32d0a",
   "mouth.py": "5896401b94a17fe601390e1ca29dc618198712ee3f69807ebe570f45ea68dca2",
   "ears.py": "fc5f58b5e37e6867cf14a024f28e9e01390cbb32d15f1fd4f3f44c33169537a7",
-  "shell.py": "6212f4f36f5ba5a65ea6c70f6a79ed901a0df92f1054b99a773bc48dc1601693",
+  "shell.py": "55bd46aa4eea4be58d567ad969223c613fa90e91bbabd1905e2b003d32a9c43e",
   "textures.py": "76d4ca8d1d1960c0c4f8f244a5b2c377ee6b9cc14168319f817821f9b4f5a03f",
   "glb_merge.py": "367082b2b1cf0bc9edcc7424abd92811c721c6751afaabd8638b2be3d754db0f",
   "crease_rules.py": "bca40d6d8c07a72cd5fe57b71dc16217dca39d83b51276994cb2c7b057e51529",
-  "pipeline.py": "6ae1668f3133a283e9df4ff98ca936db10c0197e679b98d7550d3f4e9ab3915c",
-  "authoring-brief.md": "0605dcea29039c6833888f24adee8a098b823cce9d60573c41fc57d4ee3d474b",
-  "planner-mapping.md": "6a704980db6d78fc401a706c82ddc04930e6bf950f606adbc1cba10adc64aeff",
+  "pipeline.py": "5b793c2850d905555c1f376b142a0b34d62cb10bebf8c82b302687486e229065",
+  "authoring-brief.md": "93c1b5d1ed3ce4382056a02b3d9d4ad27fa155e3c222fb1329cd376acbd9d1f2",
+  "planner-mapping.md": "cb279a0811e646204e707d6904d90aa7994b1ec9418e40b685228544ece1c119",
   "eye-structure-plan.md": "a4e85304a01bb6b4824b46113e58e9c301d6215c3e28c5acdbff1d802fe364b0",
-  "face_style.json": "6072949e1feaf17214d5eebb8527d1210882cdc67f10275f8317c32b361ff1ea"
+  "face_style.json": "55e0af61bbeb9bb8b7e0417c657eab6b8dbe8b350ca8b4ade72725557ddfc2d0"
 }

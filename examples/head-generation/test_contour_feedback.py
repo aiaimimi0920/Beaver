@@ -31,7 +31,7 @@ class ContourFeedbackTests(unittest.TestCase):
         self.assertLess(x, 0.236 * 0.18)
         self.assertGreater(x, 0)
         self.assertAlmostEqual(
-            z, 0.04 + (0.078 - 0.236 * 0.25 - 0.04) * C["jaw_return_depth_strength"]
+            z, 0.04 + (0.078 + 0.236 * curve(0.08, 1, C["jaw_return_depth_profile"]) - 0.04) * C["jaw_return_depth_strength"]
         )
 
     def test_existing_chin_return_base_remains_unchanged(self):
@@ -205,3 +205,11 @@ class WrappedPinnaTests(unittest.TestCase):
         self.assertNotIn("for i in reversed(f)) for f in front_faces", source)
         self.assertGreater(C["ear_return_lip_width"], .04)
         self.assertLess(C["ear_return_lip_width"], C["ear_outward_span"])
+
+
+class RearJawJoinTests(unittest.TestCase):
+    def test_final_return_has_no_deeper_center_spur(self):
+        fn, _ = pure_function("shell.py", "chin_underside_depth_offset", {"C": C, "H": 1})
+        back, lift, _ = C["chin_underside_stations"][-1]
+        self.assertAlmostEqual(fn(back, lift, 0), fn(back, lift, 1))
+        self.assertGreater(lift, .04)

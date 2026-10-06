@@ -146,3 +146,19 @@ Side review of130 still shows too much closed oval pigment. Keep the same origin
 
 ## Revision 132: wrapped open pinna
 User review identifies the ear as a three-dimensional wrapped sheet, readable in untextured white view, with an open rear. The previous duplicate front membrane offset by 0.2 mm is not that construction. Use one connected concave front sheet with an asymmetric upper-full/lower-small outline; roll the outer rim inward into a distinct short return sheet, leaving its inner rear edge open. No full-area duplicate reverse membrane, no cap, no solidified slab. Preserve welded face-root positions and original painted detail. This isolated ear iteration freezes all other 131 geometry, shader normals and mouth behavior. Side-face silhouette calibration follows in its own measured iteration, including the pointed rear jaw boundary.
+
+
+## Revision 133: measured profile envelope
+After the isolated ear change, calibrate the complete side silhouette. At normalized heights 0.08–0.15 the prior jaw back boundary was 0.034–0.039 H too far forward, while the nose-tip projection at height 0.28 already agreed. Correct the posterior jaw trajectory without pulling the frontal chin into a point. Add lower/upper lip-support volume and a shallow glabella-to-nasal transition instead of a flat face plus isolated protruding nose. Preserve mouth aperture, morph fixation and accepted central normal division. Use a small explicit front/back semantic station list, not reference mesh sampling in the generator. The last underside return must remain inside the continuous rear-jaw envelope; inspect the user-circled rear lower corner after subdivision.
+
+
+## Revision 134: posterior lower-jaw envelope continuity
+133 improved lip support and nasal bridge recession while keeping the nose tip projection; its side render still shows the circled tiny rear-bottom spur. Read-only section audit finds posterior deficit at heights 0.04–0.12. The low-height cross-section table still blends the old shallow back profile with the new semantic envelope. Correct that low station and lower-cheek width, leaving the frontal chin tip and underside height fixed. This is a parameter-source correction, not a post-export mesh patch. Compare left and right side silhouettes, then inspect front and mouth morph.
+
+
+## Revision 135: underside endpoint meets the jaw envelope
+134 audit shows the rear underside endpoint, not the cheek station, still controls the small low-height spur: changing the upper rear curve does not move the 0.025–0.04 H silhouette. Raise and extend the final underside station along the intended posterior jaw trajectory, keeping the front lip/chin tip fixed. Fade the under-chin center-depth bow to zero at the final open rear edge, so it cannot project a separate central spike behind the side-return edge. Verify the whole side silhouette after subdivision; no claim of success from parameter values alone.
+
+
+## Revision 136: retain the smooth join, calibrate underside arc length
+135 removes the observed posterior spur in the actual side render. Its lower underside turns upward too early compared with the reference envelope. Increase the middle underside depth stations and lower the final lift modestly; keep the free rear edge center-depth bow at zero using the actual final-station height. Preserve the flat-tip-free smooth join, front chin, ears, mouth and accepted normal division.
