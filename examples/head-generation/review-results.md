@@ -28,3 +28,7 @@ Native synchronized front render, left-side white, rear white and full-MouthOpen
 The first aggregate project check correctly failed even with exit 0 and five passing tests: an old test preloaded retired NPRLab files absent from the pinned runtime. Its migration tests the current head-review actor, nonmutation, view controls and explicitly preserves rejection of missing full-wardrobe data. Aggregate rerun status is recorded with the checkpoint; focused model validation is not a substitute for it.
 
 GitHub PR 20 remains draft. Earlier checks failed before runner/job steps and a bounded rerun did not resolve that infrastructure symptom; no current-head CI success, external review, merge, release or production deployment is claimed. Approval to initiate external review while CI fails is still pending.
+
+## Aggregate rerun completed
+
+On 2026-10-06 at 06:28 UTC, Beaver completed validation run 05a6b703-2c51-49fe-ac62-fbb1479098c2 and marked the existing task completed. All 7 tests / 57 assertions passed across 3 scripts. No SCRIPT ERROR or engine ERROR remained in the test log. Invalid-resource-UID fallback warnings remain, so this is not zero-warning acceptance. The migrated test checks candidate94 actor initialization, unchanged input definition, four actual slider controls, view/rotation/reset, and explicit rejection of missing full-wardrobe inputs. It does not grant full-wardrobe or final visual acceptance.

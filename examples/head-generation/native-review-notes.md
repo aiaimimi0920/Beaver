@@ -1,3 +1,7 @@
+# Native review chronology
+
+Latest checkpoint: candidate 94; see review-results.md for current evidence and bounds. The candidate88 observations below are retained as historical context, not the latest model or acceptance.
+
 # Candidate 88 eye-occlusion checkpoint
 
 Beaver job ad08fc06-71e8-46c0-9484-ce77dbf9d37f, request c987aec5-8c75-422d-96bd-bd814d15914a, succeeded with exit code 0. GLB SHA-256: 7503e63067b499518626a37dc027d8dbc6e2e76a39c0780cfd326a1b1c2b97d3. Standard NPR validation returned ok=true with definition/model hashes verified. Twenty-one focused tests pass.
