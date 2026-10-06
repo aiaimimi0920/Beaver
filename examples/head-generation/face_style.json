@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "preset": "semantic_calibration_a_111",
+  "preset": "semantic_calibration_a_119",
   "note": "Explicit semantic calibration case; no character-name generation dependency.",
   "iris_half_width_m": 0.01534,
   "eye_lens_bulge_m": 0.0012,
@@ -930,7 +930,14 @@
     "ear_upper_arc_lift": 0.17,
     "ear_return_lip_width": 0.01,
     "ear_return_lip_depth": 0.004,
-    "ear_membrane_thickness_m": 0.0002
+    "ear_membrane_thickness_m": 0.0002,
+    "ear_outward_span": 0.096,
+    "ear_posterior_span": 0.1,
+    "ear_root_depth_base": -0.32,
+    "ear_root_depth_slope": -0.035,
+    "ear_upper_arc_bias": 0.065,
+    "ear_lateral_basin": 0.035,
+    "ear_bend_contrast": 0.75
   },
   "normal_policy": "actual_area_weighted_geometry",
   "surface_subdivision_levels": 1,

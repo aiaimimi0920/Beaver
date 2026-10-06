@@ -102,24 +102,22 @@ def eye_atlas_color(u, v):
 
 
 def ear_color(u, v):
-    x = (u - 0.5) / 0.36
-    y = (v - 0.54) / 0.43
+    x = (u - 0.50) / 0.26
+    y = (v - 0.71) / 0.24
     radius = sqrt(x * x + y * y)
     concha = STYLE["ear_concha_tint_strength"] * exp(
-        -(((u - 0.49) / 0.22) ** 2) - ((v - 0.48) / 0.28) ** 2
+        -(((u - 0.43) / 0.17) ** 2) - ((v - 0.62) / 0.20) ** 2
     )
-    helix = (
-        STYLE["ear_helix_stroke_strength"]
-        * exp(-(((radius - 0.80) / 0.065) ** 2))
-        * max(0, min(1, (u - 0.18) / 0.18))
-    )
-    fold_u = 0.57 - 0.13 * sin(pi * max(0, min(1, (v - 0.25) / 0.7)))
+    arch_mask = max(0, min(1, (v - 0.57) / 0.10))
+    helix = STYLE["ear_helix_stroke_strength"] * exp(-(((radius - 0.80) / 0.10) ** 2)) * arch_mask
+    fold_u = 0.37 + 0.065 * sin(pi * max(0, min(1, (v - 0.38) / 0.40)))
     fold = (
         STYLE["ear_inner_fold_strength"]
-        * exp(-(((u - fold_u) / 0.04) ** 2))
-        * exp(-(((v - 0.57) / 0.24) ** 4))
+        * exp(-(((u - fold_u) / 0.055) ** 2))
+        * exp(-(((v - 0.57) / 0.18) ** 4))
     )
-    strength = max(0, min(0.65, concha + helix + fold))
+    lobe_mask = max(0, min(1, (v - 0.24) / 0.18))
+    strength = max(0, min(0.65, concha + helix + fold)) * lobe_mask
     pigment = (0.79, 0.43, 0.37)
     return tuple(SKIN[i] * (1 - strength) + pigment[i] * strength for i in range(3)) + (1,)
 

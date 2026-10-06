@@ -6,7 +6,7 @@ from mouth import store_mouth_deltas
 from glb_merge import merge_face
 
 ROOT = Path(beaver_input("project.godot")).parent
-OUT = "assets/aster/head_recovery_111/"
+OUT = "assets/aster/head_recovery_119/"
 BASE = "assets/aster/head_recovery_49/"
 GUIDE = Path(beaver_input("authoring/head_generation_guide.md")).read_text()
 assert "去发侧脸轮廓检查" in GUIDE
@@ -188,6 +188,12 @@ for part_index, part in enumerate(PARTS):
         region = part_index + 10
         if part == shell:
             region = 1 if poly.index < front_count else 2
+        elif part.get("ear_front_faces"):
+            count = part["ear_front_faces"]
+            if poly.index % count >= part["ear_main_faces"]:
+                region += 100
+            if poly.index >= count:
+                region += 200
         regions.data[poly.index].value = region
     for vertex in part.data.vertices:
         vertex.co.z -= 0.021
@@ -254,7 +260,11 @@ for role in ["Face"]:
             region = regions.data[poly.index].value
             for index in poly.vertices:
                 normals[index] += poly.normal * poly.area
-                side = (1 if poly.center.x >= 0 else -1) if abs(data.vertices[index].co.x) < 1e-7 else 0
+                side = (
+                    (1 if poly.center.x >= 0 else -1)
+                    if abs(data.vertices[index].co.x) < 1e-7
+                    else 0
+                )
                 key = (index, region, side)
                 region_normals.setdefault(key, Vector((0, 0, 0)))
                 region_normals[key] += poly.normal * poly.area
@@ -269,10 +279,16 @@ for role in ["Face"]:
             region = regions.data[poly.index].value
             for loop_index in poly.loop_indices:
                 index = data.loops[loop_index].vertex_index
-                side = (1 if poly.center.x >= 0 else -1) if abs(data.vertices[index].co.x) < 1e-7 else 0
+                side = (
+                    (1 if poly.center.x >= 0 else -1)
+                    if abs(data.vertices[index].co.x) < 1e-7
+                    else 0
+                )
                 normal = region_normals.get((index, region, side), poly.normal)
                 if region in (1, 2) and side == 0:
-                    normal = normals[index].lerp(normal, C["jaw_normal_boundary_strength"]).normalized()
+                    normal = (
+                        normals[index].lerp(normal, C["jaw_normal_boundary_strength"]).normalized()
+                    )
                 corner_normals[loop_index] = normal if poly.use_smooth else poly.normal.copy()
         data.normals_split_custom_set(corner_normals)
         report["flat_geometric_triangles"] = sum(not poly.use_smooth for poly in data.polygons)

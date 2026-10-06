@@ -9,12 +9,21 @@ def build_ears():
 
 
 def membrane_offset(t, u, config, root_depth):
-    outward = curve(t, 1, config["ear_outward_profile"]) * sin(pi * u / 2)
-    posterior = (root_depth - curve(t, 1, config["ear_outer_depth_profile"])) * (
-        1 - cos(pi * u / 2)
+    outward = config["ear_outward_span"] * sin(pi * t) * u
+    outer_depth = (
+        config["ear_root_depth_base"]
+        + config["ear_root_depth_slope"] * t
+        - config["ear_posterior_span"] * sin(pi * t)
     )
-    posterior += config["ear_basin_depth"] * sin(pi * u)
+    sweep = u + config["ear_bend_contrast"] * sin(2 * pi * u) / (2 * pi)
+    posterior = (root_depth - outer_depth) * sweep
     return outward, posterior
+
+
+def ear_arc_height(t, low, high):
+    return (
+        low + (high - low) * (1 - cos(pi * t)) / 2 + H * C["ear_upper_arc_bias"] * t * sin(pi * t)
+    )
 
 
 def fit_ear_roots(shell):
@@ -57,7 +66,7 @@ def fit_ear_roots(shell):
                 for u in values:
                     outward, posterior = membrane_offset(t, u, C, (-root.y - Z0) / H)
                     row.append(len(vs))
-                    lift = H * C["ear_upper_arc_lift"] * sin(pi * t) * t * t * sin(pi * u / 2)
+                    lift = (ear_arc_height(t, low, high) - root.z) * sqrt(max(0, sin(pi * u / 2)))
                     vs.append((root.x + side * H * outward, root.y + H * posterior, root.z + lift))
                     uvpoints.append((0.02 + 0.96 * u, 0.02 + 0.96 * t))
                 root_indices.append(row[0])
@@ -69,6 +78,7 @@ def fit_ear_roots(shell):
                     fs.extend((a[k], a[k + 1], b[0]) for k in range(len(a) - 1))
                 else:
                     fs.extend((a[k], a[k + 1], b[k + 1], b[k]) for k in range(len(a) - 1))
+            main_face_count = len(fs)
             # A narrow skin return lip supports back-side visibility without
             # closing the ear basin or creating an independent dark stroke.
             rim = []
@@ -80,8 +90,13 @@ def fit_ear_roots(shell):
                 t = (root_points[j].z - low) / (high - low)
                 x, y, z = vs[outer]
                 rim.append(len(vs))
-                vs.append((x - side * H * C["ear_return_lip_width"] * sin(pi * t),
-                           y + H * C["ear_return_lip_depth"] * sin(pi * t), z))
+                vs.append(
+                    (
+                        x - side * H * C["ear_return_lip_width"] * sin(pi * t),
+                        y + H * C["ear_return_lip_depth"] * sin(pi * t),
+                        z,
+                    )
+                )
                 uvpoints.append((0.86, 0.02 + 0.96 * t))
             for j in range(len(rows) - 1):
                 corners = [rows[j][-1], rim[j], rim[j + 1], rows[j + 1][-1]]
@@ -94,6 +109,7 @@ def fit_ear_roots(shell):
             # a contour stroke; its open root remains behind the welded front.
             front_vertices = len(vs)
             front_faces = list(fs)
+            front_face_count = len(front_faces)
             thickness = C["ear_membrane_thickness_m"]
             vs.extend((x - side * thickness, y + thickness, z) for x, y, z in list(vs))
             uvpoints.extend([(0.08, 0.50)] * front_vertices)
@@ -101,6 +117,8 @@ def fit_ear_roots(shell):
             obj = mesh("Ear hollow pinna " + str(side), vs, fs, SKIN)
             assert all(poly.area > 1e-12 for poly in obj.data.polygons), "Degenerate ear membrane"
             obj["ear_detail"] = True
+            obj["ear_main_faces"] = main_face_count
+            obj["ear_front_faces"] = front_face_count
             detail = obj.data.uv_layers.new(name="DetailUV")
             for loop in obj.data.loops:
                 detail.data[loop.index].uv = uvpoints[loop.vertex_index]

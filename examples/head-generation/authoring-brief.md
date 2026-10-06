@@ -59,3 +59,23 @@ The skin pass culls back faces while the outline pass culls front faces. A singl
 
 ## Candidate 111 two-sided thin skin membrane
 A narrow returning rim alone still leaves an unshaded back-facing patch visible near the lower ear in the side test. Give the thin curved ear membrane a skin-colored reverse surface separated by a submillimeter thickness, rather than exposing the outline pass. Keep its posterior attachment open and the ear bowl hollow; do not create a closed solid cylinder or a black contour mesh. Preserve front root topology and test both side views.
+
+## Candidate 113 continuous half-ellipse pinna
+The upper ear boundary must be a genuinely curved half-ellipse in side projection, not a straight ruled ray lifted from the root. Use a sinusoidal outward/posterior sweep and a cosine-spaced height arc with a modest upward bias. Interpolate the arc nonlinearly toward the fixed facial root so the upper attachment turns smoothly. Retain the verified reverse skin surface and accepted central facial division. Candidate112 graphic/silhouette experiment did not sufficiently match the reference and is not the final result.
+
+## Candidate115 orient the concavity laterally as well as posteriorly
+A side-visible hollow ear needs its basin to recede toward the head, not only toward the back. Apply a bounded inward lateral displacement in the interior of the membrane while preserving both the fixed root and the rounded outer lip. This separates visible concavity from the outer silhouette and prevents a posterior bulge from being mistaken for a hollow pinna. Retain thin reverse skin and existing face geometry.
+
+## Candidate116 preserve the ear-rim normal transition
+Do not smooth the returning outer ear lip together with the basin wall. Retain a dedicated corner-normal group at this geometric fold so the lip catches light distinctly while the basin remains smooth. Keep all positions and the accepted facial centerline unchanged for this isolated shading comparison.
+
+## Candidate117 monotone ear cross-section informed by normal directions
+Read-only reference inspection shows the visible ear membrane normals remain outward and forward across the basin; they do not flip to the back-facing side. Replace the over-bent posterior/lateral displacement with a monotone cross-section whose slope is stronger at the attachment and outer lip and weaker in the basin. A smooth integrated cosine slope gives that controlled fold while avoiding a flipped strip. This uses a generic mathematical profile, not copied reference vertices or normals.
+
+
+## Ear lower-arc correction 118
+Preserve the accepted facial center division and welded ear roots. The side silhouette must turn smoothly from the lower root into a rounded lobe, rather than leaving a pointed diagonal. Weight the upper-arc lift toward the upper ear so that it contributes zero first derivative at the lower endpoint. Keep the shallow, non-flipping cross section and original skin/texture workflow. Verify front and both side views against the reference; this is an iteration, not aesthetic acceptance.
+
+
+## Ear pigment correction 119
+Keep the rounded lower silhouette from118. Original ear pigmentation should suggest a short upper arch, a shallow concha and a short inner fold ending above the lobe. Do not draw a full-length stripe from the upper root to the lower attachment. Keep the lower lobe nearly plain skin. The reference informs structure only; no reference texture pixels are imported.

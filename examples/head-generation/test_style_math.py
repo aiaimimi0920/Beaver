@@ -136,6 +136,13 @@ class StyleMathTests(unittest.TestCase):
                 self.assertEqual(rgba[3], 1)
                 self.assertTrue(all(math.isfinite(c) and 0 <= c <= 1 for c in rgba))
 
+    def test_lower_lobe_stays_plain_skin(self):
+        fn, _ = pure_function(
+            "textures.py", "ear_color", {"STYLE": STYLE, "SKIN": STYLE["skin_rgb"]}
+        )
+        for u in [0.1, 0.3, 0.5, 0.7, 0.9]:
+            self.assertEqual(fn(u, 0.15)[:3], tuple(STYLE["skin_rgb"]))
+
     def test_ear_membrane_profile_has_bounded_depth(self):
         curve_fn, _ = pure_function("face.py", "curve", {})
         fn, _ = pure_function("ears.py", "membrane_offset", {"curve": curve_fn})
@@ -144,7 +151,7 @@ class StyleMathTests(unittest.TestCase):
             for u in [i / 10 for i in range(11)]:
                 outward, posterior = fn(t, u, c, -0.33)
                 self.assertTrue(0 <= outward < 0.13)
-                self.assertTrue(0 <= posterior <= 0.15)
+                self.assertTrue(-0.04 <= posterior <= 0.15)
 
     def test_nasal_profiles_are_monotone_and_bounded(self):
         curve_fn, _ = pure_function("face.py", "curve", {})
