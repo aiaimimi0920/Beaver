@@ -1,5 +1,5 @@
 {
-  "candidate": 94,
+  "candidate": 95,
   "static_read_keys": {
     "STYLE": [
       "brow_arch_m",
@@ -36,6 +36,12 @@
       "brow_outer_x",
       "brow_rise",
       "brow_thickness",
+      "catchlight_grid_resolution",
+      "catchlight_half_height",
+      "catchlight_half_width",
+      "catchlight_offset_x",
+      "catchlight_offset_y",
+      "catchlight_surface_offset",
       "chin_depth_m",
       "chin_front_lift",
       "chin_morph_blend_height",
@@ -107,23 +113,5 @@
       "width_stations"
     ]
   },
-  "not_directly_read_style": [
-    "normal_policy",
-    "note",
-    "preset",
-    "schema_version"
-  ],
-  "not_directly_read_calibration": [
-    "ear_membrane_roundness",
-    "ear_membrane_sweep",
-    "ear_membrane_width",
-    "face_center_crease_profile",
-    "face_side_crease_lateral_ratio",
-    "face_side_crease_profile",
-    "face_side_crease_selection_tolerance",
-    "lower_lip_edge_depth_delta",
-    "mouth_lip_relief",
-    "upper_lip_edge_depth_delta"
-  ],
-  "caution": "Static reads include unused function bodies and do not establish parameter effectiveness. Actual crease ablation, generated geometry and native review are separate evidence."
+  "caution": "Static reads do not prove parameter effectiveness; consult actual generated geometry and native checks."
 }

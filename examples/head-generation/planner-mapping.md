@@ -49,3 +49,8 @@ Reference top boundary falls substantially farther down at the side than the old
 
 ## 94：保持额头前轮廓
 93侧面复核发现把整段额头深度混向顶部绝对深度会压凹前额。顶部空间弧线应只施加相对于原顶部深度的差值，并向下渐隐，不能把额头中线原有凸弧拉向头顶平面。保持头顶边界目标、原前额凸度及其他本批参数，复核侧面后才保留。
+
+## Candidate95 eye mapping
+- Visible original white catchlight: explicit normalized offset(-0.030,+0.010)H from iris center, half-size(0.009,0.007)H, surface offset0.0012H,5x5 square-to-disk quad patch. White ocular palette, actual geometry, no reference pixels.
+- Pocket transition setback0.004H, posterior straight length0.030H, width/height expansion1.04. Previous0.020/0.065/1.10 values are superseded. Rear remains behind iris; inspect actual clearances rather than claiming a shorter parameter proves no collision.
+- Iris concavity0.014H and outward depth slope-0.31; rim depth and aperture stay fixed. No global forward translation.

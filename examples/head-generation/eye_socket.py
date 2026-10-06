@@ -67,6 +67,7 @@ def build_socket(side):
             y = Y0 + H * (C["iris_center_y"] + C["iris_half_height"] * v)
             iv.append(coord(x, y, iris_depth(x, y)))
     iris = mesh("Independent concave iris " + str(side), iv, grid_faces(rows, cols), WHITE)
+    build_catchlight(side)
     iris["iris_detail"] = True
     iris["ocular_surface"] = True
     uv = iris.data.uv_layers.new(name="DetailUV")
@@ -76,6 +77,26 @@ def build_socket(side):
             (v.x - side * H * C["iris_center_x"]) / (2 * STYLE["eye_half_width_m"]) + 0.5,
             (v.z - Y0 - H * C["iris_center_y"]) / 0.044 + 0.5,
         )
+
+
+def build_catchlight(side):
+    vs = []
+    n = int(C["catchlight_grid_resolution"])
+    for j in range(n):
+        for i in range(n):
+            u, v = iris_grid_point(-1 + 2 * i / (n - 1), -1 + 2 * j / (n - 1))
+            x = H * (
+                side * C["iris_center_x"]
+                + C["catchlight_offset_x"]
+                + C["catchlight_half_width"] * u
+            )
+            y = Y0 + H * (
+                C["iris_center_y"] + C["catchlight_offset_y"] + C["catchlight_half_height"] * v
+            )
+            vs.append(coord(x, y, iris_depth(x, y) + H * C["catchlight_surface_offset"]))
+    obj = mesh("Catchlight white ellipse " + str(side), vs, grid_faces(n, n), (1.0, 1.0, 1.0))
+    obj["ocular_surface"] = True
+    assert all(p.area > 1e-12 for p in obj.data.polygons), "Degenerate catchlight"
 
 
 def fit_pocket_clearance(shell):

@@ -1,34 +1,9 @@
-# Candidate 94 feedback-batch review — 2026-10-06
+# Candidate95 eye feedback checkpoint — 2026-10-06
 
-This is a generated, inspected development checkpoint, not final aesthetic or universal-template acceptance. Candidate 94 was executed through Beaver's existing task and native tools; no model-service call or Codex task was created.
+Actual Beaver job0aecc89f-dae1-45d6-b01a-46834b478f56, request330f0070-ae55-49cb-b2a6-377be31d701b succeeded with exit0. GLB SHA-25650f9b22c8aa3d339bb3f938bb75bfebc5cf8c8fe9dddf7ebb53c2bc2ea42341c. Standard NPR validation23eab266-60df-4a84-afb4-08a5cb307a27 returned ok, empty errors, no engine errors, definition/model and pinned framework hashes verified. Broader asset-dependency verification is not claimed.29 pure recipe tests pass and published runtime ASTs match actual generated source.
 
-## Actual execution
+Each eye has an original25-vertex/16-quad white catchlight following the concave iris with a small offset. The native normal-scale front render now visibly shows the white points. Both oblique white views, left white side and right render side were inspected. This is not an exhaustive collision or aesthetic guarantee. Posterior straight pocket length is0.030H rather than0.065H; the transition setback is0.004H rather than0.020H. Iris concavity is0.014H, with its rim not globally translated forward. Actual hidden-pocket vertex fitting moved12 samples, maximum1.851mm, at requested0.944mm clearance; this is a sampled surface check, not a proof of global nonintersection.
 
-- Job eae4e85a-9a17-4c46-bf14-0543c977e0e3; request 7275699c-df9c-4a96-b4fe-528e1d011b54; succeeded, exit 0.
-- GLB SHA-256 bf142c47edf3a9309fa8f9393c4cebf8bf1669cec216288f10537a06e8da9bb1.
-- Focused Python suite: 27 tests passed. Native NPR character validation: ok, errors empty, output hashes verified. This is not an absence-of-all-warning claim.
-- Published Python runtime sources are AST-equivalent to the actual generated copies; source formatting and documentation do not retroactively alter the exported model.
-- MiDot, the pinned NPR 1.3.0 package, Body and Hair remain unchanged.
+Body/Hair and the original GLB binary prefix are preserved. Mouth and chin dynamics remain94. Ear shape and jaw-to-ear contour are unchanged in this isolated candidate and are still being revised in the following batch; do not claim them fixed by95. MiDot and NPR1.3.0 package are unchanged. Reference small white-mapped surfaces were inspected, but no reference vertices, UVs or pixels enter the generator.
 
-## Feedback implemented through the recipe
-
-- Localized upper/lower lip motion with a fixed lower-chin region. Actual front chin-tip samples move 0 mm versus 15.11 mm in candidate 89. Skin-UV-filtered lower-chin samples have up to 0.709 mm downward / 0.767 mm total motion; do not claim the entire chin is perfectly rigid. Broader geometric masks include oral vertices and are not valid chin-only metrics.
-- Neutral lip width reduced and vertical position adjusted; cavity and tongue retained. MouthOpen 0, 0.5 and 1 inspected; neutral 0 restored.
-- Ears are shallow, open-backed elliptical membranes with independently authored pigment. The evaluated face and each ear now share 14 root edges, each incident to exactly two faces. Candidate 94 has 54 vertices and 36 quads per generated ear plus local end triangles. This does not establish perfect reference shape matching.
-- Upper-head height and depth boundary controls smooth the silhouette. Candidate 93's absolute-depth blend flattened the forehead and was rejected; 94 uses a boundary depth correction while preserving the middle forehead curvature.
-- Brow thickness/rise and taper adjusted to sparse semantic observations.
-- Eye-pocket rear bodies use constant oval cross-sections; oral rear rings also share an oval section. Front apertures and cavity requirements remain independent; the default mouth is not an open pipe.
-
-## Visual evidence and limits
-
-Native synchronized front render, left-side white, rear white and full-MouthOpen captures were inspected, with Body/Hair off, zoom 1.37 and light -45 degrees. The reference stays neutral when candidate MouthOpen is driven; the capture does not compare both actors' animation. Ears and lips can still need further aesthetic feedback. Hair intersections are outside this frozen-Hair batch. Reference export splits or triangulation artifacts are not copied into the generator.
-
-## Validation and publication gates
-
-The first aggregate project check correctly failed even with exit 0 and five passing tests: an old test preloaded retired NPRLab files absent from the pinned runtime. Its migration tests the current head-review actor, nonmutation, view controls and explicitly preserves rejection of missing full-wardrobe data. Aggregate rerun status is recorded with the checkpoint; focused model validation is not a substitute for it.
-
-GitHub PR 20 remains draft. Earlier checks failed before runner/job steps and a bounded rerun did not resolve that infrastructure symptom; no current-head CI success, external review, merge, release or production deployment is claimed. Approval to initiate external review while CI fails is still pending.
-
-## Aggregate rerun completed
-
-On 2026-10-06 at 06:28 UTC, Beaver completed validation run 05a6b703-2c51-49fe-ac62-fbb1479098c2 and marked the existing task completed. All 7 tests / 57 assertions passed across 3 scripts. No SCRIPT ERROR or engine ERROR remained in the test log. Invalid-resource-UID fallback warnings remain, so this is not zero-warning acceptance. The migrated test checks candidate94 actor initialization, unchanged input definition, four actual slider controls, view/rotation/reset, and explicit rejection of missing full-wardrobe inputs. It does not grant full-wardrobe or final visual acceptance.
+This is a partial eye result, not final face, full wardrobe or universal-template acceptance. GitHub PR20 remains draft with infrastructure-stage CI failures and pending external review; no merge or deployment claimed. Exporter optional Draco/color warnings remain. Subsequent contour trials96/97 were blocked by unchanged topology gates;98/99 needed further local visual correction and are not accepted replacements for this isolated eye checkpoint.

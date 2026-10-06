@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "preset": "semantic_calibration_a_94",
+  "preset": "semantic_calibration_a_95",
   "note": "Explicit semantic calibration case; no character-name generation dependency.",
   "iris_half_width_m": 0.01534,
   "eye_lens_bulge_m": 0.0012,
@@ -139,8 +139,8 @@
     "iris_half_width": 0.065,
     "iris_half_height": 0.077,
     "iris_rim_depth": -0.029,
-    "iris_plane_slope": -0.28,
-    "iris_concavity": 0.02,
+    "iris_plane_slope": -0.31,
+    "iris_concavity": 0.014,
     "upper_cover": 0.028,
     "lower_cover": 0.005,
     "orbital_band_width": 0.28,
@@ -675,10 +675,10 @@
     ],
     "mouth_half_width": 0.065,
     "pocket_ring_samples": 32,
-    "pocket_body_width_ratio": 1.1,
-    "pocket_body_height_ratio": 1.1,
-    "pocket_transition_back": 0.02,
-    "pocket_body_length": 0.065,
+    "pocket_body_width_ratio": 1.04,
+    "pocket_body_height_ratio": 1.04,
+    "pocket_transition_back": 0.004,
+    "pocket_body_length": 0.03,
     "top_boundary_depth_profile": [
       [
         0,
@@ -712,7 +712,13 @@
         1,
         -0.311
       ]
-    ]
+    ],
+    "catchlight_offset_x": -0.03,
+    "catchlight_offset_y": 0.01,
+    "catchlight_half_width": 0.009,
+    "catchlight_half_height": 0.007,
+    "catchlight_surface_offset": 0.0012,
+    "catchlight_grid_resolution": 5
   },
   "normal_policy": "actual_area_weighted_geometry",
   "surface_subdivision_levels": 1,
