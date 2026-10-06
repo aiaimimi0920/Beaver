@@ -13,6 +13,7 @@ def membrane_offset(t, u, config, root_depth):
     posterior = (root_depth - curve(t, 1, config["ear_outer_depth_profile"])) * (
         1 - cos(pi * u / 2)
     )
+    posterior += config["ear_basin_depth"] * sin(pi * u)
     return outward, posterior
 
 
@@ -52,7 +53,7 @@ def fit_ear_roots(shell):
             for j, root in enumerate(root_points):
                 t = (root.z - low) / (high - low)
                 row = []
-                values = [0] if j in [0, len(root_points) - 1] else [0, 0.3, 0.7, 1]
+                values = [0] if j in [0, len(root_points) - 1] else [0, 0.25, 0.5, 0.78, 1]
                 for u in values:
                     outward, posterior = membrane_offset(t, u, C, (-root.y - Z0) / H)
                     row.append(len(vs))

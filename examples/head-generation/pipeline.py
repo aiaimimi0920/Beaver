@@ -6,7 +6,7 @@ from mouth import store_mouth_deltas
 from glb_merge import merge_face
 
 ROOT = Path(beaver_input("project.godot")).parent
-OUT = "assets/aster/head_recovery_103/"
+OUT = "assets/aster/head_recovery_107/"
 BASE = "assets/aster/head_recovery_49/"
 GUIDE = Path(beaver_input("authoring/head_generation_guide.md")).read_text()
 assert "去发侧脸轮廓检查" in GUIDE
@@ -181,7 +181,13 @@ from textures import bake_control_maps
 
 bake_control_maps(OUT)
 # Assemble the complete head 12 mm lower onto the frozen original neck.
-for part in PARTS:
+for part_index, part in enumerate(PARTS):
+    regions = part.data.attributes.new("NormalRegion", "INT", "FACE")
+    for poly in part.data.polygons:
+        region = part_index + 10
+        if part == shell:
+            region = 1 if poly.index < front_count else 2
+        regions.data[poly.index].value = region
     for vertex in part.data.vertices:
         vertex.co.z -= 0.021
 report["head_assembly_y_offset_m"] = -0.021
@@ -238,31 +244,35 @@ for role in ["Face"]:
 
         report["ear_shared_seams"] = verify_ear_seams(data, report["ear_root_fit"])
         normals = [Vector((0, 0, 0)) for _ in data.vertices]
-        lateral_normals = {}
+        region_normals = {}
+        regions = data.attributes.get("NormalRegion")
+        assert regions is not None, "Missing authored normal regions"
         for poly in data.polygons:
+            if not poly.use_smooth:
+                continue
+            region = regions.data[poly.index].value
             for index in poly.vertices:
                 normals[index] += poly.normal * poly.area
-                if abs(data.vertices[index].co.x) < 1e-7:
-                    side = 1 if poly.center.x >= 0 else -1
-                    key = (index, side)
-                    lateral_normals.setdefault(key, Vector((0, 0, 0)))
-                    lateral_normals[key] += poly.normal * poly.area
+                side = (1 if poly.center.x >= 0 else -1) if abs(data.vertices[index].co.x) < 1e-7 else 0
+                key = (index, region, side)
+                region_normals.setdefault(key, Vector((0, 0, 0)))
+                region_normals[key] += poly.normal * poly.area
         for normal in normals:
             normal.normalize()
-        for normal in lateral_normals.values():
+        for normal in region_normals.values():
             normal.normalize()
-        report["center_partition_normal_corners"] = len(lateral_normals)
+        report["regional_normal_groups"] = len(region_normals)
+        report["center_partition_normal_corners"] = sum(key[2] != 0 for key in region_normals)
         corner_normals = [Vector((0, 0, 0)) for _ in data.loops]
         for poly in data.polygons:
+            region = regions.data[poly.index].value
             for loop_index in poly.loop_indices:
-                corner_normals[loop_index] = (
-                    lateral_normals.get(
-                        (data.loops[loop_index].vertex_index, 1 if poly.center.x >= 0 else -1),
-                        normals[data.loops[loop_index].vertex_index],
-                    )
-                    if poly.use_smooth
-                    else poly.normal.copy()
-                )
+                index = data.loops[loop_index].vertex_index
+                side = (1 if poly.center.x >= 0 else -1) if abs(data.vertices[index].co.x) < 1e-7 else 0
+                normal = region_normals.get((index, region, side), poly.normal)
+                if region in (1, 2) and side == 0:
+                    normal = normals[index].lerp(normal, C["jaw_normal_boundary_strength"]).normalized()
+                corner_normals[loop_index] = normal if poly.use_smooth else poly.normal.copy()
         data.normals_split_custom_set(corner_normals)
         report["flat_geometric_triangles"] = sum(not poly.use_smooth for poly in data.polygons)
         delta = members[0].data.attributes.get("MouthOpenDelta")

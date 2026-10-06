@@ -59,7 +59,15 @@ def base_depth(x, y):
     for height, points in C["cross_sections"]:
         section_x = q * points[-1][0]
         sections.append((height, curve(section_x, 1, points)))
-    z = Z0 + H * curve(v, 1, sections) + nose(x, y)
+    front = curve(v, 1, C["continuous_front_profile"])
+    back = curve(v, 1, C["continuous_back_profile"])
+    linear = C["continuous_lateral_linear"]
+    falloff = linear * q + (1 - linear) * q ** C["continuous_lateral_power"]
+    consistent = front * (1 - falloff) + back * falloff
+    blend = max(0, min(1, (v - 0.02) / 0.08))
+    blend = blend * blend * (3 - 2 * blend)
+    base = curve(v, 1, sections) * (1 - blend) + consistent * blend
+    z = Z0 + H * base + nose(x, y)
     lip = exp(-((x / 0.02) ** 4)) * H
     z += (
         lip

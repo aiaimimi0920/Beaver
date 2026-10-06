@@ -1,5 +1,7 @@
-# Candidate 103 isolated normal partition test
+# Candidate 107 checkpoint, batch still in progress
 
-Actually generated through Beaver job 70d632e0-8938-42a7-9f5e-40ee603c8720, request 6e216ddc-fa52-414d-8c94-b73aaf78a095. GLB SHA-256 d377f3bfcb036970c6921175e4d3f33172c6901dc4907d24441ec86f7bb12d0d.
+103 isolated centerline normals and visibly restored the front central shading division. 104 height smoothing alone left cheek bands. 105 used a consistent lateral profile and improved upper-side continuity, with lower-cheek work remaining. 106 added a shallow ear basin, enlarged the shallow posterior eye ellipse and contracted the oral back wall. 107 partitions ear-root and lower-jaw normals and excludes flat end caps from smooth-wall normal accumulation.
 
-36 pure tests passed. Native front white comparison at zoom 1.37, light -46.52 visibly shows a continuous central shading boundary from forehead down the face, comparable in mechanism to the observed reference. 164 center-partition normal entries were generated. This isolates the runtime normal-averaging issue; it does not prove original modifier history. Cheek horizontal bands and ear shape remain visibly unresolved. Not final visual acceptance.
+107 was actually generated through Beaver job ebf317cd-532f-4cfd-b81e-957f82d0deaf, request b4e62930-8a17-49be-96cb-18d420f1adac. GLB SHA-256 4ccdc53a6877a0dd0a1ae4521beb4bf02234ee71b9701ddf153c794f4d7a06ab. 38 pure tests pass; native model loads and rear white comparison shows clearer posterior eye/oral rim transitions. Root seams remain shared geometry.
+
+The overall feedback batch is still in progress. Cheek continuity, ear aesthetics, posterior cap planarity after clearance fitting and outline visibility need further work. Project aggregate tests still target prior102 and have NOT validated this batch. No final artistic acceptance or full-wardrobe acceptance. PR remains draft.

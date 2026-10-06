@@ -85,3 +85,17 @@ class ContourFeedbackTests(unittest.TestCase):
             for root in [-0.30, -0.33, -0.36]:
                 _, posterior = fn(t, 1, C, root)
                 self.assertAlmostEqual(root - posterior, target)
+
+
+class EarBasinTests(unittest.TestCase):
+    def test_ear_basin_preserves_root_and_rim(self):
+        curve, _ = pure_function("face.py", "curve", {})
+        fn, _ = pure_function("ears.py", "membrane_offset", {"curve": curve})
+        for t in [0.1, 0.3, 0.55, 0.78, 0.94]:
+            self.assertEqual(fn(t, 0, C, -0.35), (0, 0))
+            self.assertAlmostEqual(-0.35 - fn(t, 1, C, -0.35)[1], curve(t, 1, C["ear_outer_depth_profile"]))
+
+    def test_ear_basin_turns_back_toward_outer_rim(self):
+        curve, _ = pure_function("face.py", "curve", {})
+        fn, _ = pure_function("ears.py", "membrane_offset", {"curve": curve})
+        self.assertGreater(fn(0.55, 0.78, C, -0.35)[1], fn(0.55, 1, C, -0.35)[1])

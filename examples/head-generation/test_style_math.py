@@ -63,7 +63,11 @@ class StyleMathTests(unittest.TestCase):
         self.assertEqual(c["pocket_ring_samples"], 32)
         self.assertGreater(c["pocket_body_length"], 0)
         self.assertEqual(len(c["oral_rings"]), 4)
-        self.assertEqual(c["oral_rings"][-1][1:], c["oral_rings"][-2][1:])
+        # The new brief requires a gently contracting back wall, not a tube.
+        for rear, middle in zip(c["oral_rings"][-1][1:], c["oral_rings"][-2][1:]):
+            self.assertGreater(rear, 0.8 * middle)
+            self.assertLess(rear, middle)
+        self.assertTrue(all(a[0] < b[0] for a, b in zip(c["oral_rings"], c["oral_rings"][1:])))
 
     def test_iris_grid_has_no_collapsed_poles(self):
         fn, _ = pure_function("eye_socket.py", "iris_grid_point", {})
