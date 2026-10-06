@@ -256,4 +256,6 @@ def build_eyes():
                 )
                 y += lane * H * C["brow_thickness"] * sin(pi * t) ** 0.7
                 brow.append(coord(x, y, depth(x, y) + 0.001))
-        mesh("Tapered brow " + str(side), brow, grid_faces(2, 25, side < 0), (0.13, 0.105, 0.1))
+        mesh(
+            "Tapered brow " + str(side), brow, grid_faces(2, 25, side < 0), tuple(STYLE["brow_rgb"])
+        )

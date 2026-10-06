@@ -32,3 +32,20 @@ Candidate87 was not retained as an isolated improvement because the unchanged lo
 
 ## 89 iris topology mapping before implementation
 The old 13 by17 iris grid scales a whole row by sqrt(max(0.002,1-v²)); its extreme rows compress many vertices into tiny spans. Replace it with a9 by9 quad grid mapped continuously from a square to a disk: x=u*sqrt(1-v²/2), y=v*sqrt(1-u²/2), then apply the existing ellipse radii. This keeps32 boundary edges,81 vertices and64 quads per iris without a center fan or collapsed pole rows. Use unchanged analytic depth/UV mapping. Validate positive projected cell area, finite samples, boundary ellipse and minimum edge spacing; native front and oblique views decide retention.
+
+## 90 bounded mouth morph
+Read-only actual89 GLB measurement found front-chin downward motion up to15.11mm and lower-chin-region motion15.85mm. Preserve neutral geometry, replace broad lower-jaw falloff with explicit local mouth parameters and a smooth chin-preservation gate. Lower opening reduces to0.038H, upper0.0127H, corner down0.0064H; lower radial falloff0.09H and upper0.05H. Pin normalized height<=0.07H, blend to full support by0.145H. Tongue moves down0.025H, with existing small backward shift. Verify exported sparse morph displacement by region and native half/full opening; lower motion must not cross fixed chin vertices.
+
+## 91 shared-root ear membrane
+Reference audit finds exported ear components with exact coincident root points/edges against the main face, though index connectivity is split. Current overlapping closed shells do not reproduce that relation. Author a shallow, open-backed ear membrane from the actual evaluated facial boundary chain in the ear-height interval. Four lateral bands follow a rounded outward bulge with slight posterior sweep, rather than copying reference vertices. Reuse every root point; the existing runtime weld should make shared edges. Verify exact seam position and two-face adjacency after joining. Endpoint triangles remain local, not a dense central fan. Original procedural pinna pigment remains.
+
+## 92 bounded feedback mapping
+Reference top boundary falls substantially farther down at the side than the old q^4 warp. Apply a rounded semantic drop profile over a wider upper-head height interval starting0.58H; constrain its derivative so longitudinal rows remain ordered. Do not extend face creases into the crown. Reference eyebrow strip is thicker centrally with a near-linear lower edge: thickness0.012H, rise0.025H, no extra baseline bow. Neutral rendered mouth is wider than reference; reduce half-width to0.065H and shift its center to0.150H, keeping relative lip peaks and stable-chin dynamics. Sparse lip-depth rays through the open seam hit the rear cavity and are not valid surface-fit errors. Rear eye pockets use32 angular samples, front aperture plus two identical ellipse sections behind the minimum rim depth. Oral back uses4 rings with two equal rear sections at fixed depth planes. Keep root-connected91 ear membrane; validate all topology, containment and native views before retention.
+
+耳根的第一段面片应顺着脸侧切线向后转，再逐渐放平为浅弯耳壳；避免精确接缝虽焊上、却因切线突变鼓成结块。91白模显示根部仍有鼓起感，92将后扫轮廓改为平滑正弦转向并保留同一根部边。
+
+## 93：头顶空间弧线与耳根跨度复核
+92侧面显示仅调整顶部高度还不足以得到圆滑空间弧线：顶部深度不能在降低高度后再次套用较低面部截面，否则后缘会偏前而显得像斜直边。将头顶边界的高度和前后深度分别用少量语义控制点约束，在同一宽过渡区平滑连接额头。根部耳高区间略扩大到0.26–0.55H，以免实际采样截短耳壳。保留前述眉唇、简洁后腔、共享耳根和稳定下巴口型。
+
+## 94：保持额头前轮廓
+93侧面复核发现把整段额头深度混向顶部绝对深度会压凹前额。顶部空间弧线应只施加相对于原顶部深度的差值，并向下渐隐，不能把额头中线原有凸弧拉向头顶平面。保持头顶边界目标、原前额凸度及其他本批参数，复核侧面后才保留。

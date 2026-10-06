@@ -1,6 +1,24 @@
 from face import *
 
 
+def upper_boundary_offset(y, q):
+    v = (y - Y0) / H
+    blend = max(0, min(1, (v - C["top_warp_start_height"]) / (1 - C["top_warp_start_height"])))
+    blend = blend * blend * (3 - 2 * blend)
+    return H * curve(q, 1, C["top_boundary_drop_profile"]) * blend
+
+
+def upper_boundary_depth(x, warped_y, original_y, q):
+    v = (original_y - Y0) / H
+    blend = max(0, min(1, (v - C["top_warp_start_height"]) / (1 - C["top_warp_start_height"])))
+    blend = blend * blend * (3 - 2 * blend)
+    target = Z0 + H * curve(q, 1, C["top_boundary_depth_profile"])
+    top_y = Y0 + H - H * curve(q, 1, C["top_boundary_drop_profile"])
+    top_x = width(top_y) * q
+    correction = target - depth(top_x, top_y)
+    return depth(x, warped_y) + correction * blend
+
+
 def build_face():
     levels = [
         1.544,
@@ -35,18 +53,17 @@ def build_face():
             focus = max(0, min(1, (y - 1.544) / 0.026)) * max(0, min(1, (1.710 - y) / 0.028))
             q = lateral[i] * focus + (i / (cols - 1)) * (1 - focus)
             x = width(y) * q
-            top_blend = max(0, min(1, (y - 1.740) / 0.040))
-            top_blend = top_blend * top_blend * (3 - 2 * top_blend)
+            top_blend = float(y > Y0 + H * C["top_warp_start_height"])
             yy = (
                 y
-                - STYLE["forehead_edge_drop_m"] * q**4 * top_blend
+                - upper_boundary_offset(y, q)
                 + H * C["chin_return_lift"] * q * q * exp(-(y - 1.544) / 0.008)
                 + H * C["chin_front_lift"] * exp(-(y - Y0) / (0.02 * H))
             )
             # Re-evaluate width after height warping; otherwise the outer rim
             # incorrectly samples an interior depth and develops a notch.
             x = width(yy) * q if top_blend > 0 else x
-            verts.append(coord(x, yy, depth(x, yy)))
+            verts.append(coord(x, yy, upper_boundary_depth(x, yy, y, q)))
     # Feature-aligned patches replace the uniform lattice around eyes and mouth.
     ej0 = levels.index(1.614)
     ej1 = levels.index(1.673)

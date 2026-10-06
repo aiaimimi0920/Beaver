@@ -1,9 +1,30 @@
-# Candidate 89 topology checkpoint
+# Candidate 94 feedback-batch review — 2026-10-06
 
-Beaver job 42600663-d0ca-4bd1-a82a-6057da0f5e2f, request c2014714-8af6-44b2-a176-bd16d26fafc3, succeeded with exit code 0. GLB SHA-256: 06c140bf0ae91262abf2af2e9df6c08f869d01dc0a6bc0d9f37c2c837bebed32. Standard NPR validation returned ok=true, verified definition/model hashes and no engine errors. Twenty-two focused tests pass.
+This is a generated, inspected development checkpoint, not final aesthetic or universal-template acceptance. Candidate 94 was executed through Beaver's existing task and native tools; no model-service call or Codex task was created.
 
-Each independent iris changes from 221 vertices / 192 quads to a uniform square-to-disk grid with 81 vertices / 64 quads. The grid avoids compressed pole rows and center fans while preserving semantic ellipse and analytic depth. Pure tests verify nonzero positive projected cells, minimum normalized edge spacing and boundary ellipse. Native front render, oblique white and left white side were observed without obvious iris protrusion or new open gaps. This validates only the limited topology checkpoint.
+## Actual execution
 
-User review on 2026-10-06 explicitly leaves these issues open: ear outline and exact attachment to face, hollow shallow ear-shell style with texture detail, irregular upper-head edge, side-profile smoothness, eyebrow style, neutral lip shape, overly complicated eye-pocket and oral backs, and excessive chin motion during MouthOpen. Actual sparse GLB morph audit finds front-chin downward motion up to 15.11 mm, supporting the user's concern. This is not whole-face approval. The next specification must constrain chin motion and address this bounded feedback batch.
+- Job eae4e85a-9a17-4c46-bf14-0543c977e0e3; request 7275699c-df9c-4a96-b4fe-528e1d011b54; succeeded, exit 0.
+- GLB SHA-256 bf142c47edf3a9309fa8f9393c4cebf8bf1669cec216288f10537a06e8da9bb1.
+- Focused Python suite: 27 tests passed. Native NPR character validation: ok, errors empty, output hashes verified. This is not an absence-of-all-warning claim.
+- Published Python runtime sources are AST-equivalent to the actual generated copies; source formatting and documentation do not retroactively alter the exported model.
+- MiDot, the pinned NPR 1.3.0 package, Body and Hair remain unchanged.
 
-The reference ear and face have separate exported indices but coincident root boundaries; positional grouping reconnects them. This supports exact seam alignment, not proof of original authoring welds. Current ears remain independently closed overlapping shells and need redesign. Body/Hair and pinned engine/package remain unchanged. No final template, deployment or release acceptance.
+## Feedback implemented through the recipe
+
+- Localized upper/lower lip motion with a fixed lower-chin region. Actual front chin-tip samples move 0 mm versus 15.11 mm in candidate 89. Skin-UV-filtered lower-chin samples have up to 0.709 mm downward / 0.767 mm total motion; do not claim the entire chin is perfectly rigid. Broader geometric masks include oral vertices and are not valid chin-only metrics.
+- Neutral lip width reduced and vertical position adjusted; cavity and tongue retained. MouthOpen 0, 0.5 and 1 inspected; neutral 0 restored.
+- Ears are shallow, open-backed elliptical membranes with independently authored pigment. The evaluated face and each ear now share 14 root edges, each incident to exactly two faces. Candidate 94 has 54 vertices and 36 quads per generated ear plus local end triangles. This does not establish perfect reference shape matching.
+- Upper-head height and depth boundary controls smooth the silhouette. Candidate 93's absolute-depth blend flattened the forehead and was rejected; 94 uses a boundary depth correction while preserving the middle forehead curvature.
+- Brow thickness/rise and taper adjusted to sparse semantic observations.
+- Eye-pocket rear bodies use constant oval cross-sections; oral rear rings also share an oval section. Front apertures and cavity requirements remain independent; the default mouth is not an open pipe.
+
+## Visual evidence and limits
+
+Native synchronized front render, left-side white, rear white and full-MouthOpen captures were inspected, with Body/Hair off, zoom 1.37 and light -45 degrees. The reference stays neutral when candidate MouthOpen is driven; the capture does not compare both actors' animation. Ears and lips can still need further aesthetic feedback. Hair intersections are outside this frozen-Hair batch. Reference export splits or triangulation artifacts are not copied into the generator.
+
+## Validation and publication gates
+
+The first aggregate project check correctly failed even with exit 0 and five passing tests: an old test preloaded retired NPRLab files absent from the pinned runtime. Its migration tests the current head-review actor, nonmutation, view controls and explicitly preserves rejection of missing full-wardrobe data. Aggregate rerun status is recorded with the checkpoint; focused model validation is not a substitute for it.
+
+GitHub PR 20 remains draft. Earlier checks failed before runner/job steps and a bounded rerun did not resolve that infrastructure symptom; no current-head CI success, external review, merge, release or production deployment is claimed. Approval to initiate external review while CI fails is still pending.

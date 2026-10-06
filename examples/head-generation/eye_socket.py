@@ -17,29 +17,27 @@ def iris_grid_point(u, v):
 
 
 def build_socket(side):
-    n = 48
+    n = int(C["pocket_ring_samples"])
     vs = []
     fs = []
     cx = side * H * C["eye_center_x"]
     cy = Y0 + H * C["eye_corner_y"]
-    sections = [
-        (1, 1, 0),
-        (1.07, 1.15, 0.03),
-        (C["pocket_width_ratio"], C["pocket_height_ratio"], C["pocket_back"]),
-        (
-            C["pocket_back_width_ratio"],
-            C["pocket_back_height_ratio"],
-            C["pocket_back"] + C["pocket_back_extra"],
-        ),
-    ]
-    for ring_index, (sx, sy, back) in enumerate(sections):
+    contours = [eye_contour(side, cos(2 * pi * k / n), sin(2 * pi * k / n) >= 0) for k in range(n)]
+    transition_depth = min(rim_depth(x, y) for x, y in contours) - H * C["pocket_transition_back"]
+    sections = [None, transition_depth, transition_depth - H * C["pocket_body_length"]]
+    center_y = cy + H * (C["eye_upper_arch"] - C["eye_lower_arch"]) / 2
+    half_y = H * (C["eye_upper_arch"] + C["eye_lower_arch"]) * C["pocket_body_height_ratio"] / 2
+    for ring_index, plane in enumerate(sections):
         for k in range(n):
-            a = 2 * pi * k / n
-            x, y = eye_contour(side, cos(a), sin(a) >= 0)
-            xx = cx + (x - cx) * sx
-            yy = cy + (y - cy) * sy
-            rim = rim_depth(cx, cy) if ring_index == len(sections) - 1 else rim_depth(x, y)
-            vs.append(coord(xx, yy, rim - back * H - 0.0001))
+            angle = 2 * pi * k / n
+            if ring_index == 0:
+                xx, yy = contours[k]
+                depth_value = rim_depth(xx, yy)
+            else:
+                xx = cx + side * H * C["eye_half_width"] * C["pocket_body_width_ratio"] * cos(angle)
+                yy = center_y + half_y * sin(angle)
+                depth_value = plane
+            vs.append(coord(xx, yy, depth_value - 0.0001))
     for j in range(len(sections) - 1):
         for k in range(n):
             q = (k + 1) % n
@@ -52,6 +50,7 @@ def build_socket(side):
     obj["ocular_surface"] = True
     obj.data.polygons[-1].use_smooth = False
     obj["rear_cap_flat_shading"] = True
+    obj["pocket_front_count"] = n
     obj["pocket_back_start"] = last
     obj["pocket_back_count"] = n
     obj["rear_cap_planarity_before_m"] = max(vs[i][1] for i in cap) - min(vs[i][1] for i in cap)
@@ -99,7 +98,7 @@ def fit_pocket_clearance(shell):
             if not obj.name.startswith("Expanding recessed eye pocket"):
                 continue
             for vertex in obj.data.vertices:
-                if vertex.index < 48:
+                if vertex.index < obj["pocket_front_count"]:
                     continue
                 x, y = (abs(vertex.co.x), vertex.co.z)
                 t = (x / H - C["eye_center_x"]) / C["eye_half_width"]

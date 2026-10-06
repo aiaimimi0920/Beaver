@@ -21,6 +21,50 @@ def pure_function(module, name, extra):
 
 
 class StyleMathTests(unittest.TestCase):
+    def test_top_boundary_depth_reaches_explicit_profile(self):
+        c = STYLE["calibration"]
+        curve_fn, _ = pure_function("face.py", "curve", {})
+        fn, _ = pure_function(
+            "shell.py",
+            "upper_boundary_depth",
+            {
+                "C": c,
+                "H": c["height_m"],
+                "Y0": c["origin_y_m"],
+                "Z0": c["chin_depth_m"],
+                "curve": curve_fn,
+                "depth": lambda x, y: 0.08,
+                "width": lambda y: 0.1,
+            },
+        )
+        for q in [0, 0.3, 0.65, 0.9, 1]:
+            self.assertAlmostEqual(fn(0, 0, c["origin_y_m"], q), 0.08)
+            self.assertAlmostEqual(
+                fn(0, 0, c["origin_y_m"] + c["height_m"], q),
+                c["chin_depth_m"] + c["height_m"] * curve_fn(q, 1, c["top_boundary_depth_profile"]),
+            )
+
+    def test_upper_boundary_warp_preserves_row_order(self):
+        c = STYLE["calibration"]
+        curve_fn, _ = pure_function("face.py", "curve", {})
+        offset, _ = pure_function(
+            "shell.py",
+            "upper_boundary_offset",
+            {"C": c, "H": c["height_m"], "Y0": c["origin_y_m"], "curve": curve_fn},
+        )
+        for q in [i / 30 for i in range(31)]:
+            ys = [c["origin_y_m"] + c["height_m"] * i / 200 for i in range(201)]
+            moved = [y - offset(y, q) for y in ys]
+            self.assertTrue(all(b > a for a, b in zip(moved, moved[1:])))
+        self.assertAlmostEqual(offset(c["origin_y_m"] + c["height_m"], 0), 0)
+
+    def test_rear_cavity_sections_are_simple(self):
+        c = STYLE["calibration"]
+        self.assertEqual(c["pocket_ring_samples"], 32)
+        self.assertGreater(c["pocket_body_length"], 0)
+        self.assertEqual(len(c["oral_rings"]), 4)
+        self.assertEqual(c["oral_rings"][-1][1:], c["oral_rings"][-2][1:])
+
     def test_iris_grid_has_no_collapsed_poles(self):
         fn, _ = pure_function("eye_socket.py", "iris_grid_point", {})
         n = STYLE["calibration"]["iris_grid_resolution"]
@@ -59,19 +103,15 @@ class StyleMathTests(unittest.TestCase):
         self.assertGreater(lower_cover, iris_bottom)
         self.assertLess(lower_cover - iris_bottom, 0.02 * h)
 
-    def test_ear_outline_is_periodic_and_affine(self):
-        fn, scope = pure_function("ears.py", "outline", {"C": copy.deepcopy(STYLE["calibration"])})
-        shift = [0.02, -0.03, 0.01]
-        samples = [i * math.pi / 9 for i in range(18)]
-        original = [fn(t) for t in samples]
-        for t, point in zip(samples, original):
-            for a, b in zip(point, fn(t + 2 * math.pi)):
-                self.assertAlmostEqual(a, b, places=10)
-        points = scope["C"]["ear_outline_stations"]
-        scope["C"]["ear_outline_stations"] = [[p[i] + shift[i] for i in range(3)] for p in points]
-        for t, point in zip(samples, original):
-            for i, actual in enumerate(fn(t)):
-                self.assertAlmostEqual(actual, point[i] + shift[i], places=10)
+    def test_ear_membrane_root_is_exact_and_outward(self):
+        fn, _ = pure_function("ears.py", "membrane_offset", {})
+        c = STYLE["calibration"]
+        for t in [i / 20 for i in range(21)]:
+            self.assertEqual(fn(t, 0, c), (0, 0))
+            xs = [fn(t, u, c)[0] for u in [0, 0.3, 0.7, 1]]
+            self.assertTrue(all(b >= a for a, b in zip(xs, xs[1:])))
+            for u in [0, 0.3, 0.7, 1]:
+                self.assertTrue(all(math.isfinite(v) for v in fn(t, u, c)))
 
     def test_iris_palette_is_finite_and_bounded(self):
         fn, _ = pure_function("textures.py", "iris_color", {"STYLE": STYLE})
@@ -91,14 +131,14 @@ class StyleMathTests(unittest.TestCase):
                 self.assertEqual(rgba[3], 1)
                 self.assertTrue(all(math.isfinite(c) and 0 <= c <= 1 for c in rgba))
 
-    def test_simple_ear_band_contract(self):
-        calibration = STYLE["calibration"]
-        bands = calibration["ear_relief_bands"]
-        self.assertEqual(calibration["ear_ring_samples"], 24)
-        self.assertEqual(len(bands), 3)
-        self.assertTrue(all(a[0] < b[0] for a, b in zip(bands, bands[1:])))
-        self.assertEqual(bands[-1][0], 1)
-        self.assertTrue(all(abs(b[1]) <= 0.004 for b in bands))
+    def test_ear_membrane_profile_has_bounded_depth(self):
+        fn, _ = pure_function("ears.py", "membrane_offset", {})
+        c = STYLE["calibration"]
+        for t in [i / 30 for i in range(31)]:
+            for u in [i / 10 for i in range(11)]:
+                outward, posterior = fn(t, u, c)
+                self.assertTrue(0 <= outward < 0.13)
+                self.assertTrue(0 <= posterior <= 0.12)
 
     def test_nasal_profiles_are_monotone_and_bounded(self):
         curve_fn, _ = pure_function("face.py", "curve", {})

@@ -6,7 +6,7 @@ from mouth import store_mouth_deltas
 from glb_merge import merge_face
 
 ROOT = Path(beaver_input("project.godot")).parent
-OUT = "assets/aster/head_recovery_89/"
+OUT = "assets/aster/head_recovery_94/"
 BASE = "assets/aster/head_recovery_49/"
 GUIDE = Path(beaver_input("authoring/head_generation_guide.md")).read_text()
 assert "去发侧脸轮廓检查" in GUIDE
@@ -234,6 +234,9 @@ for role in ["Face"]:
         # Honest geometry-consistent normals; no unmatched analytic shading field.
         data = members[0].data
         data.update()
+        from ears import verify_ear_seams
+
+        report["ear_shared_seams"] = verify_ear_seams(data, report["ear_root_fit"])
         normals = [Vector((0, 0, 0)) for _ in data.vertices]
         for poly in data.polygons:
             for index in poly.vertices:

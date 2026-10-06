@@ -7,25 +7,40 @@ REST_GAP = H * C["mouth_rest_half_gap"]
 
 
 def rest_seam_y(x):
-    t = max(-1, min(1, x / 0.0195))
+    t = max(-1, min(1, x / (H * C["mouth_half_width"])))
     return MOUTH_Y + H * C["mouth_corner_lift"] * t * t
 
 
 def mouth_half_contour(a):
-    x = 0.0195 * cos(a)
+    x = H * C["mouth_half_width"] * cos(a)
     return (x, rest_seam_y(x) + REST_GAP * sin(a))
 
 
 def jaw_delta(x, y, z):
-    side = exp(-((abs(x) / 0.049) ** 4))
+    side = exp(-((abs(x) / (H * C["mouth_lateral_falloff"])) ** 4))
     relative = y - rest_seam_y(x)
     upper = max(0, min(1, relative / REST_GAP))
     lower = max(0, min(1, -relative / REST_GAP))
+    corner = -H * C["mouth_corner_down"]
     if relative >= 0:
-        dy = (-0.0065 + 0.0095 * upper) * exp(-((relative / 0.012) ** 2))
+        dy = (corner + (H * C["mouth_open_upper"] - corner) * upper) * exp(
+            -((relative / (H * C["mouth_upper_falloff"])) ** 2)
+        )
     else:
-        dy = (-0.0065 - 0.0095 * lower) * exp(-((relative / 0.066) ** 4))
-    return Vector((0, 0.0035 * lower * side, dy * side))
+        dy = (corner + (-H * C["mouth_open_lower"] - corner) * lower) * exp(
+            -((relative / (H * C["mouth_lower_falloff"])) ** 4)
+        )
+    height = (y - Y0) / H
+    gate = max(
+        0,
+        min(
+            1,
+            (height - C["chin_morph_fixed_height"])
+            / (C["chin_morph_blend_height"] - C["chin_morph_fixed_height"]),
+        ),
+    )
+    gate = gate * gate * (3 - 2 * gate)
+    return Vector((0, 0.0035 * lower * side * gate, dy * side * gate))
 
 
 def store_mouth_deltas(obj, override=None):
@@ -52,7 +67,7 @@ def build_oral_cavity(half_edge):
             t = (y - rest_seam_y(x)) / REST_GAP
             xx = x * scale
             yy = y + t * H * (upper_h if t > 0 else lower_h)
-            rear_depth = -depth(0, MOUTH_Y) if ring == len(C["oral_rings"]) - 1 else negz
+            rear_depth = -depth(0, MOUTH_Y) if ring >= 2 else negz
             p = (xx, rear_depth + back, yy)
             ids.append(len(vs))
             vs.append(p)
@@ -111,7 +126,7 @@ def build_oral_cavity(half_edge):
             )
     tf.extend([tuple(reversed(range(cols))), tuple((rows - 1) * cols + k for k in range(cols))])
     tongue = mesh("Tongue with thickness", tv, [tuple(reversed(f)) for f in tf], (0.66, 0.24, 0.28))
-    store_mouth_deltas(tongue, lambda v: Vector((0, 0.002, -0.010)))
+    store_mouth_deltas(tongue, lambda v: Vector((0, 0.002, -H * C["tongue_open_down"])))
 
 
 def validate_oral_clearance(shell):

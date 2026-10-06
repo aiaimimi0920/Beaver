@@ -40,6 +40,27 @@ def load_math(half_gap=None):
 
 
 class MouthMathTests(unittest.TestCase):
+    def test_chin_is_fixed_and_transition_is_bounded(self):
+        scope = load_math()
+        for x in [0, 0.008, 0.025, 0.045]:
+            for height in [0, 0.025, 0.05, 0.07]:
+                for value in scope["jaw_delta"](x, scope["Y0"] + scope["H"] * height, 0):
+                    self.assertAlmostEqual(value, 0, places=12)
+        for height in [i / 1000 for i in range(70, 160)]:
+            d = scope["jaw_delta"](0, scope["Y0"] + scope["H"] * height, 0)
+            self.assertLessEqual(abs(d[2]), scope["H"] * scope["C"]["mouth_open_lower"] + 1e-9)
+
+    def test_lower_mouth_deformation_does_not_fold_vertical_samples(self):
+        scope = load_math()
+        for x in [0, 0.005, 0.012, 0.019, 0.03, 0.045]:
+            seam = scope["rest_seam_y"](x)
+            ys = [
+                scope["Y0"] + (seam - scope["REST_GAP"] - scope["Y0"]) * i / 600 for i in range(601)
+            ]
+            for strength in [0.5, 1]:
+                moved = [y + strength * scope["jaw_delta"](x, y, 0)[2] for y in ys]
+                self.assertTrue(all(b > a for a, b in zip(moved, moved[1:])))
+
     def test_oral_profile_keeps_attachment_and_expands_rear(self):
         c = json.loads((ROOT / "face_style.json").read_text())["calibration"]
         rings = c["oral_rings"]
@@ -63,7 +84,7 @@ class MouthMathTests(unittest.TestCase):
         x, y = scope["mouth_half_contour"](-math.pi / 6)
         self.assertGreater(y, scope["MOUTH_Y"])
         delta = scope["jaw_delta"](x, y, 0)
-        self.assertLess(delta[2], -0.010)
+        self.assertLess(delta[2], -0.005)
         self.assertGreater(delta[1], 0)
 
     def test_gap_change_preserves_lip_classification(self):
@@ -83,7 +104,7 @@ class MouthMathTests(unittest.TestCase):
         x, y = scope["mouth_half_contour"](0)
         self.assertEqual(y, scope["rest_seam_y"](x))
         for fraction in (0, 0.3, 0.8, 1):
-            x = 0.0195 * fraction
+            x = scope["H"] * scope["C"]["mouth_half_width"] * fraction
             y = scope["rest_seam_y"](x)
             self.assertEqual(scope["jaw_delta"](x, y, 0), scope["jaw_delta"](-x, y, 0))
 
