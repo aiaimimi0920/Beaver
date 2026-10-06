@@ -19,6 +19,36 @@ def upper_boundary_depth(x, warped_y, original_y, q):
     return depth(x, warped_y) + correction * blend
 
 
+def jaw_return_position(x, y, z, q, boundary_depth):
+    start = C["jaw_return_start_ratio"]
+    blend = max(0, min(1, (q - start) / (1 - start)))
+    blend = blend * blend * (3 - 2 * blend)
+    v = (y - Y0) / H
+    low = max(
+        0,
+        min(
+            1,
+            (v - C["jaw_return_low_fade_start"])
+            / (C["jaw_return_low_fade_end"] - C["jaw_return_low_fade_start"]),
+        ),
+    )
+    blend *= low * low * (3 - 2 * low)
+    requested_inset = H * curve(v, 1, C["jaw_return_width_profile"])
+    max_inset = abs(x) / max(q, 0.00001) * C["jaw_return_max_inset_ratio"]
+    inset = min(requested_inset, max_inset) * blend
+    fade = max(
+        0,
+        min(
+            1,
+            (C["jaw_return_depth_fade_end"] - v)
+            / (C["jaw_return_depth_fade_end"] - C["jaw_return_depth_fade_start"]),
+        ),
+    )
+    fade = fade * fade * (3 - 2 * fade)
+    target = Z0 + H * curve(v, 1, C["jaw_return_depth_profile"])
+    return x - inset, z + (target - boundary_depth) * blend * fade
+
+
 def build_face():
     levels = [
         1.544,
@@ -63,7 +93,9 @@ def build_face():
             # Re-evaluate width after height warping; otherwise the outer rim
             # incorrectly samples an interior depth and develops a notch.
             x = width(yy) * q if top_blend > 0 else x
-            verts.append(coord(x, yy, upper_boundary_depth(x, yy, y, q)))
+            zz = upper_boundary_depth(x, yy, y, q)
+            x, zz = jaw_return_position(x, yy, zz, q, depth(width(yy), yy))
+            verts.append(coord(x, yy, zz))
     # Feature-aligned patches replace the uniform lattice around eyes and mouth.
     ej0 = levels.index(1.614)
     ej1 = levels.index(1.673)

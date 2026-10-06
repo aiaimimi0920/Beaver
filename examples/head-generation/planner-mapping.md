@@ -54,3 +54,9 @@ Reference top boundary falls substantially farther down at the side than the old
 - Visible original white catchlight: explicit normalized offset(-0.030,+0.010)H from iris center, half-size(0.009,0.007)H, surface offset0.0012H,5x5 square-to-disk quad patch. White ocular palette, actual geometry, no reference pixels.
 - Pocket transition setback0.004H, posterior straight length0.030H, width/height expansion1.04. Previous0.020/0.065/1.10 values are superseded. Rear remains behind iris; inspect actual clearances rather than claiming a shorter parameter proves no collision.
 - Iris concavity0.014H and outward depth slope-0.31; rim depth and aperture stay fixed. No global forward translation.
+
+## Candidate96 contour mapping
+Ear outward/posterior profiles replace one symmetric sinusoidal bulge. Transverse x uses sin(pi*u/2), posterior uses1-cos(pi*u/2); rootu=0 remains exactly the evaluated shell. Lower head outer band q>.78 gains sparse width-inset and posterior-depth profiles, fading out between heights.52 and.60. This changes only the return band, not the front chin-tip or mouth operator. Measurements guide authored ratios rather than copied vertices.
+
+## Final102 refinements
+The ear transverse posterior displacement uses root_depth minus the authored outer-depth curve, so the outer rim stays smooth even when the attached root varies. Lower return depth is an additive boundary correction, not an interpolation toward absolute depth; the field fades below0.285H, beneath the actual eye patch minimum~0.297H. The unchanged topology gates rejected96/97, and native oblique white views rejected98–100 flattening. All these revisions are captured in the authored brief rather than manual Blender editing.

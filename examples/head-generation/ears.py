@@ -8,12 +8,10 @@ def build_ears():
     return None
 
 
-def membrane_offset(t, u, config):
-    bulge = max(0, sin(pi * t)) ** 0.8
-    outward = config["ear_membrane_width"] * bulge * (0.85 + 0.3 * t) * u
-    posterior = bulge * (
-        config["ear_membrane_sweep"] * sin(pi * u / 2)
-        + config["ear_membrane_roundness"] * sin(pi * u)
+def membrane_offset(t, u, config, root_depth):
+    outward = curve(t, 1, config["ear_outward_profile"]) * sin(pi * u / 2)
+    posterior = (root_depth - curve(t, 1, config["ear_outer_depth_profile"])) * (
+        1 - cos(pi * u / 2)
     )
     return outward, posterior
 
@@ -56,7 +54,7 @@ def fit_ear_roots(shell):
                 row = []
                 values = [0] if j in [0, len(root_points) - 1] else [0, 0.3, 0.7, 1]
                 for u in values:
-                    outward, posterior = membrane_offset(t, u, C)
+                    outward, posterior = membrane_offset(t, u, C, (-root.y - Z0) / H)
                     row.append(len(vs))
                     vs.append((root.x + side * H * outward, root.y + H * posterior, root.z))
                     uvpoints.append((0.02 + 0.96 * u, 0.02 + 0.96 * t))

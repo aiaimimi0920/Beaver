@@ -1,2 +1,2 @@
-# Candidate95 native review
-Actual front/render at zoom1.37 and light-45 shows clear paired white catchlights. Left side white, both oblique white and right side render inspected. Original candidate94 ears and jaw are intentionally retained in this isolated eye revision. The candidate95 front viewport PNG and state JSON are preserved privately. No final appearance approval; see review-results.md.
+# Candidate102 native review
+Front/render catchlights, both exact sides, right-oblique white, left-oblique runtime wire, rear white and MouthOpen0/.5/1 inspected in real MiDot. Light+68.76 keeps the white point visible but NPR shadows still differ from the reference. Previous98–100 local flattening regression is not retained. Ear contour is now rounded in exact sides; user aesthetic review is still required. Captures and actual state metadata are preserved privately. See review-results.md for quantitative and scope limits.

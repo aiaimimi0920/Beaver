@@ -1,12 +1,12 @@
 # Semantic head-generation calibration
 
-This is a recoverable development recipe, not an accepted character asset or a finished universal face generator. It follows specification → explicit parameters → Beaver generation → native MiDot comparison. Current executable recipe: candidate 95.
+This is a recoverable development recipe, not an accepted character asset or a finished universal face generator. It follows specification → explicit parameters → Beaver generation → native MiDot comparison. Current executable recipe: candidate 102.
 
 ## Inputs and execution
 
 Restore the user's project checkpoint containing project.godot, authoring/head_generation_guide.md, and the frozen assets/aster/head_recovery_49/ baseline with its editable Blend, GLB, definition and Hair textures. Project/reference assets and runtime binaries are deliberately not published here.
 
-Run python3 examples/head-generation/bundle.py --output /tmp/head-recipe.json to package a request. The bundler does not launch Blender or call any model service. Load the request into the existing authorized Beaver workbench, execute blender.start and poll the returned job to a real terminal result. Outputs are creation-only under assets/aster/head_recovery_95/. Change both bundle.py and pipeline.py consistently for a new candidate; an existing output is not permission to overwrite it.
+Run python3 examples/head-generation/bundle.py --output /tmp/head-recipe.json to package a request. The bundler does not launch Blender or call any model service. Load the request into the existing authorized Beaver workbench, execute blender.start and poll the returned job to a real terminal result. Outputs are creation-only under assets/aster/head_recovery_102/. Change both bundle.py and pipeline.py consistently for a new candidate; an existing output is not permission to overwrite it.
 
 Use Beaver's npr-character validation and native MiDot review. The companion examples/head-review scripts provide synchronized render, white, wire, side/rear and candidate-only MouthOpen views. Restore MouthOpen to 0 after testing. Technical validation is separate from visual acceptance.
 
@@ -27,3 +27,8 @@ The chronological authoring brief records each calibration amendment; later amen
 ## Tests and review
 
 Run python3 -m unittest discover -s examples/head-generation -p 'test_*.py'. These pure checks do not replace real Blender execution or native review. See review-results.md for the actual checkpoint evidence and remaining scope. Optional exporter warnings and CI annotations are not claimed absent. Publication, CI, external review, merge and final aesthetic acceptance are separate stages; no production deployment or release is implied.
+
+## Current feedback batch
+Candidate102 retains original visible white catchlights and bounded shallow eye pockets, refines hollow ear membranes, and adds bounded lower-jaw return controls. The return uses boundary displacement rather than absolute-depth flattening and fades below the real eye-patch boundary. See review-results.md for actual observations and unresolved gates.
+
+Ear outer-depth controls are independent of the sampled root-depth wave; root positions remain exactly shared with the face.

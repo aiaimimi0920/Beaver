@@ -1,5 +1,5 @@
 {
-  "candidate": 95,
+  "candidate": 102,
   "static_read_keys": {
     "STYLE": [
       "brow_arch_m",
@@ -72,6 +72,14 @@
       "iris_half_width",
       "iris_plane_slope",
       "iris_rim_depth",
+      "jaw_return_depth_fade_end",
+      "jaw_return_depth_fade_start",
+      "jaw_return_depth_profile",
+      "jaw_return_low_fade_end",
+      "jaw_return_low_fade_start",
+      "jaw_return_max_inset_ratio",
+      "jaw_return_start_ratio",
+      "jaw_return_width_profile",
       "lower_cover",
       "lower_lip_height",
       "lower_lip_relief",
@@ -113,5 +121,5 @@
       "width_stations"
     ]
   },
-  "caution": "Static reads do not prove parameter effectiveness; consult actual generated geometry and native checks."
+  "caution": "Static reads do not prove effectiveness; see actual geometry, tests and native review."
 }

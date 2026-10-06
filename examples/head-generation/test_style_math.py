@@ -104,14 +104,15 @@ class StyleMathTests(unittest.TestCase):
         self.assertLess(lower_cover - iris_bottom, 0.02 * h)
 
     def test_ear_membrane_root_is_exact_and_outward(self):
-        fn, _ = pure_function("ears.py", "membrane_offset", {})
+        curve_fn, _ = pure_function("face.py", "curve", {})
+        fn, _ = pure_function("ears.py", "membrane_offset", {"curve": curve_fn})
         c = STYLE["calibration"]
         for t in [i / 20 for i in range(21)]:
-            self.assertEqual(fn(t, 0, c), (0, 0))
-            xs = [fn(t, u, c)[0] for u in [0, 0.3, 0.7, 1]]
+            self.assertEqual(fn(t, 0, c, -0.33), (0, 0))
+            xs = [fn(t, u, c, -0.33)[0] for u in [0, 0.3, 0.7, 1]]
             self.assertTrue(all(b >= a for a, b in zip(xs, xs[1:])))
             for u in [0, 0.3, 0.7, 1]:
-                self.assertTrue(all(math.isfinite(v) for v in fn(t, u, c)))
+                self.assertTrue(all(math.isfinite(v) for v in fn(t, u, c, -0.33)))
 
     def test_iris_palette_is_finite_and_bounded(self):
         fn, _ = pure_function("textures.py", "iris_color", {"STYLE": STYLE})
@@ -132,13 +133,14 @@ class StyleMathTests(unittest.TestCase):
                 self.assertTrue(all(math.isfinite(c) and 0 <= c <= 1 for c in rgba))
 
     def test_ear_membrane_profile_has_bounded_depth(self):
-        fn, _ = pure_function("ears.py", "membrane_offset", {})
+        curve_fn, _ = pure_function("face.py", "curve", {})
+        fn, _ = pure_function("ears.py", "membrane_offset", {"curve": curve_fn})
         c = STYLE["calibration"]
         for t in [i / 30 for i in range(31)]:
             for u in [i / 10 for i in range(11)]:
-                outward, posterior = fn(t, u, c)
+                outward, posterior = fn(t, u, c, -0.33)
                 self.assertTrue(0 <= outward < 0.13)
-                self.assertTrue(0 <= posterior <= 0.12)
+                self.assertTrue(0 <= posterior <= 0.15)
 
     def test_nasal_profiles_are_monotone_and_bounded(self):
         curve_fn, _ = pure_function("face.py", "curve", {})
