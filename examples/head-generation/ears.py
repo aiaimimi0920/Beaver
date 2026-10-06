@@ -57,7 +57,8 @@ def fit_ear_roots(shell):
                 for u in values:
                     outward, posterior = membrane_offset(t, u, C, (-root.y - Z0) / H)
                     row.append(len(vs))
-                    vs.append((root.x + side * H * outward, root.y + H * posterior, root.z))
+                    lift = H * C["ear_upper_arc_lift"] * sin(pi * t) * t * t * sin(pi * u / 2)
+                    vs.append((root.x + side * H * outward, root.y + H * posterior, root.z + lift))
                     uvpoints.append((0.02 + 0.96 * u, 0.02 + 0.96 * t))
                 root_indices.append(row[0])
                 rows.append(row)
@@ -68,8 +69,35 @@ def fit_ear_roots(shell):
                     fs.extend((a[k], a[k + 1], b[0]) for k in range(len(a) - 1))
                 else:
                     fs.extend((a[k], a[k + 1], b[k + 1], b[k]) for k in range(len(a) - 1))
+            # A narrow skin return lip supports back-side visibility without
+            # closing the ear basin or creating an independent dark stroke.
+            rim = []
+            for j, row in enumerate(rows):
+                outer = row[-1]
+                if j in [0, len(rows) - 1]:
+                    rim.append(outer)
+                    continue
+                t = (root_points[j].z - low) / (high - low)
+                x, y, z = vs[outer]
+                rim.append(len(vs))
+                vs.append((x - side * H * C["ear_return_lip_width"] * sin(pi * t),
+                           y + H * C["ear_return_lip_depth"] * sin(pi * t), z))
+                uvpoints.append((0.86, 0.02 + 0.96 * t))
+            for j in range(len(rows) - 1):
+                corners = [rows[j][-1], rim[j], rim[j + 1], rows[j + 1][-1]]
+                clean = list(dict.fromkeys(corners))
+                if len(clean) >= 3:
+                    fs.append(tuple(clean))
             if side < 0:
                 fs = [tuple(reversed(f)) for f in fs]
+            # The return membrane is an anatomical reverse skin surface, not
+            # a contour stroke; its open root remains behind the welded front.
+            front_vertices = len(vs)
+            front_faces = list(fs)
+            thickness = C["ear_membrane_thickness_m"]
+            vs.extend((x - side * thickness, y + thickness, z) for x, y, z in list(vs))
+            uvpoints.extend([(0.08, 0.50)] * front_vertices)
+            fs.extend(tuple(i + front_vertices for i in reversed(f)) for f in front_faces)
             obj = mesh("Ear hollow pinna " + str(side), vs, fs, SKIN)
             assert all(poly.area > 1e-12 for poly in obj.data.polygons), "Degenerate ear membrane"
             obj["ear_detail"] = True

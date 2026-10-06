@@ -46,7 +46,7 @@ def jaw_return_position(x, y, z, q, boundary_depth):
     )
     fade = fade * fade * (3 - 2 * fade)
     target = Z0 + H * curve(v, 1, C["jaw_return_depth_profile"])
-    return x - inset, z + (target - boundary_depth) * blend * fade
+    return x - inset, z + (target - boundary_depth) * blend * fade * C["jaw_return_depth_strength"]
 
 
 def build_face():

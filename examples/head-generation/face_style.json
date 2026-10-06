@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "preset": "semantic_calibration_a_107",
+  "preset": "semantic_calibration_a_111",
   "note": "Explicit semantic calibration case; no character-name generation dependency.",
   "iris_half_width_m": 0.01534,
   "eye_lens_bulge_m": 0.0012,
@@ -557,8 +557,8 @@
         0
       ]
     ],
-    "face_side_crease_lateral_ratio": 0.78,
-    "face_side_crease_selection_tolerance": 0.03,
+    "face_side_crease_lateral_ratio": 0.94,
+    "face_side_crease_selection_tolerance": 0.025,
     "nose_lateral_profile": [
       [
         0,
@@ -634,7 +634,7 @@
     "chin_morph_blend_height": 0.145,
     "tongue_open_down": 0.025,
     "ear_root_min_height": 0.26,
-    "ear_root_max_height": 0.54,
+    "ear_root_max_height": 0.52,
     "top_warp_start_height": 0.58,
     "top_boundary_drop_profile": [
       [
@@ -754,23 +754,23 @@
       ],
       [
         0.03,
-        0.004
+        0.001
       ],
       [
         0.08,
-        0.012
+        0.003
       ],
       [
         0.12,
-        0.014
+        0.0035
       ],
       [
         0.2,
-        0.01
+        0.0025
       ],
       [
         0.26,
-        0.002
+        0.0005
       ],
       [
         0.29,
@@ -865,19 +865,19 @@
       ],
       [
         0.08,
-        0.028
+        0.024
       ],
       [
-        0.2,
-        0.075
+        0.16,
+        0.044
       ],
       [
-        0.4,
-        0.075
+        0.3,
+        0.069
       ],
       [
-        0.52,
-        0.085
+        0.5,
+        0.089
       ],
       [
         0.7,
@@ -924,8 +924,13 @@
     ],
     "continuous_lateral_linear": 0.28,
     "continuous_lateral_power": 24,
-    "ear_basin_depth": 0.055,
-    "jaw_normal_boundary_strength": 0.4
+    "ear_basin_depth": 0.05,
+    "jaw_normal_boundary_strength": 0.4,
+    "jaw_return_depth_strength": 0.2,
+    "ear_upper_arc_lift": 0.17,
+    "ear_return_lip_width": 0.01,
+    "ear_return_lip_depth": 0.004,
+    "ear_membrane_thickness_m": 0.0002
   },
   "normal_policy": "actual_area_weighted_geometry",
   "surface_subdivision_levels": 1,

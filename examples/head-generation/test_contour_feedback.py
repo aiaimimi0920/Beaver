@@ -29,7 +29,7 @@ class ContourFeedbackTests(unittest.TestCase):
         x, z = fn(0.236 * 0.18, 1.544 + 0.236 * 0.08, 0.04, 1, 0.04)
         self.assertLess(x, 0.236 * 0.18)
         self.assertGreater(x, 0)
-        self.assertAlmostEqual(z, 0.078 - 0.236 * 0.25)
+        self.assertAlmostEqual(z, 0.04 + (0.078 - 0.236 * 0.25 - 0.04) * C["jaw_return_depth_strength"])
 
     def test_existing_chin_return_base_remains_unchanged(self):
         curve, _ = pure_function("face.py", "curve", {})
@@ -98,4 +98,11 @@ class EarBasinTests(unittest.TestCase):
     def test_ear_basin_turns_back_toward_outer_rim(self):
         curve, _ = pure_function("face.py", "curve", {})
         fn, _ = pure_function("ears.py", "membrane_offset", {"curve": curve})
-        self.assertGreater(fn(0.55, 0.78, C, -0.35)[1], fn(0.55, 1, C, -0.35)[1])
+        self.assertGreater(fn(0.55, 0.9, C, -0.35)[1], fn(0.55, 1, C, -0.35)[1])
+
+    def test_upper_ear_arc_rises_above_attachment(self):
+        import math
+        low, high = C["ear_root_min_height"], C["ear_root_max_height"]
+        top = max(low + (high-low)*t/100 + C["ear_upper_arc_lift"]*math.sin(math.pi*t/100)*(t/100)**2 for t in range(101))
+        self.assertGreater(top, high + 0.01)
+        self.assertLess(top, high + 0.035)

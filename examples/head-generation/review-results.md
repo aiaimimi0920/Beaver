@@ -1,7 +1,7 @@
-# Candidate 107 checkpoint, batch still in progress
+# Candidate111 verified checkpoint; further contour work continues
 
-103 isolated centerline normals and visibly restored the front central shading division. 104 height smoothing alone left cheek bands. 105 used a consistent lateral profile and improved upper-side continuity, with lower-cheek work remaining. 106 added a shallow ear basin, enlarged the shallow posterior eye ellipse and contracted the oral back wall. 107 partitions ear-root and lower-jaw normals and excludes flat end caps from smooth-wall normal accumulation.
+Actual generation job8c99b380-51e9-49fa-b212-67eea235916d, request3be0c271-81cd-41c2-a079-25ca55ce0f65. GLB SHA-256df0ec9bcb9f8ea829d9e806354dd2b1fe96a0abeb43968d0783ff6696813999e. 39 pure tests pass and standard native NPR validation passed.
 
-107 was actually generated through Beaver job ebf317cd-532f-4cfd-b81e-957f82d0deaf, request b4e62930-8a17-49be-96cb-18d420f1adac. GLB SHA-256 4ccdc53a6877a0dd0a1ae4521beb4bf02234ee71b9701ddf153c794f4d7a06ab. 38 pure tests pass; native model loads and rear white comparison shows clearer posterior eye/oral rim transitions. Root seams remain shared geometry.
+The user accepted the center division on108.109 moved the lateral crease near the perimeter and reduced stacked jaw correction; matched white oblique shows reduced lower-cheek bands.110 returned the upper ear rim but retained a black lower wedge.111 adds a0.2mm separated reverse skin membrane, preserving12 shared front-root edges per ear. Actual native left-side render shows the black wedge gone, with the shader outline retained. Evidence: compare-1791280677-45407, light-46.52, zoom1.37, mouth0.
 
-The overall feedback batch is still in progress. Cheek continuity, ear aesthetics, posterior cap planarity after clearance fitting and outline visibility need further work. Project aggregate tests still target prior102 and have NOT validated this batch. No final artistic acceptance or full-wardrobe acceptance. PR remains draft.
+Ear contour refinement remains in progress. No overall artistic acceptance, no current aggregate test pass claim, no full wardrobe acceptance. Body/Hair and pinned engine/framework unchanged.

@@ -18,7 +18,8 @@ class CreaseRulesTests(unittest.TestCase):
         role, value = semantic_weight((0, 0, 0.25), (0, 0, 0.3), 1, 1, 1, 0, C)
         self.assertEqual(role, 1)
         self.assertGreater(value, 0.9)
-        role, value = semantic_weight((0.78, 0, 0.25), (0.78, 0, 0.3), 1, 1, 1, 0, C)
+        q = C["face_side_crease_lateral_ratio"]
+        role, value = semantic_weight((q, 0, 0.25), (q, 0, 0.3), 1, 1, 1, 0, C)
         self.assertEqual(role, 2)
         self.assertGreater(value, 0)
 

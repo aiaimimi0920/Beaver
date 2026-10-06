@@ -148,6 +148,13 @@ def fit_pocket_clearance(shell):
             obj.data.update()
             start = obj["pocket_back_start"]
             cap_vertices = list(obj.data.vertices)[start : start + obj["pocket_back_count"]]
+            rear_plane = max(v.co.y for v in cap_vertices)
+            cap_shift = max(rear_plane - v.co.y for v in cap_vertices)
+            assert cap_shift < 0.01 * H, "Cap fit needs a structural redesign"
+            for vertex in cap_vertices:
+                vertex.co.y = rear_plane
+            obj["rear_cap_planarization_shift_m"] = cap_shift
+            obj.data.update()
             obj["rear_cap_planarity_after_m"] = max(v.co.y for v in cap_vertices) - min(
                 v.co.y for v in cap_vertices
             )
