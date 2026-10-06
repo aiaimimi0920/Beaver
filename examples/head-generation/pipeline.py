@@ -6,7 +6,7 @@ from mouth import store_mouth_deltas
 from glb_merge import merge_face
 
 ROOT = Path(beaver_input("project.godot")).parent
-OUT = "assets/aster/head_recovery_83/"
+OUT = "assets/aster/head_recovery_85/"
 BASE = "assets/aster/head_recovery_49/"
 GUIDE = Path(beaver_input("authoring/head_generation_guide.md")).read_text()
 assert "去发侧脸轮廓检查" in GUIDE
@@ -85,29 +85,19 @@ for obj in PARTS:
         normal_checks[obj.name] = weighted
         assert weighted < 0, "Reversed facial surface: " + obj.name
 report["front_surface_normal_checks"] = normal_checks
-# Preserve meaningful aperture boundaries without dense artificial support rails.
-edge_use = {tuple(sorted(e.vertices)): 0 for e in shell.data.edges}
-for poly in shell.data.polygons:
-    ids = list(poly.vertices)
-    for a, b in zip(ids, ids[1:] + ids[:1]):
-        edge_use[tuple(sorted((a, b)))] += 1
-crease = shell.data.attributes.new("crease_edge", "FLOAT", "EDGE")
-for edge in shell.data.edges:
-    if edge_use[tuple(sorted(edge.vertices))] != 1:
-        continue
-    verts = [shell.data.vertices[i].co for i in edge.vertices]
-    x = sum(v.x for v in verts) / 2
-    y = sum(v.z for v in verts) / 2
-    # Positive half shell: eye/mouth boundaries only. Mirror seam stays smooth.
-    aperture = (0.018 < x < 0.087 and 1.610 < y < 1.671) or (
-        x > 0.00001 and x < 0.021 and abs(y - Y0 - H * C["mouth_height"]) < 0.002
-    )
-    crease.data[edge.index].value = 1.0 if aperture else 0.0
+from crease_rules import assign_creases, measure_crease_effect
+
+new_crease_edges, crease_counts = assign_creases(shell, front_count, H, Y0, width, C)
 sub = shell.modifiers.new("Semantic quad surface refinement", "SUBSURF")
 sub.subdivision_type = "CATMULL_CLARK"
 sub.levels = STYLE["surface_subdivision_levels"]
 sub.render_levels = sub.levels
 report["surface_subdivision_levels"] = sub.levels
+report["facial_crease"] = {
+    "edge_counts": crease_counts,
+    "evaluated_effect": measure_crease_effect(shell, new_crease_edges),
+}
+
 from eye_socket import fit_pocket_clearance
 
 report["pocket_skin_clearance"] = fit_pocket_clearance(shell)

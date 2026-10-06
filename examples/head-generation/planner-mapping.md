@@ -13,3 +13,10 @@ Keep48 angular samples and the first3 expansion bands. Replace the old fourth re
 ##83 mapping
 Ear angular samples36→24, radial bands6→3, with relief only-0.004H at inner bands and0 at rim. Preserve the existing semantic outline, paired closed back surface, root fitting and UV isolation. Inner ear shape is moved to an independently authored analytic color function with bounded strengths rather than copied texture pixels.
 Flag only the actual planar eye rear-cap polygon as flat. After joining and triangulating, custom corner normals use polygon normals on flat faces and area-weighted vertex normals on smooth faces. This preserves honest geometric shading and removes the cap's boundary-normal interpolation artifacts.
+
+##84 edge-Crease mapping
+Use a normalized-height strength profile on true front-surface center edges, with the strongest values near the nasal bridge/tip and tapered weights toward forehead/chin. Select the existing q=0.78 lateral control-cage chain for the cheek front/side boundary; reject non-longitudinal edges and preserve eye/mouth aperture creases. Record selected edge counts and evaluate matched vertex displacement with the new groups disabled as a non-reference ablation. No original source Crease metadata is available, so these are explicit case parameters subject to native visual validation.
+
+##85 nasal mapping
+Read-only reference/candidate ray measurements after84: tip-center depth is close (about0.8mm short at0.28H), lower-nose sides remain about2–3mm shallow, while upper-bridge sides at0.40H are about2.7–4.5mm too projected. These are sparse semantic observations, not copied vertex coordinates or original crease weights.
+Use separate monotone nasal lateral profiles for tip/bridge and fuller base, blended across height0.25–0.28H. Increase lower-nose support width, make a small tip-height adjustment, and insert a narrow0.40H bridge cross-section while retaining outer-side values. Validate actual subdivided geometry; all numerical estimates are hypotheses until generated and viewed.

@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "preset": "semantic_calibration_a_83",
+  "preset": "semantic_calibration_a_85",
   "note": "Explicit semantic calibration case; no character-name generation dependency.",
   "iris_half_width_m": 0.01534,
   "eye_lens_bulge_m": 0.0012,
@@ -100,18 +100,18 @@
       ],
       [
         0.25,
-        0.054,
-        0.05
+        0.055,
+        0.066
       ],
       [
         0.28,
-        0.091,
-        0.047
+        0.0945,
+        0.064
       ],
       [
         0.3,
-        0.09,
-        0.045
+        0.1,
+        0.062
       ],
       [
         0.34,
@@ -270,6 +270,47 @@
           [
             0.325,
             -0.32
+          ]
+        ]
+      ],
+      [
+        0.4,
+        [
+          [
+            0,
+            0.062
+          ],
+          [
+            0.03,
+            0.045
+          ],
+          [
+            0.06,
+            0.027
+          ],
+          [
+            0.09,
+            0.012
+          ],
+          [
+            0.16,
+            0.01605
+          ],
+          [
+            0.24,
+            -0.00992
+          ],
+          [
+            0.3,
+            -0.03509
+          ],
+          [
+            0.34,
+            -0.11214
+          ],
+          [
+            0.35631,
+            -0.3416
           ]
         ]
       ],
@@ -548,7 +589,107 @@
         1,
         0
       ]
-    ]
+    ],
+    "face_center_crease_profile": [
+      [
+        0.04,
+        0
+      ],
+      [
+        0.12,
+        0.25
+      ],
+      [
+        0.2,
+        0.65
+      ],
+      [
+        0.26,
+        1
+      ],
+      [
+        0.38,
+        0.9
+      ],
+      [
+        0.52,
+        0.45
+      ],
+      [
+        0.7,
+        0.2
+      ],
+      [
+        0.9,
+        0
+      ]
+    ],
+    "face_side_crease_profile": [
+      [
+        0.06,
+        0
+      ],
+      [
+        0.16,
+        0.35
+      ],
+      [
+        0.3,
+        0.7
+      ],
+      [
+        0.55,
+        0.65
+      ],
+      [
+        0.75,
+        0.3
+      ],
+      [
+        0.9,
+        0
+      ]
+    ],
+    "face_side_crease_lateral_ratio": 0.78,
+    "face_side_crease_selection_tolerance": 0.03,
+    "nose_lateral_profile": [
+      [
+        0,
+        1
+      ],
+      [
+        0.4,
+        0.5
+      ],
+      [
+        0.8,
+        0.18
+      ],
+      [
+        1,
+        0
+      ]
+    ],
+    "nose_basal_profile": [
+      [
+        0,
+        1
+      ],
+      [
+        0.4,
+        0.72
+      ],
+      [
+        0.8,
+        0.24
+      ],
+      [
+        1,
+        0
+      ]
+    ],
+    "nose_flare_start_height": 0.25,
+    "nose_flare_end_height": 0.28
   },
   "normal_policy": "actual_area_weighted_geometry",
   "surface_subdivision_levels": 1,
