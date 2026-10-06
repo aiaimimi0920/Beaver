@@ -100,7 +100,7 @@ def depth(x, y):
     cy = Y0 + H * (C["eye_corner_y"] + C["eye_corner_slope"] * t)
     arch = C["eye_upper_arch"] if y >= cy else C["eye_lower_arch"]
     power = C["eye_upper_power"] if y >= cy else C["eye_lower_power"]
-    r = sqrt(t * t + abs((y - cy) / (H * arch)) ** (1 / power))
+    r = sqrt(abs(t) ** C["eye_horizontal_power"] + abs((y - cy) / (H * arch)) ** (1 / power))
     weight = exp(-(((r - 1) / C["orbital_band_width"]) ** 2))
     return raw + (rim_depth(x, y) - raw) * weight
 
@@ -165,7 +165,7 @@ def eye_contour(side, t, upper):
     cy = C["eye_corner_y"] + C["eye_corner_slope"] * t
     h = C["eye_upper_arch"] if upper else -C["eye_lower_arch"]
     power = C["eye_upper_power"] if upper else C["eye_lower_power"]
-    return (x, Y0 + H * (cy + h * max(0, 1 - t * t) ** power))
+    return (x, Y0 + H * (cy + h * max(0, 1 - abs(t) ** C["eye_horizontal_power"]) ** power))
 
 
 def eye_surface(side, x, y):
@@ -236,9 +236,9 @@ def build_eyes():
                 x, y = eye_contour(side, 0.92, True)
                 tip = (x + side * 0.006, y + 0.0035)
                 wing = [
-                    coord(x, y, depth(x, y) + 0.0015),
-                    coord(tip[0], tip[1], depth(tip[0], tip[1]) + 0.0009),
-                    coord(x, y + 0.0025, depth(x, y + 0.0025) + 0.0015),
+                    coord(x, y, lash_depth(x, y)),
+                    coord(tip[0], tip[1], lash_depth(tip[0], y)),
+                    coord(x, y + 0.0025, lash_depth(x, y)),
                 ]
                 mesh(
                     "Soft outer lash flick " + str(side),
@@ -246,7 +246,7 @@ def build_eyes():
                     [(0, 1, 2) if side > 0 else (2, 1, 0)],
                     INK,
                 )
-        for upper, ts in [(True, [0.6, 0.8]), (False, [0.64, 0.83])]:
+        for upper, ts in [(True, [0.76])]:
             for t in ts:
                 x, y = eye_contour(side, t, upper)
                 scale = STYLE["lash_fan_scale"]
@@ -256,13 +256,25 @@ def build_eyes():
                     (x + side * 0.0015, y),
                     (x + side * 0.004 * scale, y + direction * 0.0035 * scale),
                 ]
-                vs = [coord(xx, yy, depth(xx, yy) + 0.0018) for xx, yy in points]
+                vs = [coord(xx, yy, lash_depth(xx, y)) for xx, yy in points]
                 mesh(
                     "Attached lash accent " + str((side, upper, t)),
                     vs,
                     [(0, 1, 2) if (side > 0) == upper else (2, 1, 0)],
                     INK,
                 )
+        liner = []
+        _, top = eye_contour(side, .95, True)
+        _, bottom = eye_contour(side, .55, False)
+        for lane in range(2):
+            for i in range(9):
+                f = i / 8
+                t = .95 - .23 * f + .06 * sin(pi * f)
+                x = side * H * (C["eye_center_x"] + C["eye_half_width"] * t)
+                x -= side * lane * H * C["outer_liner_width"] * max(.015, sin(pi * f)) ** .65
+                y = top * (1 - f) + bottom * f
+                liner.append(coord(x, y, lash_depth(x, y)))
+        mesh("Outer lateral eye liner " + str(side), liner, grid_faces(2, 9, side > 0), (.23, .065, .14))
         brow = []
         for lane in range(2):
             for i in range(25):

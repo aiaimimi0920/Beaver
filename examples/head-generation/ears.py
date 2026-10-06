@@ -104,12 +104,14 @@ def fit_ear_roots(shell):
                     rim.append(outer)
                     continue
                 t = (root_points[j].z - low) / (high - low)
+                end_weight = min(1, t / C["ear_return_end_fade"], (1 - t) / C["ear_return_end_fade"])
+                end_weight = end_weight * end_weight * (3 - 2 * end_weight)
                 x, y, z = vs[outer]
                 rim.append(len(vs))
                 vs.append(
                     (
-                        x - side * H * C["ear_return_lip_width"] * sin(pi * t),
-                        y + H * C["ear_return_lip_depth"] * sin(pi * t),
+                        x - side * H * C["ear_return_lip_width"] * sin(pi * t) * end_weight,
+                        y + H * C["ear_return_lip_depth"] * sin(pi * t) * end_weight,
                         z,
                     )
                 )

@@ -80,3 +80,19 @@ After the isolated ear change, calibrate the complete side silhouette. At normal
 
 ## Revision 136: retain the smooth join, calibrate underside arc length
 135 removes the observed posterior spur in the actual side render. Its lower underside turns upward too early compared with the reference envelope. Increase the middle underside depth stations and lower the final lift modestly; keep the free rear edge center-depth bow at zero using the actual final-station height. Preserve the flat-tip-free smooth join, front chin, ears, mouth and accepted normal division.
+
+
+## Revision 137: bounded chin follow and ear-root return
+The user now requests a small positive chin drop and slight facial elongation with MouthOpen, replacing a fully fixed chin as final intent. Add a separate adjustable 1.5 mm maximum downward lower-face follow, with smooth height and lateral falloff; preserve the existing lip opening and anti-folding gates. Verify neutral remains identical and the open pose is far below the early excessive jaw drop.
+
+Preserve accepted single-sheet inward-wrapped ear construction. The circled black wedge is localized at the lower ear-root return, not a full-ear shadow. Reduce return width smoothly near attachment endpoints so the free return border does not poke into the adjacent cheek. The broad cup remains. Refine original pigment into a narrower inner fold and upper arch with controllable sharpness, avoiding the old blurred thick ring. This iteration does not claim the remaining jaw corner, complete ear contour or eye-layer changes are finished.
+
+
+## Revision 138: rounded aperture and distinct eye-line layers
+The user describes the reference as rounded-corner and slightly narrower below, not a literal rectangle. Use a smooth superelliptic horizontal aperture exponent, independently controlled upper/lower arch powers, and retain shallow recessed eyes. Preserve the original iris and catchlight geometry. Keep eyebrow, rose upper-lid crease, thick upper lash ribbon and outer vertical liner as separate semantic features. Replace the scattered lower lash triangles with a coherent tapering outer liner, and keep the upper accent attached to the actual rim-depth surface. Do not reproduce broken reference brow triangles or apparent extraction defects. Verify frontal and side views and pocket clearance after this change.
+
+
+## Revision 139: locally fair the posterior jaw boundary
+The user marks a small remaining tangent break where the bottom rear edge turns into the side edge at 90 degrees. The large spur was removed, but sparse rear-return boundary samples still produce a corner after subdivision. Apply a bounded, distance-weighted fairing to only the low posterior open authoring boundary, before mirror/subdivision and normal calculation. Keep frontal chin/lips, eye/ear regions and all topology unchanged. Do not smooth accepted central shading normals away or hide the corner through lighting. Verify both exact side views at enlarged scale; a small residual corner is still a failure.
+
+Actual138 front-view review rejected the protruding C-shaped outer liner. Keep the rounded aperture but place the liner inward over the outer white margin, leaning toward a lower tapered endpoint; do not build a free external loop. Verify face winding after reversing the strip direction.

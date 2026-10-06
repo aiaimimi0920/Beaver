@@ -40,15 +40,18 @@ def load_math(half_gap=None):
 
 
 class MouthMathTests(unittest.TestCase):
-    def test_chin_is_fixed_and_transition_is_bounded(self):
+    def test_chin_follow_is_small_positive_and_adjustable(self):
         scope = load_math()
-        for x in [0, 0.008, 0.025, 0.045]:
-            for height in [0, 0.025, 0.05, 0.07]:
-                for value in scope["jaw_delta"](x, scope["Y0"] + scope["H"] * height, 0):
-                    self.assertAlmostEqual(value, 0, places=12)
-        for height in [i / 1000 for i in range(70, 160)]:
-            d = scope["jaw_delta"](0, scope["Y0"] + scope["H"] * height, 0)
-            self.assertLessEqual(abs(d[2]), scope["H"] * scope["C"]["mouth_open_lower"] + 1e-9)
+        maximum = scope["C"]["chin_follow_down_m"]
+        self.assertGreater(maximum, 0)
+        self.assertLessEqual(maximum, .0025)
+        for x in [0, .008, .025, .045]:
+            for height in [0, .025, .05, .07]:
+                d = scope["jaw_delta"](x, scope["Y0"] + scope["H"] * height, 0)
+                self.assertGreaterEqual(d[2], -maximum - 1e-9)
+                self.assertLess(d[2], 0)
+        scope["C"]["chin_follow_down_m"] = 0
+        self.assertEqual(scope["jaw_delta"](0, scope["Y0"], 0)[2], 0)
 
     def test_lower_mouth_deformation_does_not_fold_vertical_samples(self):
         scope = load_math()

@@ -55,3 +55,22 @@ class BrowTaperTests(unittest.TestCase):
                 (fn(t, 0) + fn(t, 1)) / 2, 0.5 * c["brow_thickness"] * math.sin(math.pi * t) ** 0.7
             )
         self.assertEqual(fn(0, 0), fn(0, 1))
+
+class RoundedApertureTests(unittest.TestCase):
+    def test_rounding_preserves_corners_center_and_symmetry(self):
+        import json
+        from pathlib import Path
+        from test_style_math import pure_function
+        c = json.loads(Path(__file__).with_name('face_style.json').read_text())['calibration']
+        fn, _ = pure_function('face.py', 'eye_contour', {'C': c, 'H': 1, 'Y0': 0})
+        for t in [-1, 0, 1]:
+            a, b = fn(1, t, True), fn(-1, t, True)
+            self.assertAlmostEqual(a[0], -b[0])
+            self.assertAlmostEqual(a[1], b[1])
+        for t in [-1, 1]:
+            self.assertEqual(fn(1, t, True), fn(1, t, False))
+        for t in [-.95, -.8, -.4, 0, .4, .8, .95]:
+            self.assertGreater(fn(1, t, True)[1], fn(1, t, False)[1])
+        old = dict(c, eye_horizontal_power=2)
+        classic, _ = pure_function('face.py', 'eye_contour', {'C': old, 'H': 1, 'Y0': 0})
+        self.assertGreater(fn(1, .8, True)[1]-fn(1, .8, False)[1], classic(1, .8, True)[1]-classic(1, .8, False)[1])

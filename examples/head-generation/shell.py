@@ -62,6 +62,37 @@ def chin_underside_depth_offset(back, lift, q):
     return H * (back + C["chin_underside_center_back"] * blend * rear_fade * (1 - profile))
 
 
+def fair_jaw_boundary(vertices, faces, config, height, origin, depth_origin):
+    uses = {}
+    for face in faces:
+        for a, b in zip(face, face[1:] + face[:1]):
+            edge = tuple(sorted((a, b)))
+            uses[edge] = uses.get(edge, 0) + 1
+    neighbors = {}
+    for (a, b), count in uses.items():
+        if count == 1:
+            neighbors.setdefault(a, []).append(b)
+            neighbors.setdefault(b, []).append(a)
+    selected = [i for i, linked in neighbors.items() if len(linked) == 2
+                and abs(vertices[i][0]) > .01 * height
+                and .015 < (vertices[i][2] - origin) / height < config["jaw_border_max_height"]
+                and (-vertices[i][1] - depth_origin) / height < config["jaw_border_back_threshold"]]
+    result = list(vertices)
+    for _ in range(int(config["jaw_border_iterations"])):
+        old = list(result)
+        for i in selected:
+            a, b = neighbors[i]
+            da = sqrt(sum((old[a][j] - old[i][j]) ** 2 for j in range(3)))
+            db = sqrt(sum((old[b][j] - old[i][j]) ** 2 for j in range(3)))
+            if da + db < 1e-10:
+                continue
+            target = tuple((old[a][j] * db + old[b][j] * da) / (da + db) for j in range(3))
+            result[i] = tuple(old[i][j] + config["jaw_border_relaxation"] * (target[j] - old[i][j]) for j in range(3))
+    maximum = max((sqrt(sum((result[i][j] - vertices[i][j]) ** 2 for j in range(3))) for i in selected), default=0)
+    assert maximum < .02 * height, "Jaw boundary relaxation exceeds local correction budget"
+    return result, {"selected_vertices": len(selected), "maximum_displacement_m": maximum}
+
+
 def build_face():
     levels = [
         1.544,
@@ -222,6 +253,7 @@ def build_face():
     shell_faces.append((outer[0], side_path[1], outer[1]))
     for j in range(1, len(side_path) - 1):
         shell_faces.append((side_path[j], side_path[j + 1], outer[j + 1], outer[j]))
+    verts, jaw_fairing = fair_jaw_boundary(verts, shell_faces, C, H, Y0, Z0)
     face = mesh("Face shell editable half", verts, shell_faces, SKIN, mirror=True)
     face["front_surface_face_count"] = front_count
     face["underside_face_count"] = underside_count
@@ -232,6 +264,7 @@ def build_face():
 
     build_ears()
     return {
+        "jaw_boundary_fairing": jaw_fairing,
         "face_authoring_quads": sum(len(q) == 4 for q in shell_faces),
         "face_authoring_triangles": sum(len(q) == 3 for q in shell_faces),
         "semantic_rows": levels,

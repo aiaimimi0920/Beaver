@@ -1,13 +1,12 @@
-# Candidate 136 verification
+# Iteration 139 evidence
 
-- 55 pure Python tests passed.
-- Generation request 5b1483a5-0313-4304-a9c6-e0a3e3f42341, job 52d7c091-3a4f-4bf8-9c81-fc59025d9269 succeeded, exit 0.
-- GLB SHA-256 dc4f2ba29784903d7e95177518d6290078bb82727f947a7d9c9afe3991d7dc31.
-- Native validation b77fb074-5f7f-44dd-97e3-e61ac5663ce0: pass, engineErrors false, errors empty. This excludes artistic acceptance.
-- All 13 generated source/spec hashes verified.
-- The user-circled rear lower-jaw spur is absent in the inspected left-side render.
-- Actual left-side render capture compare-1791296373-98241, frontal MouthOpen=1 compare-1791296463-99455, left45 neutral compare-1791296518-89569. Right-side white model also inspected.
-- Mean posterior depth error over 11 fixed normalized heights .025–.28 H fell from .029927 H on131 to .006370 H on136. This is a sparse read-only geometric diagnostic, not overall similarity or pixel acceptance.
-- Front chin-tip morph displacement is zero; filtered lower chin skin maximum downward displacement .489235 mm. Oral geometry is not counted as chin skin.
-- Project aggregate test target136 SHA-256 57c29ea1f12b4af1ff4d26ad0e6ce0228d0fdc136c83d6ab126d2ee1cbc2a44b. Aggregate result pending.
-- Source132 remote is48569c31337721709e3bbbc14d6041a61c03a9d8. Its hosted CI37474789697 failed before runner allocation, runner0 steps[]. No merge or final artistic acceptance.
+- Pure Python:56 tests pass.
+- GLB SHA-256:1ed65acb4565b135f7022ae164fa1776da765cc103c7e16566960aca8e892853.
+- Beaver job:b1ef0f41-6115-4a7c-99ed-175b319daa5f, succeeded exit0.
+- Native validation:e0c8fb8c-352f-4220-b324-f503b1576586, pass.
+- All13 embedded source/spec hashes verified.
+- Authoring jaw fairing selects12 low posterior boundary vertices, maximum displacement3.945305mm, topology unchanged. Frontal tip and lips excluded.
+- Actual front and right90-degree comparison inspected; inward eye liner improves the rejected external C-loop trial138. Ear-root dark triangle still visible on opposite side and remains pending.
+-137 morph diagnostic: front chin drop1.500010mm; lower chin skin maximum1.539469mm. New user target allows slight elongation; zero displacement is no longer the final criterion.
+- Latest full aggregate136:78ee0917-596e-4b70-a09f-5be05a14b8e8,7pass0fail. Parent aggregate9a9bf39a-1ef3-489d-a7c8-8c180b4b0322 also autoPassed7. Existing UID warnings remain.
+- Library checkpoint39 covers through136 and user-review136;139 assets currently preserved locally, next backup pending.

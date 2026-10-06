@@ -126,7 +126,7 @@ def fit_pocket_clearance(shell):
                 cy = Y0 + H * (C["eye_corner_y"] + C["eye_corner_slope"] * t)
                 arch = C["eye_upper_arch"] if y >= cy else C["eye_lower_arch"]
                 power = C["eye_upper_power"] if y >= cy else C["eye_lower_power"]
-                radius = sqrt(t * t + abs((y - cy) / (H * arch)) ** (1 / power))
+                radius = sqrt(abs(t) ** C["eye_horizontal_power"] + abs((y - cy) / (H * arch)) ** (1 / power))
                 if radius <= 1.01:
                     continue
                 old = vertex.co.copy()

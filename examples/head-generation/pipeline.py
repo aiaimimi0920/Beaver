@@ -6,7 +6,7 @@ from mouth import store_mouth_deltas
 from glb_merge import merge_face
 
 ROOT = Path(beaver_input("project.godot")).parent
-OUT = "assets/aster/head_recovery_136/"
+OUT = "assets/aster/head_recovery_139/"
 BASE = "assets/aster/head_recovery_49/"
 GUIDE = Path(beaver_input("authoring/head_generation_guide.md")).read_text()
 assert "去发侧脸轮廓检查" in GUIDE
@@ -80,7 +80,7 @@ report["shell_geometry_checks"] = {
 report["authoring_guide_sha256"] = hashlib.sha256(GUIDE.encode()).hexdigest()
 normal_checks = {}
 for obj in PARTS:
-    if any(tag in obj.name for tag in ["skin lid", "lash ", "Eye sclera"]):
+    if any(tag in obj.name for tag in ["skin lid", "lash ", "Eye sclera", "eye liner"]):
         weighted = sum(poly.normal.y * poly.area for poly in obj.data.polygons)
         normal_checks[obj.name] = weighted
         assert weighted < 0, "Reversed facial surface: " + obj.name

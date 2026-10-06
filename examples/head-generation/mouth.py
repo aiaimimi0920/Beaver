@@ -40,7 +40,9 @@ def jaw_delta(x, y, z):
         ),
     )
     gate = gate * gate * (3 - 2 * gate)
-    return Vector((0, 0.0035 * lower * side * gate, dy * side * gate))
+    follow = C["chin_follow_down_m"] * exp(-((height / C["chin_follow_height"]) ** 4))
+    follow *= exp(-((abs(x) / (H * C["chin_follow_lateral"])) ** 4))
+    return Vector((0, 0.0035 * lower * side * gate, dy * side * gate - follow))
 
 
 def store_mouth_deltas(obj, override=None):

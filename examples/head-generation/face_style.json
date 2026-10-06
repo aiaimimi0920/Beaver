@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "preset": "semantic_calibration_a_136",
+  "preset": "semantic_calibration_a_139",
   "note": "Explicit semantic calibration case; no character-name generation dependency.",
   "iris_half_width_m": 0.01534,
   "eye_lens_bulge_m": 0.0012,
@@ -129,8 +129,8 @@
     "eye_half_width": 0.11,
     "eye_upper_arch": 0.044,
     "eye_lower_arch": 0.088,
-    "eye_upper_power": 0.4,
-    "eye_lower_power": 0.65,
+    "eye_upper_power": 0.38,
+    "eye_lower_power": 0.53,
     "eye_inner_depth": -0.006,
     "eye_outer_depth": -0.071,
     "eye_rim_vertical_bulge": 0.012,
@@ -897,7 +897,17 @@
     "brow_inner_fullness": 0.35,
     "chin_underside_center_back": 0.016,
     "chin_underside_roundness": 0.35,
-    "ear_cup_recess": 0.018
+    "ear_cup_recess": 0.018,
+    "chin_follow_down_m": 0.0015,
+    "chin_follow_height": 0.12,
+    "chin_follow_lateral": 0.35,
+    "ear_return_end_fade": 0.22,
+    "eye_horizontal_power": 2.6,
+    "outer_liner_width": 0.014,
+    "jaw_border_relaxation": 0.35,
+    "jaw_border_iterations": 3,
+    "jaw_border_max_height": 0.18,
+    "jaw_border_back_threshold": -0.12
   },
   "normal_policy": "actual_area_weighted_geometry",
   "surface_subdivision_levels": 1,
@@ -906,7 +916,7 @@
     0.025,
     0.065
   ],
-  "lid_crease_strength": 0.24,
+  "lid_crease_strength": 0.34,
   "iris_graphic_disc_strength": 0.2,
   "iris_accent_rgb": [
     0.26,
@@ -916,9 +926,9 @@
   "nose_plane_bottom_height": 0.345,
   "nose_plane_height": 0.08,
   "nose_plane_width": 0.032,
-  "ear_concha_tint_strength": 0.14,
-  "ear_helix_stroke_strength": 0.22,
-  "ear_inner_fold_strength": 0.38,
+  "ear_concha_tint_strength": 0.1,
+  "ear_helix_stroke_strength": 0.28,
+  "ear_inner_fold_strength": 0.42,
   "brow_rgb": [
     0.075,
     0.035,
@@ -932,5 +942,7 @@
   "ear_concha_center_u": 0.48,
   "ear_concha_center_v": 0.58,
   "iris_depth_contrast": 0.2,
-  "ear_fold_curl": 0.1
+  "ear_fold_curl": 0.1,
+  "ear_fold_width": 0.033,
+  "ear_helix_softness": 0.065
 }
