@@ -102,15 +102,16 @@ def eye_atlas_color(u, v):
 
 
 def ear_color(u, v):
-    x = (u - 0.50) / 0.26
-    y = (v - 0.71) / 0.24
+    x = (u - STYLE["ear_arch_center_u"]) / STYLE["ear_arch_radius_u"]
+    y = (v - STYLE["ear_arch_center_v"]) / STYLE["ear_arch_radius_v"]
     radius = sqrt(x * x + y * y)
     concha = STYLE["ear_concha_tint_strength"] * exp(
-        -(((u - 0.43) / 0.17) ** 2) - ((v - 0.62) / 0.20) ** 2
+        -(((u - STYLE["ear_concha_center_u"]) / 0.20) ** 2)
+        - ((v - STYLE["ear_concha_center_v"]) / 0.20) ** 2
     )
-    arch_mask = max(0, min(1, (v - 0.57) / 0.10))
+    arch_mask = max(0, min(1, (v - 0.49) / 0.10))
     helix = STYLE["ear_helix_stroke_strength"] * exp(-(((radius - 0.80) / 0.10) ** 2)) * arch_mask
-    fold_u = 0.37 + 0.065 * sin(pi * max(0, min(1, (v - 0.38) / 0.40)))
+    fold_u = STYLE["ear_fold_center_u"] + 0.065 * sin(pi * max(0, min(1, (v - 0.38) / 0.40)))
     fold = (
         STYLE["ear_inner_fold_strength"]
         * exp(-(((u - fold_u) / 0.055) ** 2))

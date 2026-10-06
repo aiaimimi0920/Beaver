@@ -83,3 +83,18 @@ Keep the rounded lower silhouette from118. Original ear pigmentation should sugg
 
 ## Lower-cheek contour correction120
 The green-marked cheek-to-chin outline must taper continuously without a pinched lower cheek followed by a straight oblique segment. Use a small number of independent rounded width controls: increase lower-cheek fullness most around 12 percent of normalized head height, fade the change toward the ear root, and preserve chin-tip width and all center shading rules. Read-only reference cross sections show the current lower-cheek span is too narrow. This is sparse semantic calibration, not a mesh fit or reference geometry import. Inspect the same front and oblique white/render views after Beaver generation.
+
+
+## Active parameter contract121
+Remove obsolete calibration controls left behind by earlier ear/lip implementations. Every advertised calibration field must be consumed by the current runtime recipe. Retired fields: mouth_lip_relief, ear_outward_profile, ear_outer_depth_profile, ear_basin_depth, ear_upper_arc_lift, ear_lateral_basin. This cleanup intentionally preserves120 generated geometry and texture; validate byte identity after regeneration. Historical notes describe prior revisions only and are not active parameter definitions.
+
+
+## Ear inner arch placement122
+The original ear pigment should remain visibly inside the shallow pinna in true side views. Move the compact upper arch and short inner fold away from the anterior face attachment toward the exposed ear surface. Keep a clear plain lower lobe and a soft shallow concha. Expose arch/fold/concha placement as explicit reusable style controls, preserving geometry and shader outline behavior. Validate both sides and do not accept the adjustment merely because the texture file changed.
+
+
+Parameter audit correction: conditional subscript expressions consume both upper_lip_edge_depth_delta and lower_lip_edge_depth_delta. These remain active controls and are retained. The first121 attempt failed on the missing lower-lip key before producing outputs; the revised test traverses conditional subscript expressions and verifies all possible C/config keys are present. Only six inactive legacy controls are removed.
+
+
+## Ear pigment projection123
+The122 inner arch remains compressed in the actual side view. Its row-relative UV coordinates follow a nonlinear depth sweep, which can squeeze the painted arch even after changing pigment centers. Test a whole-ear side-plane UV projection of our own front membrane and return rim, normalized by their own depth/height bounds. Keep the reverse skin plain. Preserve all vertex positions, root connectivity, shading normals and texture colors in this isolation step. This is an authored projection experiment, not a claim about the reference UV implementation. The same pattern should occupy a coherent visible shallow ear region from normal side and oblique views.

@@ -133,3 +133,15 @@ class EarBasinTests(unittest.TestCase):
         fn, _ = pure_function("ears.py", "ear_arc_height", {"H": 1, "C": C})
         low, high = C["ear_root_min_height"], C["ear_root_max_height"]
         self.assertLess(abs((fn(0.0001, low, high) - fn(0, low, high)) / 0.0001), 0.001)
+
+
+class EarProjectionTests(unittest.TestCase):
+    def test_projection_preserves_side_plane_spacing_and_mirroring(self):
+        fn, _ = pure_function("ears.py", "project_ear_uv", {})
+        points = [(1, 0, 0), (2, 0.2, 0.3), (3, 0.5, 0.7), (4, 1, 1)]
+        result = fn(points)
+        self.assertEqual(result, fn([(-x, y, z) for x, y, z in points]))
+        self.assertEqual(result[0], (0.02, 0.02))
+        self.assertEqual(result[-1], (0.98, 0.98))
+        self.assertAlmostEqual(result[2][0] - result[1][0], 0.96 * 0.3)
+        self.assertTrue(all(0.02 <= x <= 0.98 and 0.02 <= y <= 0.98 for x, y in result))

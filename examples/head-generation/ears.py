@@ -26,6 +26,21 @@ def ear_arc_height(t, low, high):
     )
 
 
+def project_ear_uv(vertices):
+    depths = [p[1] for p in vertices]
+    heights = [p[2] for p in vertices]
+    low_d, high_d = min(depths), max(depths)
+    low_h, high_h = min(heights), max(heights)
+    assert high_d - low_d > 1e-8 and high_h - low_h > 1e-8
+    return [
+        (
+            0.02 + 0.96 * (p[1] - low_d) / (high_d - low_d),
+            0.02 + 0.96 * (p[2] - low_h) / (high_h - low_h),
+        )
+        for p in vertices
+    ]
+
+
 def fit_ear_roots(shell):
     bpy.context.view_layer.update()
     evaluated = shell.evaluated_get(bpy.context.evaluated_depsgraph_get())
@@ -103,6 +118,7 @@ def fit_ear_roots(shell):
                 clean = list(dict.fromkeys(corners))
                 if len(clean) >= 3:
                     fs.append(tuple(clean))
+            uvpoints = project_ear_uv(vs)
             if side < 0:
                 fs = [tuple(reversed(f)) for f in fs]
             # The return membrane is an anatomical reverse skin surface, not

@@ -2,14 +2,14 @@
   "face.py": "3e73c910fb881281e5c1772e9959241630a28f86364fcc8657ff3c53d558318e",
   "eye_socket.py": "81c61ef535a79a1f9e18068fd97e86fa77cfebd11aa4e6ff490d8a0042b32d0a",
   "mouth.py": "5896401b94a17fe601390e1ca29dc618198712ee3f69807ebe570f45ea68dca2",
-  "ears.py": "cd52d09726a121fdd6d0030506d60c6e2a5c7731ac2b10883a0e465afcbc992f",
+  "ears.py": "e4d79b4dd928eec7e58531d71af844b39bbc3f6ed5f03b838ca5e7f36cb89567",
   "shell.py": "ab738ece73660e5db1d524d2c89a1cf50a1ff19d7f60a7da7cc10bcc3ad8ef15",
-  "textures.py": "ce7876f5af925cf510e988d521e608eba12dd1d038f7679196eb01afa79d09e7",
+  "textures.py": "6d998fb2b65d9c551ae70689d61dd3ab3ccbe62655015c695baf7213d772f4d9",
   "glb_merge.py": "367082b2b1cf0bc9edcc7424abd92811c721c6751afaabd8638b2be3d754db0f",
   "crease_rules.py": "bca40d6d8c07a72cd5fe57b71dc16217dca39d83b51276994cb2c7b057e51529",
-  "pipeline.py": "4bd8851bd13c8e635c8f623583dcd4c1314b7c384aa47eb6b0c647ea6ad4c9c1",
-  "authoring-brief.md": "8d1283749847e96e88bce5c9d956bb2219ac4b425180392b9692aa38daa7186d",
+  "pipeline.py": "07c8fc9419b9853d42becd01f89751c91ca758d20ac9611ed49c5b89d03ccd20",
+  "authoring-brief.md": "7f5de3e46cd0b8ad29d818721700bd29b21bbbffb750eb3f7ee2ef7975c34f1a",
   "planner-mapping.md": "20a1a543c4601286c2f1abc6c9709c7e6a8d1b4cc01df64ed980b686012b548e",
   "eye-structure-plan.md": "a4e85304a01bb6b4824b46113e58e9c301d6215c3e28c5acdbff1d802fe364b0",
-  "face_style.json": "6cdfee7e1b2bd1e1561c6fb63d1f2bfafb44d5f8465f096078ed870113083140"
+  "face_style.json": "38ad9e90d25c01bfe47954a4c45a6f3ad4f9c9138297fe24693d1c7db7476949"
 }

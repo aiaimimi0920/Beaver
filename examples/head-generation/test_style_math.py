@@ -136,6 +136,49 @@ class StyleMathTests(unittest.TestCase):
                 self.assertEqual(rgba[3], 1)
                 self.assertTrue(all(math.isfinite(c) and 0 <= c <= 1 for c in rgba))
 
+    def test_ear_arch_style_controls_change_pigment(self):
+        fn, _ = pure_function(
+            "textures.py", "ear_color", {"STYLE": STYLE, "SKIN": STYLE["skin_rgb"]}
+        )
+        shifted = dict(STYLE, ear_arch_center_u=0.35, ear_fold_center_u=0.25)
+        other, _ = pure_function(
+            "textures.py", "ear_color", {"STYLE": shifted, "SKIN": STYLE["skin_rgb"]}
+        )
+        self.assertGreater(
+            max(
+                abs(fn(u / 20, v / 20)[0] - other(u / 20, v / 20)[0])
+                for u in range(21)
+                for v in range(21)
+            ),
+            0.01,
+        )
+
+    def test_each_ear_placement_control_has_effect(self):
+        base, _ = pure_function(
+            "textures.py", "ear_color", {"STYLE": STYLE, "SKIN": STYLE["skin_rgb"]}
+        )
+        names = [
+            "ear_arch_center_u",
+            "ear_arch_center_v",
+            "ear_arch_radius_u",
+            "ear_arch_radius_v",
+            "ear_fold_center_u",
+            "ear_concha_center_u",
+            "ear_concha_center_v",
+        ]
+        for key in names:
+            changed = dict(STYLE)
+            changed[key] += 0.08
+            fn, _ = pure_function(
+                "textures.py", "ear_color", {"STYLE": changed, "SKIN": STYLE["skin_rgb"]}
+            )
+            difference = max(
+                abs(base(u / 20, v / 20)[0] - fn(u / 20, v / 20)[0])
+                for u in range(21)
+                for v in range(21)
+            )
+            self.assertGreater(difference, 0.003, key)
+
     def test_lower_lobe_stays_plain_skin(self):
         fn, _ = pure_function(
             "textures.py", "ear_color", {"STYLE": STYLE, "SKIN": STYLE["skin_rgb"]}
