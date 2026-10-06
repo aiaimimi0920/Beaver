@@ -1,5 +1,5 @@
 {
-  "candidate": 85,
+  "candidate": 86,
   "static_read_keys": {
     "STYLE": [
       "brow_arch_m",
@@ -83,6 +83,7 @@
       "nose_flare_start_height",
       "nose_lateral_profile",
       "nose_stations",
+      "oral_rings",
       "orbital_band_width",
       "origin_y_m",
       "pocket_back",

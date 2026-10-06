@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "preset": "semantic_calibration_a_85",
+  "preset": "semantic_calibration_a_86",
   "note": "Explicit semantic calibration case; no character-name generation dependency.",
   "iris_half_width_m": 0.01534,
   "eye_lens_bulge_m": 0.0012,
@@ -689,7 +689,39 @@
       ]
     ],
     "nose_flare_start_height": 0.25,
-    "nose_flare_end_height": 0.28
+    "nose_flare_end_height": 0.28,
+    "oral_rings": [
+      [
+        0,
+        1,
+        0,
+        0
+      ],
+      [
+        0.010593220338983052,
+        0.98,
+        0.0023728813559322033,
+        0.0018008474576271187
+      ],
+      [
+        0.04237288135593221,
+        1.45,
+        0.07203389830508475,
+        0.059322033898305086
+      ],
+      [
+        0.13135593220338984,
+        1.35,
+        0.09745762711864407,
+        0.08474576271186442
+      ],
+      [
+        0.20762711864406783,
+        1.12,
+        0.08898305084745764,
+        0.0805084745762712
+      ]
+    ]
   },
   "normal_policy": "actual_area_weighted_geometry",
   "surface_subdivision_levels": 1,

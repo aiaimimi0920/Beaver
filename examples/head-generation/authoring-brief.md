@@ -90,3 +90,6 @@ Keep83 eye rear closures, ear simplification and81 mouth dynamics. Inspect front
 ## Candidate85: distinct nasal base and narrow upper bridge
 Use the verified center/perimeter edge-Crease mechanism, but do not expect crease strength alone to fix proportions. The lower nose needs broader side support without a bulbous tip; the upper bridge must fall into the inner cheek/eye region more narrowly. Give the nasal cross-section an explicit monotone peaked profile with a fuller basal variant, rather than a single circular bell. Blend basal fullness out above the tip. Preserve a small slightly projected tip and continuous side silhouette.
 Add a sparse semantic upper-bridge cross-section while preserving outer cheek/head boundaries. Keep84 lips, eye pocket closures and simplified ears unchanged. Generator parameters must be semantic and independent of reference meshes/texture pixels. Judge native front, exact sides, white45 and a light sweep as well as sparse measurements; lower numerical error does not establish beauty or acceptance.
+
+## 86：口腔后部体积
+静止嘴缝及外部唇形保持85版。口腔从窄唇缝向内扩展为有足够上下空间的腔体，不能把后壁收成扁小的尖锥。内腔顶、底、宽度和向后距离应有独立的归一化控制；后壁应为宽阔、近似平面的封口，不在可见面皮上制造汇聚极点。舌体有厚度，保持既有开口时可见的状态。检查闭口、半开口、全开口及背面；增加内腔不能穿出下巴、鼻底或面颊。保持当前眼、鼻、耳和表面拓扑不变，以隔离这项调整。

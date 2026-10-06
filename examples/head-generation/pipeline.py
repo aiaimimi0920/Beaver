@@ -6,7 +6,7 @@ from mouth import store_mouth_deltas
 from glb_merge import merge_face
 
 ROOT = Path(beaver_input("project.godot")).parent
-OUT = "assets/aster/head_recovery_85/"
+OUT = "assets/aster/head_recovery_86/"
 BASE = "assets/aster/head_recovery_49/"
 GUIDE = Path(beaver_input("authoring/head_generation_guide.md")).read_text()
 assert "去发侧脸轮廓检查" in GUIDE
@@ -115,6 +115,9 @@ report["pocket_rear_closure"] = [
 from ears import fit_ear_roots
 
 report["ear_root_fit"] = fit_ear_roots(shell)
+from mouth import validate_oral_clearance
+
+report["oral_clearance"] = validate_oral_clearance(shell)
 
 report["face_atlas_layout"] = "spatial_skin_eye_ear_flat_swatches_v2"
 assert body == {o.name: object_hash(o) for o in bpy.data.objects if o.name in body}

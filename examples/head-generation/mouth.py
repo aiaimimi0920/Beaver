@@ -45,25 +45,19 @@ def build_oral_cavity(half_edge):
     colors = [(0.58, 0.27, 0.25), (0.26, 0.065, 0.072), (0.115, 0.019, 0.026)]
     # Lips attach exactly to the shell; interior expands behind the tiny rest gap.
     rings = []
-    for ring, (back, scale, height) in enumerate(
-        [
-            (0, 1, 0),
-            (0.0025, 0.98, 0.0005),
-            (0.010, 1.45, 0.009),
-            (0.031, 1.28, 0.013),
-            (0.049, 0.52, 0.008),
-        ]
-    ):
+    for ring, (back_h, scale, upper_h, lower_h) in enumerate(C["oral_rings"]):
+        back = back_h * H
         ids = []
         for k, (x, negz, y) in enumerate(edge):
             t = (y - rest_seam_y(x)) / REST_GAP
             xx = x * scale
-            yy = y + t * height * (1.12 if t > 0 else 0.85)
-            p = (xx, negz + back, yy)
+            yy = y + t * H * (upper_h if t > 0 else lower_h)
+            rear_depth = -depth(0, MOUTH_Y) if ring == len(C["oral_rings"]) - 1 else negz
+            p = (xx, rear_depth + back, yy)
             ids.append(len(vs))
             vs.append(p)
             d = jaw_delta(x, y, -negz)
-            d *= 1 - 0.25 * ring / 4
+            d *= 1 - 0.25 * ring / (len(C["oral_rings"]) - 1)
             deltas.append(d)
         rings.append(ids)
     for j in range(len(rings) - 1):
@@ -79,6 +73,12 @@ def build_oral_cavity(half_edge):
     )
     assert facing > 0, "Oral side walls must face the cavity interior"
     oral["inward_facing_measure"] = facing
+    oral.data.polygons[-1].use_smooth = False
+    cap_depths = [vs[i][1] for i in rings[-1]]
+    oral["rear_cap_planarity_m"] = max(cap_depths) - min(cap_depths)
+    assert oral["rear_cap_planarity_m"] < 1e-8
+    assert all(p.area > 1e-12 for p in oral.data.polygons), "Degenerate oral wall"
+
     attr = oral.data.attributes.new("MouthOpenDelta", "FLOAT_VECTOR", "POINT")
     for i, d in enumerate(deltas):
         attr.data[i].vector = d
@@ -112,3 +112,32 @@ def build_oral_cavity(half_edge):
     tf.extend([tuple(reversed(range(cols))), tuple((rows - 1) * cols + k for k in range(cols))])
     tongue = mesh("Tongue with thickness", tv, [tuple(reversed(f)) for f in tf], (0.66, 0.24, 0.28))
     store_mouth_deltas(tongue, lambda v: Vector((0, 0.002, -0.010)))
+
+
+def validate_oral_clearance(shell):
+    """Check neutral hidden wall samples against actual evaluated facial skin."""
+    from mathutils.bvhtree import BVHTree
+
+    oral = next(o for o in PARTS if o.name == "Oral cavity inner lips and back wall")
+    bpy.context.view_layer.update()
+    evaluated = shell.evaluated_get(bpy.context.evaluated_depsgraph_get())
+    data = evaluated.to_mesh()
+    count = len(oral.data.vertices) // len(C["oral_rings"])
+    signed_distances = []
+    try:
+        tree = BVHTree.FromPolygons(
+            [v.co.copy() for v in data.vertices], [tuple(p.vertices) for p in data.polygons]
+        )
+        for vertex in list(oral.data.vertices)[2 * count :]:
+            point, normal, _, _ = tree.find_nearest(vertex.co)
+            assert point is not None, "Missing oral containment surface"
+            signed_distances.append((vertex.co - point).dot(normal))
+        assert max(signed_distances) < 0, "Hidden oral wall sample lies outside facial skin"
+    finally:
+        evaluated.to_mesh_clear()
+    return {
+        "scope": "neutral hidden wall vertices against evaluated skin; not a global collision test",
+        "sampled_vertices": len(signed_distances),
+        "maximum_signed_distance_m": max(signed_distances),
+        "rear_cap_planarity_m": oral["rear_cap_planarity_m"],
+    }

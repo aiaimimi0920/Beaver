@@ -1,20 +1,15 @@
-# Candidate 85 observed checkpoint
+# Candidate 86 observed checkpoint
 
-On 2026-10-06, Beaver job 01ea07c6-97e9-4f7d-9ee5-d61ee3e233e3 (request 2fde41dd-6859-417c-921d-417f841b9eff) completed with exit code 0. GLB SHA-256: 928c72de981d513b3767f3d3c4933bc9a18752c5509281038539690da9083eea.
+Beaver job 0ab1da98-0f87-4bb9-8fb6-e36efc5db01d, request 931b4989-b81b-4ad2-a1e3-0545dbd4188d, succeeded on 2026-10-06 with exit code 0. GLB SHA-256: cb74a06bd524e6d55f92a74986e9e5f20a211f77b2f583aef7ada2ce7df5d23d.
 
-## Retained changes
+## Focused change
 
-- Candidate 83 broad planar ocular rear caps retain geometric flat corner normals. Simplified pinnae use 144 vertices and 120 quads each, with original procedural ear pigment.
-- Candidate 84 introduced real crease_edge center and side-face profiles. Candidate 85 reports 21 center edges, 13 side edges and 47 existing aperture edges. A matched evaluated-mesh ablation changes 369 of 3096 vertices, with maximum displacement 2.742 mm. This establishes that the attribute affects the evaluated mesh; it does not establish likeness.
-- Candidate 85 separates nasal basal flare from tip/bridge lateral falloff, widens lower nasal support and narrows upper bridge sides using explicit semantic parameters.
-- Twenty sparse nasal-section ray measurements improve RMS depth mismatch from 2.256 mm in candidate 84 to 0.769 mm in candidate 85. These sampled measurements are not a whole-surface comparison or aesthetic acceptance.
+Preserve the outer lip seam and candidate85 eye/nose/ear geometry. Replace hard-coded oral interior rings with explicit normalized backward-depth, width, upper-height and lower-height controls. Increase hidden vertical/rear volume while retaining the first two attachment rings. The broad planar rear cap has actual flat geometric normals rather than pinched interpolation.
 
 ## Verification
 
-Nineteen local recipe tests pass. Raw facial shell reports finite vertices, no zero-area faces and no reversed checked front/chin panels. Body/Hair primitives and the original baseline GLB binary prefix remain unchanged. Optional Draco and unused active vertex-color warnings remain; this is not a zero-warning claim.
+Twenty local tests pass. Actual generation checked 90 neutral hidden-wall vertices against evaluated facial skin: maximum signed distance -4.237 mm, rear cap planarity 0 m. This is a sampled neutral containment test, not a global or animated collision certificate. Body/Hair primitives and original binary prefix remain frozen. Standard Beaver NPR validation returned ok=true, no engine errors, and verified definition/model hashes.
 
-Native MiDot comparison inspected front render, white left 45 degrees, both white side views, and render lighting at approximately -95 and +94 degrees. Nasal side contour remains continuous and lower nasal support is less pinched. Face/side boundary is visible in white view. The lip profile retains a slightly forward upper lip. MouthOpen 0, 0.5 and 1 shows a narrow rest seam and rounded dark oral opening with visible tongue; the previous triangular opening regression was not observed. Neutral mouth is restored after testing.
+Native front neutral render, rear white view and MouthOpen 0.5/1 render inspected. Rear volume is visibly taller/broader than85, with no previous small pointed almond closure. Neutral mouth stays a slit; open-mouth outline remains rounded, dark, with visible tongue. Whole-face/eye likeness, ear root outline, topology density and shadow matching remain open. No final aesthetic or universal-template acceptance. Reference facets and possible unpacking artifacts are not treated as mandatory topology.
 
-## Still open
-
-The eyes and upper eyelid shape, oral rear volume, ear attachment outline, facial topology density and overall resemblance still need refinement. NPR facial shadow shape does not yet match the calibration reference. No final visual acceptance, universal-template acceptance, full wardrobe acceptance, deployment or release is claimed. The unpacked reference has split attributes and possible export artifacts; original Blender crease weights are unavailable, so these authored weights are not claimed as recovered source data.
+Both native side views at MouthOpen 1 were inspected without visible oral walls protruding through the facial silhouette. Default mouth0/front restored afterward.

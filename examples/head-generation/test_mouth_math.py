@@ -40,6 +40,16 @@ def load_math(half_gap=None):
 
 
 class MouthMathTests(unittest.TestCase):
+    def test_oral_profile_keeps_attachment_and_expands_rear(self):
+        c = json.loads((ROOT / "face_style.json").read_text())["calibration"]
+        rings = c["oral_rings"]
+        self.assertEqual(rings[0], [0, 1, 0, 0])
+        self.assertGreaterEqual(len(rings), 4)
+        self.assertTrue(all(a[0] < b[0] for a, b in zip(rings, rings[1:])))
+        self.assertGreater(rings[-1][1], 1)
+        self.assertGreater(rings[-1][2] + rings[-1][3], 0.15)
+        self.assertTrue(all(r[1] > 0 and r[2] >= 0 and r[3] >= 0 for r in rings))
+
     def test_aperture_and_cavity_share_curved_seam(self):
         scope = load_math()
         for i in range(25):
