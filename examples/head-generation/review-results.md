@@ -1,0 +1,7 @@
+# Candidate81 observed results
+Reconstructed from verified75 after workspace reset; not byte-identical recovery of lost76–80.
+Actual Beaver blender.start job0e2ed566-a72b-42a3-9faa-ea6906576bbb/request1fb77215-0514-4135-a48a-29f2312c727b completed; actual poll succeeded, exitCode0, duration23048ms. Blender4.3.2. GLB SHA256dbaa22cb91f83b116e7fa0dade9c9f76e6fde83045085cd27281fc526c686004.
+Frozen Body/Hair primitives and original binary prefix preserved. Face finite vertices, zero degenerate faces and zero reversed front/chin-side/chin-underside faces. Export printed unavailable optional Draco library and unused active vertex-color warnings; uncompressed GLB/morph checks passed. These logs are not a zero-warning result.
+12 focused local packaging, GLB merge and mathematical tests passed. Native Beaver workflow validate preceded actual MiDot Forward+/Vulkan preview.
+Observed native front MouthOpen0/.5/1: narrow neutral seam, oval half/full opening, dark cavity and tongue visible. The central triangular opening described for79 did not recur. White45 and wire45 views also inspected. Both white side views inspected: upper lip leads lower rim for this style; complete nose–lip–chin likeness is still not accepted.
+Only the lip increment is retained. Eyes/pocket rear closure, nose, ear simplicity/texture balance, regional facial center/perimeter crease and whole-face topology remain open. No general-template or whole-face acceptance.
