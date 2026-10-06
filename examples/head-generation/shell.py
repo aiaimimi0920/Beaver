@@ -56,7 +56,9 @@ def chin_underside_height(lift, q):
 def chin_underside_depth_offset(back, lift, q):
     blend = max(0, min(1, lift / 0.03))
     blend = blend * blend * (3 - 2 * blend)
-    return H * (back + C["chin_underside_center_back"] * blend * (1 - q * q))
+    radius = C["chin_underside_roundness"]
+    profile = (sqrt(q * q + radius * radius) - radius) / (sqrt(1 + radius * radius) - radius)
+    return H * (back + C["chin_underside_center_back"] * blend * (1 - profile))
 
 
 def build_face():

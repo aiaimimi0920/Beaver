@@ -60,3 +60,7 @@ Ear outward/posterior profiles replace one symmetric sinusoidal bulge. Transvers
 
 ## Final102 refinements
 The ear transverse posterior displacement uses root_depth minus the authored outer-depth curve, so the outer rim stays smooth even when the attached root varies. Lower return depth is an additive boundary correction, not an interpolation toward absolute depth; the field fades below0.285H, beneath the actual eye patch minimum~0.297H. The unchanged topology gates rejected96/97, and native oblique white views rejected98–100 flattening. All these revisions are captured in the authored brief rather than manual Blender editing.
+
+
+## Revision 132: wrapped open pinna
+User review identifies the ear as a three-dimensional wrapped sheet, readable in untextured white view, with an open rear. The previous duplicate front membrane offset by 0.2 mm is not that construction. Use one connected concave front sheet with an asymmetric upper-full/lower-small outline; roll the outer rim inward into a distinct short return sheet, leaving its inner rear edge open. No full-area duplicate reverse membrane, no cap, no solidified slab. Preserve welded face-root positions and original painted detail. This isolated ear iteration freezes all other 131 geometry, shader normals and mouth behavior. Side-face silhouette calibration follows in its own measured iteration, including the pointed rear jaw boundary.

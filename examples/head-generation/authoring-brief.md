@@ -119,7 +119,30 @@ The user's saved pitch-25.25 view, not a generic demand for a sharp chin, expose
 The lively-eye request includes eyelid coverage, not merely larger white dots. A read-only check of our current upper ink ribbon found its inner/lower row sits roughly10–12mm farther forward than the lid's lower skin at representative positions, because it samples facial skin depth inside the eye aperture. At the user's tilted view that depth difference compresses the visible ribbon and produces a visor-like slope. Align both ink rows to the same local orbital-rim depth plus the existing small surface offset; preserve eye shape, iris/sclera geometry, iris depth, highlight size and all pigments for this isolation step. The change moves the old over-forward lower ink edge back toward the lid rather than pushing the eye outward. Verify front, both sides, oblique and saved pitch-25.25 view, preserving attachment and front winding guards.
 
 
+## Brow asymmetric taper128
+Read-only sparse eyebrow cross sections indicate the reference's inner tenth is thicker than the outer tenth (about0.007H versus0.0037H), while the current symmetric sine-width brow has equal endpoint-region thickness. Preserve the existing brow center path and attachment depth. Add a bounded inner-fullness parameter to its crosswise width so the inner body is fuller and the outer tail tapers more finely. Offset both lanes around the unchanged center path rather than raising the whole brow or changing brow-eye spacing indiscriminately. Keep both ends closed and retain smooth interpolation. Verify actual front and user-saved pitch view; do not imitate any unpacking-related broken triangles in the reference eyebrow.
+
+
 Underside isolation refinement: fade the added arch from zero at the first posterior band to full at the rear-most lift0.03 band. The126 projection improved the tilted view but its near-front subdivision also narrowed the ordinary front tip. Keeping the first underside band at the original chin_return_lift isolates the intended posterior curvature and preserves the frontal edge more closely.
 
 
 126 visual rejection and127 replacement: raising the whole transverse underside arch created a localized tip-like bump and small shading marks in the user's saved view. Do not retain that strategy. Restore all original underside heights and instead apply a small center-only posterior-depth bow, fading from zero at the front band to at most0.016H at the rear center. Keep its side endpoints and all frontal cage positions unchanged. This targets the tilted-view closure without narrowing the ordinary frontal tip; the reference's posterior central underside is also farther back in the sparse diagnostic. Recheck actual view and winding/clearance.
+
+
+## Iris depth and lower reflection129
+In the user's saved matched-light view, sampled candidate iris patches have a lighter upper region and darker lower reflection than the reference. Treat the samples as diagnostic rather than pixel-transfer targets. Increase the original iris's controlled top-to-bottom contrast: darken its upper pigment, brighten a soft lower crescent, and reduce the strength of the flat lower graphic disc. Preserve pupil proportions, iris depth/concavity, existing white glint geometry and highlight sizes in this step. Wateriness should emerge from depth, reflection layering and corrected lid coverage rather than protruding eyeballs or oversized white dots. Add a bounded reusable iris_depth_contrast control and test its intended directional effect plus finite color bounds.
+
+
+## Original ear fold130
+The user rejected the oval-looking ear pigment on123. Retain the corrected side-plane UV and the asymmetric pinna, but reduce broad concha redness, soften the upper arch and draw a shorter inner fold with a gentle lower curl toward the attachment. Raise the upper arch within the existing ear patch and keep the lower lobe mostly plain skin. Use explicit original pigment parameters rather than the reference pixels. Verify that the result reads as a shallow stylized ear rather than an oval red mark or a long stripe.
+
+
+Final view calibration130: the saved-view brow diagnostic shows the reference has slightly more middle arch and a subtly rising projected outer end, while the candidate outer end descends slightly. Apply small independent authored brow rise/height/arch adjustments, retaining asymmetric thickness and attachment. For the posterior underside depth bow, use a smooth rounded-V crosswise profile with finite center curvature instead of a broad quadratic plateau. Preserve its0.016H maximum depth, unchanged side/front attachments and all original underside heights. This targets remaining saved-view flatness without collapsing any vertices or changing ordinary frontal tip width.
+
+
+## Open upper helix131
+Side review of130 still shows too much closed oval pigment. Keep the same original geometry and color palette. Restrict the helix stroke to the upper part of its ellipse, using the authored arch-center height as the gate, so the lower half remains open and the separate curled inner fold supplies the descending contour. Do not paint a full closed ring. Verify actual side and saved front-tilt views; all other four-item corrections remain unchanged.
+
+
+## Revision 132: wrapped open pinna
+User review identifies the ear as a three-dimensional wrapped sheet, readable in untextured white view, with an open rear. The previous duplicate front membrane offset by 0.2 mm is not that construction. Use one connected concave front sheet with an asymmetric upper-full/lower-small outline; roll the outer rim inward into a distinct short return sheet, leaving its inner rear edge open. No full-area duplicate reverse membrane, no cap, no solidified slab. Preserve welded face-root positions and original painted detail. This isolated ear iteration freezes all other 131 geometry, shader normals and mouth behavior. Side-face silhouette calibration follows in its own measured iteration, including the pointed rear jaw boundary.

@@ -126,6 +126,14 @@ class StyleMathTests(unittest.TestCase):
                 self.assertEqual(rgba[3], 1)
                 self.assertTrue(all(math.isfinite(c) and 0 <= c <= 1 for c in rgba))
 
+    def test_iris_contrast_deepens_top_and_lights_lower_region(self):
+        fn, _ = pure_function("textures.py", "iris_color", {"STYLE": STYLE})
+        plain, _ = pure_function(
+            "textures.py", "iris_color", {"STYLE": dict(STYLE, iris_depth_contrast=0)}
+        )
+        self.assertLess(sum(fn(0.65, 0.75)[:3]), sum(plain(0.65, 0.75)[:3]))
+        self.assertGreater(sum(fn(0.65, 0.25)[:3]), sum(plain(0.65, 0.25)[:3]))
+
     def test_ear_palette_is_bounded_without_reference_pixels(self):
         fn, _ = pure_function(
             "textures.py", "ear_color", {"STYLE": STYLE, "SKIN": STYLE["skin_rgb"]}
@@ -163,6 +171,7 @@ class StyleMathTests(unittest.TestCase):
             "ear_arch_radius_u",
             "ear_arch_radius_v",
             "ear_fold_center_u",
+            "ear_fold_curl",
             "ear_concha_center_u",
             "ear_concha_center_v",
         ]

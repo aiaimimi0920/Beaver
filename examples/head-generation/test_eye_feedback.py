@@ -39,3 +39,19 @@ class LashPlaneTests(unittest.TestCase):
         for x in [0.03, 0.05, 0.07]:
             self.assertAlmostEqual(fn(x, 1.65) - rim(x, 1.65), 0.0015)
             self.assertEqual(fn(x, 1.65), fn(x, 1.64))
+
+
+class BrowTaperTests(unittest.TestCase):
+    def test_inner_body_fuller_outer_tail_and_center_preserved(self):
+        import json, math
+        from pathlib import Path
+        from test_style_math import pure_function
+
+        c = json.loads(Path(__file__).with_name("face_style.json").read_text())["calibration"]
+        fn, _ = pure_function("face.py", "brow_lane_offset", {"C": c, "H": 1})
+        self.assertGreater(fn(0.1, 1) - fn(0.1, 0), fn(0.9, 1) - fn(0.9, 0))
+        for t in [0.1, 0.3, 0.5, 0.7, 0.9]:
+            self.assertAlmostEqual(
+                (fn(t, 0) + fn(t, 1)) / 2, 0.5 * c["brow_thickness"] * math.sin(math.pi * t) ** 0.7
+            )
+        self.assertEqual(fn(0, 0), fn(0, 1))

@@ -61,7 +61,11 @@ def iris_color(u, v):
     shade = 0.2 + 0.7 * max(0, min(1, (0.65 - y) / 1.4))
     fibers = 0.016 * sin(43 * a + 7 * r) + 0.009 * sin(91 * a - 11 * r)
     bright = shade + fibers * min(1, max(0, (r - 0.28) * 3))
-    c = [STYLE["iris_dark_rgb"][i] + STYLE["iris_light_rgb"][i] * bright for i in range(3)]
+    contrast = STYLE["iris_depth_contrast"] * max(-0.75, min(0.75, -y))
+    c = [
+        max(0, min(1, STYLE["iris_dark_rgb"][i] + STYLE["iris_light_rgb"][i] * bright + contrast))
+        for i in range(3)
+    ]
     crescent = exp(-(((r - 0.65) / 0.17) ** 2)) * max(0, min(1, (-y - 0.05) / 0.65))
     c = [
         c[i] * (1 - 0.55 * crescent) + STYLE["iris_crescent_rgb"][i] * 0.55 * crescent
@@ -109,9 +113,10 @@ def ear_color(u, v):
         -(((u - STYLE["ear_concha_center_u"]) / 0.20) ** 2)
         - ((v - STYLE["ear_concha_center_v"]) / 0.20) ** 2
     )
-    arch_mask = max(0, min(1, (v - 0.49) / 0.10))
+    arch_mask = max(0, min(1, (v - (STYLE["ear_arch_center_v"] - 0.04)) / 0.08))
     helix = STYLE["ear_helix_stroke_strength"] * exp(-(((radius - 0.80) / 0.10) ** 2)) * arch_mask
     fold_u = STYLE["ear_fold_center_u"] + 0.065 * sin(pi * max(0, min(1, (v - 0.38) / 0.40)))
+    fold_u -= STYLE["ear_fold_curl"] * exp(-(((v - 0.39) / 0.075) ** 2))
     fold = (
         STYLE["ear_inner_fold_strength"]
         * exp(-(((u - fold_u) / 0.055) ** 2))

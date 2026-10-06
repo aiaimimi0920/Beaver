@@ -10,7 +10,7 @@ def build_ears():
 
 def membrane_offset(t, u, config, root_depth):
     envelope = sin(pi * t) * (1 + config["ear_upper_fullness"] * (2 * t - 1))
-    outward = config["ear_outward_span"] * envelope * u
+    outward = envelope * (config["ear_outward_span"] * u - config["ear_cup_recess"] * 4 * u * (1 - u))
     outer_depth = (
         config["ear_root_depth_base"]
         + config["ear_root_depth_slope"] * t
@@ -122,15 +122,9 @@ def fit_ear_roots(shell):
             uvpoints = project_ear_uv(vs)
             if side < 0:
                 fs = [tuple(reversed(f)) for f in fs]
-            # The return membrane is an anatomical reverse skin surface, not
-            # a contour stroke; its open root remains behind the welded front.
-            front_vertices = len(vs)
-            front_faces = list(fs)
-            front_face_count = len(front_faces)
-            thickness = C["ear_membrane_thickness_m"]
-            vs.extend((x - side * thickness, y + thickness, z) for x, y, z in list(vs))
-            uvpoints.extend([(0.08, 0.50)] * front_vertices)
-            fs.extend(tuple(i + front_vertices for i in reversed(f)) for f in front_faces)
+            # A single wrapped surface: the inward return has a free inner edge.
+            # Do not duplicate the whole front sheet into a nearly coincident back.
+            front_face_count = len(fs)
             obj = mesh("Ear hollow pinna " + str(side), vs, fs, SKIN)
             assert all(poly.area > 1e-12 for poly in obj.data.polygons), "Degenerate ear membrane"
             obj["ear_detail"] = True

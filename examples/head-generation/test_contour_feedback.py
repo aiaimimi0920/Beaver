@@ -180,3 +180,28 @@ class ChinPosteriorBowTests(unittest.TestCase):
         self.assertEqual(fn(0.2, 0.03, 1), 0.2)
         self.assertAlmostEqual(fn(0.2, 0.03, 0) - 0.2, C["chin_underside_center_back"])
         self.assertLess(fn(0.2, 0.03, 0) - 0.2, 0.02)
+
+
+class ChinRoundnessTests(unittest.TestCase):
+    def test_rounded_bow_has_smooth_center_and_monotone_depth(self):
+        fn, _ = pure_function("shell.py", "chin_underside_depth_offset", {"C": C, "H": 1})
+        values = [fn(0.2, 0.03, i / 20) for i in range(21)]
+        self.assertTrue(all(b < a for a, b in zip(values, values[1:])))
+        self.assertLess(abs((fn(0.2, 0.03, 0.0001) - fn(0.2, 0.03, 0)) / 0.0001), 0.001)
+        self.assertEqual(values[-1], 0.2)
+
+
+class WrappedPinnaTests(unittest.TestCase):
+    def test_recess_keeps_root_and_outer_outline_but_changes_basin(self):
+        fn, _ = pure_function("ears.py", "membrane_offset", {})
+        flat = dict(C, ear_cup_recess=0)
+        for u in [0, 1]:
+            self.assertEqual(fn(.5, u, C, -.34), fn(.5, u, flat, -.34))
+        self.assertLess(fn(.5, .5, C, -.34)[0], fn(.5, .5, flat, -.34)[0])
+
+    def test_no_duplicate_back_membrane_in_recipe(self):
+        source = Path(__file__).with_name("ears.py").read_text()
+        self.assertNotIn("vs.extend((x - side * thickness", source)
+        self.assertNotIn("for i in reversed(f)) for f in front_faces", source)
+        self.assertGreater(C["ear_return_lip_width"], .04)
+        self.assertLess(C["ear_return_lip_width"], C["ear_outward_span"])

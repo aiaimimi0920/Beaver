@@ -1,34 +1,13 @@
-# Semantic head-generation calibration
+# Reproducible head recipe, iteration 132
 
-This is a recoverable development recipe, not an accepted character asset or a finished universal face generator. It follows specification → explicit parameters → Beaver generation → native MiDot comparison. Current executable recipe: candidate 127 (in-progress calibration).
+Natural language constraints → explicit semantic style and topology parameters → Beaver blender.start → native MiDot/NPR validation and same-camera comparison. No character-name prompt dependency or reference mesh/texture input to generation.
 
-## Inputs and execution
+132 replaces the full-area 0.2 mm reverse-ear duplicate with a single wrapped membrane, a shallow cup and a wider inward rim return with an open inner edge. Non-ear geometry remains at 131. Reference ear connectivity and silhouette are read-only diagnostics, not imported generated geometry.
 
-Restore the user's project checkpoint containing project.godot, authoring/head_generation_guide.md, and the frozen assets/aster/head_recovery_49/ baseline with its editable Blend, GLB, definition and Hair textures. Project/reference assets and runtime binaries are deliberately not published here.
+Local pure tests: 54 pass. Beaver generation succeeded. Native NPR validation passed; side and rear white-model views inspected. Overall visual acceptance remains pending. Latest full project aggregate passed at 120; later source tests and native asset validation do not replace it. 133 side-profile calibration is a separate in-progress candidate.
 
-Run python3 examples/head-generation/bundle.py --output /tmp/head-recipe.json to package a request. The bundler does not launch Blender or call any model service. Load the request into the existing authorized Beaver workbench, execute blender.start and poll the returned job to a real terminal result. Outputs are creation-only under assets/aster/head_recovery_127/. Change both bundle.py and pipeline.py consistently for a new candidate; an existing output is not permission to overwrite it.
+## Reproduce
+Run Python unittest discovery in this directory. Use bundle.py --output request.json to package the recipe, then submit through Beaver blender.start. Do not run Blender out of the workflow. Body and Hair primitives and the pinned framework/runtime are preserved.
 
-Use Beaver's npr-character validation and native MiDot review. The companion examples/head-review scripts provide synchronized render, white, wire, side/rear and candidate-only MouthOpen views. Restore MouthOpen to 0 after testing. Technical validation is separate from visual acceptance.
-
-## Current capabilities and boundaries
-
-- Explicit case proportions and sparse semantic cross-sections; generator never loads reference meshes, UVs or textures.
-- Real center/side edge-crease profiles, evaluated ablation, and geometry-consistent normals.
-- A continuous quad facial cage with chin return bands rather than a visible chin fan.
-- Shared curved neutral lip seam, real oral cavity and thick tongue, localized MouthOpen and a fixed lower-chin region.
-- Simple oval eye-pocket rear sections and original independent concave iris patches with uniform quad sampling.
-- Open-backed shallow ear membranes derived from actual evaluated face boundaries. Runtime welded root edges are checked for exactly two adjacent surfaces.
-- Independently authored brow and face/iris/ear pigments, with separate geometric and material controls.
-- Upper-head boundary height/depth controls with broad smooth falloff; absolute-depth flattening in candidate 93 was rejected and replaced by a boundary-depth correction in 94.
-- Face-only GLB replacement preserves frozen Body/Hair primitives and the original binary prefix. Engine and pinned NPR package remain unchanged.
-
-The chronological authoring brief records each calibration amendment; later amendments supersede earlier case values. Some assembly coordinates and material layout remain project-specific. Parameter effectiveness requires actual geometry/visual checks, not merely a static key read. Do not claim a universal beauty template from this one case.
-
-## Tests and review
-
-Run python3 -m unittest discover -s examples/head-generation -p 'test_*.py'. These pure checks do not replace real Blender execution or native review. See review-results.md for the actual checkpoint evidence and remaining scope. Optional exporter warnings and CI annotations are not claimed absent. Publication, CI, external review, merge and final aesthetic acceptance are separate stages; no production deployment or release is implied.
-
-## Current feedback batch
-The user explicitly accepted the center facial shading division visible in108. Later iterations retain it.111 removed the thick lower-ear black wedge in actual side rendering.118 rounds the lower-ear silhouette;119 shortens the original ear pigment pattern and keeps the lobe clear. Ear resemblance and green-marked cheek/jaw curves remain under review. Successful generation and pure tests are not final visual acceptance.
-
-Ear cross-sections use a positive bounded slope variation, with evaluated shared face roots and a thin reverse skin membrane. The generator reads no reference assets. The latest project aggregate explicitly validated120 (7 tests / 57 assertions); 123 has native validation and focused tests but has not yet run that aggregate.
+## Boundaries
+PR remains draft. Hosted CI previously failed before runner allocation. No merge, production deployment, release, or final artistic acceptance is claimed.

@@ -180,6 +180,12 @@ def lash_depth(x, rim_y):
     return rim_depth(x, rim_y) + 0.0015
 
 
+def brow_lane_offset(t, lane):
+    original = H * C["brow_thickness"] * sin(pi * t) ** 0.7
+    factor = 1 + C["brow_inner_fullness"] * (1 - 2 * t)
+    return original * 0.5 + (lane - 0.5) * original * factor
+
+
 def build_eyes():
     for side in [-1, 1]:
         cols = 17
@@ -267,7 +273,7 @@ def build_eyes():
                     + H * (C["brow_height"] + C["brow_rise"] * t)
                     + STYLE["brow_arch_m"] * sin(pi * t)
                 )
-                y += lane * H * C["brow_thickness"] * sin(pi * t) ** 0.7
+                y += brow_lane_offset(t, lane)
                 brow.append(coord(x, y, depth(x, y) + 0.001))
         mesh(
             "Tapered brow " + str(side), brow, grid_faces(2, 25, side < 0), tuple(STYLE["brow_rgb"])
