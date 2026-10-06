@@ -9,11 +9,12 @@ def build_ears():
 
 
 def membrane_offset(t, u, config, root_depth):
-    outward = config["ear_outward_span"] * sin(pi * t) * u
+    envelope = sin(pi * t) * (1 + config["ear_upper_fullness"] * (2 * t - 1))
+    outward = config["ear_outward_span"] * envelope * u
     outer_depth = (
         config["ear_root_depth_base"]
         + config["ear_root_depth_slope"] * t
-        - config["ear_posterior_span"] * sin(pi * t)
+        - config["ear_posterior_span"] * envelope
     )
     sweep = u + config["ear_bend_contrast"] * sin(2 * pi * u) / (2 * pi)
     posterior = (root_depth - outer_depth) * sweep

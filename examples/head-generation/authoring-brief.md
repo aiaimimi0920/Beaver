@@ -98,3 +98,28 @@ Parameter audit correction: conditional subscript expressions consume both upper
 
 ## Ear pigment projection123
 The122 inner arch remains compressed in the actual side view. Its row-relative UV coordinates follow a nonlinear depth sweep, which can squeeze the painted arch even after changing pigment centers. Test a whole-ear side-plane UV projection of our own front membrane and return rim, normalized by their own depth/height bounds. Keep the reverse skin plain. Preserve all vertex positions, root connectivity, shading normals and texture colors in this isolation step. This is an authored projection experiment, not a claim about the reference UV implementation. The same pattern should occupy a coherent visible shallow ear region from normal side and oblique views.
+
+
+## Ear upper attachment124
+The actual evaluated upper ear attachment in123 stops at normalized height about0.508, below the approximate0.52 semantic reference landmark. The visible upper silhouette consequently sits low. Extend the maximum root sampling height from0.52 to0.53 to admit the next evaluated boundary sample, preserving exact shared root positions and the rounded lobe. This is an isolated bounded attachment-height adjustment; preserve123 whole-ear UV projection, original pigment, accepted face center division and all other geometry. Judge the actual upper arc and root transition in front and both side views, not only a parameter value.
+
+
+## User review after123: required corrections125 onward
+The user explicitly handed the screen back after reviewing123. Keep the accepted facial center division. Four aspects remain unaccepted: asymmetric ear silhouette and original ear texture; the chin's flatter closure specifically at the user's current view; eye depth/iris/highlight/lid relationships that should read more lively and watery without protruding eyeballs; eyebrow shape, taper, angle and brow-eye spacing. Do not treat earlier visibility fixes or technical passes as aesthetic acceptance. Saved view: yaw-0.8, pitch-25.25, zoom1.05, render, light-45, neutral mouth.
+
+## Asymmetric pinna125
+Read-only sparse front-ear cross sections show the upper-middle ear body has a fuller lateral span than the matching lower region, with a smaller lower lobe rather than a symmetric ellipse. For example, lower normalized height0.33 lateral span is about0.054H while the upper-middle at0.48 is about0.078H. These are diagnostic semantic proportions, not imported geometry. Add an explicit bounded upper-fullness coefficient to the authored sine outline, applying the same asymmetric envelope to outward extension and posterior sweep. Keep exact root attachment, rounded lower tangent, shallow membrane, original side-plane UV and plain reverse skin. Verify silhouette at front, side and user's saved view. This step isolates ear shape; the other three requested aspects remain pending.
+
+
+## View-specific chin closure126
+The user's saved pitch-25.25 view, not a generic demand for a sharp chin, exposes a flat underside. Read-only projected skin-vertex checks show123 has a near-bottom width about0.129H within0.005H of the lowest projected point; the reference closes more tightly. At zero pitch the candidate's tip is already at least as narrow as the sparse reference sample, so do not narrow the frontal tip or collapse topology to a pole. Increase only the transverse curvature of the posterior underside bands with a separate bounded chin_underside_arch control, keeping frontal chin_return_lift and tip width unchanged. A quadratic crosswise arch retains a rounded center, supports the reference-like view-specific taper and preserves stable mouth/chin behavior. Verify the exact saved view and ordinary front/side views after generation.
+
+
+## Stable eyelid ink plane127
+The lively-eye request includes eyelid coverage, not merely larger white dots. A read-only check of our current upper ink ribbon found its inner/lower row sits roughly10–12mm farther forward than the lid's lower skin at representative positions, because it samples facial skin depth inside the eye aperture. At the user's tilted view that depth difference compresses the visible ribbon and produces a visor-like slope. Align both ink rows to the same local orbital-rim depth plus the existing small surface offset; preserve eye shape, iris/sclera geometry, iris depth, highlight size and all pigments for this isolation step. The change moves the old over-forward lower ink edge back toward the lid rather than pushing the eye outward. Verify front, both sides, oblique and saved pitch-25.25 view, preserving attachment and front winding guards.
+
+
+Underside isolation refinement: fade the added arch from zero at the first posterior band to full at the rear-most lift0.03 band. The126 projection improved the tilted view but its near-front subdivision also narrowed the ordinary front tip. Keeping the first underside band at the original chin_return_lift isolates the intended posterior curvature and preserves the frontal edge more closely.
+
+
+126 visual rejection and127 replacement: raising the whole transverse underside arch created a localized tip-like bump and small shading marks in the user's saved view. Do not retain that strategy. Restore all original underside heights and instead apply a small center-only posterior-depth bow, fading from zero at the front band to at most0.016H at the rear center. Keep its side endpoints and all frontal cage positions unchanged. This targets the tilted-view closure without narrowing the ordinary frontal tip; the reference's posterior central underside is also farther back in the sparse diagnostic. Recheck actual view and winding/clearance.

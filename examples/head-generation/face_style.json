@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "preset": "semantic_calibration_a_123",
+  "preset": "semantic_calibration_a_127",
   "note": "Explicit semantic calibration case; no character-name generation dependency.",
   "iris_half_width_m": 0.01534,
   "eye_lens_bulge_m": 0.0012,
@@ -631,7 +631,7 @@
     "chin_morph_blend_height": 0.145,
     "tongue_open_down": 0.025,
     "ear_root_min_height": 0.26,
-    "ear_root_max_height": 0.52,
+    "ear_root_max_height": 0.53,
     "top_warp_start_height": 0.58,
     "top_boundary_drop_profile": [
       [
@@ -873,7 +873,9 @@
     "ear_upper_arc_bias": 0.065,
     "ear_bend_contrast": 0.75,
     "upper_lip_edge_depth_delta": 0.008,
-    "lower_lip_edge_depth_delta": -0.004
+    "lower_lip_edge_depth_delta": -0.004,
+    "ear_upper_fullness": 0.28,
+    "chin_underside_center_back": 0.016
   },
   "normal_policy": "actual_area_weighted_geometry",
   "surface_subdivision_levels": 1,

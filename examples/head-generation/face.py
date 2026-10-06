@@ -176,6 +176,10 @@ def eye_surface(side, x, y):
     return depth(x, y) - 0.0006 + STYLE["eye_lens_bulge_m"] * (1 - t * t) * sin(pi * v)
 
 
+def lash_depth(x, rim_y):
+    return rim_depth(x, rim_y) + 0.0015
+
+
 def build_eyes():
     for side in [-1, 1]:
         cols = 17
@@ -207,6 +211,7 @@ def build_eyes():
                 for i in range(cols):
                     t = -1 + 2 * i / (cols - 1)
                     x, y = eye_contour(side, t, upper)
+                    rim_y = y
                     y += (
                         (-1 if upper else 1)
                         * lane
@@ -214,7 +219,7 @@ def build_eyes():
                         * max(0, 1 - t * t) ** 0.55
                         * (0.85 + 0.35 * (t + 1) / 2)
                     )
-                    ink.append(coord(x, y, depth(x, y) + 0.0015))
+                    ink.append(coord(x, y, lash_depth(x, rim_y)))
             mesh(
                 ("Upper" if upper else "Lower") + " lash " + str(side),
                 ink,

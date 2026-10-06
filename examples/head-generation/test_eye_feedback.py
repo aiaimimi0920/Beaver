@@ -23,3 +23,19 @@ class EyeFeedbackTests(unittest.TestCase):
                 )
         self.assertLess(C["catchlight_surface_offset"], 0.002)
         self.assertEqual(C["catchlight_grid_resolution"], 5)
+
+
+class LashPlaneTests(unittest.TestCase):
+    def test_ink_stays_just_in_front_of_local_rim(self):
+        import json
+        from pathlib import Path
+        from test_style_math import pure_function
+
+        c = json.loads(Path(__file__).with_name("face_style.json").read_text())["calibration"]
+        rim, _ = pure_function(
+            "face.py", "rim_depth", {"C": c, "H": c["height_m"], "Z0": c["chin_depth_m"]}
+        )
+        fn, _ = pure_function("face.py", "lash_depth", {"rim_depth": rim})
+        for x in [0.03, 0.05, 0.07]:
+            self.assertAlmostEqual(fn(x, 1.65) - rim(x, 1.65), 0.0015)
+            self.assertEqual(fn(x, 1.65), fn(x, 1.64))

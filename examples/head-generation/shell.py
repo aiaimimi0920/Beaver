@@ -49,6 +49,16 @@ def jaw_return_position(x, y, z, q, boundary_depth):
     return x - inset, z + (target - boundary_depth) * blend * fade * C["jaw_return_depth_strength"]
 
 
+def chin_underside_height(lift, q):
+    return Y0 + H * (lift + C["chin_return_lift"] * q * q)
+
+
+def chin_underside_depth_offset(back, lift, q):
+    blend = max(0, min(1, lift / 0.03))
+    blend = blend * blend * (3 - 2 * blend)
+    return H * (back + C["chin_underside_center_back"] * blend * (1 - q * q))
+
+
 def build_face():
     levels = [
         1.544,
@@ -194,7 +204,11 @@ def build_face():
                 base[-1][0] * spread, width(Y0 + H * lift) * C["chin_return_boundary_inset"]
             )
             verts.append(
-                (half_width * q, negz + H * back, Y0 + H * (lift + C["chin_return_lift"] * q * q))
+                (
+                    half_width * q,
+                    negz + chin_underside_depth_offset(back, lift, q),
+                    chin_underside_height(lift, q),
+                )
             )
         for i in range(cols - 1):
             shell_faces.append((previous[i + 1], previous[i], current[i], current[i + 1]))

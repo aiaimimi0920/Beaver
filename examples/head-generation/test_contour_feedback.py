@@ -87,7 +87,9 @@ class ContourFeedbackTests(unittest.TestCase):
             target = (
                 C["ear_root_depth_base"]
                 + C["ear_root_depth_slope"] * t
-                - C["ear_posterior_span"] * math.sin(math.pi * t)
+                - C["ear_posterior_span"]
+                * math.sin(math.pi * t)
+                * (1 + C["ear_upper_fullness"] * (2 * t - 1))
             )
             for root in [-0.30, -0.33, -0.36]:
                 _, posterior = fn(t, 1, C, root)
@@ -105,7 +107,9 @@ class EarBasinTests(unittest.TestCase):
                 (
                     C["ear_root_depth_base"]
                     + C["ear_root_depth_slope"] * t
-                    - C["ear_posterior_span"] * math.sin(math.pi * t)
+                    - C["ear_posterior_span"]
+                    * math.sin(math.pi * t)
+                    * (1 + C["ear_upper_fullness"] * (2 * t - 1))
                 ),
             )
 
@@ -145,3 +149,34 @@ class EarProjectionTests(unittest.TestCase):
         self.assertEqual(result[-1], (0.98, 0.98))
         self.assertAlmostEqual(result[2][0] - result[1][0], 0.96 * 0.3)
         self.assertTrue(all(0.02 <= x <= 0.98 and 0.02 <= y <= 0.98 for x, y in result))
+
+
+class EarAsymmetryTests(unittest.TestCase):
+    def test_upper_body_is_fuller_than_lower_lobe(self):
+        fn, _ = pure_function("ears.py", "membrane_offset", {})
+        for low in [0.15, 0.25, 0.35]:
+            self.assertGreater(fn(1 - low, 1, C, -0.35)[0], fn(low, 1, C, -0.35)[0])
+        self.assertEqual(fn(0.5, 0, C, -0.35), (0, 0))
+        self.assertGreater(C["ear_upper_fullness"], 0)
+        self.assertLess(C["ear_upper_fullness"], 0.6)
+
+
+class ChinViewTests(unittest.TestCase):
+    def test_underside_arch_is_bounded_and_keeps_center(self):
+        fn, _ = pure_function("shell.py", "chin_underside_height", {"C": C, "H": 1, "Y0": 0})
+        self.assertEqual(fn(0.03, 0), 0.03)
+        self.assertAlmostEqual(fn(0, 1), C["chin_return_lift"])
+        heights = [fn(0.03, i / 20) for i in range(21)]
+        self.assertTrue(all(b > a for a, b in zip(heights, heights[1:])))
+        self.assertLess(heights[-1] - heights[0], 0.03)
+        self.assertEqual(C["chin_return_lift"], 0.008)
+        self.assertEqual(C["width_stations"][0], [0, 0.025])
+
+
+class ChinPosteriorBowTests(unittest.TestCase):
+    def test_bow_preserves_front_and_side_attachments(self):
+        fn, _ = pure_function("shell.py", "chin_underside_depth_offset", {"C": C, "H": 1})
+        self.assertEqual(fn(0.03, 0, 0), 0.03)
+        self.assertEqual(fn(0.2, 0.03, 1), 0.2)
+        self.assertAlmostEqual(fn(0.2, 0.03, 0) - 0.2, C["chin_underside_center_back"])
+        self.assertLess(fn(0.2, 0.03, 0) - 0.2, 0.02)
