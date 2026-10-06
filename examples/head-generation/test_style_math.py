@@ -21,6 +21,21 @@ def pure_function(module, name, extra):
 
 
 class StyleMathTests(unittest.TestCase):
+    def test_eye_corners_join_and_lower_lid_covers_iris_base(self):
+        c = STYLE["calibration"]
+        h = c["height_m"]
+        y0 = c["origin_y_m"]
+        fn, _ = pure_function("face.py", "eye_contour", {"C": c, "H": h, "Y0": y0})
+        for side in [-1, 1]:
+            for t in [-1, 1]:
+                self.assertEqual(fn(side, t, True), fn(side, t, False))
+            for t in [-0.8, -0.4, 0, 0.4, 0.8]:
+                self.assertGreater(fn(side, t, True)[1], fn(side, t, False)[1])
+        iris_bottom = y0 + h * (c["iris_center_y"] - c["iris_half_height"])
+        lower_cover = fn(1, 0, False)[1] + h * c["lower_cover"]
+        self.assertGreater(lower_cover, iris_bottom)
+        self.assertLess(lower_cover - iris_bottom, 0.02 * h)
+
     def test_ear_outline_is_periodic_and_affine(self):
         fn, scope = pure_function("ears.py", "outline", {"C": copy.deepcopy(STYLE["calibration"])})
         shift = [0.02, -0.03, 0.01]

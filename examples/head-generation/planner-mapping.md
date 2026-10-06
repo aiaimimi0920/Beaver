@@ -23,3 +23,9 @@ Use separate monotone nasal lateral profiles for tip/bridge and fuller base, ble
 
 ## 86 oral-volume mapping, before implementation
 The native rear view shows the previous oral bag as a shallow horizontal almond; the reference has a taller, broader rear volume. Treat this as a semantic volume requirement, not permission to copy its triangulation or possible unpacking artifacts. Preserve the first two lip attachment rings. Parameterize subsequent width, backward depth and upper/lower expansion relative to H; taper less aggressively at the rear. The final cap uses a constant depth and geometric flat normals, avoiding nonplanar triangulation shading. Preserve neutral lip and jaw classification; validate volume, rear planarity and sampled skin containment before native mouth regression.
+
+## 87 independent-iris alignment hypothesis
+Read-only connected-component bounds of the isolated reference iris suggest center height approximately0.429H and vertical half-extent0.077H, versus current0.423H/0.082H. Use rounded semantic parameters center0.4295H and half-height0.077H, lateral center0.2195H. These are a calibration hypothesis, not direct vertex copying or acceptance. Keep pocket/lids/nasal/ear/oral source and texture unchanged. Compare against86; reject if new exposed edges, scleral slivers or protrusion appear.
+
+## 88 paired lower-lid hypothesis
+Candidate87 was not retained as an isolated improvement because the unchanged lower lid exposed a narrow white crescent below the raised iris. Reduce lower arch from0.094H to0.088H while preserving corner height/slope and iris87. This lifts the central lower contour by1.416mm and rebuilds its pocket/shell boundary through the same shared contour function. Test corner continuity and central iris overlap; verify side view for protrusion.

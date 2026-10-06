@@ -1,15 +1,9 @@
-# Candidate 86 observed checkpoint
+# Candidate 88 eye-occlusion checkpoint
 
-Beaver job 0ab1da98-0f87-4bb9-8fb6-e36efc5db01d, request 931b4989-b81b-4ad2-a1e3-0545dbd4188d, succeeded on 2026-10-06 with exit code 0. GLB SHA-256: cb74a06bd524e6d55f92a74986e9e5f20a211f77b2f583aef7ada2ce7df5d23d.
+Beaver job ad08fc06-71e8-46c0-9484-ce77dbf9d37f, request c987aec5-8c75-422d-96bd-bd814d15914a, succeeded with exit code 0. GLB SHA-256: 7503e63067b499518626a37dc027d8dbc6e2e76a39c0780cfd326a1b1c2b97d3. Standard NPR validation returned ok=true with definition/model hashes verified. Twenty-one focused tests pass.
 
-## Focused change
+Candidate 87 independently raised and shortened the iris using rounded semantic extents. Its front render exposed an unwanted narrow white crescent below the iris, so that isolated trial was not retained as an improvement. Candidate 88 pairs this with a lower-arch change from 0.094H to 0.088H, lifting the central lower eye contour by 1.416 mm while keeping eye corners joined. Front render no longer shows the previous complete narrow lower crescent. This is a limited eye-occlusion improvement, not overall visual acceptance.
 
-Preserve the outer lip seam and candidate85 eye/nose/ear geometry. Replace hard-coded oral interior rings with explicit normalized backward-depth, width, upper-height and lower-height controls. Increase hidden vertical/rear volume while retaining the first two attachment rings. The broad planar rear cap has actual flat geometric normals rather than pinched interpolation.
+The pocket clearance still passes with 12 adjusted vertices and maximum correction 1.384 mm; requested sampled margin is 0.944 mm. Neutral oral containment remains unchanged from86. Body/Hair primitives and original binary prefix remain frozen. The mouth, nose, crease and ear configuration otherwise retain86. Upper-lid styling, pinna root outline, topology density, NPR shadow matching and whole-face resemblance remain open. Reference component bounds alone are not acceptance criteria. No generic-template or product/deployment acceptance is claimed.
 
-## Verification
-
-Twenty local tests pass. Actual generation checked 90 neutral hidden-wall vertices against evaluated facial skin: maximum signed distance -4.237 mm, rear cap planarity 0 m. This is a sampled neutral containment test, not a global or animated collision certificate. Body/Hair primitives and original binary prefix remain frozen. Standard Beaver NPR validation returned ok=true, no engine errors, and verified definition/model hashes.
-
-Native front neutral render, rear white view and MouthOpen 0.5/1 render inspected. Rear volume is visibly taller/broader than85, with no previous small pointed almond closure. Neutral mouth stays a slit; open-mouth outline remains rounded, dark, with visible tongue. Whole-face/eye likeness, ear root outline, topology density and shadow matching remain open. No final aesthetic or universal-template acceptance. Reference facets and possible unpacking artifacts are not treated as mandatory topology.
-
-Both native side views at MouthOpen 1 were inspected without visible oral walls protruding through the facial silhouette. Default mouth0/front restored afterward.
+Native white side views on both sides retained recessed iris placement; no new protruding eyeball was observed. Full MouthOpen still shows the rounded cavity and tongue. Default mouth0 restored.
