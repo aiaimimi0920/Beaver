@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "preset": "semantic_calibration_a_81_reconstructed",
+  "preset": "semantic_calibration_a_83",
   "note": "Explicit semantic calibration case; no character-name generation dependency.",
   "iris_half_width_m": 0.01534,
   "eye_lens_bulge_m": 0.0012,
@@ -530,7 +530,25 @@
     "brow_rise": 0.023,
     "mouth_rest_half_gap": 0.00065,
     "upper_lip_edge_depth_delta": 0.008,
-    "lower_lip_edge_depth_delta": -0.004
+    "lower_lip_edge_depth_delta": -0.004,
+    "pocket_back_width_ratio": 1.08,
+    "pocket_back_height_ratio": 1.12,
+    "pocket_back_extra": 0.03,
+    "ear_ring_samples": 24,
+    "ear_relief_bands": [
+      [
+        0.15,
+        -0.004
+      ],
+      [
+        0.65,
+        -0.004
+      ],
+      [
+        1,
+        0
+      ]
+    ]
   },
   "normal_policy": "actual_area_weighted_geometry",
   "surface_subdivision_levels": 1,
@@ -548,5 +566,8 @@
   ],
   "nose_plane_bottom_height": 0.345,
   "nose_plane_height": 0.08,
-  "nose_plane_width": 0.032
+  "nose_plane_width": 0.032,
+  "ear_concha_tint_strength": 0.3,
+  "ear_helix_stroke_strength": 0.32,
+  "ear_inner_fold_strength": 0.24
 }

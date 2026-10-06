@@ -42,6 +42,23 @@ class StyleMathTests(unittest.TestCase):
                 self.assertEqual(rgba[3], 1)
                 self.assertTrue(all(math.isfinite(c) and 0 <= c <= 1 for c in rgba))
 
+    def test_ear_palette_is_bounded_without_reference_pixels(self):
+        fn, _ = pure_function('textures.py', 'ear_color', {'STYLE': STYLE, 'SKIN': STYLE['skin_rgb']})
+        for iy in range(21):
+            for ix in range(21):
+                rgba = fn(ix/20, iy/20)
+                self.assertEqual(rgba[3], 1)
+                self.assertTrue(all(math.isfinite(c) and 0 <= c <= 1 for c in rgba))
+
+    def test_simple_ear_band_contract(self):
+        calibration = STYLE['calibration']
+        bands = calibration['ear_relief_bands']
+        self.assertEqual(calibration['ear_ring_samples'], 24)
+        self.assertEqual(len(bands), 3)
+        self.assertTrue(all(a[0] < b[0] for a,b in zip(bands,bands[1:])))
+        self.assertEqual(bands[-1][0], 1)
+        self.assertTrue(all(abs(b[1]) <= .004 for b in bands))
+
 
 if __name__ == '__main__':
     unittest.main()

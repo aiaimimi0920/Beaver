@@ -6,7 +6,7 @@ from mouth import store_mouth_deltas
 from glb_merge import merge_face
 
 ROOT = Path(beaver_input("project.godot")).parent
-OUT = "assets/aster/head_recovery_81/"
+OUT = "assets/aster/head_recovery_83/"
 BASE = "assets/aster/head_recovery_49/"
 GUIDE = Path(beaver_input("authoring/head_generation_guide.md")).read_text()
 assert "去发侧脸轮廓检查" in GUIDE
@@ -111,6 +111,17 @@ report["surface_subdivision_levels"] = sub.levels
 from eye_socket import fit_pocket_clearance
 
 report["pocket_skin_clearance"] = fit_pocket_clearance(shell)
+report["pocket_rear_closure"] = [
+    {
+        "name": o.name,
+        "planarity_before_m": o["rear_cap_planarity_before_m"],
+        "planarity_after_m": o["rear_cap_planarity_after_m"],
+        "rear_boundary_vertices": o["pocket_back_count"],
+    }
+    for o in PARTS
+    if o.get("pocket_back_count")
+]
+
 from ears import fit_ear_roots
 
 report["ear_root_fit"] = fit_ear_roots(shell)
@@ -236,7 +247,16 @@ for role in ["Face"]:
                 normals[index] += poly.normal * poly.area
         for normal in normals:
             normal.normalize()
-        data.normals_split_custom_set_from_vertices(normals)
+        corner_normals = [Vector((0, 0, 0)) for _ in data.loops]
+        for poly in data.polygons:
+            for loop_index in poly.loop_indices:
+                corner_normals[loop_index] = (
+                    normals[data.loops[loop_index].vertex_index]
+                    if poly.use_smooth
+                    else poly.normal.copy()
+                )
+        data.normals_split_custom_set(corner_normals)
+        report["flat_geometric_triangles"] = sum(not poly.use_smooth for poly in data.polygons)
         delta = members[0].data.attributes.get("MouthOpenDelta")
         assert delta is not None
         moves = [Vector(v.vector) for v in delta.data]

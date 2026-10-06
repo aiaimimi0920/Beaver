@@ -6,3 +6,10 @@ Only explicit brow/iris/lower-cover and nose pigment controls change from74. Tre
 - Planned80 correction: one curved rest seam y(x)=mouth_height+corner_lift*clamp(x/half_width,-1,1)^2. Aperture, jaw classification/falloff and cavity normalization share this function. This was not executed before reset and requires fresh tests.
 - Keep eye/mouth boundary crease1.0;77 changed no exported positions and is not treated as a useful geometry control.
 - Do not restore78's rejected wider/deeper neutral dark band.
+
+##82 eye-pocket mapping
+Keep48 angular samples and the first3 expansion bands. Replace the old fourth rear band plus18-percent shrinking fifth ring with one full-sized terminal contour, width1.08 and height1.12 times aperture, at constant rear depth measured from eye-center rim. Rear cap has no added center pole; its planar polygon triangulation must not create geometric pinching. Preserve the evaluated-skin clearance algorithm and inspect its effect on the terminal boundary. No original reference vertices or topology are copied.
+
+##83 mapping
+Ear angular samples36→24, radial bands6→3, with relief only-0.004H at inner bands and0 at rim. Preserve the existing semantic outline, paired closed back surface, root fitting and UV isolation. Inner ear shape is moved to an independently authored analytic color function with bounded strengths rather than copied texture pixels.
+Flag only the actual planar eye rear-cap polygon as flat. After joining and triangulating, custom corner normals use polygon normals on flat faces and area-weighted vertex normals on smooth faces. This preserves honest geometric shading and removes the cap's boundary-normal interpolation artifacts.
