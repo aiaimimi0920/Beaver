@@ -19,3 +19,6 @@ Native102 inspected: normal front/render; left/right render sides; right-oblique
 
 ## Remaining completion gates
 The project integration test is being retargeted to102 through Beaver's file workflow, then aggregate validation must be rerun. GitHub PR20 is draft; previous commits failed CI before runner/job steps and no current-head CI or external-review success is asserted. Source publication, durable backup and final user handback are separate steps. No production deployment or release.
+
+## Final project aggregate result
+Beaver validation eadd00b8-f9d7-4eca-b2f4-d05e1c35f1a0 completed against the retargeted102 scene:7 tests/57 assertions pass across3 scripts, without script errors. Invalid UID fallback warnings remain. This establishes the tested integration contract, not final visual or full-wardrobe acceptance.
