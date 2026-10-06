@@ -41,3 +41,25 @@
 
 ## 下颏两侧闭合修订
 回转面必须沿两侧连接到下颌边界，不得形成悬空底片或侧面开缝。回转环横向范围保持在对应高度下颌轮廓内侧。用连续四边面侧带连接；只允许每侧起始角一个局部三角闭合面，不形成扇状汇聚，更不把颏尖收束到单点。分别验证前脸、向下回转面与向外侧带的绕序。通过真实几何闭合修复，不改诊断材质或隐藏缺陷。
+
+
+## Candidate70: asymmetric attached ear specification
+The ear must read as a swept-back pinna attached to the facial side, not an independent elliptical dish. Calibrate a twelve-landmark semantic outline: narrow attached lobe below, wider upper helix above and behind, recessed concha, a broken inner antihelix ridge, and an anterior tragus transition. Use a thin closed back shell and meaningful quad bands; do not fan all faces into one vertex. Root-side points must overlap the facial side surface without a visible circular rim. Keep the successful69 chin, eye pocket clearance and mouth geometry unchanged. Reference mesh/UV/texture remain analysis-only and are never loaded by generation. These approximate landmarks are a case preset, not a universal anatomy claim.
+Acceptance: neutral front, both sides, white45 and wire against the reference; no black atlas bleed or visible gap, ear not protruding forward, closed positive volume and finite/positive face areas. Recheck mouth0/0.5/1.
+
+Back-shell correction: the back surface must follow every front semantic band at positive thickness. A single nonplanar polygon across the outer ear boundary can intersect the recessed concha and triangulate differently when reversed; it is prohibited. Mirror the front quad layout into the back shell and join only the outer boundary.
+
+## Candidate71: root attachment depth
+An ear root must join the posterior side boundary, not extend over the cheek. Sample root depth at the actual outer facial boundary; lateral overlap is a separate burial parameter and must not move the depth sample inward across the sharp cheek-return profile. Keep the closed conforming back shell from70. Verify absence of a lateral wing/visible root outline in exact side view.
+
+## Candidate72: inferior ear-root transition
+The ear lobe must transition into the lower lateral head, without a blue/background notch between the lobe and jaw. Extend the root attachment sector smoothly through the inferior lobe, retaining the posterior depth sample and a distinct outer helix. Do not restore the cheek wing. The outermost rear rim stays independent of the buried root sector. Keep all face and eye/mouth geometry unchanged.
+
+## Candidate73: evaluated-surface ear-root attachment
+A control-profile overlap alone is insufficient to certify the final subdivided root junction. After evaluating the facial shell, project only the anterior/inferior ear boundary onto its nearest skin surface and bury the seam0.002H inside. Propagate each boundary correction smoothly inward across radial bands and identically to the back shell, retaining ear thickness. Limit correction to0.06H and record actual movement. Do not move the posterior helix or use material changes to hide a gap. Reject nonfinite or degenerate geometry.
+
+## Candidate74: readable brow and illustrative facial accents
+Keep the successful recessed eyes, nose/lip geometry, closed chin and fitted pinnae. Bury the ear seam0.006H to clear the fixed renderer outline as well as the skin surface. Brows span x0.106–0.304H, rising from y0.568H to0.591H with gentle arch and tapered thickness up to0.018H; they must not be long horizontal lines. Add a restrained warm upper-lid crease in the procedural skin atlas, without extra parallel mesh rails. Use dark plum lash pigment, gray-violet iris planes, a soft outlined lower iris disc and a small cool accent near the pupil; reduce large white dots. Give the small nose plane a readable but restrained tint. All graphic features are independently authored procedural parameters, not sampled or copied textures.
+
+## Candidate75: pigment calibration independent of structure
+Retain structural74 geometry. Keep eyebrows short and gently rising but halve their visible thickness to0.009H and reduce arch to0.002H; avoid an exaggerated high curved brow. Iris lower planes are a lighter gray-violet with dark upper rim. Increase lower eyelid coverage to0.005H while retaining recessed placement. The nose-plane pigment occupies height0.345–0.425H above the geometric tip, with0.032H width; do not confuse pigment placement with nasal projection. Keep subtle tip blush lower. No lighting changes or reference texture copying.

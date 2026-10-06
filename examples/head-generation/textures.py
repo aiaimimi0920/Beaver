@@ -66,10 +66,17 @@ def iris_color(u, v):
     if pupil < 0.3:
         t = max(0, min(1, (pupil - 0.23) / 0.07))
         c = [c[i] * t + [0.005, 0.014, 0.014][i] * (1 - t) for i in range(3)]
-    for gx, gy, rad, strength in [(-0.28, 0.1, 0.105, 1.0), (0.29, -0.35, 0.045, 0.72), (-0.1, 0.18, 0.034, 0.72)]:
+    for gx, gy, rad, strength in [(-0.2, 0.18, 0.047, 0.9), (0.27, -0.34, 0.024, 0.55)]:
         d = sqrt((x - gx) ** 2 + (y - gy) ** 2)
         amount = max(0, min(1, (rad - d) / 0.018)) * strength
         c = [c[i] * (1 - amount) + [0.98, 1.0, 0.96][i] * amount for i in range(3)]
+    disc = sqrt((x / 0.53) ** 2 + ((y + 0.53) / 0.42) ** 2)
+    fill = STYLE['iris_graphic_disc_strength'] * max(0, min(1, (1 - disc) / 0.15))
+    c = [c[i] * (1 - fill) + [0.58, 0.53, 0.63][i] * fill for i in range(3)]
+    outline = 0.16 * exp(-((disc - 1) / 0.055) ** 2)
+    c = [c[i] * (1 - outline) for i in range(3)]
+    accent = max(0, min(1, (1 - sqrt((x / 0.095) ** 2 + ((y - 0.18) / 0.16) ** 2)) / 0.2)) * 0.7
+    c = [c[i] * (1 - accent) + STYLE['iris_accent_rgb'][i] * accent for i in range(3)]
     return (*c, 1)
 
 def eye_atlas_color(u, v):
@@ -126,8 +133,14 @@ def bake_base_atlas(role, parts, colors, out):
                 y = 1.5 + (v - 0.02) / 0.96 * 0.31
                 blush = 0.08 * exp(-((abs(x) - 0.068) / 0.022) ** 2 - ((y - 1.606) / 0.018) ** 2)
                 c = tuple((c[i] * (1 - blush) + [0.97, 0.49, 0.45][i] * blush for i in range(3))) + (1,)
-                ny = (y - 1.605) / 0.02
-                nx = (x + 0.001) / 0.006
+                t = (abs(x) / H - C['eye_center_x']) / C['eye_half_width']
+                if abs(t) < 0.93:
+                    _, lid_y = eye_contour(1, t, True)
+                    crease_y = lid_y + 0.027 * H * max(0, 1 - t * t) ** 0.65
+                    crease = STYLE['lid_crease_strength'] * exp(-((y - crease_y) / (0.0028 * H)) ** 2) * max(0, 1 - t * t)
+                    c = tuple((c[i] * (1 - crease) + [0.7, 0.31, 0.33][i] * crease for i in range(3))) + (1,)
+                ny = (y - Y0 - H * STYLE['nose_plane_bottom_height']) / (H * STYLE['nose_plane_height'])
+                nx = (x + 0.001) / (H * STYLE['nose_plane_width'])
                 signed = min(ny, 1 - ny, nx, ny - nx)
                 accent = STYLE['nose_plane_tint_strength'] * max(0, min(1, signed / 0.1))
                 c = tuple((c[i] * (1 - accent) + [0.76, 0.47, 0.43][i] * accent for i in range(3))) + (1,)

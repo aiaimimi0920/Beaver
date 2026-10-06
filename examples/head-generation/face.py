@@ -104,7 +104,7 @@ def grid_faces(rows, cols, reverse=False):
     return fs
 SKIN = tuple(STYLE['skin_rgb'])
 WHITE = (0.96, 0.945, 0.88)
-INK = (0.055, 0.035, 0.045)
+INK = tuple(STYLE['lash_rgb'])
 
 def eye_contour(side, t, upper):
     x = side * H * (C['eye_center_x'] + C['eye_half_width'] * t)
@@ -163,8 +163,8 @@ def build_eyes():
         for lane in range(2):
             for i in range(25):
                 t = i / 24
-                x = side * (0.018 + 0.064 * t)
-                y = Y0 + H * C['brow_height'] + STYLE['brow_arch_m'] * sin(pi * t * 0.88) - 0.003 * t
+                x = side * H * (C['brow_inner_x'] + (C['brow_outer_x'] - C['brow_inner_x']) * t)
+                y = Y0 + H * (C['brow_height'] + C['brow_rise'] * t) + STYLE['brow_arch_m'] * sin(pi * t)
                 y += lane * H * C['brow_thickness'] * sin(pi * t) ** 0.7
                 brow.append(coord(x, y, depth(x, y) + 0.001))
         mesh('Tapered brow ' + str(side), brow, grid_faces(2, 25, side < 0), (0.13, 0.105, 0.1))

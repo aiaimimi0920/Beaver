@@ -2,13 +2,13 @@
 
 This is a recoverable development example, not an accepted character asset or a finished general-purpose face generator. It preserves the specification → explicit parameters → Beaver generation → native comparison loop used in the Aster face calibration experiment.
 
-The executable modules and preset correspond to candidate 69. Python formatting was normalized with AST equivalence checked against the executed source. The portable bundler only packages source into a declared `blender.start` request; it does not launch Blender, call a model service, or create a coding task.
+The executable modules and preset correspond to candidate 75. Python formatting was normalized with AST equivalence checked against the executed source. The portable bundler only packages source into a declared `blender.start` request; it does not launch Blender, call a model service, or create a coding task.
 
 ## Inputs and execution
 
 The existing Beaver project must contain `project.godot`, `authoring/head_generation_guide.md`, and the frozen `assets/aster/head_recovery_49/` baseline with `aster_head_editable.blend`, `aster_head.glb`, `aster_definition.tres`, `hair_base.png`, and `hair_ilm.png`. These project assets are deliberately not published here. Restore the user's project checkpoint rather than substituting third-party geometry.
 
-Run `python3 examples/head-generation/bundle.py --output /tmp/head-recipe.json` to package the request. Load that JSON into the existing authorized Beaver external-agent workbench, execute `blender.start`, and poll the returned job until terminal. Output paths are creation-only under `assets/aster/head_recovery_69/`; an existing output is a conflict, not permission to overwrite. For a new candidate, change the output prefix consistently in `bundle.py` and `pipeline.py` before packaging.
+Run `python3 examples/head-generation/bundle.py --output /tmp/head-recipe.json` to package the request. Load that JSON into the existing authorized Beaver external-agent workbench, execute `blender.start`, and poll the returned job until terminal. Output paths are creation-only under `assets/aster/head_recovery_75/`; an existing output is a conflict, not permission to overwrite. For a new candidate, change the output prefix consistently in `bundle.py` and `pipeline.py` before packaging.
 
 Use Beaver's `npr-character` workflow validation and its native MiDot review to inspect the produced definition. The companion `examples/head-review` scripts provide synchronized comparison, white and wire views, and the candidate-only `MouthOpen` slider. The normal state is mouth closed (value 0).
 
@@ -17,6 +17,8 @@ Use Beaver's `npr-character` workflow validation and its native MiDot review to 
 - Explicit normalized case proportions, sparse semantic cross-sections and eyelid/cavity/iris depth relationships. Generation does not read the visual reference asset or use a character name as an instruction.
 - A closed chin return with quad underside bands, three side quads and one corner triangle per half; separate orientation checks prevent flipped panels.
 - Hidden eye-pocket walls respect a sampled clearance against the evaluated facial shell. This is not a global collision certificate.
+- Asymmetric pinnae with paired front/back quad bands and bounded evaluated-surface root fitting.
+- Explicit short rising brow proportions and independently generated iris/lid/nose graphics.
 - A quad skin control cage, bounded subdivision, expanding recessed eye pockets and separate concave iris surfaces.
 - A real inward-facing oral cavity and thick tongue, exported neutral `MouthOpen` shape key and tangents.
 - Face-only GLB replacement with frozen Body/Hair primitives and original binary prefix preserved.
@@ -26,7 +28,7 @@ Some assembly, mouth and material coordinates remain specific to this restored p
 
 ## Evidence and limits
 
-Candidate 69 completed through Beaver on 2026-10-05 with exit code 0. Its GLB SHA-256 is `95969c585f946078ccbaac8b3108730d60d19c7b670496e51997a6bcdbacfb47`. Native front/side/white45 review on 2026-10-05 verified closed chin underside side panels without the prior hanging strip or black flaps. A BVH-based hidden eye-pocket clearance removed the prior side-eye fleck. Full mouth opening showed a dark cavity and tongue without white seams; neutral remains nearly closed. Actual geometry checks passed for front, underside and side-panel winding, zero-area faces and frozen Body/Hair. Ear atlas bleeding is corrected, but the ear silhouette/anatomy is still rejected and under a separate experiment.
+Candidate 75 completed through Beaver on 2026-10-06 with exit code 0. Its GLB SHA-256 is `e9b6c82a70b57a9f3f4ceebe481811407196f6dae1f3d5ebb7e70d5ba1615847`. Native front/side/white45 review on 2026-10-06 confirmed retained chin closure and recessed eye placement. The pinna now has an asymmetric semantic outline, concha/helix bands and a conforming closed back shell; a single nonplanar rear cap was rejected after failed volume checks. Sampled evaluated-shell fitting removes the prior ear-root gap without the earlier cheek wing. This is overlapping attachment, not a welded mesh or a global collision guarantee. Sparse brow proportions and independent procedural iris/lid/nose pigments are explicit case parameters. Native MouthOpen0/0.5/1 regression retained the neutral slit and the dark cavity/tongue without white seams. Ear lower-root shape, lip volume and overall reference resemblance still need work.
 
 Ear, eye, nose, lip and overall reference resemblance remain under visual iteration. This source checkpoint is not visual approval, full wardrobe acceptance, a production deployment, or a release. The screenshots and complete editable project are retained separately in the user's project backup.
 

@@ -5,7 +5,7 @@ from shell import build_face
 from mouth import store_mouth_deltas
 from glb_merge import merge_face
 ROOT = Path(beaver_input('project.godot')).parent
-OUT = 'assets/aster/head_recovery_69/'
+OUT = 'assets/aster/head_recovery_75/'
 BASE = 'assets/aster/head_recovery_49/'
 GUIDE = Path(beaver_input('authoring/head_generation_guide.md')).read_text()
 assert '去发侧脸轮廓检查' in GUIDE
@@ -68,6 +68,8 @@ sub.render_levels = sub.levels
 report['surface_subdivision_levels'] = sub.levels
 from eye_socket import fit_pocket_clearance
 report['pocket_skin_clearance'] = fit_pocket_clearance(shell)
+from ears import fit_ear_roots
+report['ear_root_fit'] = fit_ear_roots(shell)
 report['face_atlas_layout'] = 'spatial_skin_eye_ear_flat_swatches_v2'
 assert body == {o.name: object_hash(o) for o in bpy.data.objects if o.name in body}
 for role in ['Face']:
