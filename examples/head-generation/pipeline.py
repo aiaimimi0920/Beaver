@@ -6,7 +6,7 @@ from mouth import store_mouth_deltas
 from glb_merge import merge_face
 
 ROOT = Path(beaver_input("project.godot")).parent
-OUT = "assets/aster/head_recovery_102/"
+OUT = "assets/aster/head_recovery_103/"
 BASE = "assets/aster/head_recovery_49/"
 GUIDE = Path(beaver_input("authoring/head_generation_guide.md")).read_text()
 assert "去发侧脸轮廓检查" in GUIDE
@@ -238,16 +238,28 @@ for role in ["Face"]:
 
         report["ear_shared_seams"] = verify_ear_seams(data, report["ear_root_fit"])
         normals = [Vector((0, 0, 0)) for _ in data.vertices]
+        lateral_normals = {}
         for poly in data.polygons:
             for index in poly.vertices:
                 normals[index] += poly.normal * poly.area
+                if abs(data.vertices[index].co.x) < 1e-7:
+                    side = 1 if poly.center.x >= 0 else -1
+                    key = (index, side)
+                    lateral_normals.setdefault(key, Vector((0, 0, 0)))
+                    lateral_normals[key] += poly.normal * poly.area
         for normal in normals:
             normal.normalize()
+        for normal in lateral_normals.values():
+            normal.normalize()
+        report["center_partition_normal_corners"] = len(lateral_normals)
         corner_normals = [Vector((0, 0, 0)) for _ in data.loops]
         for poly in data.polygons:
             for loop_index in poly.loop_indices:
                 corner_normals[loop_index] = (
-                    normals[data.loops[loop_index].vertex_index]
+                    lateral_normals.get(
+                        (data.loops[loop_index].vertex_index, 1 if poly.center.x >= 0 else -1),
+                        normals[data.loops[loop_index].vertex_index],
+                    )
                     if poly.use_smooth
                     else poly.normal.copy()
                 )
