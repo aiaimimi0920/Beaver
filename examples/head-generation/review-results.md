@@ -1,20 +1,19 @@
-# Candidate119 progress checkpoint, 2026-10-06
+# Candidate 120 progress checkpoint, 2026-10-06
 
-Status: in progress; not final aesthetic acceptance. The user accepted only the center facial shading division seen in108. Preserve that behavior.
+Status: in progress, no final aesthetic acceptance. The accepted center facial shading division from 108 remains preserved.
 
-## Verified
-- 41 pure tests passed locally. Changed runtime Python modules remain below500 effective lines (pipeline322, face235, ears158, textures190).
-- All13 declared source/config/document hashes match the actual119 generation input manifest.
-- Beaver blender.start/poll succeeded: job85b59876-189e-4b18-8243-fedc7f5dd844; request1eff4498-4d10-4626-93d9-c5417ab7264d.
-- Native NPR validation passed at10:52 UTC: request3a780e44-a599-4462-a8bd- 419650b55273, ok=true, errors=[], engineErrors=false.
-- 119 GLB SHA-256 e7ca57b9c8c7bc4f4c70faf5bfdbc3526fdc6d182f49127eb14ec74455f11f7f. Geometry equals118 intentionally;119 changes original external face texture only.
-- 119 face_base.png SHA-256 f93739316ff11d18105903ec81a3f7df853b08eaa91e608419961a683b4c74e0.
-- The118/119 lower-ear silhouette is visibly rounder than117 in actual synchronized side rendering.119 no longer draws the original full-height ear pigment stripe to the lower lobe. The reference still has a clearer inner arch and concha: this is unresolved.
-- 111's removed lower-ear black wedge remains absent in the inspected side view. Root connectivity and frozen Body/Hair preservation checks remain enabled. No reference mesh/UV/pixels are loaded by the generator.
+## Current results
+- 41 pure tests passed; all 13 generated source/config/document hashes match the actual input manifest.
+- Beaver generation succeeded, job 344cfe0b-6cc1-4b81-a33e-7b17497d5f6e, request 02148d5c-1479-4967-bd09-e115f45b727c.
+- Native NPR validation passed at 11:00 UTC. Actual front/render and oblique white comparison were inspected.
+- Aggregate validation 20e6b01d-faa6-410b-8bb0-7cc551ca3b92 completed at 11:11:20 UTC, verdict autoPassed, exit 0: 7 tests and 57 assertions passed. The head-review integration explicitly loaded candidate 120. This is not full wardrobe/product acceptance; the negative full-wardrobe gate remains intact.
+- Current GLB SHA-256: 2c89b968eccb160b74e9bab326083d883720bd5ed77bac6280cc66c4c75bc0b5.
+- Rounded ear lobe and shorter original ear pigment from 118/119 retained. Lower-cheek width uses a few rounded semantic controls to reduce pinching. Ear inner arch and marked cheek/jaw transitions still require visual refinement.
+- Both ear roots retain 12 shared manifold edges with exactly two adjacent faces. Body/Hair binary prefix is preserved.
+- Morph audit: front chin-tip 382 samples have zero movement. Lower skin-chin 780 samples have maximum downward movement 0.730 mm. Broader coordinate-only sets include oral structures and must not be called chin skin.
 
-## Boundaries
-- The project aggregate still targets102; no aggregate pass is claimed for119.
-- Ear shape and internal shading, eye/lip differences and user-marked cheek/jaw transitions remain under review. A pure test pass is not an aesthetic approval.
-- Optional Draco exporter/vertex-color and inherited UID warnings are not claimed absent.
-- Previous exact published111 CI jobs failed before allocating a runner (runner_id0, steps[]); cause unresolved.119 has not yet been submitted to CI at the time of this source note.
-- PR remains draft and unmerged; no external review approval, production deployment or release is implied.
+## Remaining limits
+- Existing UID fallback and exporter warnings remain; passing tests do not mean zero warnings.
+- Previous source 119 CI run 37452858541 failed before runner allocation (job 112233299304, runner_id 0, no steps). No current GitHub CI pass, review, merge or production release is claimed.
+- Library version 37 preserves models through 120, but was created before updating the aggregate test target. Current tests and aggregate evidence must accompany the next checkpoint.
+- A subsequent parameter-contract cleanup is staged separately, not part of this generated 120 checkpoint.

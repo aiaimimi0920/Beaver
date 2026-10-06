@@ -79,3 +79,7 @@ Preserve the accepted facial center division and welded ear roots. The side silh
 
 ## Ear pigment correction 119
 Keep the rounded lower silhouette from118. Original ear pigmentation should suggest a short upper arch, a shallow concha and a short inner fold ending above the lobe. Do not draw a full-length stripe from the upper root to the lower attachment. Keep the lower lobe nearly plain skin. The reference informs structure only; no reference texture pixels are imported.
+
+
+## Lower-cheek contour correction120
+The green-marked cheek-to-chin outline must taper continuously without a pinched lower cheek followed by a straight oblique segment. Use a small number of independent rounded width controls: increase lower-cheek fullness most around 12 percent of normalized head height, fade the change toward the ear root, and preserve chin-tip width and all center shading rules. Read-only reference cross sections show the current lower-cheek span is too narrow. This is sparse semantic calibration, not a mesh fit or reference geometry import. Inspect the same front and oblique white/render views after Beaver generation.
