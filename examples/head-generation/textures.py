@@ -114,7 +114,11 @@ def ear_color(u, v):
         - ((v - STYLE["ear_concha_center_v"]) / 0.20) ** 2
     )
     arch_mask = max(0, min(1, (v - (STYLE["ear_arch_center_v"] - 0.04)) / 0.08))
-    helix = STYLE["ear_helix_stroke_strength"] * exp(-(((radius - 0.80) / STYLE["ear_helix_softness"]) ** 2)) * arch_mask
+    helix = (
+        STYLE["ear_helix_stroke_strength"]
+        * exp(-(((radius - 0.80) / STYLE["ear_helix_softness"]) ** 2))
+        * arch_mask
+    )
     fold_u = STYLE["ear_fold_center_u"] + 0.065 * sin(pi * max(0, min(1, (v - 0.38) / 0.40)))
     fold_u -= STYLE["ear_fold_curl"] * exp(-(((v - 0.39) / 0.075) ** 2))
     fold = (

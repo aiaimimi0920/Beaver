@@ -6,7 +6,7 @@ from mouth import store_mouth_deltas
 from glb_merge import merge_face
 
 ROOT = Path(beaver_input("project.godot")).parent
-OUT = "assets/aster/head_recovery_139/"
+OUT = "assets/aster/head_recovery_145/"
 BASE = "assets/aster/head_recovery_49/"
 GUIDE = Path(beaver_input("authoring/head_generation_guide.md")).read_text()
 assert "去发侧脸轮廓检查" in GUIDE
@@ -274,6 +274,25 @@ for role in ["Face"]:
             normal.normalize()
         report["regional_normal_groups"] = len(region_normals)
         report["center_partition_normal_corners"] = sum(key[2] != 0 for key in region_normals)
+        from mathutils.kdtree import KDTree
+
+        ear_tree = KDTree(len(data.vertices))
+        for vertex in data.vertices:
+            ear_tree.insert(vertex.co, vertex.index)
+        ear_tree.balance()
+        ear_root_ids = set()
+        ear_root_max_error = 0.0
+        expected_ear_roots = 0
+        for ear_report in report["ear_root_fit"]:
+            for point in ear_report["root_positions"]:
+                _, index, distance = ear_tree.find(Vector((point[0], point[1], point[2] - 0.021)))
+                assert distance < 0.000002, "Missing actual shared ear-root normal vertex"
+                ear_root_ids.add(index)
+                expected_ear_roots += 1
+                ear_root_max_error = max(ear_root_max_error, distance)
+        assert len(ear_root_ids) == expected_ear_roots
+        report["ear_common_normal_root_vertices"] = len(ear_root_ids)
+        report["ear_common_normal_root_max_error_m"] = ear_root_max_error
         corner_normals = [Vector((0, 0, 0)) for _ in data.loops]
         for poly in data.polygons:
             region = regions.data[poly.index].value
@@ -289,6 +308,8 @@ for role in ["Face"]:
                     normal = (
                         normals[index].lerp(normal, C["jaw_normal_boundary_strength"]).normalized()
                     )
+                if index in ear_root_ids:
+                    normal = normal.lerp(normals[index], C["ear_root_normal_blend"]).normalized()
                 corner_normals[loop_index] = normal if poly.use_smooth else poly.normal.copy()
         data.normals_split_custom_set(corner_normals)
         report["flat_geometric_triangles"] = sum(not poly.use_smooth for poly in data.polygons)

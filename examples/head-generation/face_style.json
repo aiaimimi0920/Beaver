@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "preset": "semantic_calibration_a_139",
+  "preset": "semantic_calibration_a_145",
   "note": "Explicit semantic calibration case; no character-name generation dependency.",
   "iris_half_width_m": 0.01534,
   "eye_lens_bulge_m": 0.0012,
@@ -609,15 +609,15 @@
       ],
       [
         0.10593220338983052,
-        1.8,
-        0.1,
-        0.085
+        2.15,
+        0.12,
+        0.105
       ],
       [
         0.17,
-        1.65,
-        0.085,
-        0.07
+        2.0,
+        0.108,
+        0.09
       ]
     ],
     "iris_grid_resolution": 9,
@@ -669,10 +669,10 @@
     ],
     "mouth_half_width": 0.065,
     "pocket_ring_samples": 32,
-    "pocket_body_width_ratio": 1.2,
-    "pocket_body_height_ratio": 1.25,
+    "pocket_body_width_ratio": 1.25,
+    "pocket_body_height_ratio": 1.5,
     "pocket_transition_back": 0.004,
-    "pocket_body_length": 0.03,
+    "pocket_body_length": 0.04,
     "top_boundary_depth_profile": [
       [
         0,
@@ -884,7 +884,6 @@
     "jaw_normal_boundary_strength": 0.4,
     "jaw_return_depth_strength": 0.2,
     "ear_return_lip_width": 0.065,
-    "ear_return_lip_depth": 0.014,
     "ear_outward_span": 0.096,
     "ear_posterior_span": 0.1,
     "ear_root_depth_base": -0.32,
@@ -907,7 +906,17 @@
     "jaw_border_relaxation": 0.35,
     "jaw_border_iterations": 3,
     "jaw_border_max_height": 0.18,
-    "jaw_border_back_threshold": -0.12
+    "jaw_border_back_threshold": -0.12,
+    "ear_lower_taper": 0.18,
+    "ear_upper_trim": 0.14,
+    "ear_upper_depth_return": 0.027,
+    "orbital_lateral_fade": 0.16,
+    "pocket_center_lift": 0.012,
+    "ear_root_normal_blend": 1.0,
+    "ear_return_anterior_depth": 0.028,
+    "ear_min_posterior_clearance": 0.012,
+    "ear_return_basin_depth_fraction": 0.2,
+    "ear_return_basin_width_fraction": 0.5
   },
   "normal_policy": "actual_area_weighted_geometry",
   "surface_subdivision_levels": 1,

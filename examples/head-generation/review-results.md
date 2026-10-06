@@ -1,12 +1,20 @@
-# Iteration 139 evidence
+# Candidate145 verification
 
-- Pure Python:56 tests pass.
-- GLB SHA-256:1ed65acb4565b135f7022ae164fa1776da765cc103c7e16566960aca8e892853.
-- Beaver job:b1ef0f41-6115-4a7c-99ed-175b319daa5f, succeeded exit0.
-- Native validation:e0c8fb8c-352f-4220-b324-f503b1576586, pass.
-- All13 embedded source/spec hashes verified.
-- Authoring jaw fairing selects12 low posterior boundary vertices, maximum displacement3.945305mm, topology unchanged. Frontal tip and lips excluded.
-- Actual front and right90-degree comparison inspected; inward eye liner improves the rejected external C-loop trial138. Ear-root dark triangle still visible on opposite side and remains pending.
--137 morph diagnostic: front chin drop1.500010mm; lower chin skin maximum1.539469mm. New user target allows slight elongation; zero displacement is no longer the final criterion.
-- Latest full aggregate136:78ee0917-596e-4b70-a09f-5be05a14b8e8,7pass0fail. Parent aggregate9a9bf39a-1ef3-489d-a7c8-8c180b4b0322 also autoPassed7. Existing UID warnings remain.
-- Library checkpoint39 covers through136 and user-review136;139 assets currently preserved locally, next backup pending.
+## Implemented and checked
+- 58 pure Python tests passed; 13/13 generation manifest hashes matched.
+- Beaver generation request350ecffc-4929-44f9-95ba-1da0917842c9, job98c49f0b-e632-436d-b9d7-7e9600b66776, completion pollbfe47f49-db19-44ea-b545-7d191021e1e8: succeeded,exit0.
+- GLB SHA256 cb0b13ed7dab2e623a4c18ad481c6eae476ab1579cf01ef23e03bfa4a6475534.
+- Native validation08032c7f-4b25-4283-8490-dad869b1584b: pass,engineErrors=false,errors=[].
+- Ear roots:13 shared manifold edges each side,28 common-normal root vertices,matching error≤0.00000012m. Open wrapped sheet retained.
+- The143 lower front-sheet correction reduced the wedge;144 cleared right90 but still had an oblique residual;145 bounds the return within the basin. Actual left45,right45,right90 renders show no earlier black root wedge. Ear shape/pigment still require user aesthetic confirmation.
+- Posterior lower-jaw boundary fairing affects12 authoring vertices,max3.945305mm. Right90 has been inspected; do not claim overall contour identity or user acceptance.
+- Rear white-model and runtime wireframe comparison inspected: simpler larger pocket backs and expanded oral back. Differences from the unpacked reference remain visible; reference faceting is not automatically treated as correct geometry.
+- MouthOpen0,0.5,1 actual runtime inspected. Full-open front chin-tip down1.500010mm; skin-only lower chin maximum1.539469mm. Unfiltered mouth/tongue vertices are not reported as chin skin.
+- Neutral oral clearance sampled60 hidden wall vertices,max signed distance−0.006210477m,cap planarity0. This is not a global collision proof.
+- Body/Hair primitives frozen; pinned MiDot and NPR1.3.0 unchanged.
+
+## Pending / limits
+- Candidate145 aggregate3e7b77b7-308f-42ab-8bfe-897caf2f833c completed2026-10-06T16:40:08UTC,autoPassed,7tests0failures. Integration test target145 SHA2561e10063f38acdb78184ef31062b7cfa5f75a341a228ae11a8c0ccad016d82c06.
+- User requested a short report/live scene followed by manual visual confirmation. No artistic acceptance has been received for this batch.
+- Prior remote139 was3a5f6ba48fb26b6edca032c4130a63f3f3545d62. Its hosted recipe run37489507588/job112358201986 failed before runner allocation (runner0,steps[]), not a tested recipe failure. New commit CI must be checked separately.
+- PR20 remains draft; no merge,release,production deployment or full-character acceptance. Existing native UID fallback warnings remain; no zero-warning claim.

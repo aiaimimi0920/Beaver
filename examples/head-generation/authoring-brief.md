@@ -177,4 +177,34 @@ The user describes the reference as rounded-corner and slightly narrower below, 
 ## Revision 139: locally fair the posterior jaw boundary
 The user marks a small remaining tangent break where the bottom rear edge turns into the side edge at 90 degrees. The large spur was removed, but sparse rear-return boundary samples still produce a corner after subdivision. Apply a bounded, distance-weighted fairing to only the low posterior open authoring boundary, before mirror/subdivision and normal calculation. Keep frontal chin/lips, eye/ear regions and all topology unchanged. Do not smooth accepted central shading normals away or hide the corner through lighting. Verify both exact side views at enlarged scale; a small residual corner is still a failure.
 
+
+## Revision 140: multiview pinna contour and orbital influence limit
+Sparse front/side sections show the generated lower-middle ear too broad and the upper posterior crown too far back, despite similar frontal peak width. Do not fit an ellipse: taper the lower envelope, trim the upper crown and return its depth toward the attachment. Preserve the accepted inward-wrapped structure and end-faded root. These are independent semantic controls; no reference geometry is used by generation.
+
+Read-only diagnosis also finds the orbital blend reaching the outer facial boundary beyond the actual eye corner: at normalized side height about0.44, the generated root is roughly0.03 H too far forward. Limit orbital blending smoothly outside the lateral eye corner rather than compensating by distorting the ear. This restores the posterior facial trajectory, with eye-front clearance and side clipping checked afterwards.
+
 Actual138 front-view review rejected the protruding C-shaped outer liner. Keep the rounded aperture but place the liner inward over the outer white margin, leaning toward a lower tapered endpoint; do not build a free external loop. Verify face winding after reversing the strip direction.
+
+
+## Revision 141: normalized rear cavity proportions
+Actual back white-model comparison shows the generated eye backs vertically flattened and the oral back smaller than the reference, independent of the dark back-outline rendering. Increase orbital rear ellipse height modestly and shift its center upward, retaining the original aperture and shallow front recess. Keep posterior depth inside the previously established short-pocket budget rather than reproducing a deep tunnel. Enlarge the oral middle/back ellipse while retaining a gently contracting planar rear cap, tiny neutral lip seam and inward-facing walls. Do not copy rough triangulation or nonplanarity from the unpacked reference; preserve containment and rear-planarity assertions and check actual side/back/open-mouth views.
+
+137 left-oblique review reduced the root wedge, but139 exact opposite-side review still exposes a dark root triangle. Shared ear-root vertices retain separate regional corner normals, which can diverge under shader outline extrusion. Use one area-weighted geometric normal at the actual welded attachment vertices on both face and ear; preserve all other normal partitions, especially the accepted facial centerline. Record the matched root count and inspect both sides before claiming resolution.
+
+140 matched only15 of28 attachment vertices using rounded coordinate keys. Use nearest actual welded vertices with a2-micrometre guard and exact expected-count assertion to cover both attachments reliably, then apply common geometric root normals.
+
+
+## Revision 142: correct the direction of the pinna return sheet
+Complete common-root normals did not remove the exact-side black root triangle on141; the normal-seam hypothesis alone is insufficient. Cross-section inspection finds the return was moving inward laterally but farther posterior in depth, retaining a front-facing lateral normal. The read-only reference reverse patch has predominantly opposite lateral normals and returns anteriorly toward the attachment. Correct the original return path to travel inward and anteriorly, preserving the open free edge and the user-approved wrapped-sheet construction. Add an area-weighted reverse-lateral-normal assertion, not a texture mask or disabled shader outline. Keep the endpoint fade, multi-angle silhouette parameters, complete root-normal matching and all other improvements. Check both exact sides and the white back view before claiming the black wedge fixed.
+
+
+## Revision 143: prevent the lower ear membrane folding forward
+The exact-side black triangle persists on142. Read-only exported-triangle inspection identifies negative lateral normals in the LOWER FRONT membrane, not merely its return lip. The independent posterior contour lies anterior to the actual skin attachment near the lower endpoint; this reverses the visible sheet. Preserve the measured silhouette target where feasible, but enforce a parameterized nonnegative posterior clearance from the actual root at all heights. Keep lateral width and the existing open wrapped construction. Verify all front triangle normals around the lower root in the generated mesh and inspect the actual NPR render. The return-normal fix alone is not counted as black-triangle resolution.
+
+
+## Revision 144: contain the return lip inside the actual ear basin
+143 removes the lower front-sheet reversal but a thin black return wedge remains at the endpoint in exact-side NPR. The return depth still uses a fixed budget larger than the local basin depth, crossing anterior to the attachment. Bound its anterior travel and inward span to 65% and75% of the actual local basin dimensions respectively. This preserves the free back edge without piercing the front/root envelope. Validate both exact sides and oblique views.
+
+
+## Revision 145: oblique-view return containment
+144 clears the exact-side black wedge but a residual reverse-face patch is visible at45 degrees. Independent width/depth fraction limits still allow the return to sit in front of the curved basin. Retain at least80% of local posterior depth and50% of lateral span so the free return edge stays behind the front sheet across oblique viewing. These explicit bounded parameters remain configurable. Recheck both side and45-degree renders before acceptance.

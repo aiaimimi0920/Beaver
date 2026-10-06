@@ -25,7 +25,7 @@ def build_socket(side):
     contours = [eye_contour(side, cos(2 * pi * k / n), sin(2 * pi * k / n) >= 0) for k in range(n)]
     transition_depth = min(rim_depth(x, y) for x, y in contours) - H * C["pocket_transition_back"]
     sections = [None, transition_depth, transition_depth - H * C["pocket_body_length"]]
-    center_y = cy + H * (C["eye_upper_arch"] - C["eye_lower_arch"]) / 2
+    center_y = cy + H * ((C["eye_upper_arch"] - C["eye_lower_arch"]) / 2 + C["pocket_center_lift"])
     half_y = H * (C["eye_upper_arch"] + C["eye_lower_arch"]) * C["pocket_body_height_ratio"] / 2
     for ring_index, plane in enumerate(sections):
         for k in range(n):
@@ -126,7 +126,9 @@ def fit_pocket_clearance(shell):
                 cy = Y0 + H * (C["eye_corner_y"] + C["eye_corner_slope"] * t)
                 arch = C["eye_upper_arch"] if y >= cy else C["eye_lower_arch"]
                 power = C["eye_upper_power"] if y >= cy else C["eye_lower_power"]
-                radius = sqrt(abs(t) ** C["eye_horizontal_power"] + abs((y - cy) / (H * arch)) ** (1 / power))
+                radius = sqrt(
+                    abs(t) ** C["eye_horizontal_power"] + abs((y - cy) / (H * arch)) ** (1 / power)
+                )
                 if radius <= 1.01:
                     continue
                 old = vertex.co.copy()

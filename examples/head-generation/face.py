@@ -102,6 +102,8 @@ def depth(x, y):
     power = C["eye_upper_power"] if y >= cy else C["eye_lower_power"]
     r = sqrt(abs(t) ** C["eye_horizontal_power"] + abs((y - cy) / (H * arch)) ** (1 / power))
     weight = exp(-(((r - 1) / C["orbital_band_width"]) ** 2))
+    lateral = max(0, min(1, (1 + C["orbital_lateral_fade"] - abs(t)) / C["orbital_lateral_fade"]))
+    weight *= lateral * lateral * (3 - 2 * lateral)
     return raw + (rim_depth(x, y) - raw) * weight
 
 
@@ -264,17 +266,22 @@ def build_eyes():
                     INK,
                 )
         liner = []
-        _, top = eye_contour(side, .95, True)
-        _, bottom = eye_contour(side, .55, False)
+        _, top = eye_contour(side, 0.95, True)
+        _, bottom = eye_contour(side, 0.55, False)
         for lane in range(2):
             for i in range(9):
                 f = i / 8
-                t = .95 - .23 * f + .06 * sin(pi * f)
+                t = 0.95 - 0.23 * f + 0.06 * sin(pi * f)
                 x = side * H * (C["eye_center_x"] + C["eye_half_width"] * t)
-                x -= side * lane * H * C["outer_liner_width"] * max(.015, sin(pi * f)) ** .65
+                x -= side * lane * H * C["outer_liner_width"] * max(0.015, sin(pi * f)) ** 0.65
                 y = top * (1 - f) + bottom * f
                 liner.append(coord(x, y, lash_depth(x, y)))
-        mesh("Outer lateral eye liner " + str(side), liner, grid_faces(2, 9, side > 0), (.23, .065, .14))
+        mesh(
+            "Outer lateral eye liner " + str(side),
+            liner,
+            grid_faces(2, 9, side > 0),
+            (0.23, 0.065, 0.14),
+        )
         brow = []
         for lane in range(2):
             for i in range(25):

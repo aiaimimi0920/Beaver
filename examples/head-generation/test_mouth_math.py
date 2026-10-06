@@ -44,9 +44,9 @@ class MouthMathTests(unittest.TestCase):
         scope = load_math()
         maximum = scope["C"]["chin_follow_down_m"]
         self.assertGreater(maximum, 0)
-        self.assertLessEqual(maximum, .0025)
-        for x in [0, .008, .025, .045]:
-            for height in [0, .025, .05, .07]:
+        self.assertLessEqual(maximum, 0.0025)
+        for x in [0, 0.008, 0.025, 0.045]:
+            for height in [0, 0.025, 0.05, 0.07]:
                 d = scope["jaw_delta"](x, scope["Y0"] + scope["H"] * height, 0)
                 self.assertGreaterEqual(d[2], -maximum - 1e-9)
                 self.assertLess(d[2], 0)

@@ -73,10 +73,14 @@ def fair_jaw_boundary(vertices, faces, config, height, origin, depth_origin):
         if count == 1:
             neighbors.setdefault(a, []).append(b)
             neighbors.setdefault(b, []).append(a)
-    selected = [i for i, linked in neighbors.items() if len(linked) == 2
-                and abs(vertices[i][0]) > .01 * height
-                and .015 < (vertices[i][2] - origin) / height < config["jaw_border_max_height"]
-                and (-vertices[i][1] - depth_origin) / height < config["jaw_border_back_threshold"]]
+    selected = [
+        i
+        for i, linked in neighbors.items()
+        if len(linked) == 2
+        and abs(vertices[i][0]) > 0.01 * height
+        and 0.015 < (vertices[i][2] - origin) / height < config["jaw_border_max_height"]
+        and (-vertices[i][1] - depth_origin) / height < config["jaw_border_back_threshold"]
+    ]
     result = list(vertices)
     for _ in range(int(config["jaw_border_iterations"])):
         old = list(result)
@@ -87,9 +91,15 @@ def fair_jaw_boundary(vertices, faces, config, height, origin, depth_origin):
             if da + db < 1e-10:
                 continue
             target = tuple((old[a][j] * db + old[b][j] * da) / (da + db) for j in range(3))
-            result[i] = tuple(old[i][j] + config["jaw_border_relaxation"] * (target[j] - old[i][j]) for j in range(3))
-    maximum = max((sqrt(sum((result[i][j] - vertices[i][j]) ** 2 for j in range(3))) for i in selected), default=0)
-    assert maximum < .02 * height, "Jaw boundary relaxation exceeds local correction budget"
+            result[i] = tuple(
+                old[i][j] + config["jaw_border_relaxation"] * (target[j] - old[i][j])
+                for j in range(3)
+            )
+    maximum = max(
+        (sqrt(sum((result[i][j] - vertices[i][j]) ** 2 for j in range(3))) for i in selected),
+        default=0,
+    )
+    assert maximum < 0.02 * height, "Jaw boundary relaxation exceeds local correction budget"
     return result, {"selected_vertices": len(selected), "maximum_displacement_m": maximum}
 
 

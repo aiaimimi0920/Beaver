@@ -31,7 +31,10 @@ class ContourFeedbackTests(unittest.TestCase):
         self.assertLess(x, 0.236 * 0.18)
         self.assertGreater(x, 0)
         self.assertAlmostEqual(
-            z, 0.04 + (0.078 + 0.236 * curve(0.08, 1, C["jaw_return_depth_profile"]) - 0.04) * C["jaw_return_depth_strength"]
+            z,
+            0.04
+            + (0.078 + 0.236 * curve(0.08, 1, C["jaw_return_depth_profile"]) - 0.04)
+            * C["jaw_return_depth_strength"],
         )
 
     def test_existing_chin_return_base_remains_unchanged(self):
@@ -80,7 +83,7 @@ class ContourFeedbackTests(unittest.TestCase):
         b = fn(0.04, 1.58, 0.06, 0.9, 0.04)[1]
         self.assertAlmostEqual(b - a, 0.01)
 
-    def test_outer_ear_depth_is_independent_of_root_waviness(self):
+    def test_outer_ear_target_respects_nonfolding_root_constraint(self):
         curve, _ = pure_function("face.py", "curve", {})
         fn, _ = pure_function("ears.py", "membrane_offset", {"curve": curve})
         for t in [0.1, 0.3, 0.55, 0.78, 0.94]:
@@ -90,10 +93,21 @@ class ContourFeedbackTests(unittest.TestCase):
                 - C["ear_posterior_span"]
                 * math.sin(math.pi * t)
                 * (1 + C["ear_upper_fullness"] * (2 * t - 1))
+                * (
+                    1
+                    - C["ear_lower_taper"] * (1 - t) ** 2
+                    - C["ear_upper_trim"] * max(0, (t - 0.7) / 0.3) ** 2
+                )
+                + C["ear_upper_depth_return"]
+                * max(0, min(1, (t - 0.55) / 0.45)) ** 2
+                * (3 - 2 * max(0, min(1, (t - 0.55) / 0.45)))
             )
             for root in [-0.30, -0.33, -0.36]:
                 _, posterior = fn(t, 1, C, root)
-                self.assertAlmostEqual(root - posterior, target)
+                self.assertAlmostEqual(
+                    root - posterior,
+                    min(target, root - C["ear_min_posterior_clearance"] * math.sin(math.pi * t)),
+                )
 
 
 class EarBasinTests(unittest.TestCase):
@@ -102,16 +116,15 @@ class EarBasinTests(unittest.TestCase):
         fn, _ = pure_function("ears.py", "membrane_offset", {"curve": curve})
         for t in [0.1, 0.3, 0.55, 0.78, 0.94]:
             self.assertEqual(fn(t, 0, C, -0.35), (0, 0))
-            self.assertAlmostEqual(
-                -0.35 - fn(t, 1, C, -0.35)[1],
-                (
-                    C["ear_root_depth_base"]
-                    + C["ear_root_depth_slope"] * t
-                    - C["ear_posterior_span"]
-                    * math.sin(math.pi * t)
-                    * (1 + C["ear_upper_fullness"] * (2 * t - 1))
-                ),
-            )
+            self.assertGreater(fn(t, 1, C, -0.35)[1], 0)
+
+    def test_lower_ear_cross_sections_never_sweep_anteriorly(self):
+        fn, _ = pure_function("ears.py", "membrane_offset", {})
+        for root in [-0.30, -0.33, -0.36, -0.38]:
+            for j in range(1, 100):
+                t = j / 100
+                points = [fn(t, u / 40, C, root) for u in range(41)]
+                self.assertTrue(all(b[1] > a[1] for a, b in zip(points, points[1:])))
 
     def test_visible_ear_cross_section_does_not_flip(self):
         curve, _ = pure_function("face.py", "curve", {})
@@ -196,14 +209,14 @@ class WrappedPinnaTests(unittest.TestCase):
         fn, _ = pure_function("ears.py", "membrane_offset", {})
         flat = dict(C, ear_cup_recess=0)
         for u in [0, 1]:
-            self.assertEqual(fn(.5, u, C, -.34), fn(.5, u, flat, -.34))
-        self.assertLess(fn(.5, .5, C, -.34)[0], fn(.5, .5, flat, -.34)[0])
+            self.assertEqual(fn(0.5, u, C, -0.34), fn(0.5, u, flat, -0.34))
+        self.assertLess(fn(0.5, 0.5, C, -0.34)[0], fn(0.5, 0.5, flat, -0.34)[0])
 
     def test_no_duplicate_back_membrane_in_recipe(self):
         source = Path(__file__).with_name("ears.py").read_text()
         self.assertNotIn("vs.extend((x - side * thickness", source)
         self.assertNotIn("for i in reversed(f)) for f in front_faces", source)
-        self.assertGreater(C["ear_return_lip_width"], .04)
+        self.assertGreater(C["ear_return_lip_width"], 0.04)
         self.assertLess(C["ear_return_lip_width"], C["ear_outward_span"])
 
 
@@ -212,4 +225,4 @@ class RearJawJoinTests(unittest.TestCase):
         fn, _ = pure_function("shell.py", "chin_underside_depth_offset", {"C": C, "H": 1})
         back, lift, _ = C["chin_underside_stations"][-1]
         self.assertAlmostEqual(fn(back, lift, 0), fn(back, lift, 1))
-        self.assertGreater(lift, .04)
+        self.assertGreater(lift, 0.04)

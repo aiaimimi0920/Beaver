@@ -1,2 +1,3 @@
-# Candidate102 native review
-Front/render catchlights, both exact sides, right-oblique white, left-oblique runtime wire, rear white and MouthOpen0/.5/1 inspected in real MiDot. Light+68.76 keeps the white point visible but NPR shadows still differ from the reference. Previous98–100 local flattening regression is not retained. Ear contour is now rounded in exact sides; user aesthetic review is still required. Captures and actual state metadata are preserved privately. See review-results.md for quantitative and scope limits.
+# Candidate145 native review
+
+Actual MiDot/NPR1.3.0 comparison inspected front neutral, both45-degree renders, exact right90, rear white and runtime wireframe, MouthOpen0/0.5/1. Earlier ear-root black wedge is absent in these sampled145 views. The right-side jaw transition was faired; full similarity and aesthetic acceptance remain pending owner review. Chin tip moves down1.500010mm at full mouth opening. Eye shape/layers and rear pocket/oral proportions were changed, not claimed identical. Existing UID fallback warnings remain. See review-results.md for receipts and aggregate boundaries.

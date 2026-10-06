@@ -10,12 +10,23 @@ def build_ears():
 
 def membrane_offset(t, u, config, root_depth):
     envelope = sin(pi * t) * (1 + config["ear_upper_fullness"] * (2 * t - 1))
-    outward = envelope * (config["ear_outward_span"] * u - config["ear_cup_recess"] * 4 * u * (1 - u))
+    envelope *= (
+        1
+        - config["ear_lower_taper"] * (1 - t) ** 2
+        - config["ear_upper_trim"] * max(0, (t - 0.7) / 0.3) ** 2
+    )
+    upper_return = max(0, min(1, (t - 0.55) / 0.45))
+    upper_return = upper_return * upper_return * (3 - 2 * upper_return)
+    outward = envelope * (
+        config["ear_outward_span"] * u - config["ear_cup_recess"] * 4 * u * (1 - u)
+    )
     outer_depth = (
         config["ear_root_depth_base"]
         + config["ear_root_depth_slope"] * t
         - config["ear_posterior_span"] * envelope
+        + config["ear_upper_depth_return"] * upper_return
     )
+    outer_depth = min(outer_depth, root_depth - config["ear_min_posterior_clearance"] * sin(pi * t))
     sweep = u + config["ear_bend_contrast"] * sin(2 * pi * u) / (2 * pi)
     posterior = (root_depth - outer_depth) * sweep
     return outward, posterior
@@ -104,14 +115,24 @@ def fit_ear_roots(shell):
                     rim.append(outer)
                     continue
                 t = (root_points[j].z - low) / (high - low)
-                end_weight = min(1, t / C["ear_return_end_fade"], (1 - t) / C["ear_return_end_fade"])
+                end_weight = min(
+                    1, t / C["ear_return_end_fade"], (1 - t) / C["ear_return_end_fade"]
+                )
                 end_weight = end_weight * end_weight * (3 - 2 * end_weight)
                 x, y, z = vs[outer]
+                return_width = min(
+                    H * C["ear_return_lip_width"] * sin(pi * t) * end_weight,
+                    abs(x - root_points[j].x) * C["ear_return_basin_width_fraction"],
+                )
+                return_depth = min(
+                    H * C["ear_return_anterior_depth"] * sin(pi * t) * end_weight,
+                    max(0, y - root_points[j].y) * C["ear_return_basin_depth_fraction"],
+                )
                 rim.append(len(vs))
                 vs.append(
                     (
-                        x - side * H * C["ear_return_lip_width"] * sin(pi * t) * end_weight,
-                        y + H * C["ear_return_lip_depth"] * sin(pi * t) * end_weight,
+                        x - side * return_width,
+                        y - return_depth,
                         z,
                     )
                 )
@@ -129,6 +150,12 @@ def fit_ear_roots(shell):
             front_face_count = len(fs)
             obj = mesh("Ear hollow pinna " + str(side), vs, fs, SKIN)
             assert all(poly.area > 1e-12 for poly in obj.data.polygons), "Degenerate ear membrane"
+            reverse_measure = sum(
+                poly.normal.x * side * poly.area
+                for poly in list(obj.data.polygons)[main_face_count:]
+            )
+            assert reverse_measure < 0, "Ear return must wrap to the reverse lateral side"
+            obj["ear_return_side_normal_measure"] = reverse_measure
             obj["ear_detail"] = True
             obj["ear_main_faces"] = main_face_count
             obj["ear_front_faces"] = front_face_count
@@ -146,6 +173,7 @@ def fit_ear_roots(shell):
                 {
                     "name": obj.name,
                     "root_vertices": len(roots),
+                    "return_side_normal_measure": reverse_measure,
                     "max_root_position_error_m": error,
                     "root_positions": [list(r) for r in root_points],
                     "geometry": "open-backed shallow membrane; no separate closed back shell",
