@@ -27,3 +27,13 @@ The candidate-only MouthOpen slider defaults to zero. Values 0, 0.5 and 1 were e
 ## Ownership and publication
 
 These scripts extend the consuming project's review scene. Beaver owns this reproducible example and its workflow; NPRCharacterFrame and MiDot remain unmodified. Do not copy private reference models, cloud credentials, task databases, or generated project caches into this repository.
+
+
+## Current head-review integration test
+
+The supplied tests/test_aster_lab.gd replaces an obsolete NPRLab smoke test in the consuming project. Copy it through Beaver's regular file workflow and restore the authorized candidate102 checkpoint before running: its explicit definition is assets/aster/head_recovery_102/aster_definition.tres. No generated or reference assets are included here. Keep the pinned addon unchanged.
+
+The test validates actual head-review initialization, definition nonmutation, hidden Body, orthographic camera, disabled full-scheme save, four current HSlider controls, rotation/view/reset, and rejection of incomplete full-wardrobe inputs. It is not a full-wardrobe acceptance test. The earlier candidate94 baseline's Beaver aggregate validation05a6b703-2c51-49fe-ac62-fbb1479098c2 completed on2026-10-06: all7 tests/57 assertions passed across the restored project's3 test scripts, without script errors; invalid-UID fallback warnings remained. GitHub CI and visual acceptance are separate gates.
+
+
+Current candidate102 is actually generated and native-reviewed; the retargeted project test passed Beaver aggregate validation eadd00b8-f9d7-4eca-b2f4-d05e1c35f1a0 with 7 tests and 57 assertions, without script errors; UID fallback warnings remain. The earlier candidate94 pass above does not validate102. See the current head-generation review record for the new result when available.

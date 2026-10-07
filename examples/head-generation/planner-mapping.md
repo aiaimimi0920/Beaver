@@ -6,3 +6,275 @@ Only explicit brow/iris/lower-cover and nose pigment controls change from74. Tre
 - Planned80 correction: one curved rest seam y(x)=mouth_height+corner_lift*clamp(x/half_width,-1,1)^2. Aperture, jaw classification/falloff and cavity normalization share this function. This was not executed before reset and requires fresh tests.
 - Keep eye/mouth boundary crease1.0;77 changed no exported positions and is not treated as a useful geometry control.
 - Do not restore78's rejected wider/deeper neutral dark band.
+
+##82 eye-pocket mapping
+Keep48 angular samples and the first3 expansion bands. Replace the old fourth rear band plus18-percent shrinking fifth ring with one full-sized terminal contour, width1.08 and height1.12 times aperture, at constant rear depth measured from eye-center rim. Rear cap has no added center pole; its planar polygon triangulation must not create geometric pinching. Preserve the evaluated-skin clearance algorithm and inspect its effect on the terminal boundary. No original reference vertices or topology are copied.
+
+##83 mapping
+Ear angular samples36→24, radial bands6→3, with relief only-0.004H at inner bands and0 at rim. Preserve the existing semantic outline, paired closed back surface, root fitting and UV isolation. Inner ear shape is moved to an independently authored analytic color function with bounded strengths rather than copied texture pixels.
+Flag only the actual planar eye rear-cap polygon as flat. After joining and triangulating, custom corner normals use polygon normals on flat faces and area-weighted vertex normals on smooth faces. This preserves honest geometric shading and removes the cap's boundary-normal interpolation artifacts.
+
+##84 edge-Crease mapping
+Use a normalized-height strength profile on true front-surface center edges, with the strongest values near the nasal bridge/tip and tapered weights toward forehead/chin. Select the existing q=0.78 lateral control-cage chain for the cheek front/side boundary; reject non-longitudinal edges and preserve eye/mouth aperture creases. Record selected edge counts and evaluate matched vertex displacement with the new groups disabled as a non-reference ablation. No original source Crease metadata is available, so these are explicit case parameters subject to native visual validation.
+
+##85 nasal mapping
+Read-only reference/candidate ray measurements after84: tip-center depth is close (about0.8mm short at0.28H), lower-nose sides remain about2–3mm shallow, while upper-bridge sides at0.40H are about2.7–4.5mm too projected. These are sparse semantic observations, not copied vertex coordinates or original crease weights.
+Use separate monotone nasal lateral profiles for tip/bridge and fuller base, blended across height0.25–0.28H. Increase lower-nose support width, make a small tip-height adjustment, and insert a narrow0.40H bridge cross-section while retaining outer-side values. Validate actual subdivided geometry; all numerical estimates are hypotheses until generated and viewed.
+
+## 86 oral-volume mapping, before implementation
+The native rear view shows the previous oral bag as a shallow horizontal almond; the reference has a taller, broader rear volume. Treat this as a semantic volume requirement, not permission to copy its triangulation or possible unpacking artifacts. Preserve the first two lip attachment rings. Parameterize subsequent width, backward depth and upper/lower expansion relative to H; taper less aggressively at the rear. The final cap uses a constant depth and geometric flat normals, avoiding nonplanar triangulation shading. Preserve neutral lip and jaw classification; validate volume, rear planarity and sampled skin containment before native mouth regression.
+
+## 87 independent-iris alignment hypothesis
+Read-only connected-component bounds of the isolated reference iris suggest center height approximately0.429H and vertical half-extent0.077H, versus current0.423H/0.082H. Use rounded semantic parameters center0.4295H and half-height0.077H, lateral center0.2195H. These are a calibration hypothesis, not direct vertex copying or acceptance. Keep pocket/lids/nasal/ear/oral source and texture unchanged. Compare against86; reject if new exposed edges, scleral slivers or protrusion appear.
+
+## 88 paired lower-lid hypothesis
+Candidate87 was not retained as an isolated improvement because the unchanged lower lid exposed a narrow white crescent below the raised iris. Reduce lower arch from0.094H to0.088H while preserving corner height/slope and iris87. This lifts the central lower contour by1.416mm and rebuilds its pocket/shell boundary through the same shared contour function. Test corner continuity and central iris overlap; verify side view for protrusion.
+
+## 89 iris topology mapping before implementation
+The old 13 by17 iris grid scales a whole row by sqrt(max(0.002,1-v²)); its extreme rows compress many vertices into tiny spans. Replace it with a9 by9 quad grid mapped continuously from a square to a disk: x=u*sqrt(1-v²/2), y=v*sqrt(1-u²/2), then apply the existing ellipse radii. This keeps32 boundary edges,81 vertices and64 quads per iris without a center fan or collapsed pole rows. Use unchanged analytic depth/UV mapping. Validate positive projected cell area, finite samples, boundary ellipse and minimum edge spacing; native front and oblique views decide retention.
+
+## 90 bounded mouth morph
+Read-only actual89 GLB measurement found front-chin downward motion up to15.11mm and lower-chin-region motion15.85mm. Preserve neutral geometry, replace broad lower-jaw falloff with explicit local mouth parameters and a smooth chin-preservation gate. Lower opening reduces to0.038H, upper0.0127H, corner down0.0064H; lower radial falloff0.09H and upper0.05H. Pin normalized height<=0.07H, blend to full support by0.145H. Tongue moves down0.025H, with existing small backward shift. Verify exported sparse morph displacement by region and native half/full opening; lower motion must not cross fixed chin vertices.
+
+## 91 shared-root ear membrane
+Reference audit finds exported ear components with exact coincident root points/edges against the main face, though index connectivity is split. Current overlapping closed shells do not reproduce that relation. Author a shallow, open-backed ear membrane from the actual evaluated facial boundary chain in the ear-height interval. Four lateral bands follow a rounded outward bulge with slight posterior sweep, rather than copying reference vertices. Reuse every root point; the existing runtime weld should make shared edges. Verify exact seam position and two-face adjacency after joining. Endpoint triangles remain local, not a dense central fan. Original procedural pinna pigment remains.
+
+## 92 bounded feedback mapping
+Reference top boundary falls substantially farther down at the side than the old q^4 warp. Apply a rounded semantic drop profile over a wider upper-head height interval starting0.58H; constrain its derivative so longitudinal rows remain ordered. Do not extend face creases into the crown. Reference eyebrow strip is thicker centrally with a near-linear lower edge: thickness0.012H, rise0.025H, no extra baseline bow. Neutral rendered mouth is wider than reference; reduce half-width to0.065H and shift its center to0.150H, keeping relative lip peaks and stable-chin dynamics. Sparse lip-depth rays through the open seam hit the rear cavity and are not valid surface-fit errors. Rear eye pockets use32 angular samples, front aperture plus two identical ellipse sections behind the minimum rim depth. Oral back uses4 rings with two equal rear sections at fixed depth planes. Keep root-connected91 ear membrane; validate all topology, containment and native views before retention.
+
+耳根的第一段面片应顺着脸侧切线向后转，再逐渐放平为浅弯耳壳；避免精确接缝虽焊上、却因切线突变鼓成结块。91白模显示根部仍有鼓起感，92将后扫轮廓改为平滑正弦转向并保留同一根部边。
+
+## 93：头顶空间弧线与耳根跨度复核
+92侧面显示仅调整顶部高度还不足以得到圆滑空间弧线：顶部深度不能在降低高度后再次套用较低面部截面，否则后缘会偏前而显得像斜直边。将头顶边界的高度和前后深度分别用少量语义控制点约束，在同一宽过渡区平滑连接额头。根部耳高区间略扩大到0.26–0.55H，以免实际采样截短耳壳。保留前述眉唇、简洁后腔、共享耳根和稳定下巴口型。
+
+## 94：保持额头前轮廓
+93侧面复核发现把整段额头深度混向顶部绝对深度会压凹前额。顶部空间弧线应只施加相对于原顶部深度的差值，并向下渐隐，不能把额头中线原有凸弧拉向头顶平面。保持头顶边界目标、原前额凸度及其他本批参数，复核侧面后才保留。
+
+## Candidate95 eye mapping
+- Visible original white catchlight: explicit normalized offset(-0.030,+0.010)H from iris center, half-size(0.009,0.007)H, surface offset0.0012H,5x5 square-to-disk quad patch. White ocular palette, actual geometry, no reference pixels.
+- Pocket transition setback0.004H, posterior straight length0.030H, width/height expansion1.04. Previous0.020/0.065/1.10 values are superseded. Rear remains behind iris; inspect actual clearances rather than claiming a shorter parameter proves no collision.
+- Iris concavity0.014H and outward depth slope-0.31; rim depth and aperture stay fixed. No global forward translation.
+
+## Candidate96 contour mapping
+Ear outward/posterior profiles replace one symmetric sinusoidal bulge. Transverse x uses sin(pi*u/2), posterior uses1-cos(pi*u/2); rootu=0 remains exactly the evaluated shell. Lower head outer band q>.78 gains sparse width-inset and posterior-depth profiles, fading out between heights.52 and.60. This changes only the return band, not the front chin-tip or mouth operator. Measurements guide authored ratios rather than copied vertices.
+
+## Final102 refinements
+The ear transverse posterior displacement uses root_depth minus the authored outer-depth curve, so the outer rim stays smooth even when the attached root varies. Lower return depth is an additive boundary correction, not an interpolation toward absolute depth; the field fades below0.285H, beneath the actual eye patch minimum~0.297H. The unchanged topology gates rejected96/97, and native oblique white views rejected98–100 flattening. All these revisions are captured in the authored brief rather than manual Blender editing.
+
+
+## Revision 132: wrapped open pinna
+User review identifies the ear as a three-dimensional wrapped sheet, readable in untextured white view, with an open rear. The previous duplicate front membrane offset by 0.2 mm is not that construction. Use one connected concave front sheet with an asymmetric upper-full/lower-small outline; roll the outer rim inward into a distinct short return sheet, leaving its inner rear edge open. No full-area duplicate reverse membrane, no cap, no solidified slab. Preserve welded face-root positions and original painted detail. This isolated ear iteration freezes all other 131 geometry, shader normals and mouth behavior. Side-face silhouette calibration follows in its own measured iteration, including the pointed rear jaw boundary.
+
+
+## Revision 133: measured profile envelope
+After the isolated ear change, calibrate the complete side silhouette. At normalized heights 0.08–0.15 the prior jaw back boundary was 0.034–0.039 H too far forward, while the nose-tip projection at height 0.28 already agreed. Correct the posterior jaw trajectory without pulling the frontal chin into a point. Add lower/upper lip-support volume and a shallow glabella-to-nasal transition instead of a flat face plus isolated protruding nose. Preserve mouth aperture, morph fixation and accepted central normal division. Use a small explicit front/back semantic station list, not reference mesh sampling in the generator. The last underside return must remain inside the continuous rear-jaw envelope; inspect the user-circled rear lower corner after subdivision.
+
+
+## Revision 134: posterior lower-jaw envelope continuity
+133 improved lip support and nasal bridge recession while keeping the nose tip projection; its side render still shows the circled tiny rear-bottom spur. Read-only section audit finds posterior deficit at heights 0.04–0.12. The low-height cross-section table still blends the old shallow back profile with the new semantic envelope. Correct that low station and lower-cheek width, leaving the frontal chin tip and underside height fixed. This is a parameter-source correction, not a post-export mesh patch. Compare left and right side silhouettes, then inspect front and mouth morph.
+
+
+## Revision 135: underside endpoint meets the jaw envelope
+134 audit shows the rear underside endpoint, not the cheek station, still controls the small low-height spur: changing the upper rear curve does not move the 0.025–0.04 H silhouette. Raise and extend the final underside station along the intended posterior jaw trajectory, keeping the front lip/chin tip fixed. Fade the under-chin center-depth bow to zero at the final open rear edge, so it cannot project a separate central spike behind the side-return edge. Verify the whole side silhouette after subdivision; no claim of success from parameter values alone.
+
+
+## Revision 136: retain the smooth join, calibrate underside arc length
+135 removes the observed posterior spur in the actual side render. Its lower underside turns upward too early compared with the reference envelope. Increase the middle underside depth stations and lower the final lift modestly; keep the free rear edge center-depth bow at zero using the actual final-station height. Preserve the flat-tip-free smooth join, front chin, ears, mouth and accepted normal division.
+
+
+## Revision 137: bounded chin follow and ear-root return
+The user now requests a small positive chin drop and slight facial elongation with MouthOpen, replacing a fully fixed chin as final intent. Add a separate adjustable 1.5 mm maximum downward lower-face follow, with smooth height and lateral falloff; preserve the existing lip opening and anti-folding gates. Verify neutral remains identical and the open pose is far below the early excessive jaw drop.
+
+Preserve accepted single-sheet inward-wrapped ear construction. The circled black wedge is localized at the lower ear-root return, not a full-ear shadow. Reduce return width smoothly near attachment endpoints so the free return border does not poke into the adjacent cheek. The broad cup remains. Refine original pigment into a narrower inner fold and upper arch with controllable sharpness, avoiding the old blurred thick ring. This iteration does not claim the remaining jaw corner, complete ear contour or eye-layer changes are finished.
+
+
+## Revision 138: rounded aperture and distinct eye-line layers
+The user describes the reference as rounded-corner and slightly narrower below, not a literal rectangle. Use a smooth superelliptic horizontal aperture exponent, independently controlled upper/lower arch powers, and retain shallow recessed eyes. Preserve the original iris and catchlight geometry. Keep eyebrow, rose upper-lid crease, thick upper lash ribbon and outer vertical liner as separate semantic features. Replace the scattered lower lash triangles with a coherent tapering outer liner, and keep the upper accent attached to the actual rim-depth surface. Do not reproduce broken reference brow triangles or apparent extraction defects. Verify frontal and side views and pocket clearance after this change.
+
+
+## Revision 139: locally fair the posterior jaw boundary
+The user marks a small remaining tangent break where the bottom rear edge turns into the side edge at 90 degrees. The large spur was removed, but sparse rear-return boundary samples still produce a corner after subdivision. Apply a bounded, distance-weighted fairing to only the low posterior open authoring boundary, before mirror/subdivision and normal calculation. Keep frontal chin/lips, eye/ear regions and all topology unchanged. Do not smooth accepted central shading normals away or hide the corner through lighting. Verify both exact side views at enlarged scale; a small residual corner is still a failure.
+
+
+## Revision 140: multiview pinna contour and orbital influence limit
+Sparse front/side sections show the generated lower-middle ear too broad and the upper posterior crown too far back, despite similar frontal peak width. Do not fit an ellipse: taper the lower envelope, trim the upper crown and return its depth toward the attachment. Preserve the accepted inward-wrapped structure and end-faded root. These are independent semantic controls; no reference geometry is used by generation.
+
+Read-only diagnosis also finds the orbital blend reaching the outer facial boundary beyond the actual eye corner: at normalized side height about0.44, the generated root is roughly0.03 H too far forward. Limit orbital blending smoothly outside the lateral eye corner rather than compensating by distorting the ear. This restores the posterior facial trajectory, with eye-front clearance and side clipping checked afterwards.
+
+Actual138 front-view review rejected the protruding C-shaped outer liner. Keep the rounded aperture but place the liner inward over the outer white margin, leaning toward a lower tapered endpoint; do not build a free external loop. Verify face winding after reversing the strip direction.
+
+
+## Revision 141: normalized rear cavity proportions
+Actual back white-model comparison shows the generated eye backs vertically flattened and the oral back smaller than the reference, independent of the dark back-outline rendering. Increase orbital rear ellipse height modestly and shift its center upward, retaining the original aperture and shallow front recess. Keep posterior depth inside the previously established short-pocket budget rather than reproducing a deep tunnel. Enlarge the oral middle/back ellipse while retaining a gently contracting planar rear cap, tiny neutral lip seam and inward-facing walls. Do not copy rough triangulation or nonplanarity from the unpacked reference; preserve containment and rear-planarity assertions and check actual side/back/open-mouth views.
+
+137 left-oblique review reduced the root wedge, but139 exact opposite-side review still exposes a dark root triangle. Shared ear-root vertices retain separate regional corner normals, which can diverge under shader outline extrusion. Use one area-weighted geometric normal at the actual welded attachment vertices on both face and ear; preserve all other normal partitions, especially the accepted facial centerline. Record the matched root count and inspect both sides before claiming resolution.
+
+140 matched only15 of28 attachment vertices using rounded coordinate keys. Use nearest actual welded vertices with a2-micrometre guard and exact expected-count assertion to cover both attachments reliably, then apply common geometric root normals.
+
+
+## Revision 142: correct the direction of the pinna return sheet
+Complete common-root normals did not remove the exact-side black root triangle on141; the normal-seam hypothesis alone is insufficient. Cross-section inspection finds the return was moving inward laterally but farther posterior in depth, retaining a front-facing lateral normal. The read-only reference reverse patch has predominantly opposite lateral normals and returns anteriorly toward the attachment. Correct the original return path to travel inward and anteriorly, preserving the open free edge and the user-approved wrapped-sheet construction. Add an area-weighted reverse-lateral-normal assertion, not a texture mask or disabled shader outline. Keep the endpoint fade, multi-angle silhouette parameters, complete root-normal matching and all other improvements. Check both exact sides and the white back view before claiming the black wedge fixed.
+
+
+## Revision 143: prevent the lower ear membrane folding forward
+The exact-side black triangle persists on142. Read-only exported-triangle inspection identifies negative lateral normals in the LOWER FRONT membrane, not merely its return lip. The independent posterior contour lies anterior to the actual skin attachment near the lower endpoint; this reverses the visible sheet. Preserve the measured silhouette target where feasible, but enforce a parameterized nonnegative posterior clearance from the actual root at all heights. Keep lateral width and the existing open wrapped construction. Verify all front triangle normals around the lower root in the generated mesh and inspect the actual NPR render. The return-normal fix alone is not counted as black-triangle resolution.
+
+
+## Revision 144: contain the return lip inside the actual ear basin
+143 removes the lower front-sheet reversal but a thin black return wedge remains at the endpoint in exact-side NPR. The return depth still uses a fixed budget larger than the local basin depth, crossing anterior to the attachment. Bound its anterior travel and inward span to 65% and75% of the actual local basin dimensions respectively. This preserves the free back edge without piercing the front/root envelope. Validate both exact sides and oblique views.
+
+
+## Revision 145: oblique-view return containment
+144 clears the exact-side black wedge but a residual reverse-face patch is visible at45 degrees. Independent width/depth fraction limits still allow the return to sit in front of the curved basin. Retain at least80% of local posterior depth and50% of lateral span so the free return edge stays behind the front sheet across oblique viewing. These explicit bounded parameters remain configurable. Recheck both side and45-degree renders before acceptance.
+
+
+## Revision146: five scoped refinements after145 owner review
+The owner accepts the overall direction and asks for ears, eyes, brows, a localized concavity in the frontal facial silhouette, and nasal bridge-to-tip versus tip-to-lip slope calibration. Other accepted form, centerline, wrapped ear topology and small chin follow are frozen as targets. This is a new unaccepted candidate;145 is not a result of this new request.
+
+Sparse original/reference cross-section diagnostics show the candidate half-width is short by about0.014H at height0.15H while the nose-tip maximum at0.28H is already close. Apply limited lower-mid contour support, not global face inflation. Lift upper nasal ramp slightly at0.32–0.36H, pull the bridge shoulder back around0.40–0.45H, preserve the tip and lower lip system. Measure resulting profile after subdivision instead of treating requested steepness as an unspecified coordinate slope.
+
+Use a slightly fuller lower ear and deeper but bounded cup, keeping the corrected posterior sweep and contained return. Independently authored pigment has a lighter, broader upper arch and a restrained curled inner fold. Do not load reference texture or geometry. Refine eyebrow center/thickness toward the healthy sparse reference ribbon, excluding unpacked broken triangles. Replace detached outer lash triangles with a contiguous tapered four-corner wing; make the pupil smaller/rounder while keeping the accepted catchlight and shallow recessed eye. Check native views before any success claim.
+
+
+## Revision147: decouple side-jaw fairing from frontal width
+146 improves the measured nasal ramp but the frontal low-cheek transition still has a local inward step. Comparing136/145 at the same sections identifies side-boundary fairing as an additional cause: it reduced lateral width by0.006–0.008H around heights0.15–0.18H while fixing a SIDE silhouette corner. That side-view task only needs depth/height smoothing. Preserve lateral x during fairing, with a separately explicit lateral relaxation parameter default0, while retaining depth/height smoothing. Reduce the compensatory width increase at0.12H and add a gentle0.16H support station. Do not undo the accepted side-jaw smoothness or inflate the whole face. Verify actual frontal and exact-side curves after generation.
+
+The147 ear pigment also connects the upper arch and inner fold with a short, bounded, independently authored curved fork; this avoids the previous lone C-stroke appearance while preserving light lobe color. It is procedural color, not imported reference pixels.
+
+
+## Revision148: structure-first owner review
+Inspect white and wireframe before rendered pigment. Preserve the accepted independent eyebrow, frontal silhouette, nasal ramp, center division and 1.5 mm maximum chin follow. Both ears change symmetrically. Their lower attachment should lean anteriorly, the hollow sheet should wrap farther inward, and its independent pigment/UV should describe a broad inner fold instead of a straight faint line. Keep root connectivity, no sealed solid ear and no crossing return wedges.
+
+The posterior lower face boundary must follow a continuous inward收束 curve from chin to ear; this is a boundary placement issue, not a painted line or global head narrowing. Independent read-only diagnostics show excess lateral extent at the rear boundary around0.10–0.24H even though the front silhouette is accepted. Increase only the far-back return inset with bounded smooth profiles. Root-depth transitions are separately calibrated around the ear attachment.
+
+The three indicated eye-adjacent shapes are the upper lash/liner, upper-lid fold, and lateral outer liner; the upper independent brow is frozen. Add attached tapered peaks to the lash ribbon and a short tapered eyelid fold, retaining meaningful geometric layers in white mode. The lower aperture should be a rounder arc, with corner positions and upper span preserved; the user's green line is approximate, not geometry to trace.
+
+Read-only inspection identifies a shallow annular iris region, a separate small recessed pupil patch, a planar white catchlight, plus a lower iris sheen patch sharing eleven exact boundary positions with the main iris. That lower patch is a contiguous region split by authoring/UV structure, not evidence of an extra free-floating layer. The white pocket patches likewise share fourteen and nine boundary positions. Raw mesh components are split and cannot establish an exact global count of three/four layers. Replace the single square-grid iris with a low-depth radial annular sheet surrounding an independently recessed pupil, with a separate catchlight and pupil accent. Do not make a protruding sphere or a deep solid cylinder. Original colors only; no reference vertices, UVs, pixels, adjacency, names or file paths in generator inputs.
+
+Acceptance: inspect front/side/rear white and wire; demonstrate separate eye layers and retained shallow inset; no degenerates or new ear-root wedge; preserve frozen body/hair, mouth regression and actual source manifest. Then inspect original pigment/render, run aggregate tests and durable preservation. This is an unaccepted candidate until actual runtime checks and owner's visual review.
+
+Implementation checkpoint148 isolates eye layers and ears first. Rear-boundary diagnostics are preserved; large existing-band inset violates positive lateral ordering and would narrow the accepted front silhouette, so it is NOT applied in this candidate. A connected posterior return strip must be evaluated separately before final batch closure.
+
+
+## Revision149: posterior return without shrinking the accepted front
+A stronger deformation of the existing side band fails positive lateral ordering and changes the accepted frontal width. Instead extend only the actual lower posterior open boundary with a connected inward return strip. Original exterior vertices stay fixed, outer rim crease preserves their boundary behavior through subdivision, and new vertices remain inside the old lateral envelope. A short posterior offset gives correct back-facing winding without a coplanar overlap. The end fades back into the existing rim below the ear root; no independent floating outline. Inspect white back/side and full mouth motion to detect inversion or attachment gaps.
+
+Native148 white/wire confirms separated radial iris, recessed pupil and catchlight, but frontal lash peaks and lid-fold width remain visually weak. Increase attached ribbon thickness and peak span modestly, enlarge lateral liner, and soften crease pigment. Do not change the accepted independent eyebrow.
+
+149 failed the existing front-normal assertion for the enlarged outer lash wing; no model was delivered.150 replaces the potentially self-crossing four-corner wing with an attached three-corner taper and preserves explicit bilateral winding. The posterior return fades to zero before the ear-root interval, preserving the actual shared root chain instead of shifting its endpoint. All generated outputs remain creation-only.
+
+151 corrects a native150 eye-stack occlusion found after structure checks: the inherited upper skin lid extended0.028H into the aperture while the lash ribbon was only1.1mm thick, exposing skin crescents above the iris. Keep the aperture contour fixed, shorten hidden skin coverage to0.010H and use a2.3mm attached lash band to cover its edge. This is an actual layer overlap correction, not an eye-wide scale change. Verify front and oblique views before completion.
+
+152 follows actual151 front-view verification: the inherited rim-only lash depth buries upward tapered peaks in the adjacent skin. Place each ink vertex just above the actual local skin or old rim, whichever is forward, using its actual adjusted height. Preserve the aperture. Replace the overly regular eyelid-fold arch with four explicit normalized height controls for a tapered, gently angular plateau. This correction must pass native front/side/white/wire inspection rather than assuming code changes are visible.
+
+153 final scoped calibration after152 actual front view: the peaks are now visible but the upper ink ribbon remains thinner than the measured reference upper-liner region (height span about0.046H). Use a4mm band and4.5mm maximum attached peak while retaining the unchanged aperture and independent brow. Sharpen the independently drawn inner-ear fold core without copying pixels. Reduce the lowest rear inset after sparse section analysis showed an inward overshoot at0.06–0.10H, preserving the successful mid-jaw correction and unchanged original exterior vertices.
+
+154 is required by actual153 oblique WHITE-mode inspection: per-vertex max-projection onto skin creates a warped upper ribbon with visible slivers despite frontal render improvement. Replace this heuristic for the upper liner and its attached wing with one shallow sloped semantic plane, following independently measured upper-liner placement. Keep lower/outer lateral liner at the validated rim depth. This yields coherent sheet geometry rather than using pigment to conceal folds. Verify oblique white, exact side and render before closing the batch.
+
+
+## Candidate155: diagnose before repair after owner rejected154
+The six marked views identify actual geometry relationships, not a general request for extra detail. Preserve accepted independent brows and mouth follow. The current ear lower root remains posterior because the generator conflates the open rear face boundary with the anterior ear attachment. Read-only shared-position diagnostics show distinct anterior attachment and posterior return chains in the reference, meeting near the lower lobe. Its back is a broad wrapping sheet, not our narrow return strip. Current return-depth cap0.20 is an obsolete recipe assumption, not a safety requirement.
+
+First repair the ear anterior root profile and fuller return with original semantic controls. The lower root must lead forward relative to the middle attachment. Maintain one connected root chain, monotonic surface progression, a hollow free back edge and no third face at a root edge. Broaden the reverse-facing sheet while keeping it separated from the front basin. Verify side, rear and oblique white/wire before judging pigment. Revisit the posterior jaw-to-ear return transition after this structural correction.
+
+The eye review remains OPEN: current three equal pointed teeth do not match the tapered multi-direction upper liner. The pink fold and lateral purple strip require independent silhouettes, and lower aperture and actual iris/pupil/highlight layers need matching white/wire views. Do not declare the whole review resolved by technical tests or by this first ear-only candidate.
+
+155 read-only reference adjacency correction: the two iris color fragments weld into ONE continuous disk with a single outer boundary, a central recessed vertex and a narrow peripheral band. Earlier148–154 incorrectly inferred an annulus and put the pupil behind a hole. Correct the original procedural iris to a shallow continuous disk, then place the separate pupil sheet in front of its central depression. Use original32-segment geometry, no imported reference indices or vertex coordinates. Inspect fan/bevel topology in white/wire and depth ordering from the side. The earlier 3/4-layer guess remains unverified as a global layer count. Upper lash peaks must lean in different directions with unequal heights, not three identical upward teeth; keep editable silhouette controls.
+
+156:155 side WHITE still lacks the reference rolled outer ear rim. Section diagnostics show a steep root, a broad middle basin, and a short steep outer return; the previous single sinusoidal sweep instead spreads curvature across the whole ear. Replace with independent original normalized outward/depth profiles, add an explicit outer support row and preserve monotonicity. Rear wrap must extend medially beyond the anterior attachment width while staying posterior: a width fraction below1 incorrectly prevents this. Restore shallow anterior back-return depth and increase medial wrap, rather than pulling the entire back sheet toward the front.155 continuous iris topology is retained.
+
+157 eye-adjacent silhouette correction: the owner circled the graphic upper eyelash band, pink lid fold and purple lateral edge, not the independent eyebrow. Replace repeated parameterized teeth on an arch with an original editable simple polygon: unequal directional tips, tapered inner corner, broader outer flare and a separate shallow purple outer wing. Keep a coherent sloped thin-sheet depth, not a projected warped ribbon. Pure tests verify bilateral winding and no outline self-intersections; white and wire must verify the actual sheets before rendered review.
+
+The156 side white view confirms the new rim is readable, but the lower posterior transition still has a separate notch. Connect the first lower back-return edge to the adjacent existing facial boundary edge with one original rear-facing bridge triangle per ear. This closes the missing lower wrap transition without adding a third face to the anterior ear-root chain or moving the accepted front outline. Verify the new shared lower seam and rear silhouette.
+
+158:157 front render shows an overlong blunt inner lash extension; shorten the inner semantic outline and keep unequal tapered tips. Measured candidate ear sections remain too wide around the lower/middle lobe; slightly reduce outward span and increase upper/lower asymmetry. The rear wrap is too medial at upper heights after applying a constant width fraction. Use a separate height-varying wrap profile: fuller lower wrap and progressively shallower medial return toward the top. Preserve the now-readable steep outer rim and lower rear bridge. Original pigment is sharpened only after white geometry review.
+
+159 closes the remaining marked rear contour discrepancy observed in158 rear render: the innermost posterior chin row is almost horizontal, leaving a flat U instead of the reference rounded V-like收束. Lower only the center of the last posterior chin row with a smooth bounded profile, preserve its lateral anchor and all earlier/front rows, and reduce excess rear-return lift. This is a geometric rear-boundary change, never a painted line. Preserve1.5mm mouth follow and verify side white does not create a new spur.
+
+161: actual160 front preview rejected the broad lateral-wrap experiment because it introduced cheek indentations. Restore159 lateral geometry and strict frontal winding; do not keep160 just because its pure tests and native import passed. Diagnose the local depth profile instead: the0.20–0.26H posterior-depth valley sits behind the forward lower ear root, creating the visible oblique bulge. Fair only this local depth valley into the unchanged lower root, preserving all lateral width stations and the anterior face. Check actual front silhouette as well as side/oblique before accepting this hypothesis.160 remains rejected experiment history.
+
+162:161 preserves the front but the left45 silhouette retains an overly vertical shoulder immediately below the ear. Continue the local depth fairing down to0.15–0.20H, allowing a continuous diagonal收束 into the unchanged lower ear anchor. Keep lateral widths and all161 facial-feature geometry. Judge actual side and oblique silhouette together, not a single sparse rear-boundary number.
+
+163 scoped mouth diagnosis:19actual10-degree baseline views show insufficient lower-lip roll and excessive upper/lower edge depth separation. Restore a small continuous lower-lip bulge, bring lip aperture edge depths closer while retaining slight upper prominence, and reduce the lifted smile-like corners. Preserve eye geometry, pupil disks, accepted independent brow and all other162 controls. This first experiment changes only mouth relief; chin underside and other owner requests remain pending and must not be called solved. Compare neutral0/±10...±90, then mouth morph clearance, before accepting.
+
+164 follows the actual19-angle close review of163: lower-lip central depth is now slightly excessive and its broad flat lateral envelope still lacks a rounded side roll. Lower the mound center and give upper/lower lips separate Gaussian lateral widths rather than one super-Gaussian plateau. Keep the aperture width and tiny neutral gap; only change relief footprint. Separately fair the posterior jaw boundary across a taller local band with more bounded iterations; preserve zero lateral relaxation to protect the accepted front silhouette. Inspect60-degree lip outline and50–90-degree posterior chin turn in actual white/wire and rendered views. All earlier ear and eye-accent work remains pending.
+
+165:164 failed the existing local jaw displacement bound and produced no valid model. Retain the bound: uniformly scale the proposed posterior-boundary fairing displacement field to at most0.018H instead of allowing the8-iteration request to exceed0.02H. Uniform scaling preserves relative smoothing weights; report proposed/applied displacement. Do not remove or loosen the assertion. Also correct the separately diagnosed mirrored ear-bridge winding: preserve directed root/rim order rather than a world-y normal heuristic. Recheck opposite edge directions and actual black triangle appearance; other ear richness and three accents remain pending.
+
+166:165 passed native validation and removed the measured ear-bridge winding conflicts, with the prior side black triangle absent in the inspected view. Its posterior chin edge still has a visibly straight run and hard corner. The posterior return currently assigns crease1.0 to its open rim: test a localized0.35crease there while retaining facial center/eye crease groups and jaw corner-normal controls. Preserve actual mouth geometry from165. Render-only mouth seam color should be authored procedurally around the existing UV seam with narrow fading coverage; it does not replace the lip surface, cavity or shader outline. This addresses the broken gray subpixel neutral seam separately from geometric relief.
+
+167 diagnoses a geometric chain conflation rather than merely a crease: front ear attachment was advanced, while the existing posterior jaw strip still has only a uniform0.007H return. Independently deepen that posterior strip with a bounded height-weighted profile, leaving front face/ear-root sampling and accepted eyes unchanged. Shorten only the last bottom return depth modestly and let the inner posterior ear sheet retain more of the outer bowl depth so the open edge can rise smoothly toward it. Do not globally change lateral widths or repeat the rejected160 front U-turn. Verify back opening, side silhouette, directed seams and oral clearance.
+
+168:167 improves mid-jaw posterior depth but exposes an unacceptable notch under the ear in actual90-degree render. Do not accept167 visually. Read-only patch bounds identify why: the lower pinna outside sheet must extend much farther posteriorly than its anterior root; the current sine-tip membrane collapses that lower depth too quickly. Introduce original asymmetric lower-arc fullness and a bounded lower-posterior sweep while keeping the fitted anterior roots fixed. Coordinate the below-ear posterior strip using a smoother weight profile. Validate winding and no front/side notch; do not hide the notch with shading.
+
+169:168 still exposes an ear-underface notch in actual side view. The last posterior return control interval goes directly from0.233H to0.271H while its inset/offset fades tozero at0.26H, so subdivision retracts the last open-boundary neighbor too far anteriorly. Add one meaningful whole quad-ring support level at1.6045m between1.599 and1.608, keeping eye and mouth patch anchors selected by height.3.5–5.5mm spacing is intentional ear-root curvature support, not duplicate near-coincident edges. Extend the posterior inset taper to the existing anterior root height instead of ending between unsupported rows. Reassess the accepted eye aperture and pupil geometry,front silhouette and neutral mouth before keeping the new support. Do not accept a mere numerical depth improvement if the notch remains.
+
+170: Actual169 side-angle review shows the ear-underface notch substantially reduced but a lower posterior jaw angular transition remains. The current fairing occurs before adding the posterior return strip, so the newly created exposed boundary has not been faired. Add a separate bounded relaxation of that final posterior boundary before subdivision and ear-root fitting, preserving x positions and all accepted front ocular geometry. Limit this additional adjustment to0.008H (1.888mm), below0.27H and behind -0.12H; record it independently. Keep mouth geometry, eye aperture, iris, pupil and existing center/side creases unchanged. Inspect white/wire and every10degree render; procedural tests alone do not accept appearance.
+
+171: Refine the three explicitly rejected eye-adjacent accents as thinner curved shapes while preserving the independent brow and accepted aperture/iris/pupil geometry. Replace the block-like upper lash with an original arched tapered outline, refine the outer corner accent, and narrow the upper fold. Enrich original ear pigment with coherent fork/helix/lower-lobe transitions rather than random strokes, keeping the hollow sheet topology and bridge winding. The169 19-angle comparison and sparse diagnostic also show the lip seam slightly too shallow, upper relief too low and lower peak slightly too high: deepen neutral seam by0.002H, raise upper relief by0.004H and lower lower-lip relief center by0.005H. These are bounded semantic adjustments; preserve narrow rest gap and1.5mm chin follow. Review geometry before rendered style and do not call pure tests aesthetic acceptance.
+
+171 additional170 side-view finding: the remaining lower-posterior silhouette knee is produced by the center of the last underside station, which is intentionally excluded from lateral boundary fairing. Reduce that station’s center drop from0.018H to0.006H (2.832mm upward change), leaving anterior chin and mouth-follow amplitude fixed. This targets the actual silhouette source rather than raising the local fairing displacement limit. Verify both profiles and front contour.
+
+172:171 removes the posterior chin knee and improves the three eye accents, but the exact10degree contact comparison still shows flatter lip definition near±60degrees. Read-only sparse lateral surface diagnostics identify the cause: center lip depth is within about0.5mm, while shoulders at0.02–0.04H lateral remain about0.8–1.8mm too recessed. Do not push the center lip outward indiscriminately. Broaden the original upper/lower Gaussian lip relief and add a small center-faded shoulder support, bounded by0.003H. Keep neutral seam, independent brow, accepted eye aperture/pupil, ear topology, nose and chin motion unchanged. Validate the new local surface field and repeat native angular inspection. Reference vertices are diagnostic only, not production data.
+
+173 controlled local experiment:172 improves measured lip geometry but the±60degree rendered ridge remains weak. Reference read-only normal diagnostics show separate lip/cheek normal islands; do not copy their custom normals or assume extraction artifacts are desired. Test geometry-derived corner-angle weighting in the mouth neighborhood instead of area-dominated averaging, with smooth bounded blend and the existing center partition intact. Outside the localized mouth region preserve normals. Compare actual outline and white surface before retaining. Separately, rear white/wire review shows the pinna return as a wide flat paddle instead of an angled wrap. Keep its outside contour/root fixed; narrow the lateral return cap from1.35 to1.15 of span and increase its anterior fold-depth fraction from0.12 to0.26, retaining open basin and correct directed bridge. Inspect both sides and the opening curve; revert any regression.
+
+174:173 corner-angle normal ablation produced no useful60degree outline improvement; revert that experiment and retain geometry-derived area normals. Lateral samples explain why matching a few depths is not sufficient: the lower-lip shoulder needs a controlled rolling edge whose tangent becomes locally steeper before joining the cheek. Replace broad Gaussian lateral relief with an original quartic falloff: lower half-width0.052H, upper0.075H, preserving center position within the bounded submillimeter correction. Increase lower/upper relief modestly to0.0112H/0.031H. Keep the small shoulder support and narrow neutral seam. No drawn mesh outline or copied reference normals. Verify the actual continuous lip ridge across±50–70degrees, not just scalar depth or shader settings.
+
+175 topology correction: Read-only triangle-facing diagnostics locate a small folded surface triangle at the mouth corner (front-facing skin has a locally reversed projected winding). The mouth patch maps an asymmetric outer rectangle to evenly spaced inner angles, so index spacing does not match the geometric direction of each boundary vertex. Replace that index-based correspondence with monotonically ordered polar directions computed from the actual authoring boundary. Use the same angles for aperture placement and depth offsets; keep shared boundaries, oral attachment, neutral gap and small motion. Validate all projected patch quads and both mirrors, then actual generated skin winding and angular renders. This is an original procedural topology fix, not a reference mesh transfer.
+
+176 material-control correction after all19 native175 angles: mouth/chin geometry now has a visible curved upper-lip ridge and no prior folded corner triangle, but10–20degree toon shading shows small dark spots around the lip shoulders. The full geometric lip derivative is being baked into the broad facial SDF threshold. Keep the lip geometry and normal-derived silhouette intact; attenuate only the high-frequency lip-detail contribution to the facial shadow-control field, similarly to the existing separately calibrated nose contribution. Use original analytic relief, not painted reference data. Verify geometry equality against175, protected eyes, and that the blotches disappear across the same angles and light sweep.
+
+177 regression correction from final white/wire review: the175 lip-boundary ray correspondence fixes the lip corner but also makes oral-bag rear sampling uneven, turning the previously regular elliptical back cap into a coarse faceted shape. Keep the inlet exactly attached to the fixed facial aperture. Gradually redistribute only deeper oral rings to evenly spaced ellipse angles, reaching a regular ellipse at the rear cap. Preserve front face geometry, approved eyes,176 shadow-control correction and the existing small mouth/chin motion. Test exact inlet invariance, bilateral symmetry, rear ellipse equation and ordered ring topology; inspect actual neutral and open mouth.
+
+
+## Candidate178 narrow eye-accent calibration
+Freeze the previously reviewed head and internal eye geometry. Replace flat ink sheets with original semantic thin rolled bands: bounded longitudinal bow, front ridge and finite return, unequal connected peaks, a shaped lateral band with short attached accents, and an asymmetric upper-lid fold. Diagnose white/wire before pigment. Do not reproduce unpacking holes or read any reference asset in the generator. Independent eyebrow, aperture, iris, pupil, catchlight, ear, nose, mouth and chin remain fixed.
+
+
+## Owner refinement 179: attached, layered eyelash sheets
+The owner reviewed 178 and asked to continue refining the eyelash/eye-edge features. Keep the accepted aperture, iris, pupil, highlight, independent eyebrow, face, ears and mouth unchanged. The upper dark band must sit close to the actual upper eyelid surface in top and oblique views rather than hover in front of the eye. Its sculptural effect comes from a modest folded sheet and unequal swept tips, not a large global stand-off. The outer vertical accent needs a narrow curved primary strip and a finer separated companion branch, with a small intermediate tip and a long legible slit; do not fill the slit into a broad three-toothed plate. Add the small isolated downward lower-outer lash indicated in the red-box wire image. Do not reproduce reference unpacking fragments. Review wire and white first, then front/oblique/top render under equal settings.
+
+Diagnosis: the previous planar ink depth is about 7.8–9.4 mm forward of the upper eyelid at five sample stations before adding bow/relief. The next original recipe binds the return side to the existing skin-lid surface and bounds local relief. No reference asset data enters generation.
+
+
+## Evaluated-surface attachment refinement180
+179 removes the gross planar stand-off, but actual white-mode review reveals local upper-band burial against the subdivided skin. Analytical depth alone is insufficient. Bind only the existing accent return rails to the evaluated generated skin and generated eyelid surfaces, preserving thin-sheet offsets, branching and all protected geometry. Record the maximum correction and sampled attachment clearance. No reference geometry is used.
+
+
+## Attached-root folded free edge181
+180 removes local skin intersections, but white/top views still have less readable broad folded-strip relief than the reference. Keep the upper rail attached, permit the lower free edge a bounded1.6mm forward flare, and retain only0.12mm local ridge relief. This is a folded sheet with an attached root, not a global translation of the band. The central tuft leans toward the outer corner. Actual multiview review remains required.
+
+
+## Root orientation182
+Actual181 white-mode comparison shows the flare was assigned to the wrong rail: the lower eyelid-facing boundary is the lash root, while the upper swept edge is free. Keep the lower root surface-attached and flare the upper free edge by the same bounded1.6mm, with the evaluated-skin collision correction retained. The accepted eye and face are unchanged. Verify top/oblique contact and a readable continuous folded face rather than an isolated thin bright lower rim.
+
+
+## Continuous narrow sheets183
+182 close render reveals that the integrated central tooth looks like a thick diamond, and the outer sheet has small disconnected-looking fragments. Preserve attached roots, separate the main upper sweep from one narrow curved overlapping tuft instead of swelling the entire main ribbon into the tuft. Subdivide only longitudinal gaps larger than the declared curvature sampling bound so the generated-surface fit cannot leave long flat chords cutting through skin. Keep thin return faces, an open lateral slit, and the isolated lower tuft. These are local eye-accent corrections; protected eye and head geometry remain unchanged.
+
+
+## Oblique free-tip depth184
+183 actual45-degree render exposed an overlong outer spear and a diamond-like side loop. The cause is evaluating the far-corner free tips and companion blade independently on rapidly changing cheek/orbital depth. Continue the local lid depth beyond the corner with a bounded support station; shorten the outer free tips, and give each lateral station a shared local support depth across its width/companion branch. Keep evaluated-skin collision checks, thin returns and the intentional slit. This does not change the accepted underlying eyelid or face.
+
+
+## Thin-sheet finish185
+184 removes the overlong oblique spear. Thin the return walls and ridge relief so intersecting layer roots do not read as beveled blocks. Keep visible depth through separate curved overlapping sheets, bounded1mm free-edge flare and the intentional side slit; the skin-facing roots remain attached. Preserve the lower isolated tuft and all accepted underlying head and eye geometry.
+
+
+The thin-sheet geometric audit caught a real defect before execution: the five-rail cross-section sampled the curved front at its ridge but spanned the back with one unbroken chord. At thin thickness that back chord can cross the curved front and reverse signed volume. The corrected six-rail section samples the back at the same ridge station, so front and return have matched curvature. Keep the strict front-facing/closed-volume checks; do not reverse normals to hide a self-intersection.
+
+
+##186 owner-feedback mapping
+- Upper-band occlusion:185 fits to generated skin+lid only. Its omitted iris rim is up to about3mm forward at sampled overlapping stations. Add obstacle-aware fitted-rail clearance against unchanged ocular geometry and verify facet interiors.
+- Missing fork: one x-monotone ribbon and min/max cross-section cannot represent an open inner notch. Build a separate inner swept blade with a measured tip gap, rather than adding a filled dent to the same outline.
+- Outer silhouette: replace the threadlike companion-loop proportion with a coherent narrow curved main band and subordinate tapered companion; keep small outward accents readable in oblique views.
+- Generate through Beaver, not a manual Blender edit. Do not declare repair from pure tests alone.
+
+
+##187 observed refinement
+Actual186 yaw -12.8/pitch -11.2, zoom.25: the iris rim no longer protrudes through the upper ribbon. The remaining outer loop gap is visibly wider than the reference, and the maroon wing has a block-like free end. Refine those silhouette parameters without modifying the approved iris or fitted collision margin.
+
+
+##188 observed refinement
+The187 outer slit still occupies too much of the eye-edge silhouette. Change only its separation parameter to a close companion spacing; retain the primary ribbon width and tapered wing. Verify long spans remain open and the local tip does not become an oversized hole.
