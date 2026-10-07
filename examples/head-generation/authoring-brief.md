@@ -345,3 +345,17 @@ Actual181 white-mode comparison shows the flare was assigned to the wrong rail: 
 
 
 The thin-sheet geometric audit caught a real defect before execution: the five-rail cross-section sampled the curved front at its ridge but spanned the back with one unbroken chord. At thin thickness that back chord can cross the curved front and reverse signed volume. The corrected six-rail section samples the back at the same ridge station, so front and return have matched curvature. Keep the strict front-facing/closed-volume checks; do not reverse normals to hide a self-intersection.
+
+
+## Owner correction186: collision-aware forked lashes
+The owner rejects185: the upper iris visibly cuts through the lash ribbon at an oblique close view; the outer vertical lash has the wrong thin-loop silhouette; the upper band lacks the reference-like inner fork. Inspect neutral white/wire before color.
+Preserve all previously accepted independent eyebrows, iris/pupil/catchlight geometry, aperture, ears, face, mouth and chin. Define the upper strip as an attached lid-facing rail with a folded free margin. Clearance must include the evaluated generated skin, skin lid and original eye surfaces, not just the skin. Test actual triangle surfaces, not merely vertex distances. Never raise the whole band by a constant offset to conceal a collision. Give the inner end two distinct swept tapering tips with an open notch, while keeping a continuous curved upper sweep and the existing outer upward tuft. Make the lateral main strip a close-following curved ribbon with outward small tapered tips and a narrow companion slit, not a wire-loop silhouette. Only these original accent modules may change.
+Reference is for visual structure analysis only; do not read/copy its vertices, UVs, textures or topology in the generator. Keep the original185 as a comparison and rollback point. Validate actual front, owner oblique(yaw -12.8/pitch -11.2), both45-degree, side and top close-ups in white/wire/render. User aesthetic acceptance remains pending.
+
+
+##187 visual follow-through
+186's actual owner-angle render removes the obvious iris-through-band horns and restores a visible inner fork. Its outer companion is still too widely bowed from the main band and its attached upper outer wing looks like a blunt plate. Keep the successful ocular/facet clearance and inner fork. Narrow only the outer slit, give the companion a slightly more readable sheet width, reduce the oversized middle triangular tip, and taper the upper outer wing into a swept point rather than a block. Flatten the excessive upper outer spike into a subtle upsweep. Verify actual matched white/wire/render again;186 is not declared accepted.
+
+
+##188 close companion silhouette
+Actual187 matched close-up improves the blunt upper outer wing but retains an oversized open side loop. Narrow the main-to-companion separation further, leaving a slender parallel slit along the long spans. Let the existing short outward middle tip approach the companion locally; do not enforce the old wide gap at that tip, which was producing the unwanted loop. Keep the tested ocular and facet clearance. The updated slit regression measures long-span gap and bounded tip approach separately; it does not waive collision checks.

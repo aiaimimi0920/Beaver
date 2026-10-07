@@ -1,7 +1,7 @@
 extends GutTest
 
 const COMPARE = preload("res://showcase_extensions/head_compare.gd")
-const CANDIDATE = preload("res://assets/aster/head_recovery_185/aster_definition.tres")
+const CANDIDATE = preload("res://assets/aster/head_recovery_188/aster_definition.tres")
 const REFERENCE = preload("res://assets/aster/head_recovery_900/aster_definition.tres")
 
 func make_comparison():
@@ -46,3 +46,19 @@ func test_exact_ten_degree_steps_preserve_other_view_state() -> void:
 	compare.set_angle(175.0, 0.0)
 	compare.step_angle(10.0)
 	assert_almost_eq(compare.state.yaw, -175.0, 0.0001)
+
+
+func test_saved_lash_collision_evidence_matches_runtime_asset() -> void:
+	var root := "res://assets/aster/head_recovery_188/"
+	var report = JSON.parse_string(FileAccess.get_file_as_string(root + "generation_report.json"))
+	assert_true(report is Dictionary)
+	if not report is Dictionary:
+		return
+	assert_eq(FileAccess.get_sha256(root + "aster_head.glb"), report.get("new_glb_sha256", ""))
+	var fit: Dictionary = report.get("eye_accent_surface_fit", {})
+	for side in [-1, 1]:
+		for label in ["Upper lash ", "Inner forked lash blade ", "Outer lateral eye liner "]:
+			var evidence: Dictionary = fit.get(label + str(side), {})
+			assert_true(evidence.get("includes_generated_ocular_obstacles", false))
+			assert_gte(float(evidence.get("minimum_sampled_obstacle_clearance_m", -1)), 0.000349)
+			assert_gt(int(evidence.get("sampled_roots", 0)), 0)

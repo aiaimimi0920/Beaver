@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "preset": "semantic_calibration_a_185",
+  "preset": "semantic_calibration_a_188",
   "note": "Explicit semantic calibration case; no character-name generation dependency.",
   "iris_half_width_m": 0.01534,
   "eye_lens_bulge_m": 0.0012,
@@ -931,7 +931,7 @@
     "chin_follow_lateral": 0.35,
     "ear_return_end_fade": 0.14,
     "eye_horizontal_power": 2.8,
-    "outer_liner_width": 0.0075,
+    "outer_liner_width": 0.014,
     "jaw_border_relaxation": 0.3,
     "jaw_border_iterations": 8,
     "jaw_border_max_height": 0.24,
@@ -1207,8 +1207,8 @@
   ],
   "upper_lash_outline": [
     [
-      -1.04,
-      0.004
+      -1.12,
+      0.027
     ],
     [
       -0.88,
@@ -1240,11 +1240,11 @@
     ],
     [
       1.1,
-      0.037
+      0.026
     ],
     [
-      1.18,
-      0.045
+      1.22,
+      0.033
     ],
     [
       1.07,
@@ -1285,28 +1285,28 @@
   ],
   "outer_lash_wing_outline": [
     [
-      0.63,
-      0.039
-    ],
-    [
-      1.0,
-      0.03
-    ],
-    [
-      1.11,
-      0.023
-    ],
-    [
-      1.18,
-      0.013
+      0.75,
+      0.033
     ],
     [
       1.02,
-      0.008
+      0.022
     ],
     [
-      0.87,
-      0.015
+      1.27,
+      0.014
+    ],
+    [
+      1.1,
+      0.016
+    ],
+    [
+      0.96,
+      0.018
+    ],
+    [
+      0.82,
+      0.026
     ]
   ],
   "lip_pigment_width_m": 0.0003,
@@ -1345,10 +1345,10 @@
     ],
     [
       0.55,
-      0.012
+      0.0065
     ],
     [
-      0.62,
+      0.64,
       0
     ],
     [
@@ -1361,13 +1361,13 @@
     ]
   ],
   "accent_surface_clearance_m": 0.00012,
-  "accent_lateral_branch_separation_H": 0.018,
-  "accent_lateral_branch_width_H": 0.0028,
+  "accent_lateral_branch_separation_H": 0.007,
+  "accent_lateral_branch_width_H": 0.006,
   "accent_lower_tip_t": 0.56,
   "accent_lower_tip_width_t": 0.07,
   "accent_lower_tip_drop_H": 0.011,
   "accent_lower_tip_thickness_m": 0.00018,
-  "accent_evaluated_clearance_m": 0.00022,
+  "accent_evaluated_clearance_m": 0.00035,
   "accent_lip_projection_m": 0.001,
   "upper_swept_tuft_outline": [
     [
@@ -1400,5 +1400,31 @@
     ]
   ],
   "accent_max_station_gap": 0.055,
-  "accent_corner_support_t": 0.97
+  "accent_corner_support_t": 0.97,
+  "inner_lash_fork_outline": [
+    [
+      -1.17,
+      -0.001
+    ],
+    [
+      -0.97,
+      0.014
+    ],
+    [
+      -0.77,
+      0.026
+    ],
+    [
+      -0.54,
+      0.029
+    ],
+    [
+      -0.72,
+      0.011
+    ],
+    [
+      -0.95,
+      0.004
+    ]
+  ]
 }

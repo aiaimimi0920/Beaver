@@ -129,6 +129,8 @@ def build_upper_accents(side):
     for key, name, color, offset, thickness, roll in [
         ("upper_lash_outline", "Upper lash ", INK, 0.0,
          STYLE["accent_band_thickness_m"], STYLE["accent_band_roll_m"]),
+        ("inner_lash_fork_outline", "Inner forked lash blade ", INK, .00012,
+         STYLE["accent_wing_thickness_m"], .00004),
         ("upper_swept_tuft_outline", "Upper swept lash tuft ", INK, .00020,
          STYLE["accent_wing_thickness_m"], .00006),
         ("outer_lash_wing_outline", "Attached outer lash wing ", (0.23, 0.065, 0.14),
@@ -159,7 +161,7 @@ def lateral_sections():
 def lateral_position(side, f, offset):
     _, top = eye_contour(side, .95, True)
     _, bottom = eye_contour(side, .55, False)
-    t = .95 - .23*f + .06*sin(pi*f)
+    t = .97 - .17*f + .055*sin(pi*f)
     x = side*H*(C["eye_center_x"]+C["eye_half_width"]*t+offset)
     return x, top*(1-f)+bottom*f
 
@@ -219,8 +221,22 @@ def build_lid_fold(side):
                 STYLE["accent_fold_roll_m"])
 
 
+def triangle_samples(a, b, c, divisions=4):
+    """Include facet interiors, where a curved obstacle can pierce a chord."""
+    for i in range(divisions+1):
+        for j in range(divisions+1-i):
+            u, v = i/divisions, j/divisions
+            yield tuple(a[k]*(1-u-v)+b[k]*u+c[k]*v for k in range(3))
+
+
+def clearance_shift(point, support_y, margin):
+    if support_y is None:
+        return 0.0
+    return min(0.0, support_y-margin-point[1])
+
+
 def fit_evaluated_accent_roots(shell):
-    """Fit original accent rails to this generated skin, never to reference data."""
+    """Fit accent rails outside generated skin, lids AND eye obstacles."""
     from mathutils.bvhtree import BVHTree
     bpy.context.view_layer.update()
     graph = bpy.context.evaluated_depsgraph_get()
@@ -230,7 +246,7 @@ def fit_evaluated_accent_roots(shell):
         vertices = [v.co.copy() for v in data.vertices]
         faces = [tuple(p.vertices) for p in data.polygons]
         for obj in PARTS:
-            if 'skin lid' not in obj.name:
+            if 'skin lid' not in obj.name and not obj.get('ocular_surface'):
                 continue
             offset = len(vertices)
             vertices.extend(v.co.copy() for v in obj.data.vertices)
@@ -255,10 +271,50 @@ def fit_evaluated_accent_roots(shell):
                 assert abs(shift)<.012,'Accent root requires a new structural design'
                 for v in group:v.co.y+=shift
                 moves.append(abs(shift))
+            # Curved iris rims can cross a long facet between clear vertices.
+            # Correct shared front/return columns together, then recheck interiors.
+            vertex_groups = {v.index: group for group in groups.values() for v in group}
+            maximum_facet_shift = 0.0
+            sampled_clearance = float('inf')
+            for iteration in range(8):
+                corrections = {}
+                sampled_clearance = float('inf')
+                for polygon in obj.data.polygons:
+                    ids = list(polygon.vertices)
+                    for j in range(1,len(ids)-1):
+                        tri = (ids[0],ids[j],ids[j+1])
+                        points = [obj.data.vertices[i].co for i in tri]
+                        needed = 0.0
+                        for sample in triangle_samples(*points):
+                            x,y,z = sample
+                            hit,_,_,_ = tree.ray_cast(Vector((x,-.5,z)),Vector((0,1,0)),1.0)
+                            if hit is None:
+                                continue
+                            sampled_clearance = min(sampled_clearance,hit.y-y)
+                            needed = min(needed,clearance_shift(sample,hit.y,
+                                         STYLE['accent_evaluated_clearance_m']))
+                        if needed < -1e-7:
+                            for i in tri:
+                                key = vertex_groups[i][0].index
+                                corrections[key] = min(corrections.get(key,0.0),needed)
+                if not corrections:
+                    break
+                assert iteration < 7, 'Accent facets still intersect generated obstacles'
+                for key,shift in corrections.items():
+                    assert abs(shift)<.012, 'Unexpected accent collision displacement'
+                    maximum_facet_shift = max(maximum_facet_shift,abs(shift))
+                    for vertex in vertex_groups[key]:
+                        vertex.co.y += shift
+            assert sampled_clearance >= STYLE['accent_evaluated_clearance_m']-2e-7
+            obj['minimum_obstacle_clearance_m'] = sampled_clearance
+            obj['maximum_facet_correction_m'] = maximum_facet_shift
             obj.data.update()
             assert all(p.area>1e-12 for p in obj.data.polygons),'Degenerate fitted accent'
             report[obj.name]={'sampled_roots':len(moves),'maximum_forward_correction_m':max(moves,default=0),
-                              'minimum_requested_skin_clearance_m':STYLE['accent_evaluated_clearance_m']}
+                              'minimum_requested_skin_clearance_m':STYLE['accent_evaluated_clearance_m'],
+                              'includes_generated_ocular_obstacles':True,
+                              'minimum_sampled_obstacle_clearance_m':sampled_clearance,
+                              'maximum_facet_correction_m':maximum_facet_shift}
         return report
     finally:
         evaluated.to_mesh_clear()

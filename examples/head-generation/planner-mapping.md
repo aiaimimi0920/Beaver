@@ -263,3 +263,18 @@ Actual181 white-mode comparison shows the flare was assigned to the wrong rail: 
 
 
 The thin-sheet geometric audit caught a real defect before execution: the five-rail cross-section sampled the curved front at its ridge but spanned the back with one unbroken chord. At thin thickness that back chord can cross the curved front and reverse signed volume. The corrected six-rail section samples the back at the same ridge station, so front and return have matched curvature. Keep the strict front-facing/closed-volume checks; do not reverse normals to hide a self-intersection.
+
+
+##186 owner-feedback mapping
+- Upper-band occlusion:185 fits to generated skin+lid only. Its omitted iris rim is up to about3mm forward at sampled overlapping stations. Add obstacle-aware fitted-rail clearance against unchanged ocular geometry and verify facet interiors.
+- Missing fork: one x-monotone ribbon and min/max cross-section cannot represent an open inner notch. Build a separate inner swept blade with a measured tip gap, rather than adding a filled dent to the same outline.
+- Outer silhouette: replace the threadlike companion-loop proportion with a coherent narrow curved main band and subordinate tapered companion; keep small outward accents readable in oblique views.
+- Generate through Beaver, not a manual Blender edit. Do not declare repair from pure tests alone.
+
+
+##187 observed refinement
+Actual186 yaw -12.8/pitch -11.2, zoom.25: the iris rim no longer protrudes through the upper ribbon. The remaining outer loop gap is visibly wider than the reference, and the maroon wing has a block-like free end. Refine those silhouette parameters without modifying the approved iris or fitted collision margin.
+
+
+##188 observed refinement
+The187 outer slit still occupies too much of the eye-edge silhouette. Change only its separation parameter to a close companion spacing; retain the primary ribbon width and tapered wing. Verify long spans remain open and the local tip does not become an oversized hole.
