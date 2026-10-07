@@ -62,22 +62,8 @@ def lip_shoulder_support(x, y):
     )
 
 
-def base_depth(x, y):
-    v = (y - Y0) / H
-    q = min(1, abs(x) / max(0.001, width(y)))
-    sections = []
-    for height, points in C["cross_sections"]:
-        section_x = q * points[-1][0]
-        sections.append((height, curve(section_x, 1, points)))
-    front = curve(v, 1, C["continuous_front_profile"])
-    back = curve(v, 1, C["continuous_back_profile"])
-    linear = C["continuous_lateral_linear"]
-    falloff = linear * q + (1 - linear) * q ** C["continuous_lateral_power"]
-    consistent = front * (1 - falloff) + back * falloff
-    blend = max(0, min(1, (v - 0.02) / 0.08))
-    blend = blend * blend * (3 - 2 * blend)
-    base = curve(v, 1, sections) * (1 - blend) + consistent * blend
-    z = Z0 + H * base + nose(x, y)
+def lip_detail_depth(x, y):
+    z = 0.0
     lip = exp(-((x / 0.02) ** 4)) * H
     z += (
         H * exp(-((x / (H * C["lower_lip_lateral_width"])) ** C["lower_lip_lateral_power"]))
@@ -95,6 +81,25 @@ def base_depth(x, y):
         * exp(-(((y - Y0 - H * C["mouth_height"]) / (H * C["mouth_seam_width"])) ** 2))
     )
     return z + lip_shoulder_support(x, y)
+
+
+def base_depth(x, y):
+    v = (y - Y0) / H
+    q = min(1, abs(x) / max(0.001, width(y)))
+    sections = []
+    for height, points in C["cross_sections"]:
+        section_x = q * points[-1][0]
+        sections.append((height, curve(section_x, 1, points)))
+    front = curve(v, 1, C["continuous_front_profile"])
+    back = curve(v, 1, C["continuous_back_profile"])
+    linear = C["continuous_lateral_linear"]
+    falloff = linear * q + (1 - linear) * q ** C["continuous_lateral_power"]
+    consistent = front * (1 - falloff) + back * falloff
+    blend = max(0, min(1, (v - 0.02) / 0.08))
+    blend = blend * blend * (3 - 2 * blend)
+    base = curve(v, 1, sections) * (1 - blend) + consistent * blend
+    z = Z0 + H * base + nose(x, y)
+    return z + lip_detail_depth(x, y)
 
 
 def rim_depth(x, y):

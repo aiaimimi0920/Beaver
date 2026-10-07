@@ -58,6 +58,19 @@ def store_mouth_deltas(obj, override=None):
         attr.data[v.index].vector = override(v) if override else jaw_delta(v.co.x, v.co.z, -v.co.y)
 
 
+def oral_ring_xy(x, y, index, count, ring, scale, upper_h, lower_h):
+    t = (y-rest_seam_y(x))/REST_GAP
+    xx = x*scale
+    yy = y+t*H*(upper_h if t>0 else lower_h)
+    blend = ring/max(1,len(C["oral_rings"])-1)
+    blend = blend*blend*(3-2*blend)
+    angle = -pi/2+2*pi*index/count
+    target_x = H*C["mouth_half_width"]*scale*cos(angle)
+    sy = sin(angle)
+    target_y = MOUTH_Y+sy*(REST_GAP+H*(upper_h if sy>0 else lower_h))
+    return xx*(1-blend)+target_x*blend, yy*(1-blend)+target_y*blend
+
+
 def build_oral_cavity(half_edge):
     # Half opening starts at bottom center and ends at top center. Mirror it
     # without duplicating either seam; all subsequent rings have equal counts.
@@ -74,8 +87,7 @@ def build_oral_cavity(half_edge):
         ids = []
         for k, (x, negz, y) in enumerate(edge):
             t = (y - rest_seam_y(x)) / REST_GAP
-            xx = x * scale
-            yy = y + t * H * (upper_h if t > 0 else lower_h)
+            xx, yy = oral_ring_xy(x, y, k, n, ring, scale, upper_h, lower_h)
             rear_depth = -depth(0, MOUTH_Y) if ring >= 2 else negz
             p = (xx, rear_depth + back, yy)
             ids.append(len(vs))

@@ -1,8 +1,8 @@
 {
-  "candidate": 175,
+  "candidate": 177,
   "calibration_keys": 168,
   "consumed_keys": 168,
   "unused": [],
   "missing": [],
-  "face_style_sha256": "7ca9d1d1de46eaa3bc2536f02ee7ba54dd8b307adef55ab4445c5a01ce8f470f"
+  "face_style_sha256": "5b87fc732a7028ac0f91c08fdd1cdfd943a330ad91984df314fedc5238535be0"
 }

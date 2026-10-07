@@ -2,7 +2,7 @@ extends GutTest
 ## Current head-review integration; full wardrobe acceptance stays a separate gate.
 
 const REVIEW = preload("res://showcase/aster_head_review.tscn")
-const ORIGINAL = preload("res://assets/aster/head_recovery_162/aster_definition.tres")
+const ORIGINAL = preload("res://assets/aster/head_recovery_177/aster_definition.tres")
 const WARDROBE_CONFIG = preload("res://addons/npr_character_frame/showcase/wardrobe_configuration.gd")
 
 func test_head_review_initializes_without_mutating_authoring_definition() -> void:

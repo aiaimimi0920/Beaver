@@ -1,13 +1,18 @@
-# Semantic head calibration candidate 175
+# Semantic head calibration candidate 177
 
-Original procedural recipe for the existing Beaver workflow. This is an in-progress review candidate, not a completed or visually accepted product.
+Original procedural recipe for the existing Beaver workflow. This is a runnable head-review candidate; owner aesthetic acceptance and whole-character acceptance are separate gates.
 
-The current batch begins from the owner's candidate 162 review. It preserves the accepted eye aperture, iris, pupil, catchlight, independent eyebrow, narrow neutral mouth gap, small chin-follow motion and frozen body/hair.
+The current batch starts from the owner’s candidate 162 feedback. It preserves the accepted eye aperture, iris, pupil, catchlight and independent brow, the narrow neutral lip seam, small chin-follow motion and frozen body/hair.
 
-Verified earlier improvements in this batch include corrected lower-ear bridge winding, linked close framing and panning, exact 10-degree view controls, a smoother posterior chin transition, refined eye-adjacent graphics and original ear pigment. Later lip experiments separately address central depth, lateral relief, curvature and patch correspondence. The ineffective candidate 173 local normal-weighting experiment was removed from candidate 174 onward.
+## Scoped changes
+- Corrected the directed lower-ear bridge edges that produced the black triangle.
+- Smoothed the posterior chin transition and eliminated the small side-profile knee.
+- Refined the three requested eye-adjacent accents and original ear pigment/return.
+- Calibrated lateral lip relief and rolling curvature using real 10-degree paired reviews.
+- Fixed mouth-corner patch correspondence; deeper oral rings retain a regular ellipse.
+- Separated lip-detail geometry from broad facial SDF shading to remove local shadow spots.
+- Added linked near framing, Shift-drag panning, framing reset and exact 10-degree steps to the example viewer.
 
-Candidate 175 specifically replaces index-spaced mouth aperture correspondence with ordered geometric rays from the asymmetric outer patch. This addresses a small projected folded skin triangle found at the candidate 174 mouth corner. The correction still requires generated-geometry and actual visual verification.
+86 pure tests pass. Generation and native validation passed. Actual 19-angle neutral comparisons, white/wire views, near framing, light sweeps and mouth motion were reviewed. Current whole-project aggregate status is recorded separately in review-results.md. Technical results do not establish final aesthetic approval.
 
-83 pure tests pass. Generation, native validation, aggregate tests, interactive comparison, preservation and final source publication are separately recorded in the review result. Do not interpret this test count as aesthetic acceptance or whole-character completion.
-
-See `review-protocol.md` for the natural-language-to-semantic-recipe workflow and review gates. Reference meshes, UVs, adjacency and pixels are not inputs to the generator or published source.
+The generator takes the original semantic profile, not reference mesh, UV, adjacency, pixels or character names. See review-protocol.md for the natural-language-to-recipe workflow. Rejected experiments are not silently declared successful: candidate 173’s ineffective local normal-weighting change was removed.

@@ -39,6 +39,8 @@ def bake_control_maps(out):
             nose_slope = (nose(x + e, y) - nose(x - e, y)) / (2 * e)
             nose_weight = STYLE["nose_sdf_scale"] * (0.6 + 0.4 * exp(-(((y - 1.61) / 0.009) ** 2)))
             zz -= nose_slope * (1 - nose_weight)
+            lip_slope = (lip_detail_depth(x+e,y)-lip_detail_depth(x-e,y))/(2*e)
+            zz -= lip_slope * (1-STYLE["lip_sdf_scale"])
             threshold = max(0.025, min(0.975, (atan2(-zz, 1) + pi / 2) / pi))
             flat_region = 0.6 < u < 0.95 and (py + 0.5) / 256 > 0.9
             slot = max(0, min(len(colors) - 1, int((u - 0.6) / 0.35 * len(colors))))

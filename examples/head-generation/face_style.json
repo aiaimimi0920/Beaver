@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "preset": "semantic_calibration_a_175",
+  "preset": "semantic_calibration_a_177",
   "note": "Explicit semantic calibration case; no character-name generation dependency.",
   "iris_half_width_m": 0.01534,
   "eye_lens_bulge_m": 0.0012,
@@ -1325,5 +1325,6 @@
     0.33
   ],
   "ear_helix_highlight_strength": 0.14,
-  "ear_lobe_curl_strength": 0.11
+  "ear_lobe_curl_strength": 0.11,
+  "lip_sdf_scale": 0.1
 }
