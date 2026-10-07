@@ -1,7 +1,7 @@
-# Candidate159 actual native review
+# Actual candidate162 review
 
-Observed: rear render, right90 white, left90 white, front wire, right45 white, front MouthOpen0.5/1, left45 render. Captures include actual view-state JSON. Candidate159 was generated and run, not substituted with a screenshot mockup.
+Inspected: front render; left45 render; right90 white; right45 white; front wire; full MouthOpen1 and neutral. Earlier155–159 additionally isolated ear front/back and layered eye construction. Each capture retains the actual scene-state JSON. The current runtime model was actually generated and launched.
 
-The continuous iris topology and geometric ear rim are materially changed from154. The lower rear chin silhouette is no longer flat across the center. However, left45 render still exposes a side-face bulge below the ear. This is NOT visually accepted and the work continues. Current evidence does not prove exact all-angle likeness or zero intersections.
+162 preserves the159 front silhouette and removes the pronounced oblique shoulder below the lower ear seen in159/161. The ear rim is geometric and visible in white mode. Iris and pupil are separate shallow surfaces with corrected ordering. The current result remains an original approximation with material/shape differences; only the user can accept the aesthetic match. Recheck any further owner annotations instead of treating test success as visual approval.
 
-Body/Hair remain frozen. Optional Draco export and existing UID fallback warnings are not counted as zero-warning success. Full-character acceptance is out of scope.
+159 project aggregate failed during preparation from exhausted temporary storage, not a model assertion. The task resumed after safe cache deduplication and removal of reproducible Godot caches in completed workspaces. No source assets or reference files were deleted. Current aggregate result is tracked independently.

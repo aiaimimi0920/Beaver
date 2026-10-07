@@ -1,13 +1,13 @@
-# Parameterized NPR head recipe, progress candidate159
+# Parameterized NPR head recipe, candidate162
 
-The owner rejected154. This batch corrects diagnosed topology assumptions through155–159 and is a preserved progress checkpoint, not final visual acceptance.
+This revision follows the owner rejection of154 and corrects the actual ear, eye and rear-contour relationships. It is a candidate for owner visual review, not a claim of identical appearance or completed general-purpose character generation.
 
-Workflow: natural-language brief → reusable semantic recipe → existing Beaver generation → native MiDot/NPR white/wire comparison → rendered and mouth-motion checks. Root dot owns all roles; no new Codex engineering task or delegated model service. Reference geometry, UVs, adjacency and pixels never enter the generator. Separate read-only diagnostics inform semantic controls only.
+Workflow: natural-language brief → explicit original semantic recipe → existing Beaver generation → native MiDot/NPR white/wire comparison → rendered and mouth-motion checks. No reference geometry, pixels, UVs or connectivity enter the generator.
 
-Corrections: continuous shallow iris disk with a peripheral ring and separate pupil in front of its central depression, replacing the incorrect annulus/behind-hole pupil. Original graphic upper-lash polygons and purple wing replace repeated vertical teeth. Ear roots lead forward at the lower attachment, independent cross-section profiles produce a rolled rim, and a height-varying broad rear sheet plus lower bridge preserve an open hollow construction. The posterior chin row now has a rounded V-like rise rather than a flat U.
+The iris is a continuous shallow disk with a narrow peripheral band, with an independent pupil ahead of the central depression and a separate catchlight. This corrects the previous annulus/behind-hole interpretation. Upper lashes use original editable graphic outlines and a purple wing; the independent upper brow remains preserved. The ears use independently controlled outward/depth sections for a rolled rim, a height-varying medial reverse sheet, an anterior lower-root profile and a joined lower return. The posterior chin boundary has a rounded V-like收束 rather than a flat U.
 
-72 pure tests and native model checks passed. Aggregate evidence is tracked separately. Body/Hair, the independent eyebrow, nasal controls and1.5mm chin follow remain regression targets. The full character/wardrobe is not accepted.
+Actual159 review still showed a bulge below the ear.160 tested a broader lateral wrap and was visually rejected for new front-cheek indentations despite native import passing.161–162 therefore return to159 lateral topology and fair only the local posterior-depth profile into the lower ear root. Actual162 left45 render no longer shows the earlier bulging shoulder; front width and nose/brow/mouth controls remain unchanged. Owner aesthetic acceptance is still pending; do not reuse160 as the current recipe.
 
-IMPORTANT remaining visual issue: the final left45 render still shows an unwanted bulge in the side-face boundary immediately below the ear. The previous monotonic-lateral front-grid assumption may prevent a true cheek-to-back wrap. This checkpoint must not be called visually finished; continuation should diagnose and repair that transition, then reassess all marked views. Preserve this valid partial work before larger topology changes. Keep the PR draft; hosted CI and owner visual acceptance remain separate gates.
+72 pure tests and native162 validation pass. Full project aggregate, source push and durable backup have separate records in review-results.md. Body/Hair and1.5mm chin follow remain frozen/regression checked. Existing optional export warnings remain; no full-character, merge, release or production-deployment acceptance is implied.
 
-Run unittest discovery in this directory. bundle.py only packages the reviewed request for Beaver blender.start.
+Run unittest discovery here. bundle.py packages a Beaver blender.start request and does not execute Blender itself.

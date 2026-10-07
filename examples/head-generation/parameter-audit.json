@@ -1,5 +1,5 @@
 {
-  "candidate": 159,
+  "candidate": 162,
   "calibration_keys": [
     "brow_height",
     "brow_inner_fullness",
@@ -308,5 +308,5 @@
   ],
   "unused": [],
   "missing": [],
-  "face_style_sha256": "2670669412a071e708093a5fa5fc2f7977ac265e14d21bef79d2a1b9bd3d9b34"
+  "face_style_sha256": "8051520f224ee4f586530450cc24ec26421866462897eb6abd16a2be938fdbcb"
 }
