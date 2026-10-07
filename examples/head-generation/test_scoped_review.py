@@ -29,7 +29,7 @@ class ScopedReviewTests(unittest.TestCase):
         self.assertLessEqual(C["brow_thickness"], 0.011)
         self.assertTrue(0.7 < STYLE["iris_pupil_aspect"] < 0.9)
         self.assertTrue(0.20 < STYLE["iris_pupil_radius"] < 0.26)
-        code = Path(__file__).with_name("face.py").read_text()
+        code = Path(__file__).with_name("face.py").read_text() + Path(__file__).with_name("eye_accents.py").read_text()
         self.assertIn("Attached outer lash wing", code)
         self.assertNotIn("Attached lash accent", code)
         self.assertNotIn("Soft outer lash flick", code)

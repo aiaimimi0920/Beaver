@@ -226,3 +226,40 @@ The156 side white view confirms the new rim is readable, but the lower posterior
 176 material-control correction after all19 native175 angles: mouth/chin geometry now has a visible curved upper-lip ridge and no prior folded corner triangle, but10–20degree toon shading shows small dark spots around the lip shoulders. The full geometric lip derivative is being baked into the broad facial SDF threshold. Keep the lip geometry and normal-derived silhouette intact; attenuate only the high-frequency lip-detail contribution to the facial shadow-control field, similarly to the existing separately calibrated nose contribution. Use original analytic relief, not painted reference data. Verify geometry equality against175, protected eyes, and that the blotches disappear across the same angles and light sweep.
 
 177 regression correction from final white/wire review: the175 lip-boundary ray correspondence fixes the lip corner but also makes oral-bag rear sampling uneven, turning the previously regular elliptical back cap into a coarse faceted shape. Keep the inlet exactly attached to the fixed facial aperture. Gradually redistribute only deeper oral rings to evenly spaced ellipse angles, reaching a regular ellipse at the rear cap. Preserve front face geometry, approved eyes,176 shadow-control correction and the existing small mouth/chin motion. Test exact inlet invariance, bilateral symmetry, rear ellipse equation and ordered ring topology; inspect actual neutral and open mouth.
+
+
+## Candidate178 narrow eye-accent calibration
+Freeze the previously reviewed head and internal eye geometry. Replace flat ink sheets with original semantic thin rolled bands: bounded longitudinal bow, front ridge and finite return, unequal connected peaks, a shaped lateral band with short attached accents, and an asymmetric upper-lid fold. Diagnose white/wire before pigment. Do not reproduce unpacking holes or read any reference asset in the generator. Independent eyebrow, aperture, iris, pupil, catchlight, ear, nose, mouth and chin remain fixed.
+
+
+## Owner refinement 179: attached, layered eyelash sheets
+The owner reviewed 178 and asked to continue refining the eyelash/eye-edge features. Keep the accepted aperture, iris, pupil, highlight, independent eyebrow, face, ears and mouth unchanged. The upper dark band must sit close to the actual upper eyelid surface in top and oblique views rather than hover in front of the eye. Its sculptural effect comes from a modest folded sheet and unequal swept tips, not a large global stand-off. The outer vertical accent needs a narrow curved primary strip and a finer separated companion branch, with a small intermediate tip and a long legible slit; do not fill the slit into a broad three-toothed plate. Add the small isolated downward lower-outer lash indicated in the red-box wire image. Do not reproduce reference unpacking fragments. Review wire and white first, then front/oblique/top render under equal settings.
+
+Diagnosis: the previous planar ink depth is about 7.8–9.4 mm forward of the upper eyelid at five sample stations before adding bow/relief. The next original recipe binds the return side to the existing skin-lid surface and bounds local relief. No reference asset data enters generation.
+
+
+## Evaluated-surface attachment refinement180
+179 removes the gross planar stand-off, but actual white-mode review reveals local upper-band burial against the subdivided skin. Analytical depth alone is insufficient. Bind only the existing accent return rails to the evaluated generated skin and generated eyelid surfaces, preserving thin-sheet offsets, branching and all protected geometry. Record the maximum correction and sampled attachment clearance. No reference geometry is used.
+
+
+## Attached-root folded free edge181
+180 removes local skin intersections, but white/top views still have less readable broad folded-strip relief than the reference. Keep the upper rail attached, permit the lower free edge a bounded1.6mm forward flare, and retain only0.12mm local ridge relief. This is a folded sheet with an attached root, not a global translation of the band. The central tuft leans toward the outer corner. Actual multiview review remains required.
+
+
+## Root orientation182
+Actual181 white-mode comparison shows the flare was assigned to the wrong rail: the lower eyelid-facing boundary is the lash root, while the upper swept edge is free. Keep the lower root surface-attached and flare the upper free edge by the same bounded1.6mm, with the evaluated-skin collision correction retained. The accepted eye and face are unchanged. Verify top/oblique contact and a readable continuous folded face rather than an isolated thin bright lower rim.
+
+
+## Continuous narrow sheets183
+182 close render reveals that the integrated central tooth looks like a thick diamond, and the outer sheet has small disconnected-looking fragments. Preserve attached roots, separate the main upper sweep from one narrow curved overlapping tuft instead of swelling the entire main ribbon into the tuft. Subdivide only longitudinal gaps larger than the declared curvature sampling bound so the generated-surface fit cannot leave long flat chords cutting through skin. Keep thin return faces, an open lateral slit, and the isolated lower tuft. These are local eye-accent corrections; protected eye and head geometry remain unchanged.
+
+
+## Oblique free-tip depth184
+183 actual45-degree render exposed an overlong outer spear and a diamond-like side loop. The cause is evaluating the far-corner free tips and companion blade independently on rapidly changing cheek/orbital depth. Continue the local lid depth beyond the corner with a bounded support station; shorten the outer free tips, and give each lateral station a shared local support depth across its width/companion branch. Keep evaluated-skin collision checks, thin returns and the intentional slit. This does not change the accepted underlying eyelid or face.
+
+
+## Thin-sheet finish185
+184 removes the overlong oblique spear. Thin the return walls and ridge relief so intersecting layer roots do not read as beveled blocks. Keep visible depth through separate curved overlapping sheets, bounded1mm free-edge flare and the intentional side slit; the skin-facing roots remain attached. Preserve the lower isolated tuft and all accepted underlying head and eye geometry.
+
+
+The thin-sheet geometric audit caught a real defect before execution: the five-rail cross-section sampled the curved front at its ridge but spanned the back with one unbroken chord. At thin thickness that back chord can cross the curved front and reverse signed volume. The corrected six-rail section samples the back at the same ridge station, so front and return have matched curvature. Keep the strict front-facing/closed-volume checks; do not reverse normals to hide a self-intersection.

@@ -5,7 +5,7 @@ import hashlib
 import json
 from pathlib import Path
 
-MODULES = ["face", "eye_socket", "mouth", "ears", "shell", "textures", "glb_merge", "crease_rules"]
+MODULES = ["face", "eye_accents", "eye_socket", "mouth", "ears", "shell", "textures", "glb_merge", "crease_rules"]
 SOURCE_FILES = [name + ".py" for name in MODULES] + [
     "pipeline.py",
     "authoring-brief.md",
@@ -25,7 +25,7 @@ ASSET_FILES = [
     "face_map.png",
     "hair_ilm.png",
 ]
-OUTPUT_PREFIX = "assets/aster/head_recovery_177/"
+OUTPUT_PREFIX = "assets/aster/head_recovery_185/"
 
 
 def build_request(source_dir=None):

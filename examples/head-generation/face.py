@@ -226,13 +226,8 @@ def lash_outline_points(side, controls):
 
 
 def build_graphic_upper_lash(side):
-    for key, name, color, offset in [
-        ("upper_lash_outline", "Upper lash ", INK, 0.0),
-        ("outer_lash_wing_outline", "Attached outer lash wing ", (0.23, 0.065, 0.14), 0.00012),
-    ]:
-        points = lash_outline_points(side, STYLE[key])
-        vertices = [coord(x, y, upper_ink_depth(x, y) + offset) for x, y in points]
-        mesh(name + str(side), vertices, [tuple(range(len(vertices)))], color)
+    from eye_accents import build_upper_accents
+    build_upper_accents(side)
 
 
 def build_eyes():
@@ -279,38 +274,10 @@ def build_eyes():
                     )
                     ink.append(coord(x, y, lash_depth(x, y)))
             mesh("Lower lash " + str(side), ink, grid_faces(2, cols, side < 0), (0.12, 0.08, 0.075))
-        liner = []
-        _, top = eye_contour(side, 0.95, True)
-        _, bottom = eye_contour(side, 0.55, False)
-        for lane in range(2):
-            for i in range(9):
-                f = i / 8
-                t = 0.95 - 0.23 * f + 0.06 * sin(pi * f)
-                x = side * H * (C["eye_center_x"] + C["eye_half_width"] * t)
-                x -= side * lane * H * C["outer_liner_width"] * max(0.015, sin(pi * f)) ** 0.65
-                y = top * (1 - f) + bottom * f
-                liner.append(coord(x, y, lash_depth(x, y)))
-        mesh(
-            "Outer lateral eye liner " + str(side),
-            liner,
-            grid_faces(2, 9, side > 0),
-            (0.23, 0.065, 0.14),
-        )
-        fold_vertices = []
-        for lane in range(2):
-            for i in range(17):
-                t = -0.76 + 1.52 * i / 16
-                x, y = eye_contour(side, t, True)
-                taper = sin(pi * i / 16)
-                y = Y0 + H * curve(i / 16, 1, STYLE["lid_fold_height_profile"])
-                y += lane * H * STYLE["lid_fold_width_H"] * taper
-                fold_vertices.append(coord(x, y, depth(x, y) + 0.00035))
-        mesh(
-            "Tapered upper eyelid fold " + str(side),
-            fold_vertices,
-            grid_faces(2, 17, side < 0),
-            (0.76, 0.47, 0.45),
-        )
+        from eye_accents import build_lateral_accent, build_lid_fold, build_lower_tuft
+        build_lateral_accent(side)
+        build_lid_fold(side)
+        build_lower_tuft(side)
         brow = []
         for lane in range(2):
             for i in range(25):

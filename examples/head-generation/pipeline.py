@@ -6,7 +6,7 @@ from mouth import store_mouth_deltas
 from glb_merge import merge_face
 
 ROOT = Path(beaver_input("project.godot")).parent
-OUT = "assets/aster/head_recovery_177/"
+OUT = "assets/aster/head_recovery_185/"
 BASE = "assets/aster/head_recovery_49/"
 GUIDE = Path(beaver_input("authoring/head_generation_guide.md")).read_text()
 assert "去发侧脸轮廓检查" in GUIDE
@@ -87,11 +87,23 @@ report["shell_geometry_checks"] = {
 report["authoring_guide_sha256"] = hashlib.sha256(GUIDE.encode()).hexdigest()
 normal_checks = {}
 for obj in PARTS:
-    if any(tag in obj.name for tag in ["skin lid", "lash ", "Eye sclera", "eye liner"]):
-        weighted = sum(poly.normal.y * poly.area for poly in obj.data.polygons)
+    if obj.get("accent_front_faces") or any(tag in obj.name for tag in ["skin lid", "lash ", "Eye sclera", "eye liner"]):
+        front_ids = obj.get("accent_front_faces", range(len(obj.data.polygons)))
+        weighted = sum(obj.data.polygons[i].normal.y * obj.data.polygons[i].area for i in front_ids)
         normal_checks[obj.name] = weighted
         assert weighted < 0, "Reversed facial surface: " + obj.name
 report["front_surface_normal_checks"] = normal_checks
+from collections import Counter
+accent_checks = {}
+for obj in PARTS:
+    if not obj.get("accent_front_faces"):
+        continue
+    edges = Counter(tuple(sorted((a, b))) for poly in obj.data.polygons
+                    for a, b in zip(list(poly.vertices), list(poly.vertices)[1:] + list(poly.vertices)[:1]))
+    assert all(count == 2 for count in edges.values()), "Open accent return: " + obj.name
+    accent_checks[obj.name] = {"closed_edges": len(edges), "volume_m3": obj["accent_positive_volume_m3"],
+                              "front_y_area": normal_checks[obj.name]}
+report["eye_accent_geometry_checks"] = accent_checks
 from crease_rules import assign_creases, measure_crease_effect
 
 new_crease_edges, crease_counts = assign_creases(shell, front_count, H, Y0, width, C)
@@ -108,6 +120,8 @@ report["facial_crease"] = {
 from eye_socket import fit_pocket_clearance
 
 report["pocket_skin_clearance"] = fit_pocket_clearance(shell)
+from eye_accents import fit_evaluated_accent_roots
+report["eye_accent_surface_fit"] = fit_evaluated_accent_roots(shell)
 report["pocket_rear_closure"] = [
     {
         "name": o.name,
@@ -201,6 +215,9 @@ for part_index, part in enumerate(PARTS):
                 region += 100
             if poly.index >= count:
                 region += 200
+        accent_zones = part.data.attributes.get("AccentNormalZone")
+        if accent_zones is not None:
+            region += 1000 * (accent_zones.data[poly.index].value + 1)
         regions.data[poly.index].value = region
     for vertex in part.data.vertices:
         vertex.co.z -= 0.021

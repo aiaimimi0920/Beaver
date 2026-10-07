@@ -1,0 +1,1111 @@
+{
+  "files": {
+    "ears.py": "96e7c61adf169f9b4a6260082be90797d23fb912aab4530c81dfe14c29374bff",
+    "mouth.py": "a35b29585498a205f758b5c4c64e3afd47d05a5dfcba17ff98fd9de163d64de4",
+    "shell.py": "597947dcd0cc870abc50b23e074d45b6ca4cc293af9286501eef3263f0613f62",
+    "eye_socket.py": "801a85fb8e0e281cf529a2652c3a2528cb2502aaac3bdcd286de3ab8cea4823d",
+    "textures.py": "561315f181396f79ef16cbe47fea55e9c976628417e038b7f5c1124853bac1c5",
+    "crease_rules.py": "ea0fda4e68c331c73dfff672ea4a40ebf441324c502be070d9eb157c4e30c1d7",
+    "glb_merge.py": "367082b2b1cf0bc9edcc7424abd92811c721c6751afaabd8638b2be3d754db0f"
+  },
+  "calibration": {
+    "height_m": 0.236,
+    "origin_y_m": 1.544,
+    "chin_depth_m": 0.078,
+    "width_stations": [
+      [
+        0,
+        0.025
+      ],
+      [
+        0.03,
+        0.088
+      ],
+      [
+        0.07,
+        0.165
+      ],
+      [
+        0.12,
+        0.244
+      ],
+      [
+        0.16,
+        0.276
+      ],
+      [
+        0.2,
+        0.29
+      ],
+      [
+        0.3,
+        0.325
+      ],
+      [
+        0.45,
+        0.37
+      ],
+      [
+        0.6,
+        0.402
+      ],
+      [
+        0.75,
+        0.417
+      ],
+      [
+        0.85,
+        0.407
+      ],
+      [
+        1,
+        0.4
+      ]
+    ],
+    "nose_stations": [
+      [
+        0.19,
+        0,
+        0.045
+      ],
+      [
+        0.22,
+        0.016,
+        0.05
+      ],
+      [
+        0.25,
+        0.055,
+        0.066
+      ],
+      [
+        0.28,
+        0.0945,
+        0.064
+      ],
+      [
+        0.3,
+        0.095,
+        0.062
+      ],
+      [
+        0.34,
+        0.038,
+        0.041
+      ],
+      [
+        0.4,
+        0,
+        0.038
+      ]
+    ],
+    "eye_center_x": 0.222,
+    "eye_corner_y": 0.44,
+    "eye_corner_slope": 0.014,
+    "eye_half_width": 0.11,
+    "eye_upper_arch": 0.044,
+    "eye_lower_arch": 0.088,
+    "eye_upper_power": 0.38,
+    "eye_lower_power": 0.53,
+    "eye_inner_depth": -0.006,
+    "eye_outer_depth": -0.071,
+    "eye_rim_vertical_bulge": 0.012,
+    "iris_center_x": 0.2195,
+    "iris_center_y": 0.4295,
+    "iris_half_width": 0.065,
+    "iris_half_height": 0.077,
+    "iris_rim_depth": -0.0268,
+    "iris_plane_slope": -0.277,
+    "iris_concavity": 0.022,
+    "upper_cover": 0.01,
+    "lower_cover": 0.005,
+    "orbital_band_width": 0.28,
+    "mouth_corner_lift": -0.001,
+    "cross_sections": [
+      [
+        0,
+        [
+          [
+            0,
+            0
+          ],
+          [
+            0.018,
+            -0.001
+          ],
+          [
+            0.035,
+            0
+          ]
+        ]
+      ],
+      [
+        0.08,
+        [
+          [
+            0,
+            0.028
+          ],
+          [
+            0.08,
+            0.003
+          ],
+          [
+            0.14,
+            -0.035
+          ],
+          [
+            0.175,
+            -0.22
+          ]
+        ]
+      ],
+      [
+        0.16,
+        [
+          [
+            0,
+            0.071
+          ],
+          [
+            0.08,
+            0.035
+          ],
+          [
+            0.16,
+            0.008
+          ],
+          [
+            0.24,
+            -0.032
+          ],
+          [
+            0.26,
+            -0.26
+          ]
+        ]
+      ],
+      [
+        0.25,
+        [
+          [
+            0,
+            0.075
+          ],
+          [
+            0.08,
+            0.055
+          ],
+          [
+            0.16,
+            0.021
+          ],
+          [
+            0.24,
+            -0.008
+          ],
+          [
+            0.3,
+            -0.071
+          ],
+          [
+            0.31,
+            -0.32
+          ]
+        ]
+      ],
+      [
+        0.3,
+        [
+          [
+            0,
+            0.062
+          ],
+          [
+            0.08,
+            0.047
+          ],
+          [
+            0.16,
+            0.015
+          ],
+          [
+            0.24,
+            -0.015
+          ],
+          [
+            0.3,
+            -0.047
+          ],
+          [
+            0.325,
+            -0.34
+          ]
+        ]
+      ],
+      [
+        0.4,
+        [
+          [
+            0,
+            0.062
+          ],
+          [
+            0.03,
+            0.045
+          ],
+          [
+            0.06,
+            0.027
+          ],
+          [
+            0.09,
+            0.012
+          ],
+          [
+            0.16,
+            0.01605
+          ],
+          [
+            0.24,
+            -0.00992
+          ],
+          [
+            0.3,
+            -0.03509
+          ],
+          [
+            0.34,
+            -0.11214
+          ],
+          [
+            0.35631,
+            -0.35
+          ]
+        ]
+      ],
+      [
+        0.52,
+        [
+          [
+            0,
+            0.075
+          ],
+          [
+            0.08,
+            0.046
+          ],
+          [
+            0.16,
+            0.019
+          ],
+          [
+            0.24,
+            -0.002
+          ],
+          [
+            0.3,
+            -0.023
+          ],
+          [
+            0.34,
+            -0.041
+          ],
+          [
+            0.38,
+            -0.092
+          ],
+          [
+            0.4,
+            -0.35
+          ]
+        ]
+      ],
+      [
+        0.7,
+        [
+          [
+            0,
+            0.106
+          ],
+          [
+            0.08,
+            0.095
+          ],
+          [
+            0.16,
+            0.077
+          ],
+          [
+            0.24,
+            0.051
+          ],
+          [
+            0.3,
+            0.022
+          ],
+          [
+            0.34,
+            -0.011
+          ],
+          [
+            0.38,
+            -0.056
+          ],
+          [
+            0.4,
+            -0.12
+          ],
+          [
+            0.42,
+            -0.31
+          ]
+        ]
+      ],
+      [
+        0.85,
+        [
+          [
+            0,
+            0.085
+          ],
+          [
+            0.08,
+            0.075
+          ],
+          [
+            0.16,
+            0.053
+          ],
+          [
+            0.24,
+            0.02
+          ],
+          [
+            0.3,
+            -0.024
+          ],
+          [
+            0.34,
+            -0.07
+          ],
+          [
+            0.39,
+            -0.18
+          ],
+          [
+            0.405,
+            -0.27
+          ]
+        ]
+      ],
+      [
+        1,
+        [
+          [
+            0,
+            -0.009
+          ],
+          [
+            0.08,
+            -0.025
+          ],
+          [
+            0.16,
+            -0.055
+          ],
+          [
+            0.24,
+            -0.1
+          ],
+          [
+            0.32,
+            -0.16
+          ],
+          [
+            0.4,
+            -0.25
+          ]
+        ]
+      ]
+    ],
+    "brow_height": 0.567,
+    "chin_return_lift": 0.008,
+    "lower_lip_height": 0.118,
+    "upper_lip_height": 0.171,
+    "lower_lip_width": 0.02,
+    "upper_lip_width": 0.02,
+    "brow_thickness": 0.0105,
+    "mouth_height": 0.15,
+    "mouth_seam_recess": 0.017,
+    "mouth_seam_width": 0.006,
+    "lower_lip_relief": 0.0112,
+    "upper_lip_relief": 0.031,
+    "pocket_skin_clearance": 0.004,
+    "chin_front_lift": 0.007,
+    "chin_underside_stations": [
+      [
+        0.03,
+        0,
+        1.15
+      ],
+      [
+        0.1,
+        0.01,
+        1.6
+      ],
+      [
+        0.19,
+        0.03,
+        2.5
+      ],
+      [
+        0.223,
+        0.05,
+        3.7
+      ]
+    ],
+    "chin_return_boundary_inset": 0.9,
+    "brow_inner_x": 0.106,
+    "brow_outer_x": 0.304,
+    "brow_rise": 0.0255,
+    "mouth_rest_half_gap": 0.00065,
+    "face_center_crease_profile": [
+      [
+        0.04,
+        0
+      ],
+      [
+        0.12,
+        0.25
+      ],
+      [
+        0.2,
+        0.65
+      ],
+      [
+        0.26,
+        1
+      ],
+      [
+        0.38,
+        0.9
+      ],
+      [
+        0.52,
+        0.45
+      ],
+      [
+        0.7,
+        0.2
+      ],
+      [
+        0.9,
+        0
+      ]
+    ],
+    "face_side_crease_profile": [
+      [
+        0.06,
+        0
+      ],
+      [
+        0.16,
+        0.18
+      ],
+      [
+        0.3,
+        0.35
+      ],
+      [
+        0.55,
+        0.35
+      ],
+      [
+        0.75,
+        0.18
+      ],
+      [
+        0.9,
+        0
+      ]
+    ],
+    "face_side_crease_lateral_ratio": 0.94,
+    "face_side_crease_selection_tolerance": 0.025,
+    "nose_lateral_profile": [
+      [
+        0,
+        1
+      ],
+      [
+        0.4,
+        0.5
+      ],
+      [
+        0.8,
+        0.18
+      ],
+      [
+        1,
+        0
+      ]
+    ],
+    "nose_basal_profile": [
+      [
+        0,
+        1
+      ],
+      [
+        0.4,
+        0.72
+      ],
+      [
+        0.8,
+        0.24
+      ],
+      [
+        1,
+        0
+      ]
+    ],
+    "nose_flare_start_height": 0.25,
+    "nose_flare_end_height": 0.28,
+    "oral_rings": [
+      [
+        0,
+        1,
+        0,
+        0
+      ],
+      [
+        0.010593220338983052,
+        0.98,
+        0.0023728813559322033,
+        0.0018008474576271187
+      ],
+      [
+        0.10593220338983052,
+        2.15,
+        0.12,
+        0.105
+      ],
+      [
+        0.17,
+        2.0,
+        0.108,
+        0.09
+      ]
+    ],
+    "mouth_open_upper": 0.0127,
+    "mouth_open_lower": 0.038,
+    "mouth_corner_down": 0.0064,
+    "mouth_upper_falloff": 0.05,
+    "mouth_lower_falloff": 0.09,
+    "mouth_lateral_falloff": 0.2,
+    "chin_morph_fixed_height": 0.07,
+    "chin_morph_blend_height": 0.145,
+    "tongue_open_down": 0.025,
+    "ear_root_min_height": 0.26,
+    "ear_root_max_height": 0.53,
+    "top_warp_start_height": 0.58,
+    "top_boundary_drop_profile": [
+      [
+        0,
+        0
+      ],
+      [
+        0.26,
+        0.004
+      ],
+      [
+        0.46,
+        0.014
+      ],
+      [
+        0.65,
+        0.03
+      ],
+      [
+        0.75,
+        0.05
+      ],
+      [
+        0.87,
+        0.09
+      ],
+      [
+        0.95,
+        0.15
+      ],
+      [
+        1,
+        0.245
+      ]
+    ],
+    "mouth_half_width": 0.065,
+    "pocket_ring_samples": 32,
+    "pocket_body_width_ratio": 1.25,
+    "pocket_body_height_ratio": 1.5,
+    "pocket_transition_back": 0.004,
+    "pocket_body_length": 0.04,
+    "top_boundary_depth_profile": [
+      [
+        0,
+        -0.009
+      ],
+      [
+        0.26,
+        -0.031
+      ],
+      [
+        0.46,
+        -0.061
+      ],
+      [
+        0.65,
+        -0.104
+      ],
+      [
+        0.75,
+        -0.14
+      ],
+      [
+        0.87,
+        -0.196
+      ],
+      [
+        0.95,
+        -0.259
+      ],
+      [
+        1,
+        -0.311
+      ]
+    ],
+    "catchlight_offset_x": -0.039,
+    "catchlight_offset_y": 0.005,
+    "catchlight_half_width": 0.0135,
+    "catchlight_half_height": 0.009,
+    "catchlight_surface_offset": 0.005,
+    "catchlight_grid_resolution": 5,
+    "jaw_return_start_ratio": 0.78,
+    "jaw_return_width_profile": [
+      [
+        0,
+        0
+      ],
+      [
+        0.03,
+        0.001
+      ],
+      [
+        0.08,
+        0.003
+      ],
+      [
+        0.12,
+        0.0035
+      ],
+      [
+        0.2,
+        0.0025
+      ],
+      [
+        0.26,
+        0.0005
+      ],
+      [
+        0.29,
+        0
+      ],
+      [
+        1,
+        0
+      ]
+    ],
+    "jaw_return_depth_profile": [
+      [
+        0,
+        -0.006
+      ],
+      [
+        0.03,
+        -0.18
+      ],
+      [
+        0.08,
+        -0.28
+      ],
+      [
+        0.12,
+        -0.31
+      ],
+      [
+        0.2,
+        -0.35
+      ],
+      [
+        0.29,
+        -0.367
+      ],
+      [
+        0.4,
+        -0.35
+      ],
+      [
+        0.52,
+        -0.355
+      ],
+      [
+        0.58,
+        -0.36
+      ]
+    ],
+    "jaw_return_depth_fade_start": 0.22,
+    "jaw_return_depth_fade_end": 0.285,
+    "jaw_return_low_fade_start": 0.02,
+    "jaw_return_low_fade_end": 0.06,
+    "jaw_return_max_inset_ratio": 0.1,
+    "continuous_front_profile": [
+      [
+        0,
+        0
+      ],
+      [
+        0.08,
+        0.025
+      ],
+      [
+        0.12,
+        0.044
+      ],
+      [
+        0.18,
+        0.07
+      ],
+      [
+        0.25,
+        0.075
+      ],
+      [
+        0.3,
+        0.062
+      ],
+      [
+        0.4,
+        0.064
+      ],
+      [
+        0.45,
+        0.062
+      ],
+      [
+        0.5,
+        0.069
+      ],
+      [
+        0.6,
+        0.094
+      ],
+      [
+        0.7,
+        0.106
+      ],
+      [
+        0.85,
+        0.085
+      ],
+      [
+        1,
+        -0.009
+      ]
+    ],
+    "continuous_back_profile": [
+      [
+        0,
+        -0.006
+      ],
+      [
+        0.04,
+        -0.18
+      ],
+      [
+        0.08,
+        -0.235
+      ],
+      [
+        0.15,
+        -0.26
+      ],
+      [
+        0.2,
+        -0.275
+      ],
+      [
+        0.24,
+        -0.297
+      ],
+      [
+        0.26,
+        -0.309
+      ],
+      [
+        0.28,
+        -0.306
+      ],
+      [
+        0.32,
+        -0.319
+      ],
+      [
+        0.38,
+        -0.335
+      ],
+      [
+        0.44,
+        -0.343
+      ],
+      [
+        0.52,
+        -0.354
+      ],
+      [
+        0.6,
+        -0.35
+      ],
+      [
+        0.75,
+        -0.3
+      ],
+      [
+        1,
+        -0.25
+      ]
+    ],
+    "continuous_lateral_linear": 0.28,
+    "continuous_lateral_power": 24,
+    "jaw_normal_boundary_strength": 0.4,
+    "jaw_return_depth_strength": 0.2,
+    "ear_return_lip_width": 0.14,
+    "ear_outward_span": 0.095,
+    "ear_posterior_span": 0.112,
+    "ear_root_depth_base": -0.32,
+    "ear_root_depth_slope": -0.035,
+    "ear_upper_arc_bias": 0.065,
+    "upper_lip_edge_depth_delta": 0.002,
+    "lower_lip_edge_depth_delta": 0.002,
+    "ear_upper_fullness": 0.32,
+    "brow_inner_fullness": 0.25,
+    "chin_underside_center_back": 0.016,
+    "chin_underside_roundness": 0.35,
+    "chin_follow_down_m": 0.0015,
+    "chin_follow_height": 0.12,
+    "chin_follow_lateral": 0.35,
+    "ear_return_end_fade": 0.14,
+    "eye_horizontal_power": 2.8,
+    "jaw_border_relaxation": 0.3,
+    "jaw_border_iterations": 8,
+    "jaw_border_max_height": 0.24,
+    "jaw_border_back_threshold": -0.12,
+    "ear_lower_taper": 0.2,
+    "ear_upper_trim": 0.14,
+    "ear_upper_depth_return": 0.027,
+    "orbital_lateral_fade": 0.16,
+    "pocket_center_lift": 0.012,
+    "ear_root_normal_blend": 1.0,
+    "ear_return_anterior_depth": 0.035,
+    "ear_min_posterior_clearance": 0.012,
+    "ear_return_basin_depth_fraction": 0.26,
+    "ear_return_basin_width_fraction": 1.15,
+    "jaw_border_lateral_relaxation": 0.0,
+    "eye_lower_horizontal_power": 2.0,
+    "iris_vertical_slope": 0.088,
+    "iris_radial_samples": 32,
+    "iris_radial_rings": 2,
+    "pupil_half_width": 0.0175,
+    "pupil_half_height": 0.027,
+    "pupil_recess": -0.01,
+    "pupil_accent_width": 0.006,
+    "pupil_accent_height": 0.01,
+    "rear_return_inset_profile": [
+      [
+        0,
+        0
+      ],
+      [
+        0.03,
+        0.006
+      ],
+      [
+        0.06,
+        0.015
+      ],
+      [
+        0.1,
+        0.022
+      ],
+      [
+        0.15,
+        0.045
+      ],
+      [
+        0.2,
+        0.05
+      ],
+      [
+        0.23,
+        0.035
+      ],
+      [
+        0.255,
+        0.02
+      ],
+      [
+        0.271,
+        0
+      ],
+      [
+        1,
+        0
+      ]
+    ],
+    "rear_return_back_offset": 0.045,
+    "rear_return_rim_crease": 0.35,
+    "rear_return_lift": 0.004,
+    "upper_ink_plane_depth": 0.002,
+    "upper_ink_plane_slope_x": -0.31,
+    "upper_ink_plane_slope_y": 0.1,
+    "ear_outward_profile": [
+      [
+        0,
+        0
+      ],
+      [
+        0.22,
+        0.12
+      ],
+      [
+        0.7,
+        0.8
+      ],
+      [
+        0.88,
+        0.95
+      ],
+      [
+        1,
+        1
+      ]
+    ],
+    "ear_depth_profile": [
+      [
+        0,
+        0
+      ],
+      [
+        0.22,
+        0.32
+      ],
+      [
+        0.7,
+        0.72
+      ],
+      [
+        0.88,
+        0.79
+      ],
+      [
+        1,
+        1
+      ]
+    ],
+    "ear_return_width_profile": [
+      [
+        0,
+        1.5
+      ],
+      [
+        0.18,
+        1.5
+      ],
+      [
+        0.42,
+        1.2
+      ],
+      [
+        0.7,
+        1.0
+      ],
+      [
+        1,
+        0.92
+      ]
+    ],
+    "chin_posterior_center_drop": 0.006,
+    "chin_posterior_drop_start": 0.03,
+    "lower_lip_lateral_width": 0.052,
+    "upper_lip_lateral_width": 0.075,
+    "jaw_border_max_displacement_ratio": 0.018,
+    "rear_return_depth_weight_profile": [
+      [
+        0.02,
+        0
+      ],
+      [
+        0.04,
+        0.05
+      ],
+      [
+        0.08,
+        0.6
+      ],
+      [
+        0.12,
+        0.82
+      ],
+      [
+        0.16,
+        0.94
+      ],
+      [
+        0.2,
+        0.9
+      ],
+      [
+        0.25,
+        1.0
+      ],
+      [
+        0.31,
+        1.0
+      ]
+    ],
+    "ear_lower_arc_power": 0.6,
+    "ear_lower_posterior_sweep": 0.085,
+    "final_return_fairing_max_height": 0.27,
+    "final_return_fairing_iterations": 8,
+    "final_return_fairing_max_displacement": 0.008,
+    "lip_shoulder_relief": 0.003,
+    "lip_shoulder_lateral_center": 0.03,
+    "lip_shoulder_lateral_width": 0.025,
+    "lip_shoulder_height": 0.147,
+    "lip_shoulder_height_width": 0.038,
+    "lip_shoulder_center_fade": 0.012,
+    "lower_lip_lateral_power": 4,
+    "upper_lip_lateral_power": 4
+  },
+  "face_functions": {
+    "curve": "FunctionDef(name='curve', args=arguments(posonlyargs=[], args=[arg(arg='y'), arg(arg='axis'), arg(arg='points')], kwonlyargs=[], kw_defaults=[], defaults=[]), body=[Assign(targets=[Name(id='xs', ctx=Store())], value=ListComp(elt=Subscript(value=Name(id='p', ctx=Load()), slice=Constant(value=0), ctx=Load()), generators=[comprehension(target=Name(id='p', ctx=Store()), iter=Name(id='points', ctx=Load()), ifs=[], is_async=0)])), Assign(targets=[Name(id='ys', ctx=Store())], value=ListComp(elt=Subscript(value=Name(id='p', ctx=Load()), slice=Name(id='axis', ctx=Load()), ctx=Load()), generators=[comprehension(target=Name(id='p', ctx=Store()), iter=Name(id='points', ctx=Load()), ifs=[], is_async=0)])), Assign(targets=[Name(id='slopes', ctx=Store())], value=ListComp(elt=BinOp(left=BinOp(left=Subscript(value=Name(id='ys', ctx=Load()), slice=BinOp(left=Name(id='i', ctx=Load()), op=Add(), right=Constant(value=1)), ctx=Load()), op=Sub(), right=Subscript(value=Name(id='ys', ctx=Load()), slice=Name(id='i', ctx=Load()), ctx=Load())), op=Div(), right=BinOp(left=Subscript(value=Name(id='xs', ctx=Load()), slice=BinOp(left=Name(id='i', ctx=Load()), op=Add(), right=Constant(value=1)), ctx=Load()), op=Sub(), right=Subscript(value=Name(id='xs', ctx=Load()), slice=Name(id='i', ctx=Load()), ctx=Load()))), generators=[comprehension(target=Name(id='i', ctx=Store()), iter=Call(func=Name(id='range', ctx=Load()), args=[BinOp(left=Call(func=Name(id='len', ctx=Load()), args=[Name(id='xs', ctx=Load())], keywords=[]), op=Sub(), right=Constant(value=1))], keywords=[]), ifs=[], is_async=0)])), Assign(targets=[Name(id='ds', ctx=Store())], value=BinOp(left=BinOp(left=List(elts=[Subscript(value=Name(id='slopes', ctx=Load()), slice=Constant(value=0), ctx=Load())], ctx=Load()), op=Add(), right=ListComp(elt=IfExp(test=Compare(left=BinOp(left=Name(id='a', ctx=Load()), op=Mult(), right=Name(id='b', ctx=Load())), ops=[LtE()], comparators=[Constant(value=0)]), body=Constant(value=0), orelse=BinOp(left=BinOp(left=BinOp(left=Constant(value=2), op=Mult(), right=Name(id='a', ctx=Load())), op=Mult(), right=Name(id='b', ctx=Load())), op=Div(), right=BinOp(left=Name(id='a', ctx=Load()), op=Add(), right=Name(id='b', ctx=Load())))), generators=[comprehension(target=Tuple(elts=[Name(id='a', ctx=Store()), Name(id='b', ctx=Store())], ctx=Store()), iter=Call(func=Name(id='zip', ctx=Load()), args=[Name(id='slopes', ctx=Load()), Subscript(value=Name(id='slopes', ctx=Load()), slice=Slice(lower=Constant(value=1)), ctx=Load())], keywords=[]), ifs=[], is_async=0)])), op=Add(), right=List(elts=[Subscript(value=Name(id='slopes', ctx=Load()), slice=UnaryOp(op=USub(), operand=Constant(value=1)), ctx=Load())], ctx=Load()))), Assign(targets=[Name(id='i', ctx=Store())], value=Call(func=Name(id='next', ctx=Load()), args=[GeneratorExp(elt=Name(id='i', ctx=Load()), generators=[comprehension(target=Name(id='i', ctx=Store()), iter=Call(func=Name(id='range', ctx=Load()), args=[BinOp(left=Call(func=Name(id='len', ctx=Load()), args=[Name(id='xs', ctx=Load())], keywords=[]), op=Sub(), right=Constant(value=1))], keywords=[]), ifs=[Compare(left=Name(id='y', ctx=Load()), ops=[LtE()], comparators=[Subscript(value=Name(id='xs', ctx=Load()), slice=BinOp(left=Name(id='i', ctx=Load()), op=Add(), right=Constant(value=1)), ctx=Load())])], is_async=0)]), BinOp(left=Call(func=Name(id='len', ctx=Load()), args=[Name(id='xs', ctx=Load())], keywords=[]), op=Sub(), right=Constant(value=2))], keywords=[])), Assign(targets=[Name(id='t', ctx=Store())], value=Call(func=Name(id='max', ctx=Load()), args=[Constant(value=0), Call(func=Name(id='min', ctx=Load()), args=[Constant(value=1), BinOp(left=BinOp(left=Name(id='y', ctx=Load()), op=Sub(), right=Subscript(value=Name(id='xs', ctx=Load()), slice=Name(id='i', ctx=Load()), ctx=Load())), op=Div(), right=BinOp(left=Subscript(value=Name(id='xs', ctx=Load()), slice=BinOp(left=Name(id='i', ctx=Load()), op=Add(), right=Constant(value=1)), ctx=Load()), op=Sub(), right=Subscript(value=Name(id='xs', ctx=Load()), slice=Name(id='i', ctx=Load()), ctx=Load())))], keywords=[])], keywords=[])), Assign(targets=[Name(id='h', ctx=Store())], value=BinOp(left=Subscript(value=Name(id='xs', ctx=Load()), slice=BinOp(left=Name(id='i', ctx=Load()), op=Add(), right=Constant(value=1)), ctx=Load()), op=Sub(), right=Subscript(value=Name(id='xs', ctx=Load()), slice=Name(id='i', ctx=Load()), ctx=Load()))), Return(value=BinOp(left=BinOp(left=BinOp(left=BinOp(left=BinOp(left=BinOp(left=BinOp(left=Constant(value=2), op=Mult(), right=BinOp(left=Name(id='t', ctx=Load()), op=Pow(), right=Constant(value=3))), op=Sub(), right=BinOp(left=BinOp(left=Constant(value=3), op=Mult(), right=Name(id='t', ctx=Load())), op=Mult(), right=Name(id='t', ctx=Load()))), op=Add(), right=Constant(value=1)), op=Mult(), right=Subscript(value=Name(id='ys', ctx=Load()), slice=Name(id='i', ctx=Load()), ctx=Load())), op=Add(), right=BinOp(left=BinOp(left=BinOp(left=BinOp(left=BinOp(left=Name(id='t', ctx=Load()), op=Pow(), right=Constant(value=3)), op=Sub(), right=BinOp(left=BinOp(left=Constant(value=2), op=Mult(), right=Name(id='t', ctx=Load())), op=Mult(), right=Name(id='t', ctx=Load()))), op=Add(), right=Name(id='t', ctx=Load())), op=Mult(), right=Name(id='h', ctx=Load())), op=Mult(), right=Subscript(value=Name(id='ds', ctx=Load()), slice=Name(id='i', ctx=Load()), ctx=Load()))), op=Add(), right=BinOp(left=BinOp(left=BinOp(left=UnaryOp(op=USub(), operand=Constant(value=2)), op=Mult(), right=BinOp(left=Name(id='t', ctx=Load()), op=Pow(), right=Constant(value=3))), op=Add(), right=BinOp(left=BinOp(left=Constant(value=3), op=Mult(), right=Name(id='t', ctx=Load())), op=Mult(), right=Name(id='t', ctx=Load()))), op=Mult(), right=Subscript(value=Name(id='ys', ctx=Load()), slice=BinOp(left=Name(id='i', ctx=Load()), op=Add(), right=Constant(value=1)), ctx=Load()))), op=Add(), right=BinOp(left=BinOp(left=BinOp(left=BinOp(left=Name(id='t', ctx=Load()), op=Pow(), right=Constant(value=3)), op=Sub(), right=BinOp(left=Name(id='t', ctx=Load()), op=Mult(), right=Name(id='t', ctx=Load()))), op=Mult(), right=Name(id='h', ctx=Load())), op=Mult(), right=Subscript(value=Name(id='ds', ctx=Load()), slice=BinOp(left=Name(id='i', ctx=Load()), op=Add(), right=Constant(value=1)), ctx=Load()))))], decorator_list=[], type_params=[])",
+    "width": "FunctionDef(name='width', args=arguments(posonlyargs=[], args=[arg(arg='y')], kwonlyargs=[], kw_defaults=[], defaults=[]), body=[Return(value=BinOp(left=Name(id='H', ctx=Load()), op=Mult(), right=Call(func=Name(id='curve', ctx=Load()), args=[BinOp(left=BinOp(left=Name(id='y', ctx=Load()), op=Sub(), right=Name(id='Y0', ctx=Load())), op=Div(), right=Name(id='H', ctx=Load())), Constant(value=1), Subscript(value=Name(id='C', ctx=Load()), slice=Constant(value='width_stations'), ctx=Load())], keywords=[])))], decorator_list=[], type_params=[])",
+    "nose_profile_factor": "FunctionDef(name='nose_profile_factor', args=arguments(posonlyargs=[], args=[arg(arg='t'), arg(arg='v')], kwonlyargs=[], kw_defaults=[], defaults=[]), body=[Assign(targets=[Name(id='t', ctx=Store())], value=Call(func=Name(id='max', ctx=Load()), args=[Constant(value=0), Call(func=Name(id='min', ctx=Load()), args=[Constant(value=1), Name(id='t', ctx=Load())], keywords=[])], keywords=[])), Assign(targets=[Name(id='sharp', ctx=Store())], value=Call(func=Name(id='curve', ctx=Load()), args=[Name(id='t', ctx=Load()), Constant(value=1), Subscript(value=Name(id='C', ctx=Load()), slice=Constant(value='nose_lateral_profile'), ctx=Load())], keywords=[])), Assign(targets=[Name(id='basal', ctx=Store())], value=Call(func=Name(id='curve', ctx=Load()), args=[Name(id='t', ctx=Load()), Constant(value=1), Subscript(value=Name(id='C', ctx=Load()), slice=Constant(value='nose_basal_profile'), ctx=Load())], keywords=[])), Assign(targets=[Tuple(elts=[Name(id='start', ctx=Store()), Name(id='end', ctx=Store())], ctx=Store())], value=Tuple(elts=[Subscript(value=Name(id='C', ctx=Load()), slice=Constant(value='nose_flare_start_height'), ctx=Load()), Subscript(value=Name(id='C', ctx=Load()), slice=Constant(value='nose_flare_end_height'), ctx=Load())], ctx=Load())), Assign(targets=[Name(id='blend', ctx=Store())], value=Call(func=Name(id='max', ctx=Load()), args=[Constant(value=0), Call(func=Name(id='min', ctx=Load()), args=[Constant(value=1), BinOp(left=BinOp(left=Name(id='end', ctx=Load()), op=Sub(), right=Name(id='v', ctx=Load())), op=Div(), right=BinOp(left=Name(id='end', ctx=Load()), op=Sub(), right=Name(id='start', ctx=Load())))], keywords=[])], keywords=[])), Return(value=BinOp(left=BinOp(left=Name(id='sharp', ctx=Load()), op=Mult(), right=BinOp(left=Constant(value=1), op=Sub(), right=Name(id='blend', ctx=Load()))), op=Add(), right=BinOp(left=Name(id='basal', ctx=Load()), op=Mult(), right=Name(id='blend', ctx=Load()))))], decorator_list=[], type_params=[])",
+    "nose": "FunctionDef(name='nose', args=arguments(posonlyargs=[], args=[arg(arg='x'), arg(arg='y')], kwonlyargs=[], kw_defaults=[], defaults=[]), body=[Assign(targets=[Name(id='v', ctx=Store())], value=BinOp(left=BinOp(left=Name(id='y', ctx=Load()), op=Sub(), right=Name(id='Y0', ctx=Load())), op=Div(), right=Name(id='H', ctx=Load()))), Assign(targets=[Name(id='pts', ctx=Store())], value=Subscript(value=Name(id='C', ctx=Load()), slice=Constant(value='nose_stations'), ctx=Load())), If(test=BoolOp(op=Or(), values=[Compare(left=Name(id='v', ctx=Load()), ops=[LtE()], comparators=[Subscript(value=Subscript(value=Name(id='pts', ctx=Load()), slice=Constant(value=0), ctx=Load()), slice=Constant(value=0), ctx=Load())]), Compare(left=Name(id='v', ctx=Load()), ops=[GtE()], comparators=[Subscript(value=Subscript(value=Name(id='pts', ctx=Load()), slice=UnaryOp(op=USub(), operand=Constant(value=1)), ctx=Load()), slice=Constant(value=0), ctx=Load())])]), body=[Return(value=Constant(value=0))], orelse=[]), Assign(targets=[Name(id='h', ctx=Store())], value=BinOp(left=Call(func=Name(id='curve', ctx=Load()), args=[Name(id='v', ctx=Load()), Constant(value=1), Name(id='pts', ctx=Load())], keywords=[]), op=Mult(), right=Name(id='H', ctx=Load()))), Assign(targets=[Name(id='w', ctx=Store())], value=BinOp(left=Call(func=Name(id='curve', ctx=Load()), args=[Name(id='v', ctx=Load()), Constant(value=2), Name(id='pts', ctx=Load())], keywords=[]), op=Mult(), right=Name(id='H', ctx=Load()))), Assign(targets=[Name(id='t', ctx=Store())], value=Call(func=Name(id='max', ctx=Load()), args=[Constant(value=0), Call(func=Name(id='min', ctx=Load()), args=[Constant(value=1), BinOp(left=Call(func=Name(id='abs', ctx=Load()), args=[Name(id='x', ctx=Load())], keywords=[]), op=Div(), right=Name(id='w', ctx=Load()))], keywords=[])], keywords=[])), Return(value=BinOp(left=Name(id='h', ctx=Load()), op=Mult(), right=Call(func=Name(id='nose_profile_factor', ctx=Load()), args=[Name(id='t', ctx=Load()), Name(id='v', ctx=Load())], keywords=[])))], decorator_list=[], type_params=[])",
+    "lip_shoulder_support": "FunctionDef(name='lip_shoulder_support', args=arguments(posonlyargs=[], args=[arg(arg='x'), arg(arg='y')], kwonlyargs=[], kw_defaults=[], defaults=[]), body=[Assign(targets=[Name(id='lateral', ctx=Store())], value=BinOp(left=Call(func=Name(id='abs', ctx=Load()), args=[Name(id='x', ctx=Load())], keywords=[]), op=Div(), right=Name(id='H', ctx=Load()))), Assign(targets=[Name(id='height', ctx=Store())], value=BinOp(left=BinOp(left=Name(id='y', ctx=Load()), op=Sub(), right=Name(id='Y0', ctx=Load())), op=Div(), right=Name(id='H', ctx=Load()))), Assign(targets=[Name(id='center_fade', ctx=Store())], value=BinOp(left=Constant(value=1), op=Sub(), right=Call(func=Name(id='exp', ctx=Load()), args=[UnaryOp(op=USub(), operand=BinOp(left=BinOp(left=Name(id='lateral', ctx=Load()), op=Div(), right=Subscript(value=Name(id='C', ctx=Load()), slice=Constant(value='lip_shoulder_center_fade'), ctx=Load())), op=Pow(), right=Constant(value=2)))], keywords=[]))), Return(value=BinOp(left=BinOp(left=BinOp(left=Name(id='H', ctx=Load()), op=Mult(), right=Subscript(value=Name(id='C', ctx=Load()), slice=Constant(value='lip_shoulder_relief'), ctx=Load())), op=Mult(), right=Name(id='center_fade', ctx=Load())), op=Mult(), right=Call(func=Name(id='exp', ctx=Load()), args=[BinOp(left=UnaryOp(op=USub(), operand=BinOp(left=BinOp(left=BinOp(left=Name(id='lateral', ctx=Load()), op=Sub(), right=Subscript(value=Name(id='C', ctx=Load()), slice=Constant(value='lip_shoulder_lateral_center'), ctx=Load())), op=Div(), right=Subscript(value=Name(id='C', ctx=Load()), slice=Constant(value='lip_shoulder_lateral_width'), ctx=Load())), op=Pow(), right=Constant(value=2))), op=Sub(), right=BinOp(left=BinOp(left=BinOp(left=Name(id='height', ctx=Load()), op=Sub(), right=Subscript(value=Name(id='C', ctx=Load()), slice=Constant(value='lip_shoulder_height'), ctx=Load())), op=Div(), right=Subscript(value=Name(id='C', ctx=Load()), slice=Constant(value='lip_shoulder_height_width'), ctx=Load())), op=Pow(), right=Constant(value=2)))], keywords=[])))], decorator_list=[], type_params=[])",
+    "lip_detail_depth": "FunctionDef(name='lip_detail_depth', args=arguments(posonlyargs=[], args=[arg(arg='x'), arg(arg='y')], kwonlyargs=[], kw_defaults=[], defaults=[]), body=[Assign(targets=[Name(id='z', ctx=Store())], value=Constant(value=0.0)), Assign(targets=[Name(id='lip', ctx=Store())], value=BinOp(left=Call(func=Name(id='exp', ctx=Load()), args=[UnaryOp(op=USub(), operand=BinOp(left=BinOp(left=Name(id='x', ctx=Load()), op=Div(), right=Constant(value=0.02)), op=Pow(), right=Constant(value=4)))], keywords=[]), op=Mult(), right=Name(id='H', ctx=Load()))), AugAssign(target=Name(id='z', ctx=Store()), op=Add(), value=BinOp(left=BinOp(left=BinOp(left=Name(id='H', ctx=Load()), op=Mult(), right=Call(func=Name(id='exp', ctx=Load()), args=[UnaryOp(op=USub(), operand=BinOp(left=BinOp(left=Name(id='x', ctx=Load()), op=Div(), right=BinOp(left=Name(id='H', ctx=Load()), op=Mult(), right=Subscript(value=Name(id='C', ctx=Load()), slice=Constant(value='lower_lip_lateral_width'), ctx=Load()))), op=Pow(), right=Subscript(value=Name(id='C', ctx=Load()), slice=Constant(value='lower_lip_lateral_power'), ctx=Load())))], keywords=[])), op=Mult(), right=Subscript(value=Name(id='C', ctx=Load()), slice=Constant(value='lower_lip_relief'), ctx=Load())), op=Mult(), right=Call(func=Name(id='exp', ctx=Load()), args=[UnaryOp(op=USub(), operand=BinOp(left=BinOp(left=BinOp(left=BinOp(left=Name(id='y', ctx=Load()), op=Sub(), right=Name(id='Y0', ctx=Load())), op=Sub(), right=BinOp(left=Name(id='H', ctx=Load()), op=Mult(), right=Subscript(value=Name(id='C', ctx=Load()), slice=Constant(value='lower_lip_height'), ctx=Load()))), op=Div(), right=BinOp(left=Name(id='H', ctx=Load()), op=Mult(), right=Subscript(value=Name(id='C', ctx=Load()), slice=Constant(value='lower_lip_width'), ctx=Load()))), op=Pow(), right=Constant(value=2)))], keywords=[]))), AugAssign(target=Name(id='z', ctx=Store()), op=Add(), value=BinOp(left=BinOp(left=BinOp(left=Name(id='H', ctx=Load()), op=Mult(), right=Call(func=Name(id='exp', ctx=Load()), args=[UnaryOp(op=USub(), operand=BinOp(left=BinOp(left=Name(id='x', ctx=Load()), op=Div(), right=BinOp(left=Name(id='H', ctx=Load()), op=Mult(), right=Subscript(value=Name(id='C', ctx=Load()), slice=Constant(value='upper_lip_lateral_width'), ctx=Load()))), op=Pow(), right=Subscript(value=Name(id='C', ctx=Load()), slice=Constant(value='upper_lip_lateral_power'), ctx=Load())))], keywords=[])), op=Mult(), right=Subscript(value=Name(id='C', ctx=Load()), slice=Constant(value='upper_lip_relief'), ctx=Load())), op=Mult(), right=Call(func=Name(id='exp', ctx=Load()), args=[UnaryOp(op=USub(), operand=BinOp(left=BinOp(left=BinOp(left=BinOp(left=Name(id='y', ctx=Load()), op=Sub(), right=Name(id='Y0', ctx=Load())), op=Sub(), right=BinOp(left=Name(id='H', ctx=Load()), op=Mult(), right=Subscript(value=Name(id='C', ctx=Load()), slice=Constant(value='upper_lip_height'), ctx=Load()))), op=Div(), right=BinOp(left=Name(id='H', ctx=Load()), op=Mult(), right=Subscript(value=Name(id='C', ctx=Load()), slice=Constant(value='upper_lip_width'), ctx=Load()))), op=Pow(), right=Constant(value=2)))], keywords=[]))), AugAssign(target=Name(id='z', ctx=Store()), op=Sub(), value=BinOp(left=BinOp(left=Name(id='lip', ctx=Load()), op=Mult(), right=Subscript(value=Name(id='C', ctx=Load()), slice=Constant(value='mouth_seam_recess'), ctx=Load())), op=Mult(), right=Call(func=Name(id='exp', ctx=Load()), args=[UnaryOp(op=USub(), operand=BinOp(left=BinOp(left=BinOp(left=BinOp(left=Name(id='y', ctx=Load()), op=Sub(), right=Name(id='Y0', ctx=Load())), op=Sub(), right=BinOp(left=Name(id='H', ctx=Load()), op=Mult(), right=Subscript(value=Name(id='C', ctx=Load()), slice=Constant(value='mouth_height'), ctx=Load()))), op=Div(), right=BinOp(left=Name(id='H', ctx=Load()), op=Mult(), right=Subscript(value=Name(id='C', ctx=Load()), slice=Constant(value='mouth_seam_width'), ctx=Load()))), op=Pow(), right=Constant(value=2)))], keywords=[]))), Return(value=BinOp(left=Name(id='z', ctx=Load()), op=Add(), right=Call(func=Name(id='lip_shoulder_support', ctx=Load()), args=[Name(id='x', ctx=Load()), Name(id='y', ctx=Load())], keywords=[])))], decorator_list=[], type_params=[])",
+    "base_depth": "FunctionDef(name='base_depth', args=arguments(posonlyargs=[], args=[arg(arg='x'), arg(arg='y')], kwonlyargs=[], kw_defaults=[], defaults=[]), body=[Assign(targets=[Name(id='v', ctx=Store())], value=BinOp(left=BinOp(left=Name(id='y', ctx=Load()), op=Sub(), right=Name(id='Y0', ctx=Load())), op=Div(), right=Name(id='H', ctx=Load()))), Assign(targets=[Name(id='q', ctx=Store())], value=Call(func=Name(id='min', ctx=Load()), args=[Constant(value=1), BinOp(left=Call(func=Name(id='abs', ctx=Load()), args=[Name(id='x', ctx=Load())], keywords=[]), op=Div(), right=Call(func=Name(id='max', ctx=Load()), args=[Constant(value=0.001), Call(func=Name(id='width', ctx=Load()), args=[Name(id='y', ctx=Load())], keywords=[])], keywords=[]))], keywords=[])), Assign(targets=[Name(id='sections', ctx=Store())], value=List(elts=[], ctx=Load())), For(target=Tuple(elts=[Name(id='height', ctx=Store()), Name(id='points', ctx=Store())], ctx=Store()), iter=Subscript(value=Name(id='C', ctx=Load()), slice=Constant(value='cross_sections'), ctx=Load()), body=[Assign(targets=[Name(id='section_x', ctx=Store())], value=BinOp(left=Name(id='q', ctx=Load()), op=Mult(), right=Subscript(value=Subscript(value=Name(id='points', ctx=Load()), slice=UnaryOp(op=USub(), operand=Constant(value=1)), ctx=Load()), slice=Constant(value=0), ctx=Load()))), Expr(value=Call(func=Attribute(value=Name(id='sections', ctx=Load()), attr='append', ctx=Load()), args=[Tuple(elts=[Name(id='height', ctx=Load()), Call(func=Name(id='curve', ctx=Load()), args=[Name(id='section_x', ctx=Load()), Constant(value=1), Name(id='points', ctx=Load())], keywords=[])], ctx=Load())], keywords=[]))], orelse=[]), Assign(targets=[Name(id='front', ctx=Store())], value=Call(func=Name(id='curve', ctx=Load()), args=[Name(id='v', ctx=Load()), Constant(value=1), Subscript(value=Name(id='C', ctx=Load()), slice=Constant(value='continuous_front_profile'), ctx=Load())], keywords=[])), Assign(targets=[Name(id='back', ctx=Store())], value=Call(func=Name(id='curve', ctx=Load()), args=[Name(id='v', ctx=Load()), Constant(value=1), Subscript(value=Name(id='C', ctx=Load()), slice=Constant(value='continuous_back_profile'), ctx=Load())], keywords=[])), Assign(targets=[Name(id='linear', ctx=Store())], value=Subscript(value=Name(id='C', ctx=Load()), slice=Constant(value='continuous_lateral_linear'), ctx=Load())), Assign(targets=[Name(id='falloff', ctx=Store())], value=BinOp(left=BinOp(left=Name(id='linear', ctx=Load()), op=Mult(), right=Name(id='q', ctx=Load())), op=Add(), right=BinOp(left=BinOp(left=Constant(value=1), op=Sub(), right=Name(id='linear', ctx=Load())), op=Mult(), right=BinOp(left=Name(id='q', ctx=Load()), op=Pow(), right=Subscript(value=Name(id='C', ctx=Load()), slice=Constant(value='continuous_lateral_power'), ctx=Load()))))), Assign(targets=[Name(id='consistent', ctx=Store())], value=BinOp(left=BinOp(left=Name(id='front', ctx=Load()), op=Mult(), right=BinOp(left=Constant(value=1), op=Sub(), right=Name(id='falloff', ctx=Load()))), op=Add(), right=BinOp(left=Name(id='back', ctx=Load()), op=Mult(), right=Name(id='falloff', ctx=Load())))), Assign(targets=[Name(id='blend', ctx=Store())], value=Call(func=Name(id='max', ctx=Load()), args=[Constant(value=0), Call(func=Name(id='min', ctx=Load()), args=[Constant(value=1), BinOp(left=BinOp(left=Name(id='v', ctx=Load()), op=Sub(), right=Constant(value=0.02)), op=Div(), right=Constant(value=0.08))], keywords=[])], keywords=[])), Assign(targets=[Name(id='blend', ctx=Store())], value=BinOp(left=BinOp(left=Name(id='blend', ctx=Load()), op=Mult(), right=Name(id='blend', ctx=Load())), op=Mult(), right=BinOp(left=Constant(value=3), op=Sub(), right=BinOp(left=Constant(value=2), op=Mult(), right=Name(id='blend', ctx=Load()))))), Assign(targets=[Name(id='base', ctx=Store())], value=BinOp(left=BinOp(left=Call(func=Name(id='curve', ctx=Load()), args=[Name(id='v', ctx=Load()), Constant(value=1), Name(id='sections', ctx=Load())], keywords=[]), op=Mult(), right=BinOp(left=Constant(value=1), op=Sub(), right=Name(id='blend', ctx=Load()))), op=Add(), right=BinOp(left=Name(id='consistent', ctx=Load()), op=Mult(), right=Name(id='blend', ctx=Load())))), Assign(targets=[Name(id='z', ctx=Store())], value=BinOp(left=BinOp(left=Name(id='Z0', ctx=Load()), op=Add(), right=BinOp(left=Name(id='H', ctx=Load()), op=Mult(), right=Name(id='base', ctx=Load()))), op=Add(), right=Call(func=Name(id='nose', ctx=Load()), args=[Name(id='x', ctx=Load()), Name(id='y', ctx=Load())], keywords=[]))), Return(value=BinOp(left=Name(id='z', ctx=Load()), op=Add(), right=Call(func=Name(id='lip_detail_depth', ctx=Load()), args=[Name(id='x', ctx=Load()), Name(id='y', ctx=Load())], keywords=[])))], decorator_list=[], type_params=[])",
+    "rim_depth": "FunctionDef(name='rim_depth', args=arguments(posonlyargs=[], args=[arg(arg='x'), arg(arg='y')], kwonlyargs=[], kw_defaults=[], defaults=[]), body=[Assign(targets=[Name(id='t', ctx=Store())], value=BinOp(left=BinOp(left=BinOp(left=Call(func=Name(id='abs', ctx=Load()), args=[Name(id='x', ctx=Load())], keywords=[]), op=Div(), right=Name(id='H', ctx=Load())), op=Sub(), right=Subscript(value=Name(id='C', ctx=Load()), slice=Constant(value='eye_center_x'), ctx=Load())), op=Div(), right=Subscript(value=Name(id='C', ctx=Load()), slice=Constant(value='eye_half_width'), ctx=Load()))), Assign(targets=[Name(id='z', ctx=Store())], value=BinOp(left=BinOp(left=BinOp(left=Subscript(value=Name(id='C', ctx=Load()), slice=Constant(value='eye_inner_depth'), ctx=Load()), op=Mult(), right=BinOp(left=Constant(value=1), op=Sub(), right=Name(id='t', ctx=Load()))), op=Div(), right=Constant(value=2)), op=Add(), right=BinOp(left=BinOp(left=Subscript(value=Name(id='C', ctx=Load()), slice=Constant(value='eye_outer_depth'), ctx=Load()), op=Mult(), right=BinOp(left=Constant(value=1), op=Add(), right=Name(id='t', ctx=Load()))), op=Div(), right=Constant(value=2)))), AugAssign(target=Name(id='z', ctx=Store()), op=Add(), value=BinOp(left=Subscript(value=Name(id='C', ctx=Load()), slice=Constant(value='eye_rim_vertical_bulge'), ctx=Load()), op=Mult(), right=Call(func=Name(id='max', ctx=Load()), args=[Constant(value=0), BinOp(left=Constant(value=1), op=Sub(), right=BinOp(left=Name(id='t', ctx=Load()), op=Mult(), right=Name(id='t', ctx=Load())))], keywords=[]))), Return(value=BinOp(left=Name(id='Z0', ctx=Load()), op=Add(), right=BinOp(left=Name(id='H', ctx=Load()), op=Mult(), right=Name(id='z', ctx=Load()))))], decorator_list=[], type_params=[])",
+    "depth": "FunctionDef(name='depth', args=arguments(posonlyargs=[], args=[arg(arg='x'), arg(arg='y')], kwonlyargs=[], kw_defaults=[], defaults=[]), body=[Assign(targets=[Name(id='raw', ctx=Store())], value=Call(func=Name(id='base_depth', ctx=Load()), args=[Name(id='x', ctx=Load()), Name(id='y', ctx=Load())], keywords=[])), Assign(targets=[Name(id='t', ctx=Store())], value=BinOp(left=BinOp(left=BinOp(left=Call(func=Name(id='abs', ctx=Load()), args=[Name(id='x', ctx=Load())], keywords=[]), op=Div(), right=Name(id='H', ctx=Load())), op=Sub(), right=Subscript(value=Name(id='C', ctx=Load()), slice=Constant(value='eye_center_x'), ctx=Load())), op=Div(), right=Subscript(value=Name(id='C', ctx=Load()), slice=Constant(value='eye_half_width'), ctx=Load()))), Assign(targets=[Name(id='cy', ctx=Store())], value=BinOp(left=Name(id='Y0', ctx=Load()), op=Add(), right=BinOp(left=Name(id='H', ctx=Load()), op=Mult(), right=BinOp(left=Subscript(value=Name(id='C', ctx=Load()), slice=Constant(value='eye_corner_y'), ctx=Load()), op=Add(), right=BinOp(left=Subscript(value=Name(id='C', ctx=Load()), slice=Constant(value='eye_corner_slope'), ctx=Load()), op=Mult(), right=Name(id='t', ctx=Load())))))), Assign(targets=[Name(id='arch', ctx=Store())], value=IfExp(test=Compare(left=Name(id='y', ctx=Load()), ops=[GtE()], comparators=[Name(id='cy', ctx=Load())]), body=Subscript(value=Name(id='C', ctx=Load()), slice=Constant(value='eye_upper_arch'), ctx=Load()), orelse=Subscript(value=Name(id='C', ctx=Load()), slice=Constant(value='eye_lower_arch'), ctx=Load()))), Assign(targets=[Name(id='power', ctx=Store())], value=IfExp(test=Compare(left=Name(id='y', ctx=Load()), ops=[GtE()], comparators=[Name(id='cy', ctx=Load())]), body=Subscript(value=Name(id='C', ctx=Load()), slice=Constant(value='eye_upper_power'), ctx=Load()), orelse=Subscript(value=Name(id='C', ctx=Load()), slice=Constant(value='eye_lower_power'), ctx=Load()))), Assign(targets=[Name(id='horizontal', ctx=Store())], value=IfExp(test=Compare(left=Name(id='y', ctx=Load()), ops=[GtE()], comparators=[Name(id='cy', ctx=Load())]), body=Subscript(value=Name(id='C', ctx=Load()), slice=Constant(value='eye_horizontal_power'), ctx=Load()), orelse=Subscript(value=Name(id='C', ctx=Load()), slice=Constant(value='eye_lower_horizontal_power'), ctx=Load()))), Assign(targets=[Name(id='r', ctx=Store())], value=Call(func=Name(id='sqrt', ctx=Load()), args=[BinOp(left=BinOp(left=Call(func=Name(id='abs', ctx=Load()), args=[Name(id='t', ctx=Load())], keywords=[]), op=Pow(), right=Name(id='horizontal', ctx=Load())), op=Add(), right=BinOp(left=Call(func=Name(id='abs', ctx=Load()), args=[BinOp(left=BinOp(left=Name(id='y', ctx=Load()), op=Sub(), right=Name(id='cy', ctx=Load())), op=Div(), right=BinOp(left=Name(id='H', ctx=Load()), op=Mult(), right=Name(id='arch', ctx=Load())))], keywords=[]), op=Pow(), right=BinOp(left=Constant(value=1), op=Div(), right=Name(id='power', ctx=Load()))))], keywords=[])), Assign(targets=[Name(id='weight', ctx=Store())], value=Call(func=Name(id='exp', ctx=Load()), args=[UnaryOp(op=USub(), operand=BinOp(left=BinOp(left=BinOp(left=Name(id='r', ctx=Load()), op=Sub(), right=Constant(value=1)), op=Div(), right=Subscript(value=Name(id='C', ctx=Load()), slice=Constant(value='orbital_band_width'), ctx=Load())), op=Pow(), right=Constant(value=2)))], keywords=[])), Assign(targets=[Name(id='lateral', ctx=Store())], value=Call(func=Name(id='max', ctx=Load()), args=[Constant(value=0), Call(func=Name(id='min', ctx=Load()), args=[Constant(value=1), BinOp(left=BinOp(left=BinOp(left=Constant(value=1), op=Add(), right=Subscript(value=Name(id='C', ctx=Load()), slice=Constant(value='orbital_lateral_fade'), ctx=Load())), op=Sub(), right=Call(func=Name(id='abs', ctx=Load()), args=[Name(id='t', ctx=Load())], keywords=[])), op=Div(), right=Subscript(value=Name(id='C', ctx=Load()), slice=Constant(value='orbital_lateral_fade'), ctx=Load()))], keywords=[])], keywords=[])), AugAssign(target=Name(id='weight', ctx=Store()), op=Mult(), value=BinOp(left=BinOp(left=Name(id='lateral', ctx=Load()), op=Mult(), right=Name(id='lateral', ctx=Load())), op=Mult(), right=BinOp(left=Constant(value=3), op=Sub(), right=BinOp(left=Constant(value=2), op=Mult(), right=Name(id='lateral', ctx=Load()))))), Return(value=BinOp(left=Name(id='raw', ctx=Load()), op=Add(), right=BinOp(left=BinOp(left=Call(func=Name(id='rim_depth', ctx=Load()), args=[Name(id='x', ctx=Load()), Name(id='y', ctx=Load())], keywords=[]), op=Sub(), right=Name(id='raw', ctx=Load())), op=Mult(), right=Name(id='weight', ctx=Load()))))], decorator_list=[], type_params=[])",
+    "eye_contour": "FunctionDef(name='eye_contour', args=arguments(posonlyargs=[], args=[arg(arg='side'), arg(arg='t'), arg(arg='upper')], kwonlyargs=[], kw_defaults=[], defaults=[]), body=[Assign(targets=[Name(id='x', ctx=Store())], value=BinOp(left=BinOp(left=Name(id='side', ctx=Load()), op=Mult(), right=Name(id='H', ctx=Load())), op=Mult(), right=BinOp(left=Subscript(value=Name(id='C', ctx=Load()), slice=Constant(value='eye_center_x'), ctx=Load()), op=Add(), right=BinOp(left=Subscript(value=Name(id='C', ctx=Load()), slice=Constant(value='eye_half_width'), ctx=Load()), op=Mult(), right=Name(id='t', ctx=Load()))))), Assign(targets=[Name(id='cy', ctx=Store())], value=BinOp(left=Subscript(value=Name(id='C', ctx=Load()), slice=Constant(value='eye_corner_y'), ctx=Load()), op=Add(), right=BinOp(left=Subscript(value=Name(id='C', ctx=Load()), slice=Constant(value='eye_corner_slope'), ctx=Load()), op=Mult(), right=Name(id='t', ctx=Load())))), Assign(targets=[Name(id='h', ctx=Store())], value=IfExp(test=Name(id='upper', ctx=Load()), body=Subscript(value=Name(id='C', ctx=Load()), slice=Constant(value='eye_upper_arch'), ctx=Load()), orelse=UnaryOp(op=USub(), operand=Subscript(value=Name(id='C', ctx=Load()), slice=Constant(value='eye_lower_arch'), ctx=Load())))), Assign(targets=[Name(id='power', ctx=Store())], value=IfExp(test=Name(id='upper', ctx=Load()), body=Subscript(value=Name(id='C', ctx=Load()), slice=Constant(value='eye_upper_power'), ctx=Load()), orelse=Subscript(value=Name(id='C', ctx=Load()), slice=Constant(value='eye_lower_power'), ctx=Load()))), Assign(targets=[Name(id='horizontal', ctx=Store())], value=IfExp(test=Name(id='upper', ctx=Load()), body=Subscript(value=Name(id='C', ctx=Load()), slice=Constant(value='eye_horizontal_power'), ctx=Load()), orelse=Subscript(value=Name(id='C', ctx=Load()), slice=Constant(value='eye_lower_horizontal_power'), ctx=Load()))), Return(value=Tuple(elts=[Name(id='x', ctx=Load()), BinOp(left=Name(id='Y0', ctx=Load()), op=Add(), right=BinOp(left=Name(id='H', ctx=Load()), op=Mult(), right=BinOp(left=Name(id='cy', ctx=Load()), op=Add(), right=BinOp(left=Name(id='h', ctx=Load()), op=Mult(), right=BinOp(left=Call(func=Name(id='max', ctx=Load()), args=[Constant(value=0), BinOp(left=Constant(value=1), op=Sub(), right=BinOp(left=Call(func=Name(id='abs', ctx=Load()), args=[Name(id='t', ctx=Load())], keywords=[]), op=Pow(), right=Name(id='horizontal', ctx=Load())))], keywords=[]), op=Pow(), right=Name(id='power', ctx=Load()))))))], ctx=Load()))], decorator_list=[], type_params=[])",
+    "eye_surface": "FunctionDef(name='eye_surface', args=arguments(posonlyargs=[], args=[arg(arg='side'), arg(arg='x'), arg(arg='y')], kwonlyargs=[], kw_defaults=[], defaults=[]), body=[Assign(targets=[Name(id='t', ctx=Store())], value=Call(func=Name(id='max', ctx=Load()), args=[UnaryOp(op=USub(), operand=Constant(value=1)), Call(func=Name(id='min', ctx=Load()), args=[Constant(value=1), BinOp(left=BinOp(left=Call(func=Name(id='abs', ctx=Load()), args=[Name(id='x', ctx=Load())], keywords=[]), op=Sub(), right=Subscript(value=Name(id='STYLE', ctx=Load()), slice=Constant(value='eye_center_x_m'), ctx=Load())), op=Div(), right=Subscript(value=Name(id='STYLE', ctx=Load()), slice=Constant(value='eye_half_width_m'), ctx=Load()))], keywords=[])], keywords=[])), Assign(targets=[Tuple(elts=[Name(id='_', ctx=Store()), Name(id='hi', ctx=Store())], ctx=Store())], value=Call(func=Name(id='eye_contour', ctx=Load()), args=[Name(id='side', ctx=Load()), Name(id='t', ctx=Load()), Constant(value=True)], keywords=[])), Assign(targets=[Tuple(elts=[Name(id='_', ctx=Store()), Name(id='lo', ctx=Store())], ctx=Store())], value=Call(func=Name(id='eye_contour', ctx=Load()), args=[Name(id='side', ctx=Load()), Name(id='t', ctx=Load()), Constant(value=False)], keywords=[])), Assign(targets=[Name(id='v', ctx=Store())], value=Call(func=Name(id='max', ctx=Load()), args=[Constant(value=0), Call(func=Name(id='min', ctx=Load()), args=[Constant(value=1), BinOp(left=BinOp(left=Name(id='y', ctx=Load()), op=Sub(), right=Name(id='lo', ctx=Load())), op=Div(), right=Call(func=Name(id='max', ctx=Load()), args=[Constant(value=1e-05), BinOp(left=Name(id='hi', ctx=Load()), op=Sub(), right=Name(id='lo', ctx=Load()))], keywords=[]))], keywords=[])], keywords=[])), Return(value=BinOp(left=BinOp(left=Call(func=Name(id='depth', ctx=Load()), args=[Name(id='x', ctx=Load()), Name(id='y', ctx=Load())], keywords=[]), op=Sub(), right=Constant(value=0.0006)), op=Add(), right=BinOp(left=BinOp(left=Subscript(value=Name(id='STYLE', ctx=Load()), slice=Constant(value='eye_lens_bulge_m'), ctx=Load()), op=Mult(), right=BinOp(left=Constant(value=1), op=Sub(), right=BinOp(left=Name(id='t', ctx=Load()), op=Mult(), right=Name(id='t', ctx=Load())))), op=Mult(), right=Call(func=Name(id='sin', ctx=Load()), args=[BinOp(left=Name(id='pi', ctx=Load()), op=Mult(), right=Name(id='v', ctx=Load()))], keywords=[]))))], decorator_list=[], type_params=[])",
+    "brow_lane_offset": "FunctionDef(name='brow_lane_offset', args=arguments(posonlyargs=[], args=[arg(arg='t'), arg(arg='lane')], kwonlyargs=[], kw_defaults=[], defaults=[]), body=[Assign(targets=[Name(id='original', ctx=Store())], value=BinOp(left=BinOp(left=Name(id='H', ctx=Load()), op=Mult(), right=Subscript(value=Name(id='C', ctx=Load()), slice=Constant(value='brow_thickness'), ctx=Load())), op=Mult(), right=BinOp(left=Call(func=Name(id='sin', ctx=Load()), args=[BinOp(left=Name(id='pi', ctx=Load()), op=Mult(), right=Name(id='t', ctx=Load()))], keywords=[]), op=Pow(), right=Constant(value=0.7)))), Assign(targets=[Name(id='factor', ctx=Store())], value=BinOp(left=Constant(value=1), op=Add(), right=BinOp(left=Subscript(value=Name(id='C', ctx=Load()), slice=Constant(value='brow_inner_fullness'), ctx=Load()), op=Mult(), right=BinOp(left=Constant(value=1), op=Sub(), right=BinOp(left=Constant(value=2), op=Mult(), right=Name(id='t', ctx=Load())))))), Return(value=BinOp(left=BinOp(left=Name(id='original', ctx=Load()), op=Mult(), right=Constant(value=0.5)), op=Add(), right=BinOp(left=BinOp(left=BinOp(left=Name(id='lane', ctx=Load()), op=Sub(), right=Constant(value=0.5)), op=Mult(), right=Name(id='original', ctx=Load())), op=Mult(), right=Name(id='factor', ctx=Load()))))], decorator_list=[], type_params=[])"
+  }
+}

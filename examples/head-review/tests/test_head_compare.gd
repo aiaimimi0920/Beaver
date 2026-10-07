@@ -1,7 +1,7 @@
 extends GutTest
 
 const COMPARE = preload("res://showcase_extensions/head_compare.gd")
-const CANDIDATE = preload("res://assets/aster/head_recovery_177/aster_definition.tres")
+const CANDIDATE = preload("res://assets/aster/head_recovery_185/aster_definition.tres")
 const REFERENCE = preload("res://assets/aster/head_recovery_900/aster_definition.tres")
 
 func make_comparison():

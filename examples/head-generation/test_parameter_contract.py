@@ -17,6 +17,7 @@ class ParameterContractTests(unittest.TestCase):
             "ears",
             "mouth",
             "eye_socket",
+            "eye_accents",
             "textures",
             "crease_rules",
             "pipeline",
