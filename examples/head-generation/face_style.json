@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "preset": "semantic_calibration_a_154",
+  "preset": "semantic_calibration_a_159",
   "note": "Explicit semantic calibration case; no character-name generation dependency.",
   "iris_half_width_m": 0.01534,
   "eye_lens_bulge_m": 0.0012,
@@ -144,7 +144,7 @@
     "iris_half_height": 0.077,
     "iris_rim_depth": -0.0268,
     "iris_plane_slope": -0.277,
-    "iris_concavity": 0.006,
+    "iris_concavity": 0.022,
     "upper_cover": 0.01,
     "lower_cover": 0.005,
     "orbital_band_width": 0.28,
@@ -866,16 +866,24 @@
         -0.335
       ],
       [
+        0.24,
+        -0.344
+      ],
+      [
+        0.26,
+        -0.33
+      ],
+      [
         0.28,
-        -0.367
+        -0.306
       ],
       [
         0.32,
-        -0.324
+        -0.319
       ],
       [
         0.38,
-        -0.336
+        -0.335
       ],
       [
         0.44,
@@ -902,48 +910,46 @@
     "continuous_lateral_power": 24,
     "jaw_normal_boundary_strength": 0.4,
     "jaw_return_depth_strength": 0.2,
-    "ear_return_lip_width": 0.083,
-    "ear_outward_span": 0.102,
+    "ear_return_lip_width": 0.14,
+    "ear_outward_span": 0.095,
     "ear_posterior_span": 0.112,
     "ear_root_depth_base": -0.32,
     "ear_root_depth_slope": -0.035,
     "ear_upper_arc_bias": 0.065,
-    "ear_bend_contrast": 0.75,
     "upper_lip_edge_depth_delta": 0.008,
     "lower_lip_edge_depth_delta": -0.004,
-    "ear_upper_fullness": 0.24,
+    "ear_upper_fullness": 0.32,
     "brow_inner_fullness": 0.25,
     "chin_underside_center_back": 0.016,
     "chin_underside_roundness": 0.35,
-    "ear_cup_recess": 0.022,
     "chin_follow_down_m": 0.0015,
     "chin_follow_height": 0.12,
     "chin_follow_lateral": 0.35,
-    "ear_return_end_fade": 0.22,
+    "ear_return_end_fade": 0.14,
     "eye_horizontal_power": 2.8,
-    "outer_liner_width": 0.019,
+    "outer_liner_width": 0.024,
     "jaw_border_relaxation": 0.35,
     "jaw_border_iterations": 3,
     "jaw_border_max_height": 0.18,
     "jaw_border_back_threshold": -0.12,
-    "ear_lower_taper": 0.1,
+    "ear_lower_taper": 0.2,
     "ear_upper_trim": 0.14,
     "ear_upper_depth_return": 0.027,
     "orbital_lateral_fade": 0.16,
     "pocket_center_lift": 0.012,
     "ear_root_normal_blend": 1.0,
-    "ear_return_anterior_depth": 0.03,
+    "ear_return_anterior_depth": 0.035,
     "ear_min_posterior_clearance": 0.012,
-    "ear_return_basin_depth_fraction": 0.2,
-    "ear_return_basin_width_fraction": 0.75,
+    "ear_return_basin_depth_fraction": 0.22,
+    "ear_return_basin_width_fraction": 1.35,
     "jaw_border_lateral_relaxation": 0.0,
     "eye_lower_horizontal_power": 2.0,
     "iris_vertical_slope": 0.088,
     "iris_radial_samples": 32,
-    "iris_radial_rings": 3,
+    "iris_radial_rings": 2,
     "pupil_half_width": 0.0175,
     "pupil_half_height": 0.027,
-    "pupil_recess": 0.0065,
+    "pupil_recess": -0.01,
     "pupil_accent_width": 0.006,
     "pupil_accent_height": 0.01,
     "rear_return_inset_profile": [
@@ -986,10 +992,78 @@
     ],
     "rear_return_back_offset": 0.007,
     "rear_return_rim_crease": 1.0,
-    "rear_return_lift": 0.012,
+    "rear_return_lift": 0.004,
     "upper_ink_plane_depth": 0.002,
     "upper_ink_plane_slope_x": -0.31,
-    "upper_ink_plane_slope_y": 0.1
+    "upper_ink_plane_slope_y": 0.1,
+    "ear_outward_profile": [
+      [
+        0,
+        0
+      ],
+      [
+        0.22,
+        0.12
+      ],
+      [
+        0.7,
+        0.8
+      ],
+      [
+        0.88,
+        0.95
+      ],
+      [
+        1,
+        1
+      ]
+    ],
+    "ear_depth_profile": [
+      [
+        0,
+        0
+      ],
+      [
+        0.22,
+        0.32
+      ],
+      [
+        0.7,
+        0.72
+      ],
+      [
+        0.88,
+        0.79
+      ],
+      [
+        1,
+        1
+      ]
+    ],
+    "ear_return_width_profile": [
+      [
+        0,
+        1.5
+      ],
+      [
+        0.18,
+        1.5
+      ],
+      [
+        0.42,
+        1.2
+      ],
+      [
+        0.7,
+        1.0
+      ],
+      [
+        1,
+        0.92
+      ]
+    ],
+    "chin_posterior_center_drop": 0.018,
+    "chin_posterior_drop_start": 0.03
   },
   "normal_policy": "actual_area_weighted_geometry",
   "surface_subdivision_levels": 1,
@@ -1010,7 +1084,7 @@
   "nose_plane_width": 0.032,
   "ear_concha_tint_strength": 0.14,
   "ear_helix_stroke_strength": 0.42,
-  "ear_inner_fold_strength": 0.5,
+  "ear_inner_fold_strength": 0.58,
   "brow_rgb": [
     0.075,
     0.035,
@@ -1025,14 +1099,14 @@
   "ear_concha_center_v": 0.58,
   "iris_depth_contrast": 0.2,
   "ear_fold_curl": 0.075,
-  "ear_fold_width": 0.05,
-  "ear_helix_softness": 0.13,
+  "ear_fold_width": 0.038,
+  "ear_helix_softness": 0.09,
   "iris_pupil_aspect": 0.78,
   "iris_pupil_radius": 0.235,
   "iris_pupil_softness": 0.04,
   "ear_inner_fork_strength": 0.32,
-  "upper_lash_peak_height_m": 0.0045,
-  "upper_lash_peak_width": 0.13,
+  "upper_lash_peak_height_m": 0.0024,
+  "upper_lash_peak_width": 0.12,
   "lid_fold_width_H": 0.0065,
   "lid_fold_height_profile": [
     [
@@ -1050,6 +1124,111 @@
     [
       1,
       0.496
+    ]
+  ],
+  "upper_lash_tip_controls": [
+    [
+      -0.82,
+      -0.92,
+      0.002
+    ],
+    [
+      0.46,
+      0.6,
+      0.0028
+    ],
+    [
+      0.8,
+      0.92,
+      0.0015
+    ]
+  ],
+  "upper_lash_outline": [
+    [
+      -0.94,
+      0.019
+    ],
+    [
+      -0.72,
+      0.041
+    ],
+    [
+      -0.79,
+      0.052
+    ],
+    [
+      -0.52,
+      0.044
+    ],
+    [
+      0.38,
+      0.044
+    ],
+    [
+      0.56,
+      0.056
+    ],
+    [
+      0.51,
+      0.041
+    ],
+    [
+      0.86,
+      0.033
+    ],
+    [
+      1.1,
+      0.043
+    ],
+    [
+      0.99,
+      0.026
+    ],
+    [
+      1.24,
+      0.012
+    ],
+    [
+      0.9,
+      0.014
+    ],
+    [
+      0.54,
+      0.018
+    ],
+    [
+      -0.54,
+      0.019
+    ],
+    [
+      -0.92,
+      0.004
+    ]
+  ],
+  "outer_lash_wing_outline": [
+    [
+      0.6,
+      0.038
+    ],
+    [
+      1.1,
+      0.043
+    ],
+    [
+      0.99,
+      0.026
+    ],
+    [
+      1.24,
+      0.012
+    ],
+    [
+      0.91,
+      0.012
+    ],
+    [
+      0.7,
+      0.023
     ]
   ]
 }

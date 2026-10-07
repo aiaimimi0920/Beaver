@@ -200,6 +200,26 @@ def brow_lane_offset(t, lane):
     return original * 0.5 + (lane - 0.5) * original * factor
 
 
+def lash_outline_points(side, controls):
+    points = []
+    for t, rise in controls:
+        x = side * H * (C["eye_center_x"] + C["eye_half_width"] * t)
+        y = Y0 + H * (C["eye_corner_y"] + C["eye_corner_slope"] * t + rise)
+        points.append((x, y))
+    area = sum(a[0] * b[1] - b[0] * a[1] for a, b in zip(points, points[1:] + points[:1]))
+    return points if area > 0 else list(reversed(points))
+
+
+def build_graphic_upper_lash(side):
+    for key, name, color, offset in [
+        ("upper_lash_outline", "Upper lash ", INK, 0.0),
+        ("outer_lash_wing_outline", "Attached outer lash wing ", (0.23, 0.065, 0.14), 0.00012),
+    ]:
+        points = lash_outline_points(side, STYLE[key])
+        vertices = [coord(x, y, upper_ink_depth(x, y) + offset) for x, y in points]
+        mesh(name + str(side), vertices, [tuple(range(len(vertices)))], color)
+
+
 def build_eyes():
     for side in [-1, 1]:
         cols = 33
@@ -227,47 +247,23 @@ def build_eyes():
                 grid_faces(4, cols, side > 0 if upper else side < 0),
                 SKIN,
             )
+            if upper:
+                build_graphic_upper_lash(side)
+                continue
+            ink = []
             for lane in range(2):
                 for i in range(cols):
                     t = -1 + 2 * i / (cols - 1)
-                    x, y = eye_contour(side, t, upper)
-                    rim_y = y
-                    if upper:
-                        peak = max(
-                            max(0, 1 - abs(t - center) / STYLE["upper_lash_peak_width"])
-                            for center in [-0.63, 0.56, 0.82]
-                        )
-                        y += (1 - lane) * STYLE["upper_lash_peak_height_m"] * peak
+                    x, y = eye_contour(side, t, False)
                     y += (
-                        (-1 if upper else 1)
-                        * lane
-                        * (STYLE["upper_lash_thickness_m"] if upper else C["lower_cover"] * H)
+                        lane
+                        * C["lower_cover"]
+                        * H
                         * max(0, 1 - t * t) ** 0.55
                         * (0.85 + 0.35 * (t + 1) / 2)
                     )
-                    ink.append(coord(x, y, upper_ink_depth(x, y) if upper else lash_depth(x, y)))
-            mesh(
-                ("Upper" if upper else "Lower") + " lash " + str(side),
-                ink,
-                grid_faces(2, cols, side > 0 if upper else side < 0),
-                INK if upper else (0.12, 0.08, 0.075),
-            )
-            if upper:
-                xa, ya = eye_contour(side, 0.68, True)
-                xb, yb = eye_contour(side, 0.98, True)
-                scale = STYLE["lash_fan_scale"]
-                wing_points = [
-                    (xa, ya - STYLE["upper_lash_thickness_m"] * 0.62),
-                    (xb + side * 0.0045 * scale, yb + 0.0025 * scale),
-                    (xa, ya),
-                ]
-                wing = [coord(x, y, upper_ink_depth(x, y)) for x, y in wing_points]
-                mesh(
-                    "Attached outer lash wing " + str(side),
-                    wing,
-                    [(0, 1, 2) if side > 0 else (2, 1, 0)],
-                    INK,
-                )
+                    ink.append(coord(x, y, lash_depth(x, y)))
+            mesh("Lower lash " + str(side), ink, grid_faces(2, cols, side < 0), (0.12, 0.08, 0.075))
         liner = []
         _, top = eye_contour(side, 0.95, True)
         _, bottom = eye_contour(side, 0.55, False)

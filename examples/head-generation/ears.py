@@ -17,9 +17,7 @@ def membrane_offset(t, u, config, root_depth):
     )
     upper_return = max(0, min(1, (t - 0.55) / 0.45))
     upper_return = upper_return * upper_return * (3 - 2 * upper_return)
-    outward = envelope * (
-        config["ear_outward_span"] * u - config["ear_cup_recess"] * 4 * u * (1 - u)
-    )
+    outward = envelope * config["ear_outward_span"] * curve(u, 1, config["ear_outward_profile"])
     outer_depth = (
         config["ear_root_depth_base"]
         + config["ear_root_depth_slope"] * t
@@ -27,7 +25,7 @@ def membrane_offset(t, u, config, root_depth):
         + config["ear_upper_depth_return"] * upper_return
     )
     outer_depth = min(outer_depth, root_depth - config["ear_min_posterior_clearance"] * sin(pi * t))
-    sweep = u + config["ear_bend_contrast"] * sin(2 * pi * u) / (2 * pi)
+    sweep = curve(u, 1, config["ear_depth_profile"])
     posterior = (root_depth - outer_depth) * sweep
     return outward, posterior
 
@@ -89,7 +87,7 @@ def fit_ear_roots(shell):
             for j, root in enumerate(root_points):
                 t = (root.z - low) / (high - low)
                 row = []
-                values = [0] if j in [0, len(root_points) - 1] else [0, 0.25, 0.5, 0.78, 1]
+                values = [0] if j in [0, len(root_points) - 1] else [0, 0.22, 0.5, 0.70, 0.88, 1]
                 for u in values:
                     outward, posterior = membrane_offset(t, u, C, (-root.y - Z0) / H)
                     row.append(len(vs))
@@ -122,7 +120,11 @@ def fit_ear_roots(shell):
                 x, y, z = vs[outer]
                 return_width = min(
                     H * C["ear_return_lip_width"] * sin(pi * t) * end_weight,
-                    abs(x - root_points[j].x) * C["ear_return_basin_width_fraction"],
+                    abs(x - root_points[j].x)
+                    * min(
+                        C["ear_return_basin_width_fraction"],
+                        curve(t, 1, C["ear_return_width_profile"]),
+                    ),
                 )
                 return_depth = min(
                     H * C["ear_return_anterior_depth"] * sin(pi * t) * end_weight,
@@ -142,6 +144,23 @@ def fit_ear_roots(shell):
                 clean = list(dict.fromkeys(corners))
                 if len(clean) >= 3:
                     fs.append(tuple(clean))
+            # Join the lower rear wrap to the neighboring open facial edge.
+            # The anterior root chain remains unchanged; no third face is added
+            # to its already connected edges.
+            lower_neighbors = [
+                b if a == roots[0] else a
+                for a, b in boundary_edges
+                if roots[0] in (a, b) and data.vertices[b if a == roots[0] else a].co.z < low
+            ]
+            assert len(lower_neighbors) == 1, "Need one lower facial boundary neighbor"
+            lower = data.vertices[lower_neighbors[0]].co.copy()
+            lower_id = len(vs)
+            vs.append(tuple(lower))
+            bridge = (lower_id, rim[1], rows[0][0])
+            a, b, c = (Vector(vs[k]) for k in bridge)
+            if (b - a).cross(c - a).y * side < 0:
+                bridge = tuple(reversed(bridge))
+            fs.append(bridge)
             uvpoints = project_ear_uv(vs)
             if side < 0:
                 fs = [tuple(reversed(f)) for f in fs]

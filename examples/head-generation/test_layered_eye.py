@@ -8,7 +8,7 @@ C = json.loads(Path(__file__).with_name("face_style.json").read_text())["calibra
 
 
 class LayeredEyeTests(unittest.TestCase):
-    def test_annular_mesh_has_two_boundaries_and_no_pole(self):
+    def test_continuous_iris_has_one_boundary_and_no_hole(self):
         fn, _ = pure_function(
             "eye_socket.py",
             "annular_iris_mesh",
@@ -23,18 +23,18 @@ class LayeredEyeTests(unittest.TestCase):
         v, f = fn(1)
         n = C["iris_radial_samples"]
         r = C["iris_radial_rings"]
-        self.assertEqual(len(v), (r + 1) * n)
+        self.assertEqual(len(v), 1 + r * n)
         self.assertEqual(len(f), r * n)
         uses = {}
         for face in f:
-            self.assertEqual(len(set(face)), 4)
+            self.assertIn(len(set(face)), [3, 4])
             q = [v[i] for i in face]
             area = sum(a[0] * b[1] - b[0] * a[1] for a, b in zip(q, q[1:] + q[:1])) / 2
             self.assertGreater(area, 0)
             for a, b in zip(face, face[1:] + face[:1]):
                 e = tuple(sorted((a, b)))
                 uses[e] = uses.get(e, 0) + 1
-        self.assertEqual(sum(x == 1 for x in uses.values()), 2 * n)
+        self.assertEqual(sum(x == 1 for x in uses.values()), n)
         self.assertTrue(all(x <= 2 for x in uses.values()))
 
     def test_lower_aperture_rounding_preserves_upper_and_corners(self):
@@ -53,34 +53,30 @@ class LayeredEyeTests(unittest.TestCase):
         self.assertIn("Catchlight white ellipse", source)
         self.assertLess(C["pupil_half_width"], C["iris_half_width"])
         self.assertLess(C["pupil_half_height"], C["iris_half_height"])
-        self.assertTrue(0 < C["pupil_recess"] < 0.01)
+        self.assertTrue(-0.016 < C["pupil_recess"] < -0.005)
 
 
 class WingWindingTests(unittest.TestCase):
-    def test_attached_wing_remains_front_facing_with_thicker_ribbon(self):
-        import ast
+    def test_original_lash_polygons_are_front_facing_and_not_self_crossing(self):
+        style = json.loads(Path(__file__).with_name("face_style.json").read_text())
+        fn, _ = pure_function("face.py", "lash_outline_points", {"C": C, "H": 1, "Y0": 0})
 
-        tree = ast.parse(Path(__file__).with_name("face.py").read_text())
-        assignment = next(
-            n
-            for n in ast.walk(tree)
-            if isinstance(n, ast.Assign)
-            and any(isinstance(x, ast.Name) and x.id == "wing_points" for x in n.targets)
-        )
+        def cross(a, b, c):
+            return (b[0] - a[0]) * (c[1] - a[1]) - (b[1] - a[1]) * (c[0] - a[0])
+
         for side in [-1, 1]:
-            env = {
-                "xa": side * 0.06,
-                "ya": 1.66,
-                "xb": side * 0.07,
-                "yb": 1.657,
-                "side": side,
-                "scale": 0.75,
-                "STYLE": {"upper_lash_thickness_m": 0.0011},
-            }
-            q = eval(compile(ast.Expression(assignment.value), "wing", "eval"), env)
-            self.assertEqual(len(q), 3)
-            area = sum(a[0] * b[1] - b[0] * a[1] for a, b in zip(q, q[1:] + q[:1])) / 2
-            self.assertGreater(area * side, 0)
+            for key in ["upper_lash_outline", "outer_lash_wing_outline"]:
+                q = fn(side, style[key])
+                edges = list(zip(q, q[1:] + q[:1]))
+                self.assertGreater(sum(a[0] * b[1] - b[0] * a[1] for a, b in edges), 0)
+                for i, (a, b) in enumerate(edges):
+                    for j, (c, d) in enumerate(edges):
+                        if abs(i - j) <= 1 or {i, j} == {0, len(edges) - 1}:
+                            continue
+                        self.assertFalse(
+                            cross(a, b, c) * cross(a, b, d) < 0
+                            and cross(c, d, a) * cross(c, d, b) < 0
+                        )
 
 
 class UpperLidOcclusionTests(unittest.TestCase):

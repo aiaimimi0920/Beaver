@@ -1,7 +1,7 @@
-# Candidate154 native review
+# Candidate159 actual native review
 
-Actually inspected: front render and wireframe; right45 white; exact right90 white; rear white; left45 render; front MouthOpen0/.5/1. Captures preserve the actual scene-state JSON. Body/Hair were hidden only for comparison. Final comparison uses zoom1.05 to avoid viewport bottom cropping.
+Observed: rear render, right90 white, left90 white, front wire, right45 white, front MouthOpen0.5/1, left45 render. Captures include actual view-state JSON. Candidate159 was generated and run, not substituted with a screenshot mockup.
 
-148 established separated eye layers.149 was rejected by a front-winding assertion before delivery.150 fixed the attached wing winding and added the rear return.151 removed excess upper-lid skin coverage.152–153 exposed peaks but an oblique white view revealed a warped ribbon from per-vertex max-projection.154 uses one shallow sloped upper-ink plane; the inspected white view no longer shows that projection-induced fragmentation. Original texture and geometry still differ artistically from the reference; this is a review candidate, not a claim of identical appearance.
+The continuous iris topology and geometric ear rim are materially changed from154. The lower rear chin silhouette is no longer flat across the center. However, left45 render still exposes a side-face bulge below the ear. This is NOT visually accepted and the work continues. Current evidence does not prove exact all-angle likeness or zero intersections.
 
-The independent eyebrow and accepted center division remain. Both ear roots retain shared topology. The fuller ear return, anterior lower attachment and pigment were inspected without declaring a global all-angle collision proof. Existing UID fallback and optional Blender export warnings remain; native error checks passing do not mean zero warnings.
+Body/Hair remain frozen. Optional Draco export and existing UID fallback warnings are not counted as zero-warning success. Full-character acceptance is out of scope.

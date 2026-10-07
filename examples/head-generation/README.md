@@ -1,13 +1,13 @@
-# Reproducible structure-first head recipe, candidate154
+# Parameterized NPR head recipe, progress candidate159
 
-This batch follows the owner's147 review. It calibrates both hollow ears, the posterior chin-to-ear return boundary, the three eye-adjacent ribbons, lower aperture curvature, and independent eye-layer construction. The accepted independent eyebrow, frontal silhouette, nasal ramp, central division and small chin follow remain regression targets.
+The owner rejected154. This batch corrects diagnosed topology assumptions through155–159 and is a preserved progress checkpoint, not final visual acceptance.
 
-Workflow: natural-language specification → explicit semantic parameters → Beaver generation → native MiDot/NPR white and wireframe inspection → render and motion checks. The generator never loads reference meshes, UVs, pixels or connectivity. Separate read-only diagnostics distinguish true independent iris/pupil/catchlight sheets from imported UV-split components; raw component count is not a trustworthy layer count.
+Workflow: natural-language brief → reusable semantic recipe → existing Beaver generation → native MiDot/NPR white/wire comparison → rendered and mouth-motion checks. Root dot owns all roles; no new Codex engineering task or delegated model service. Reference geometry, UVs, adjacency and pixels never enter the generator. Separate read-only diagnostics inform semantic controls only.
 
-The iris is an original shallow annular sheet around a separate recessed pupil, with a separate pupil accent and catchlight. Lower aperture curvature is independently adjustable without changing corner anchors. The upper lash ribbon uses a coherent shallow sloped plane after native white-mode inspection rejected a per-vertex projection heuristic. Attached peaks, a tapered eyelid fold, and the lateral liner are distinct from the preserved eyebrow.
+Corrections: continuous shallow iris disk with a peripheral ring and separate pupil in front of its central depression, replacing the incorrect annulus/behind-hole pupil. Original graphic upper-lash polygons and purple wing replace repeated vertical teeth. Ear roots lead forward at the lower attachment, independent cross-section profiles produce a rolled rim, and a height-varying broad rear sheet plus lower bridge preserve an open hollow construction. The posterior chin row now has a rounded V-like rise rather than a flat U.
 
-Ears remain open sheets with a wider inward return, anterior lower-root calibration and independently authored fold pigment. The posterior jaw uses a connected inward return strip rather than narrowing the accepted exterior. Its end fades out before the ear-root interval. Body/Hair and the pinned MiDot/NPR runtime are unchanged.
+72 pure tests and native model checks passed. Aggregate evidence is tracked separately. Body/Hair, the independent eyebrow, nasal controls and1.5mm chin follow remain regression targets. The full character/wardrobe is not accepted.
 
-69 pure tests pass; generated source hashes match. Native validation passes and actual multi-angle white/wire/render views and MouthOpen0/.5/1 have been inspected. See review-results.md for exact evidence and project aggregate status. Owner aesthetic acceptance remains pending. Keep the existing PR draft until applicable gates pass; no release, deployment or full-character/wardrobe acceptance is claimed.
+IMPORTANT remaining visual issue: the final left45 render still shows an unwanted bulge in the side-face boundary immediately below the ear. The previous monotonic-lateral front-grid assumption may prevent a true cheek-to-back wrap. This checkpoint must not be called visually finished; continuation should diagnose and repair that transition, then reassess all marked views. Preserve this valid partial work before larger topology changes. Keep the PR draft; hosted CI and owner visual acceptance remain separate gates.
 
-Run unittest discovery in this directory. bundle.py packages a request for Beaver blender.start and never runs Blender itself.
+Run unittest discovery in this directory. bundle.py only packages the reviewed request for Beaver blender.start.

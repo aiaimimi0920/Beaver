@@ -63,28 +63,33 @@ def build_socket(side):
 
 
 def annular_iris_mesh(side):
+    # A continuous shallow iris disk with a narrow peripheral bevel. The pupil
+    # overlays the central depression; it is not a hole through the iris.
     n = int(C["iris_radial_samples"])
     rings = int(C["iris_radial_rings"])
-    vs, fs = [], []
-    for j in range(rings + 1):
-        t = j / rings
-        rx = C["pupil_half_width"] * (1 - t) + C["iris_half_width"] * t
-        ry = C["pupil_half_height"] * (1 - t) + C["iris_half_height"] * t
+    center_x = side * H * C["iris_center_x"]
+    center_y = Y0 + H * C["iris_center_y"]
+    vs = [coord(center_x, center_y, iris_depth(center_x, center_y))]
+    fs = []
+    for j in range(rings):
+        r = 0.94 + 0.06 * j / max(1, rings - 1)
         for k in range(n):
             a = 2 * pi * k / n
-            x = H * (side * C["iris_center_x"] + rx * cos(a))
-            y = Y0 + H * (C["iris_center_y"] + ry * sin(a))
+            x = center_x + H * C["iris_half_width"] * r * cos(a)
+            y = center_y + H * C["iris_half_height"] * r * sin(a)
             vs.append(coord(x, y, iris_depth(x, y)))
-    for j in range(rings):
+    for k in range(n):
+        fs.append((0, 1 + k, 1 + (k + 1) % n))
+    for j in range(rings - 1):
         for k in range(n):
             q = (k + 1) % n
-            fs.append((j * n + k, (j + 1) * n + k, (j + 1) * n + q, j * n + q))
+            fs.append((1 + j * n + k, 1 + (j + 1) * n + k, 1 + (j + 1) * n + q, 1 + j * n + q))
     return vs, fs
 
 
 def build_layered_iris(side):
     iv, faces = annular_iris_mesh(side)
-    iris = mesh("Independent annular iris " + str(side), iv, faces, WHITE)
+    iris = mesh("Continuous shallow iris disk " + str(side), iv, faces, WHITE)
     iris["iris_detail"] = True
     iris["ocular_surface"] = True
     uv = iris.data.uv_layers.new(name="DetailUV")

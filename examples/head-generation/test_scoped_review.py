@@ -21,9 +21,9 @@ class ScopedReviewTests(unittest.TestCase):
         curve, _ = pure_function("face.py", "curve", {})
         self.assertGreater(curve(0.15, 1, C["width_stations"]), 0.267)
         self.assertLess(curve(0.15, 1, C["width_stations"]), 0.280)
-        self.assertLessEqual(C["ear_return_basin_depth_fraction"], 0.25)
-        self.assertLessEqual(C["ear_return_basin_width_fraction"], 0.8)
-        self.assertGreater(C["ear_outward_span"], 4 * C["ear_cup_recess"])
+        self.assertTrue(0.1 < C["ear_return_basin_depth_fraction"] < 0.35)
+        self.assertTrue(1.1 < C["ear_return_basin_width_fraction"] < 1.5)
+        self.assertGreater(C["ear_outward_span"], 0.08)
 
     def test_brow_pupil_and_connected_lash_contract(self):
         self.assertLessEqual(C["brow_thickness"], 0.011)

@@ -50,7 +50,18 @@ def jaw_return_position(x, y, z, q, boundary_depth):
 
 
 def chin_underside_height(lift, q):
-    return Y0 + H * (lift + C["chin_return_lift"] * q * q)
+    back = max(
+        0,
+        min(
+            1,
+            (lift - C["chin_posterior_drop_start"])
+            / (C["chin_underside_stations"][-1][1] - C["chin_posterior_drop_start"]),
+        ),
+    )
+    back = back * back * (3 - 2 * back)
+    rounded = (sqrt(q * q + 0.08**2) - 0.08) / (sqrt(1 + 0.08**2) - 0.08)
+    drop = C["chin_posterior_center_drop"] * back * (1 - rounded)
+    return Y0 + H * (lift + C["chin_return_lift"] * q * q - drop)
 
 
 def chin_underside_depth_offset(back, lift, q):

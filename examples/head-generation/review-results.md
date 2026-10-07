@@ -1,13 +1,13 @@
-# Candidate154 verification
+# Candidate159 progress verification
 
-- 69 pure Python tests pass;13/13 generated source/spec hashes match the staged recipe.
-- Generation request6d659b60-7f0f-4e35-a0e1-27f64af40205;jobb57cbf94-37a5-4402-8d7b-b37b624827ba;completion poll1c443d1f-fab6-4338-baaa-732107952e1e: succeeded,exit0.
-- GLB SHA256 b17da37c88b93cbe148c2f9bff0cbc3376cfdcebf1cb43a6a4162332b51be5cc.
-- Native validation4d0dfa6a-53b9-4231-a931-54500cef4ed7: pass,engineErrors=false,errors=[].
-- Actual front render/wire,right45 white,right90 white,rear white,left45 render and MouthOpen0/.5/1 inspected. Native screenshots are not model generation substitutes.
-- Ear root shared manifold edges13 per side;28 shared-normal root vertices;maximum common-normal root position error1.192093e-7m. Body/Hair primitives and original binary prefix remain frozen.
-- Sixteen original connected posterior return faces were added before subdivision. Across five lower posterior heights0.06/0.10/0.15/0.20/0.24H, mean absolute lateral boundary deviation decreased from147's0.039972H to153/154's0.007212H. This is a sparse rear-boundary metric, not overall similarity. Original frontal half-width section differences remain at most0.00009H in the sampled set.
-- The front chin tip and filtered lower chin skin retain1.500010mm maximum downward MouthOpen movement. Oral and other motion bounds are scoped samples, not a global collision proof.
-- Integration target154 SHA25614587cb431dd7677a724da41f4192c323ee0e0174b311f2642cb6450e3e640c7, written through Beaver with the prior147 hash guard. Beaver model aggregate 744eff1c-87c9-4eb7-ba7b-eedb87f77c17: autoPassed;7 tests,0 failures; finished 2026-10-07T01:59:03.453762283+00:00. Parent closing aggregate is tracked separately.
-- Failed149 is preserved as diagnostic history, not a successful model. No new source commit or Library backup is implied by local file creation; these are recorded independently after verification.
-- Owner visual acceptance remains pending. Prior remote147 hosted checks failed with no executed steps; check the new commit independently. PR remains draft; no merge/release/production deployment/full-character acceptance.
+- Owner rejected154; this is a technical progress checkpoint, NOT final completion.
+-72 pure tests pass;13/13 generated source/spec hashes match.
+- Generation5059b984-556f-4714-b4b4-316768811ebd/jobfabb0c77-3a08-48fa-ac53-ffda6b1b0407, completion9bb35dc4-8add-4dd0-ab8e-8da1c0e8fc23: succeeded,exit0.
+- GLB SHA256 b1c929ce0793aff3cdced87a8540e280a54ea0fdd8bb007190bddb299bafaf56.
+- Native validationab755087-afac-44b6-a922-bec1ab9ae9d2:pass,engineErrors=false,errors=[].
+- Actual rear render,bilateral90white,frontwire,right45white,left45render,MouthOpen0/.5/1 observed. The left45 ear-to-face transition remains a known visual defect.
+- Ear-region positional weld audit:468edges;440shared by2faces,28open boundary edges;no edge with>2incident faces. This is a scoped topology check,not an all-angle collision proof.
+- Front chin tip and filtered chin skin retain1.50001049mm downward mouth follow. Broader position-only filters also include oral vertices and must not be reported as chin skin motion.
+- Integration target159 was written through Beaver with154 SHA guard; request7e5c18f9-e164-4f93-9054-df37503b4657. Aggregate c49d1dd7-dc40-409a-a755-5626b3d92863 failed during preparation with No space left on device, before GUT results. Temporary checkpoint caches were losslessly deduplicated, restoring3.5GiB free. Existing Beaver task is being resumed; no aggregate pass is claimed.
+- Source remote preservation and Library version are separate verified steps. No new remote/backup is implied by this local record.
+- Remaining:repair side-face bulge below ear;recheck scoped aesthetics;hosted CI gates. No merge/release/deployment/full-character claim.

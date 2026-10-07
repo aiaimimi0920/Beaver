@@ -35,3 +35,13 @@ class RearReturnTests(unittest.TestCase):
                 e = tuple(sorted((a, b)))
                 uses[e] = uses.get(e, 0) + 1
         self.assertLessEqual(max(uses.values()), 2)
+
+
+class PosteriorChinCurveTests(unittest.TestCase):
+    def test_rear_center_is_lower_without_moving_front_rows_or_side_anchor(self):
+        fn, _ = pure_function("shell.py", "chin_underside_height", {"C": C, "H": 1, "Y0": 0})
+        self.assertAlmostEqual(fn(0.03, 0), 0.03)
+        self.assertAlmostEqual(fn(0.05, 1), 0.05 + C["chin_return_lift"])
+        self.assertAlmostEqual(fn(0.05, 0), 0.032)
+        samples = [fn(0.05, i / 30) for i in range(31)]
+        self.assertTrue(all(b > a for a, b in zip(samples, samples[1:])))
