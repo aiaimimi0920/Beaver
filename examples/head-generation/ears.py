@@ -51,6 +51,10 @@ def project_ear_uv(vertices):
     ]
 
 
+def lower_ear_bridge(lower_id, root_id, return_id):
+    return (lower_id, return_id, root_id)
+
+
 def fit_ear_roots(shell):
     bpy.context.view_layer.update()
     evaluated = shell.evaluated_get(bpy.context.evaluated_depsgraph_get())
@@ -156,10 +160,9 @@ def fit_ear_roots(shell):
             lower = data.vertices[lower_neighbors[0]].co.copy()
             lower_id = len(vs)
             vs.append(tuple(lower))
-            bridge = (lower_id, rim[1], rows[0][0])
-            a, b, c = (Vector(vs[k]) for k in bridge)
-            if (b - a).cross(c - a).y * side < 0:
-                bridge = tuple(reversed(bridge))
+            bridge = lower_ear_bridge(lower_id, rows[0][0], rim[1])
+            # Oppose the existing root->rim edge. A world-y normal heuristic
+            # incorrectly flipped both shared edges of this lower bridge.
             fs.append(bridge)
             uvpoints = project_ear_uv(vs)
             if side < 0:

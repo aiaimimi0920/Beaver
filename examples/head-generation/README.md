@@ -1,13 +1,11 @@
-# Parameterized NPR head recipe, candidate162
+# Candidate165 verified structural progress checkpoint
 
-This revision follows the owner rejection of154 and corrects the actual ear, eye and rear-contour relationships. It is a candidate for owner visual review, not a claim of identical appearance or completed general-purpose character generation.
+The owner accepted162 eye aperture and pupil internals, but requested more work on mouth/chin, three eye-adjacent accents and ear connections/detail. This is an intermediate progress checkpoint, NOT completed visual acceptance.
 
-Workflow: natural-language brief → explicit original semantic recipe → existing Beaver generation → native MiDot/NPR white/wire comparison → rendered and mouth-motion checks. No reference geometry, pixels, UVs or connectivity enter the generator.
+The root assistant directly runs the existing Beaver natural-language/spec/generation workflow. No reference meshes, UVs, topology or pixels are used by the generator. Diagnostic observations remain separate.
 
-The iris is a continuous shallow disk with a narrow peripheral band, with an independent pupil ahead of the central depression and a separate catchlight. This corrects the previous annulus/behind-hole interpretation. Upper lashes use original editable graphic outlines and a purple wing; the independent upper brow remains preserved. The ears use independently controlled outward/depth sections for a rolled rim, a height-varying medial reverse sheet, an anterior lower-root profile and a joined lower return. The posterior chin boundary has a rounded V-like收束 rather than a flat U.
+165 corrects a genuine mirrored lower-ear bridge winding defect: previous valence checks missed four same-direction shared edges. The corrected topology has zero such conflicts in the520edge audited ear region and no>2face edge. Actual bilateral side renders no longer show the previous lower-ear black triangle. Mouth relief is localized and the lip edge depth gap reduced. Requested jaw fairing is uniformly scaled to its original bounded budget.164 failed that bound and is not a valid model.
 
-Actual159 review still showed a bulge below the ear.160 tested a broader lateral wrap and was visually rejected for new front-cheek indentations despite native import passing.161–162 therefore return to159 lateral topology and fair only the local posterior-depth profile into the lower ear root. Actual162 left45 render no longer shows the earlier bulging shoulder; front width and nose/brow/mouth controls remain unchanged. Owner aesthetic acceptance is still pending; do not reuse160 as the current recipe.
+77 pure tests pass.165 native NPR validation passes without engine errors. Current viewer supports linked near framing0.25–3.0,Shift-drag pan and exact10-degree buttons, tested interactively. Two new native regression tests are included but the full aggregate is pending. Do not substitute interactive checks for that pending gate.
 
-72 pure tests and native162 validation pass. Full project aggregate, source push and durable backup have separate records in review-results.md. Body/Hair and1.5mm chin follow remain frozen/regression checked. Existing optional export warnings remain; no full-character, merge, release or production-deployment acceptance is implied.
-
-Run unittest discovery here. bundle.py packages a Beaver blender.start request and does not execute Blender itself.
+162 baseline and163 mouth iteration each have19actual paired0/±10...±90 captures.165 still has a too-straight posterior jaw run and needs further ear detail and eye-accent refinement.166–168 are subsequent ongoing experiments, not declared accepted here. Keep PR draft, hosted CI and owner visual acceptance separate. Body/Hair and1.5mm chin-follow remain frozen.

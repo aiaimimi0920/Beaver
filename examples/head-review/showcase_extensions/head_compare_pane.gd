@@ -89,6 +89,8 @@ func apply_state(state: Dictionary) -> void:
 		return
 	pivot.rotation_degrees = Vector3(state.pitch, state.yaw, 0)
 	camera.set_orthogonal(state.zoom, 0.01, 100.0)
+	camera.position.x = state.get("pan_x", 0.0)
+	camera.position.y = state.get("pan_y", 0.0)
 	actor.light_yaw = state.light
 	actor.meshes[0].visible = state.body
 	actor.meshes[2].visible = state.hair

@@ -9,11 +9,13 @@ import unittest
 ROOT = Path(__file__).parent
 
 
-def load_math(half_gap=None):
+def load_math(half_gap=None, corner_lift=None):
     style = json.loads((ROOT / "face_style.json").read_text())
     calibration = style["calibration"]
     if half_gap is not None:
         calibration["mouth_rest_half_gap"] = half_gap
+    if corner_lift is not None:
+        calibration["mouth_corner_lift"] = corner_lift
     scope = dict(
         C=calibration,
         H=calibration["height_m"],
@@ -83,7 +85,7 @@ class MouthMathTests(unittest.TestCase):
             self.assertAlmostEqual(normalized, math.sin(angle), places=10)
 
     def test_raised_corner_lower_lip_moves_down(self):
-        scope = load_math()
+        scope = load_math(corner_lift=0.003)
         x, y = scope["mouth_half_contour"](-math.pi / 6)
         self.assertGreater(y, scope["MOUTH_Y"])
         delta = scope["jaw_delta"](x, y, 0)
@@ -114,3 +116,16 @@ class MouthMathTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+class NeutralCornerRegression(unittest.TestCase):
+    def test_both_corner_styles_keep_upper_and_lower_motion_separate(self):
+        for lift in [-0.003, -0.001, 0.0, 0.003]:
+            scope=load_math(corner_lift=lift)
+            for a in [0.2, 0.5, 1.0]:
+                x,up=scope["mouth_half_contour"](a)
+                _,low=scope["mouth_half_contour"](-a)
+                du=scope["jaw_delta"](x,up,0); dl=scope["jaw_delta"](x,low,0)
+                self.assertEqual(du[1],0)
+                self.assertGreater(dl[1],0)
+                self.assertLess(dl[2],0)
+                self.assertGreater(up+du[2],low+dl[2])

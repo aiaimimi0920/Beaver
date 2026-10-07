@@ -1,5 +1,5 @@
 {
-  "candidate": 162,
+  "candidate": 165,
   "calibration_keys": [
     "brow_height",
     "brow_inner_fullness",
@@ -84,6 +84,7 @@
     "jaw_border_back_threshold",
     "jaw_border_iterations",
     "jaw_border_lateral_relaxation",
+    "jaw_border_max_displacement_ratio",
     "jaw_border_max_height",
     "jaw_border_relaxation",
     "jaw_normal_boundary_strength",
@@ -99,6 +100,7 @@
     "lower_cover",
     "lower_lip_edge_depth_delta",
     "lower_lip_height",
+    "lower_lip_lateral_width",
     "lower_lip_relief",
     "lower_lip_width",
     "mouth_corner_down",
@@ -149,6 +151,7 @@
     "upper_ink_plane_slope_y",
     "upper_lip_edge_depth_delta",
     "upper_lip_height",
+    "upper_lip_lateral_width",
     "upper_lip_relief",
     "upper_lip_width",
     "width_stations"
@@ -237,6 +240,7 @@
     "jaw_border_back_threshold",
     "jaw_border_iterations",
     "jaw_border_lateral_relaxation",
+    "jaw_border_max_displacement_ratio",
     "jaw_border_max_height",
     "jaw_border_relaxation",
     "jaw_normal_boundary_strength",
@@ -252,6 +256,7 @@
     "lower_cover",
     "lower_lip_edge_depth_delta",
     "lower_lip_height",
+    "lower_lip_lateral_width",
     "lower_lip_relief",
     "lower_lip_width",
     "mouth_corner_down",
@@ -302,11 +307,13 @@
     "upper_ink_plane_slope_y",
     "upper_lip_edge_depth_delta",
     "upper_lip_height",
+    "upper_lip_lateral_width",
     "upper_lip_relief",
     "upper_lip_width",
     "width_stations"
   ],
   "unused": [],
   "missing": [],
-  "face_style_sha256": "8051520f224ee4f586530450cc24ec26421866462897eb6abd16a2be938fdbcb"
+  "validation": "test_parameter_contract AST runtime-consumer audit passed in77test suite",
+  "face_style_sha256": "6bb24768e2a0c37c9be2edecad2e07176531292a80b98b03d3a94bc30e6f9428"
 }

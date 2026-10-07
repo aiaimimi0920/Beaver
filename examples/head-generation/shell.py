@@ -116,8 +116,16 @@ def fair_jaw_boundary(vertices, faces, config, height, origin, depth_origin):
         (sqrt(sum((result[i][j] - vertices[i][j]) ** 2 for j in range(3))) for i in selected),
         default=0,
     )
+    proposed = maximum
+    limit = config["jaw_border_max_displacement_ratio"] * height
+    assert 0 < limit < 0.02 * height, "Invalid local jaw correction bound"
+    if maximum > limit:
+        factor = limit / maximum
+        for i in selected:
+            result[i] = tuple(vertices[i][j] + factor * (result[i][j] - vertices[i][j]) for j in range(3))
+        maximum = max((sqrt(sum((result[i][j]-vertices[i][j])**2 for j in range(3))) for i in selected), default=0)
     assert maximum < 0.02 * height, "Jaw boundary relaxation exceeds local correction budget"
-    return result, {"selected_vertices": len(selected), "maximum_displacement_m": maximum}
+    return result, {"selected_vertices": len(selected), "maximum_displacement_m": maximum, "proposed_displacement_m": proposed}
 
 
 def add_posterior_return(vertices, faces, config, height, origin, depth_origin):

@@ -4,8 +4,10 @@ extends Control
 signal closed
 const PANE = preload("res://showcase_extensions/head_compare_pane.gd")
 var panes: Array = []
-var state := {"yaw": 0.0, "pitch": 0.0, "zoom": 1.8, "light": -45.0, "mode": "render", "hair": false, "body": false, "mouth": 0.0}
+var state := {"yaw": 0.0, "pitch": 0.0, "zoom": 1.8, "light": -45.0, "mode": "render", "hair": false, "body": false, "mouth": 0.0, "pan_x": 0.0, "pan_y": 0.0}
 var dragging := false
+var panning := false
+var angle_label: Label
 var capture_pending := false
 var status: Label
 var zoom_slider: HSlider
@@ -45,9 +47,16 @@ func configure(candidate: NPRCharacterDefinition, reference: NPRCharacterDefinit
 	for pair in [["正面", 0], ["左45°", -45], ["右45°", 45], ["左侧", -90], ["右侧", 90], ["背面", 180]]:
 		button(toolbar, pair[0], set_angle.bind(float(pair[1]), 0.0))
 	button(toolbar, "俯视", set_angle.bind(0.0, 55.0))
+	var angle_row := HBoxContainer.new()
+	column.add_child(angle_row)
+	button(angle_row, "左转10°", step_angle.bind(-10.0))
+	button(angle_row, "右转10°", step_angle.bind(10.0))
+	button(angle_row, "取景复位", reset_framing)
+	angle_label = Label.new()
+	angle_row.add_child(angle_label)
 	var controls := HBoxContainer.new()
 	column.add_child(controls)
-	zoom_slider = slider(controls, "取景", 1.0, 3.0, 1.8, set_zoom)
+	zoom_slider = slider(controls, "取景", 0.25, 3.0, 1.8, set_zoom)
 	slider(controls, "主光", -180.0, 180.0, -45.0, set_light)
 	var hair := CheckButton.new()
 	hair.text = "头发"
@@ -86,7 +95,7 @@ func configure(candidate: NPRCharacterDefinition, reference: NPRCharacterDefinit
 		pane.gui_input.connect(pane_input)
 		panes.append(pane)
 	status = Label.new()
-	status.text = "拖动任一模型同步旋转；滚轮同步缩放；F12 保存对比。仅预览归一化，不修改源模型。"
+	status.text = "拖动同步旋转；Shift+拖动同步平移；滚轮缩放；10°按钮逐档检查；F12 保存。仅预览归一化，不修改源模型。"
 	column.add_child(status)
 	if success:
 		apply()
@@ -120,6 +129,8 @@ func slider(row: Control, title: String, low: float, high: float, value: float, 
 	return control
 
 func apply() -> void:
+	if is_instance_valid(angle_label):
+		angle_label.text = "水平角 %.1f° / 俯仰 %.1f°" % [state.yaw, state.pitch]
 	for pane in panes:
 		pane.apply_state(state)
 
@@ -133,12 +144,22 @@ func set_mode(value: String) -> void:
 
 func set_angle(yaw: float, pitch: float) -> void:
 	dragging = false
+	panning = false
 	state.yaw = yaw
 	state.pitch = pitch
 	apply()
 
+func step_angle(delta: float) -> void:
+	set_angle(wrapf(state.yaw + delta, -180.0, 180.0), state.pitch)
+
+func reset_framing() -> void:
+	state.pan_x = 0.0
+	state.pan_y = 0.0
+	zoom_slider.value = 1.8
+	apply()
+
 func set_zoom(value: float) -> void:
-	state.zoom = value
+	state.zoom = clampf(value, 0.25, 3.0)
 	apply()
 
 func set_mouth(value: float) -> void:
@@ -153,16 +174,23 @@ func pane_input(event: InputEvent) -> void:
 	if event is InputEventMouseButton:
 		if event.button_index == MOUSE_BUTTON_LEFT:
 			dragging = event.pressed
+			panning = event.pressed and event.shift_pressed
 		elif event.pressed and event.button_index in [MOUSE_BUTTON_WHEEL_UP, MOUSE_BUTTON_WHEEL_DOWN]:
 			zoom_slider.value *= 0.9 if event.button_index == MOUSE_BUTTON_WHEEL_UP else 1.1
 	elif event is InputEventMouseMotion and dragging:
-		state.yaw = wrapf(state.yaw + event.relative.x * 0.4, -180, 180)
-		state.pitch = clampf(state.pitch + event.relative.y * 0.25, -60, 60)
+		if panning:
+			var scale_per_pixel: float = state.zoom / maxf(panes[0].size.y, 1.0)
+			state.pan_x = clampf(state.pan_x - event.relative.x * scale_per_pixel, -1.5, 1.5)
+			state.pan_y = clampf(state.pan_y + event.relative.y * scale_per_pixel, -1.5, 1.5)
+		else:
+			state.yaw = wrapf(state.yaw + event.relative.x * 0.4, -180, 180)
+			state.pitch = clampf(state.pitch + event.relative.y * 0.25, -60, 60)
 		apply()
 
 func _input(event: InputEvent) -> void:
 	if event is InputEventMouseButton and not event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
 		dragging = false
+		panning = false
 	if event is InputEventKey and event.pressed and not event.echo:
 		if event.keycode == KEY_ESCAPE:
 			closed.emit()
@@ -172,6 +200,7 @@ func _input(event: InputEvent) -> void:
 func _notification(what: int) -> void:
 	if what == NOTIFICATION_WM_WINDOW_FOCUS_OUT:
 		dragging = false
+		panning = false
 
 func save_capture() -> void:
 	if capture_pending:

@@ -70,12 +70,12 @@ def base_depth(x, y):
     z = Z0 + H * base + nose(x, y)
     lip = exp(-((x / 0.02) ** 4)) * H
     z += (
-        lip
+        H * exp(-((x / (H * C["lower_lip_lateral_width"])) ** 2))
         * C["lower_lip_relief"]
         * exp(-(((y - Y0 - H * C["lower_lip_height"]) / (H * C["lower_lip_width"])) ** 2))
     )
     z += (
-        lip
+        H * exp(-((x / (H * C["upper_lip_lateral_width"])) ** 2))
         * C["upper_lip_relief"]
         * exp(-(((y - Y0 - H * C["upper_lip_height"]) / (H * C["upper_lip_width"])) ** 2))
     )
