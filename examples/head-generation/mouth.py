@@ -16,6 +16,13 @@ def mouth_half_contour(a):
     return (x, rest_seam_y(x) + REST_GAP * sin(a))
 
 
+def boundary_mouth_angles(points):
+    half_width = max(abs(x) for x, y in points)
+    vertical_span = max(y for x, y in points)-min(y for x, y in points)
+    assert half_width>0 and vertical_span>0
+    return [math.atan2((y-MOUTH_Y)/(vertical_span/2), x/half_width) for x,y in points]
+
+
 def jaw_delta(x, y, z):
     side = exp(-((abs(x) / (H * C["mouth_lateral_falloff"])) ** 4))
     relative = y - rest_seam_y(x)

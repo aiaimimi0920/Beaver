@@ -172,7 +172,7 @@ def add_posterior_return(vertices, faces, config, height, origin, depth_origin):
             (
                 x - inset,
                 y
-                + height * config["rear_return_back_offset"] * min(1, requested / (height * 0.02)),
+                + height * config["rear_return_back_offset"] * curve(v, 1, config["rear_return_depth_weight_profile"]) * min(1, requested / (height * 0.01)),
                 z + lift,
             )
         )
@@ -192,6 +192,7 @@ def build_face():
         1.580,
         1.590,
         1.599,
+        1.6045,
         1.608,
         1.614,
         1.623,
@@ -207,7 +208,7 @@ def build_face():
         1.760,
         1.780,
     ]
-    assert min(b - a for a, b in zip(levels, levels[1:])) >= 0.0059
+    assert min(b - a for a, b in zip(levels, levels[1:])) >= 0.00349
     lateral = [0, 0.06, 0.12, 0.18, 0.25, 0.34, 0.44, 0.55, 0.67, 0.78, 0.87, 0.94, 1]
     rows, cols = len(levels), len(lateral)
     verts = []
@@ -266,12 +267,11 @@ def build_face():
                 yy = 1.581 + 0.0011 * sin(a)
             inner.append((xx, yy))
         if kind == "mouth":
-            from mouth import mouth_half_contour
+            from mouth import mouth_half_contour, boundary_mouth_angles
 
-            inner = [
-                mouth_half_contour(-pi / 2 + pi * k / (len(boundary) - 1))
-                for k in range(len(boundary))
-            ]
+            mouth_angles = boundary_mouth_angles([(verts[i][0],verts[i][2]) for i in boundary])
+            assert all(b>a for a,b in zip(mouth_angles,mouth_angles[1:])), "Mouth boundary rays must be ordered"
+            inner = [mouth_half_contour(a) for a in mouth_angles]
         rings = []
         for blend in ([0, 0.30, 0.65] if kind == "eye" else [0, 0.30, 0.65]):
             ring = []
@@ -282,7 +282,7 @@ def build_face():
                 y = iy * (1 - blend) + by * blend
                 dz = 0
                 if kind == "mouth":
-                    a = -pi / 2 + pi * k / (len(boundary) - 1)
+                    a = mouth_angles[k]
                     rim_key = (
                         "upper_lip_edge_depth_delta"
                         if sin(a) >= 0
@@ -348,6 +348,15 @@ def build_face():
     verts, shell_faces, rear_ids, rear_count = add_posterior_return(
         verts, shell_faces, C, H, Y0, Z0
     )
+    final_boundary_config = dict(C)
+    final_boundary_config.update(
+        jaw_border_max_height=C["final_return_fairing_max_height"],
+        jaw_border_iterations=C["final_return_fairing_iterations"],
+        jaw_border_max_displacement_ratio=C["final_return_fairing_max_displacement"],
+    )
+    verts, final_boundary_fairing = fair_jaw_boundary(
+        verts, shell_faces, final_boundary_config, H, Y0, Z0
+    )
     face = mesh("Face shell editable half", verts, shell_faces, SKIN, mirror=True)
     face["chin_side_face_count"] = side_count
     face["rear_return_face_count"] = rear_count
@@ -362,6 +371,7 @@ def build_face():
     build_ears()
     return {
         "jaw_boundary_fairing": jaw_fairing,
+        "final_return_boundary_fairing": final_boundary_fairing,
         "rear_return_added_faces": rear_count,
         "face_authoring_quads": sum(len(q) == 4 for q in shell_faces),
         "face_authoring_triangles": sum(len(q) == 3 for q in shell_faces),

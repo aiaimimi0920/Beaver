@@ -52,6 +52,16 @@ def nose(x, y):
     return h * nose_profile_factor(t, v)
 
 
+def lip_shoulder_support(x, y):
+    lateral = abs(x) / H
+    height = (y-Y0) / H
+    center_fade = 1-exp(-(lateral/C["lip_shoulder_center_fade"])**2)
+    return H*C["lip_shoulder_relief"]*center_fade*exp(
+        -((lateral-C["lip_shoulder_lateral_center"])/C["lip_shoulder_lateral_width"])**2
+        -((height-C["lip_shoulder_height"])/C["lip_shoulder_height_width"])**2
+    )
+
+
 def base_depth(x, y):
     v = (y - Y0) / H
     q = min(1, abs(x) / max(0.001, width(y)))
@@ -70,12 +80,12 @@ def base_depth(x, y):
     z = Z0 + H * base + nose(x, y)
     lip = exp(-((x / 0.02) ** 4)) * H
     z += (
-        H * exp(-((x / (H * C["lower_lip_lateral_width"])) ** 2))
+        H * exp(-((x / (H * C["lower_lip_lateral_width"])) ** C["lower_lip_lateral_power"]))
         * C["lower_lip_relief"]
         * exp(-(((y - Y0 - H * C["lower_lip_height"]) / (H * C["lower_lip_width"])) ** 2))
     )
     z += (
-        H * exp(-((x / (H * C["upper_lip_lateral_width"])) ** 2))
+        H * exp(-((x / (H * C["upper_lip_lateral_width"])) ** C["upper_lip_lateral_power"]))
         * C["upper_lip_relief"]
         * exp(-(((y - Y0 - H * C["upper_lip_height"]) / (H * C["upper_lip_width"])) ** 2))
     )
@@ -84,7 +94,7 @@ def base_depth(x, y):
         * C["mouth_seam_recess"]
         * exp(-(((y - Y0 - H * C["mouth_height"]) / (H * C["mouth_seam_width"])) ** 2))
     )
-    return z
+    return z + lip_shoulder_support(x, y)
 
 
 def rim_depth(x, y):

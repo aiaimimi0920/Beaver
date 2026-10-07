@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "preset": "semantic_calibration_a_165",
+  "preset": "semantic_calibration_a_175",
   "note": "Explicit semantic calibration case; no character-name generation dependency.",
   "iris_half_width_m": 0.01534,
   "eye_lens_bulge_m": 0.0012,
@@ -459,16 +459,16 @@
     ],
     "brow_height": 0.567,
     "chin_return_lift": 0.008,
-    "lower_lip_height": 0.123,
+    "lower_lip_height": 0.118,
     "upper_lip_height": 0.171,
     "lower_lip_width": 0.02,
     "upper_lip_width": 0.02,
     "brow_thickness": 0.0105,
     "mouth_height": 0.15,
-    "mouth_seam_recess": 0.015,
+    "mouth_seam_recess": 0.017,
     "mouth_seam_width": 0.006,
-    "lower_lip_relief": 0.01,
-    "upper_lip_relief": 0.024,
+    "lower_lip_relief": 0.0112,
+    "upper_lip_relief": 0.031,
     "pocket_skin_clearance": 0.004,
     "chin_front_lift": 0.007,
     "chin_underside_stations": [
@@ -488,7 +488,7 @@
         2.5
       ],
       [
-        0.235,
+        0.223,
         0.05,
         3.7
       ]
@@ -931,7 +931,7 @@
     "chin_follow_lateral": 0.35,
     "ear_return_end_fade": 0.14,
     "eye_horizontal_power": 2.8,
-    "outer_liner_width": 0.024,
+    "outer_liner_width": 0.014,
     "jaw_border_relaxation": 0.3,
     "jaw_border_iterations": 8,
     "jaw_border_max_height": 0.24,
@@ -944,8 +944,8 @@
     "ear_root_normal_blend": 1.0,
     "ear_return_anterior_depth": 0.035,
     "ear_min_posterior_clearance": 0.012,
-    "ear_return_basin_depth_fraction": 0.22,
-    "ear_return_basin_width_fraction": 1.35,
+    "ear_return_basin_depth_fraction": 0.26,
+    "ear_return_basin_width_fraction": 1.15,
     "jaw_border_lateral_relaxation": 0.0,
     "eye_lower_horizontal_power": 2.0,
     "iris_vertical_slope": 0.088,
@@ -986,7 +986,11 @@
         0.035
       ],
       [
-        0.26,
+        0.255,
+        0.02
+      ],
+      [
+        0.271,
         0
       ],
       [
@@ -994,8 +998,8 @@
         0
       ]
     ],
-    "rear_return_back_offset": 0.007,
-    "rear_return_rim_crease": 1.0,
+    "rear_return_back_offset": 0.045,
+    "rear_return_rim_crease": 0.35,
     "rear_return_lift": 0.004,
     "upper_ink_plane_depth": 0.002,
     "upper_ink_plane_slope_x": -0.31,
@@ -1066,11 +1070,58 @@
         0.92
       ]
     ],
-    "chin_posterior_center_drop": 0.018,
+    "chin_posterior_center_drop": 0.006,
     "chin_posterior_drop_start": 0.03,
-    "lower_lip_lateral_width": 0.045,
-    "upper_lip_lateral_width": 0.065,
-    "jaw_border_max_displacement_ratio": 0.018
+    "lower_lip_lateral_width": 0.052,
+    "upper_lip_lateral_width": 0.075,
+    "jaw_border_max_displacement_ratio": 0.018,
+    "rear_return_depth_weight_profile": [
+      [
+        0.02,
+        0
+      ],
+      [
+        0.04,
+        0.05
+      ],
+      [
+        0.08,
+        0.6
+      ],
+      [
+        0.12,
+        0.82
+      ],
+      [
+        0.16,
+        0.94
+      ],
+      [
+        0.2,
+        0.9
+      ],
+      [
+        0.25,
+        1.0
+      ],
+      [
+        0.31,
+        1.0
+      ]
+    ],
+    "ear_lower_arc_power": 0.6,
+    "ear_lower_posterior_sweep": 0.085,
+    "final_return_fairing_max_height": 0.27,
+    "final_return_fairing_iterations": 8,
+    "final_return_fairing_max_displacement": 0.008,
+    "lip_shoulder_relief": 0.003,
+    "lip_shoulder_lateral_center": 0.03,
+    "lip_shoulder_lateral_width": 0.025,
+    "lip_shoulder_height": 0.147,
+    "lip_shoulder_height_width": 0.038,
+    "lip_shoulder_center_fade": 0.012,
+    "lower_lip_lateral_power": 4,
+    "upper_lip_lateral_power": 4
   },
   "normal_policy": "actual_area_weighted_geometry",
   "surface_subdivision_levels": 1,
@@ -1089,9 +1140,9 @@
   "nose_plane_bottom_height": 0.345,
   "nose_plane_height": 0.08,
   "nose_plane_width": 0.032,
-  "ear_concha_tint_strength": 0.14,
+  "ear_concha_tint_strength": 0.1,
   "ear_helix_stroke_strength": 0.42,
-  "ear_inner_fold_strength": 0.58,
+  "ear_inner_fold_strength": 0.48,
   "brow_rgb": [
     0.075,
     0.035,
@@ -1106,31 +1157,35 @@
   "ear_concha_center_v": 0.58,
   "iris_depth_contrast": 0.2,
   "ear_fold_curl": 0.075,
-  "ear_fold_width": 0.038,
+  "ear_fold_width": 0.028,
   "ear_helix_softness": 0.09,
   "iris_pupil_aspect": 0.78,
   "iris_pupil_radius": 0.235,
   "iris_pupil_softness": 0.04,
-  "ear_inner_fork_strength": 0.32,
+  "ear_inner_fork_strength": 0.46,
   "upper_lash_peak_height_m": 0.0024,
   "upper_lash_peak_width": 0.12,
-  "lid_fold_width_H": 0.0065,
+  "lid_fold_width_H": 0.0045,
   "lid_fold_height_profile": [
     [
       0,
-      0.49
+      0.495
     ],
     [
-      0.2,
-      0.511
-    ],
-    [
-      0.72,
+      0.25,
       0.51
     ],
     [
+      0.62,
+      0.512
+    ],
+    [
+      0.85,
+      0.506
+    ],
+    [
       1,
-      0.496
+      0.495
     ]
   ],
   "upper_lash_tip_controls": [
@@ -1152,90 +1207,123 @@
   ],
   "upper_lash_outline": [
     [
-      -0.94,
-      0.019
+      -1.02,
+      0.004
+    ],
+    [
+      -0.87,
+      0.022
     ],
     [
       -0.72,
-      0.041
+      0.034
     ],
     [
-      -0.79,
-      0.052
+      -0.78,
+      0.046
     ],
     [
-      -0.52,
-      0.044
+      -0.53,
+      0.042
     ],
     [
-      0.38,
-      0.044
+      -0.16,
+      0.047
     ],
     [
-      0.56,
-      0.056
+      0.3,
+      0.048
     ],
     [
-      0.51,
-      0.041
-    ],
-    [
-      0.86,
-      0.033
-    ],
-    [
-      1.1,
+      0.6,
       0.043
     ],
     [
-      0.99,
-      0.026
+      0.85,
+      0.034
     ],
     [
-      1.24,
-      0.012
+      1.04,
+      0.029
     ],
     [
-      0.9,
-      0.014
+      1.17,
+      0.031
     ],
     [
-      0.54,
+      1.05,
       0.018
     ],
     [
-      -0.54,
-      0.019
+      1.26,
+      0.013
     ],
     [
-      -0.92,
-      0.004
+      1.04,
+      0.008
+    ],
+    [
+      0.89,
+      0.009
+    ],
+    [
+      0.73,
+      0.015
+    ],
+    [
+      0.52,
+      0.024
+    ],
+    [
+      0.12,
+      0.029
+    ],
+    [
+      -0.28,
+      0.03
+    ],
+    [
+      -0.65,
+      0.024
+    ],
+    [
+      -0.87,
+      0.013
     ]
   ],
   "outer_lash_wing_outline": [
     [
-      0.6,
-      0.038
+      0.72,
+      0.036
     ],
     [
-      1.1,
-      0.043
+      1.17,
+      0.031
     ],
     [
-      0.99,
-      0.026
+      1.05,
+      0.018
     ],
     [
-      1.24,
-      0.012
+      1.26,
+      0.013
     ],
     [
-      0.91,
-      0.012
+      1.03,
+      0.008
     ],
     [
-      0.7,
-      0.023
+      0.87,
+      0.015
     ]
-  ]
+  ],
+  "lip_pigment_width_m": 0.0003,
+  "lip_pigment_strength": 0.62,
+  "lip_pigment_rgb": [
+    0.72,
+    0.35,
+    0.33
+  ],
+  "ear_helix_highlight_strength": 0.14,
+  "ear_lobe_curl_strength": 0.11
 }

@@ -42,6 +42,9 @@ class PosteriorChinCurveTests(unittest.TestCase):
         fn, _ = pure_function("shell.py", "chin_underside_height", {"C": C, "H": 1, "Y0": 0})
         self.assertAlmostEqual(fn(0.03, 0), 0.03)
         self.assertAlmostEqual(fn(0.05, 1), 0.05 + C["chin_return_lift"])
-        self.assertAlmostEqual(fn(0.05, 0), 0.032)
+        self.assertAlmostEqual(fn(0.05, 0), 0.05 - C["chin_posterior_center_drop"])
+        old, _ = pure_function("shell.py", "chin_underside_height", {"C": dict(C, chin_posterior_center_drop=0.018), "H": 1, "Y0": 0})
+        self.assertAlmostEqual(old(0.05, 0), 0.032)
+        self.assertAlmostEqual(fn(0.05, 0) - old(0.05, 0), 0.012)
         samples = [fn(0.05, i / 30) for i in range(31)]
         self.assertTrue(all(b > a for a, b in zip(samples, samples[1:])))

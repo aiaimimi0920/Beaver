@@ -91,13 +91,14 @@ class ContourFeedbackTests(unittest.TestCase):
                 C["ear_root_depth_base"]
                 + C["ear_root_depth_slope"] * t
                 - C["ear_posterior_span"]
-                * math.sin(math.pi * t)
+                * math.sin(math.pi * t) ** (1-(1-C["ear_lower_arc_power"])*(1-t)**3)
                 * (1 + C["ear_upper_fullness"] * (2 * t - 1))
                 * (
                     1
                     - C["ear_lower_taper"] * (1 - t) ** 2
                     - C["ear_upper_trim"] * max(0, (t - 0.7) / 0.3) ** 2
                 )
+                - C["ear_lower_posterior_sweep"] * math.sin(math.pi*t)**0.4 * (1-t)**3
                 + C["ear_upper_depth_return"]
                 * max(0, min(1, (t - 0.55) / 0.45)) ** 2
                 * (3 - 2 * max(0, min(1, (t - 0.55) / 0.45)))

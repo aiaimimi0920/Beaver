@@ -143,7 +143,22 @@ def ear_color(u, v):
     lobe_mask = max(0, min(1, (v - 0.24) / 0.18))
     strength = max(0, min(0.65, concha + helix + fold + fork)) * lobe_mask
     pigment = (0.79, 0.43, 0.37)
-    return tuple(SKIN[i] * (1 - strength) + pigment[i] * strength for i in range(3)) + (1,)
+    lobe_radius = sqrt(((u-0.49)/0.16)**2 + ((v-0.34)/0.09)**2)
+    lobe_curl = STYLE["ear_lobe_curl_strength"] * exp(-((lobe_radius-0.85)/0.25)**2)
+    lobe_curl *= max(0, min(1, (0.54-u)/0.10)) * lobe_mask
+    strength = min(0.65, strength+lobe_curl)
+    highlight = STYLE["ear_helix_highlight_strength"] * exp(-((radius-0.96)/0.095)**2) * arch_mask
+    color = [SKIN[i] * (1-strength) + pigment[i]*strength for i in range(3)]
+    return tuple(color[i]*(1-highlight) + (1.0,0.92,0.87)[i]*highlight for i in range(3)) + (1,)
+
+
+def lip_pigment(x, y):
+    t = abs(x) / (H * C["mouth_half_width"])
+    if t >= 1:
+        return 0.0
+    seam = Y0 + H * (C["mouth_height"] + C["mouth_corner_lift"] * t * t)
+    taper = max(0, 1 - t * t) ** 0.35
+    return STYLE["lip_pigment_strength"] * taper * exp(-((y-seam)/STYLE["lip_pigment_width_m"])**2)
 
 
 def bake_base_atlas(role, parts, colors, out):
@@ -192,6 +207,8 @@ def bake_base_atlas(role, parts, colors, out):
                 c = tuple(
                     (c[i] * (1 - blush) + [0.97, 0.49, 0.45][i] * blush for i in range(3))
                 ) + (1,)
+                lip_tint = lip_pigment(x, y)
+                c = tuple(c[i] * (1-lip_tint) + STYLE["lip_pigment_rgb"][i] * lip_tint for i in range(3)) + (1,)
                 t = (abs(x) / H - C["eye_center_x"]) / C["eye_half_width"]
                 if abs(t) < 0.93:
                     _, lid_y = eye_contour(1, t, True)

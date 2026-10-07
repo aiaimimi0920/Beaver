@@ -1,12 +1,13 @@
-#165 progress evidence
+# Verified progress checkpoint 175
 
--77 pure tests pass.13/13 generated source/spec hashes match.
-- Generation806398d7-adb8-4a78-821f-42d41d7f1733/job23231207-d0f6-4d09-8a6a-08c3bab3b558,completion652f800e-f5d3-4678-903e-f3489d618970:exit0.
--GLB d255b0169a60f0f04fe847f2302d797ae9700f5fcc8e9cdbc2e1c599315e2466.
--Native validation0b6df38b-6ea3-46e1-8ce9-9fe6178b9d6f:pass,engineErrors=false,errors=[].
-- Actual bilateral side render,side white and rear inspected; old black lower-ear triangle removed,posterior jaw still visibly differs.
--Ear regional directed-edge conflicts4→0;nonmanifold0.77 tests include regression for bridge direction and bounded jaw smoothing.
--Applied jaw-boundary shift4.248mm,requested5.953mm;existing<0.02H assertion retained.
-- Accepted eye controls fingerprint unchanged.165 unique face positions above0.4H remain within1.1921e−7m of162(1e−6m tolerance),not a normal/material equality claim.
-- Viewer camera/input functionality exercised in native163.2new viewer regression tests and full aggregate are pending.
-- No final likeness/full-character/deployment/merge/zero-warning claim. Optional export/UID warnings remain.
+- 83 pure recipe tests passed, including asymmetric mouth-patch correspondence.
+- All 168 calibration parameters have audited consumers, with no unused or missing keys.
+- Generation completed with exit 0: b20802ba-fc4d-4ccf-b6a1-f56b21165e2e.
+- Native validation passed without engine errors: 0e45d613-5571-4012-81ac-a456dcb1331e. Optional export warnings are not claimed absent.
+- GLB SHA-256: 108ced0d47cf7dd0f668b0ab9c9f3b3e7fd745e4f5e834143b1b267a58462255.
+- 13 generated source/specification hashes match the input manifest.
+- 1,682 protected front ocular-region positions and iris-atlas pixels are unchanged relative to 162. The explicitly requested three eye-adjacent accents are excluded from the frozen region and independently reviewed.
+- Ear-region audit: 584 edges, no same-direction shared edges or nonmanifold edges. This is not a complete visual acceptance claim.
+- The anomalous mouth-corner projected triangle found in 174 is absent in 175 after geometric boundary correspondence.
+- Full current aggregate tests, final multi-angle visual review, durable artifact backup and owner aesthetic acceptance remain pending.
+- GitHub-hosted CI on the prior 165 checkpoint failed before runner/source-test steps; no merge, release, deployment or full-character acceptance is claimed.
