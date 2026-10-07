@@ -38,6 +38,7 @@ def assign_creases(shell, front_count, height, origin, width_fn, config):
     groups = shell.data.attributes.new("FacialCreaseGroup", "INT", "EDGE")
     selected = []
     counts = {"center": 0, "side": 0, "aperture": 0}
+    rear_ids = set(shell.get("rear_return_outer_vertex_ids", []))
     for edge in shell.data.edges:
         key = tuple(sorted(edge.vertices))
         a, b = [shell.data.vertices[i].co for i in edge.vertices]
@@ -50,7 +51,10 @@ def assign_creases(shell, front_count, height, origin, width_fn, config):
                 and abs(y - origin - height * config["mouth_height"]) < 0.002
             )
         )
-        if aperture:
+        if set(key).issubset(rear_ids):
+            crease.data[edge.index].value = config["rear_return_rim_crease"]
+            groups.data[edge.index].value = 4
+        elif aperture:
             crease.data[edge.index].value = 1.0
             groups.data[edge.index].value = 3
             counts["aperture"] += 1

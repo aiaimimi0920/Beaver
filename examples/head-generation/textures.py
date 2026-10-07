@@ -130,7 +130,7 @@ def ear_color(u, v):
     fold_u -= STYLE["ear_fold_curl"] * exp(-(((v - 0.39) / 0.075) ** 2))
     fold = (
         STYLE["ear_inner_fold_strength"]
-        * exp(-(((u - fold_u) / STYLE["ear_fold_width"]) ** 2))
+        * exp(-(((u - fold_u) / STYLE["ear_fold_width"]) ** 4))
         * exp(-(((v - 0.57) / 0.18) ** 4))
     )
     fork_t = max(0, min(1, (v - 0.62) / 0.18))

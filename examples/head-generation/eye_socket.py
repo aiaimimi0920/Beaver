@@ -8,7 +8,10 @@ def iris_depth(x, y):
     dy = (y - Y0) / H - C["iris_center_y"]
     r2 = (dx / C["iris_half_width"]) ** 2 + (dy / C["iris_half_height"]) ** 2
     return Z0 + H * (
-        C["iris_rim_depth"] + C["iris_plane_slope"] * dx - C["iris_concavity"] * max(0, 1 - r2)
+        C["iris_rim_depth"]
+        + C["iris_plane_slope"] * dx
+        + C["iris_vertical_slope"] * dy
+        - C["iris_concavity"] * max(0, 1 - r2)
     )
 
 
@@ -56,18 +59,32 @@ def build_socket(side):
     obj["rear_cap_planarity_before_m"] = max(vs[i][1] for i in cap) - min(vs[i][1] for i in cap)
     assert obj["rear_cap_planarity_before_m"] < 1e-8
     assert all(p.area > 1e-12 for p in obj.data.polygons), "Degenerate pocket face"
-    iv = []
-    rows = cols = C["iris_grid_resolution"]
-    for j in range(rows):
-        sy = -1 + 2 * j / (rows - 1)
-        for i in range(cols):
-            tx = -1 + 2 * i / (cols - 1)
-            u, v = iris_grid_point(tx, sy)
-            x = side * H * C["iris_center_x"] + H * C["iris_half_width"] * u
-            y = Y0 + H * (C["iris_center_y"] + C["iris_half_height"] * v)
-            iv.append(coord(x, y, iris_depth(x, y)))
-    iris = mesh("Independent concave iris " + str(side), iv, grid_faces(rows, cols), WHITE)
-    build_catchlight(side)
+    build_layered_iris(side)
+
+
+def annular_iris_mesh(side):
+    n = int(C["iris_radial_samples"])
+    rings = int(C["iris_radial_rings"])
+    vs, fs = [], []
+    for j in range(rings + 1):
+        t = j / rings
+        rx = C["pupil_half_width"] * (1 - t) + C["iris_half_width"] * t
+        ry = C["pupil_half_height"] * (1 - t) + C["iris_half_height"] * t
+        for k in range(n):
+            a = 2 * pi * k / n
+            x = H * (side * C["iris_center_x"] + rx * cos(a))
+            y = Y0 + H * (C["iris_center_y"] + ry * sin(a))
+            vs.append(coord(x, y, iris_depth(x, y)))
+    for j in range(rings):
+        for k in range(n):
+            q = (k + 1) % n
+            fs.append((j * n + k, (j + 1) * n + k, (j + 1) * n + q, j * n + q))
+    return vs, fs
+
+
+def build_layered_iris(side):
+    iv, faces = annular_iris_mesh(side)
+    iris = mesh("Independent annular iris " + str(side), iv, faces, WHITE)
     iris["iris_detail"] = True
     iris["ocular_surface"] = True
     uv = iris.data.uv_layers.new(name="DetailUV")
@@ -77,6 +94,39 @@ def build_socket(side):
             (v.x - side * H * C["iris_center_x"]) / (2 * STYLE["eye_half_width_m"]) + 0.5,
             (v.z - Y0 - H * C["iris_center_y"]) / 0.044 + 0.5,
         )
+    build_pupil_layer(side, False)
+    build_pupil_layer(side, True)
+    build_catchlight(side)
+    assert all(p.area > 1e-12 for p in iris.data.polygons)
+
+
+def build_pupil_layer(side, accent):
+    vs = []
+    n = 5
+    for j in range(n):
+        for i in range(n):
+            u, v = iris_grid_point(-1 + 2 * i / (n - 1), -1 + 2 * j / (n - 1))
+            rx = C["pupil_accent_width"] if accent else C["pupil_half_width"] * 1.08
+            ry = C["pupil_accent_height"] if accent else C["pupil_half_height"] * 1.08
+            x = H * (side * C["iris_center_x"] + rx * u)
+            y = Y0 + H * (C["iris_center_y"] + ry * v + (0.010 if accent else 0))
+            dx = abs(x) / H - C["iris_center_x"]
+            dy = (y - Y0) / H - C["iris_center_y"]
+            z = Z0 + H * (
+                C["iris_rim_depth"]
+                - C["iris_concavity"]
+                - C["pupil_recess"]
+                + C["iris_plane_slope"] * dx
+                + C["iris_vertical_slope"] * dy
+            )
+            if accent:
+                z += H * 0.0007
+            vs.append(coord(x, y, z))
+    name = "Pupil separate accent " if accent else "Pupil recessed sheet "
+    color = tuple(STYLE["iris_accent_rgb"]) if accent else (0.012, 0.014, 0.024)
+    obj = mesh(name + str(side), vs, grid_faces(n, n), color)
+    obj["ocular_surface"] = True
+    assert all(p.area > 1e-12 for p in obj.data.polygons)
 
 
 def build_catchlight(side):
@@ -127,7 +177,9 @@ def fit_pocket_clearance(shell):
                 arch = C["eye_upper_arch"] if y >= cy else C["eye_lower_arch"]
                 power = C["eye_upper_power"] if y >= cy else C["eye_lower_power"]
                 radius = sqrt(
-                    abs(t) ** C["eye_horizontal_power"] + abs((y - cy) / (H * arch)) ** (1 / power)
+                    abs(t)
+                    ** (C["eye_horizontal_power"] if y >= cy else C["eye_lower_horizontal_power"])
+                    + abs((y - cy) / (H * arch))
                 )
                 if radius <= 1.01:
                     continue

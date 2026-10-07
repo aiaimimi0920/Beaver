@@ -6,7 +6,7 @@ from mouth import store_mouth_deltas
 from glb_merge import merge_face
 
 ROOT = Path(beaver_input("project.godot")).parent
-OUT = "assets/aster/head_recovery_147/"
+OUT = "assets/aster/head_recovery_154/"
 BASE = "assets/aster/head_recovery_49/"
 GUIDE = Path(beaver_input("authoring/head_generation_guide.md")).read_text()
 assert "去发侧脸轮廓检查" in GUIDE
@@ -49,7 +49,14 @@ under_count = shell.get("underside_face_count", len(shell.data.polygons) - front
 bad_return = sum(
     p.normal.z >= 0 for p in list(shell.data.polygons)[front_count : front_count + under_count]
 )
-bad_side = sum(p.normal.x <= 0 for p in list(shell.data.polygons)[front_count + under_count :])
+bad_side = sum(
+    p.normal.x <= 0
+    for p in list(shell.data.polygons)[
+        front_count + under_count : front_count + under_count + shell["chin_side_face_count"]
+    ]
+)
+rear_faces = list(shell.data.polygons)[front_count + under_count + shell["chin_side_face_count"] :]
+assert all(p.normal.y > 0 for p in rear_faces), "Posterior return must face backwards"
 assert bad_side == 0, "Chin side closure must face outward"
 assert bad_return == 0, "Chin underside winding must face downward"
 if zero_faces or reversed_faces:

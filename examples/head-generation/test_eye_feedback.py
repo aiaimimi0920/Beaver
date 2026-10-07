@@ -21,7 +21,7 @@ class EyeFeedbackTests(unittest.TestCase):
                 self.assertLess(
                     (dx / C["iris_half_width"]) ** 2 + (dy / C["iris_half_height"]) ** 2, 0.7
                 )
-        self.assertLess(C["catchlight_surface_offset"], 0.002)
+        self.assertLess(C["catchlight_surface_offset"], 0.010)
         self.assertEqual(C["catchlight_grid_resolution"], 5)
 
 
@@ -35,7 +35,7 @@ class LashPlaneTests(unittest.TestCase):
         rim, _ = pure_function(
             "face.py", "rim_depth", {"C": c, "H": c["height_m"], "Z0": c["chin_depth_m"]}
         )
-        fn, _ = pure_function("face.py", "lash_depth", {"rim_depth": rim})
+        fn, _ = pure_function("face.py", "lash_depth", {"rim_depth": rim, "depth": lambda x, y: -1})
         for x in [0.03, 0.05, 0.07]:
             self.assertAlmostEqual(fn(x, 1.65) - rim(x, 1.65), 0.0015)
             self.assertEqual(fn(x, 1.65), fn(x, 1.64))

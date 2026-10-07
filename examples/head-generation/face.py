@@ -100,7 +100,8 @@ def depth(x, y):
     cy = Y0 + H * (C["eye_corner_y"] + C["eye_corner_slope"] * t)
     arch = C["eye_upper_arch"] if y >= cy else C["eye_lower_arch"]
     power = C["eye_upper_power"] if y >= cy else C["eye_lower_power"]
-    r = sqrt(abs(t) ** C["eye_horizontal_power"] + abs((y - cy) / (H * arch)) ** (1 / power))
+    horizontal = C["eye_horizontal_power"] if y >= cy else C["eye_lower_horizontal_power"]
+    r = sqrt(abs(t) ** horizontal + abs((y - cy) / (H * arch)) ** (1 / power))
     weight = exp(-(((r - 1) / C["orbital_band_width"]) ** 2))
     lateral = max(0, min(1, (1 + C["orbital_lateral_fade"] - abs(t)) / C["orbital_lateral_fade"]))
     weight *= lateral * lateral * (3 - 2 * lateral)
@@ -167,7 +168,8 @@ def eye_contour(side, t, upper):
     cy = C["eye_corner_y"] + C["eye_corner_slope"] * t
     h = C["eye_upper_arch"] if upper else -C["eye_lower_arch"]
     power = C["eye_upper_power"] if upper else C["eye_lower_power"]
-    return (x, Y0 + H * (cy + h * max(0, 1 - abs(t) ** C["eye_horizontal_power"]) ** power))
+    horizontal = C["eye_horizontal_power"] if upper else C["eye_lower_horizontal_power"]
+    return (x, Y0 + H * (cy + h * max(0, 1 - abs(t) ** horizontal) ** power))
 
 
 def eye_surface(side, x, y):
@@ -182,6 +184,16 @@ def lash_depth(x, rim_y):
     return rim_depth(x, rim_y) + 0.0015
 
 
+def upper_ink_depth(x, y):
+    dx = abs(x) / H - C["eye_center_x"]
+    dy = (y - Y0) / H - C["eye_corner_y"]
+    return Z0 + H * (
+        C["upper_ink_plane_depth"]
+        + C["upper_ink_plane_slope_x"] * dx
+        + C["upper_ink_plane_slope_y"] * dy
+    )
+
+
 def brow_lane_offset(t, lane):
     original = H * C["brow_thickness"] * sin(pi * t) ** 0.7
     factor = 1 + C["brow_inner_fullness"] * (1 - 2 * t)
@@ -190,7 +202,7 @@ def brow_lane_offset(t, lane):
 
 def build_eyes():
     for side in [-1, 1]:
-        cols = 17
+        cols = 33
         from eye_socket import build_socket
 
         build_socket(side)
@@ -220,6 +232,12 @@ def build_eyes():
                     t = -1 + 2 * i / (cols - 1)
                     x, y = eye_contour(side, t, upper)
                     rim_y = y
+                    if upper:
+                        peak = max(
+                            max(0, 1 - abs(t - center) / STYLE["upper_lash_peak_width"])
+                            for center in [-0.63, 0.56, 0.82]
+                        )
+                        y += (1 - lane) * STYLE["upper_lash_peak_height_m"] * peak
                     y += (
                         (-1 if upper else 1)
                         * lane
@@ -227,7 +245,7 @@ def build_eyes():
                         * max(0, 1 - t * t) ** 0.55
                         * (0.85 + 0.35 * (t + 1) / 2)
                     )
-                    ink.append(coord(x, y, lash_depth(x, rim_y)))
+                    ink.append(coord(x, y, upper_ink_depth(x, y) if upper else lash_depth(x, y)))
             mesh(
                 ("Upper" if upper else "Lower") + " lash " + str(side),
                 ink,
@@ -239,16 +257,15 @@ def build_eyes():
                 xb, yb = eye_contour(side, 0.98, True)
                 scale = STYLE["lash_fan_scale"]
                 wing_points = [
-                    (xa, ya),
                     (xa, ya - STYLE["upper_lash_thickness_m"] * 0.62),
                     (xb + side * 0.0045 * scale, yb + 0.0025 * scale),
-                    (xb, yb),
+                    (xa, ya),
                 ]
-                wing = [coord(x, y, lash_depth(x, y)) for x, y in wing_points]
+                wing = [coord(x, y, upper_ink_depth(x, y)) for x, y in wing_points]
                 mesh(
                     "Attached outer lash wing " + str(side),
                     wing,
-                    [(0, 1, 2, 3) if side > 0 else (3, 2, 1, 0)],
+                    [(0, 1, 2) if side > 0 else (2, 1, 0)],
                     INK,
                 )
         liner = []
@@ -267,6 +284,21 @@ def build_eyes():
             liner,
             grid_faces(2, 9, side > 0),
             (0.23, 0.065, 0.14),
+        )
+        fold_vertices = []
+        for lane in range(2):
+            for i in range(17):
+                t = -0.76 + 1.52 * i / 16
+                x, y = eye_contour(side, t, True)
+                taper = sin(pi * i / 16)
+                y = Y0 + H * curve(i / 16, 1, STYLE["lid_fold_height_profile"])
+                y += lane * H * STYLE["lid_fold_width_H"] * taper
+                fold_vertices.append(coord(x, y, depth(x, y) + 0.00035))
+        mesh(
+            "Tapered upper eyelid fold " + str(side),
+            fold_vertices,
+            grid_faces(2, 17, side < 0),
+            (0.76, 0.47, 0.45),
         )
         brow = []
         for lane in range(2):

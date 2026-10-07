@@ -109,6 +109,61 @@ def fair_jaw_boundary(vertices, faces, config, height, origin, depth_origin):
     return result, {"selected_vertices": len(selected), "maximum_displacement_m": maximum}
 
 
+def add_posterior_return(vertices, faces, config, height, origin, depth_origin):
+    uses, oriented = {}, {}
+    for face in faces:
+        for a, b in zip(face, face[1:] + face[:1]):
+            key = tuple(sorted((a, b)))
+            uses[key] = uses.get(key, 0) + 1
+            oriented[key] = (a, b)
+    selected = []
+    for key, count in uses.items():
+        a, b = [vertices[i] for i in key]
+        if count != 1 or min(a[0], b[0]) < -1e-8:
+            continue
+        mid_height = ((a[2] + b[2]) / 2 - origin) / height
+        if (
+            0.02 < mid_height < 0.31
+            and (-a[1] - depth_origin) / height < -0.12
+            and (-b[1] - depth_origin) / height < -0.12
+        ):
+            # Center seam belongs to the mirror, not the open rear silhouette.
+            if max(a[0], b[0]) > 1e-8:
+                selected.append(oriented[key])
+    new_vertices = list(vertices)
+    new_faces = list(faces)
+    mapping = {}
+    ids = sorted({i for e in selected for i in e})
+    for i in ids:
+        x, y, z = vertices[i]
+        v = (z - origin) / height
+        requested = height * curve(v, 1, config["rear_return_inset_profile"])
+        inset = min(requested, x * 0.65)
+        lift = (
+            height
+            * config["rear_return_lift"]
+            * exp(-v / 0.08)
+            * min(1, requested / (height * 0.015))
+        )
+        if max(inset, lift) < 1e-9:
+            mapping[i] = i
+            continue
+        mapping[i] = len(new_vertices)
+        new_vertices.append(
+            (
+                x - inset,
+                y
+                + height * config["rear_return_back_offset"] * min(1, requested / (height * 0.02)),
+                z + lift,
+            )
+        )
+    for a, b in selected:
+        q = list(dict.fromkeys((b, a, mapping[a], mapping[b])))
+        if len(q) >= 3:
+            new_faces.append(tuple(q))
+    return new_vertices, new_faces, ids, len(new_faces) - len(faces)
+
+
 def build_face():
     levels = [
         1.544,
@@ -270,7 +325,14 @@ def build_face():
     for j in range(1, len(side_path) - 1):
         shell_faces.append((side_path[j], side_path[j + 1], outer[j + 1], outer[j]))
     verts, jaw_fairing = fair_jaw_boundary(verts, shell_faces, C, H, Y0, Z0)
+    side_count = len(shell_faces) - front_count - underside_count
+    verts, shell_faces, rear_ids, rear_count = add_posterior_return(
+        verts, shell_faces, C, H, Y0, Z0
+    )
     face = mesh("Face shell editable half", verts, shell_faces, SKIN, mirror=True)
+    face["chin_side_face_count"] = side_count
+    face["rear_return_face_count"] = rear_count
+    face["rear_return_outer_vertex_ids"] = rear_ids
     face["front_surface_face_count"] = front_count
     face["underside_face_count"] = underside_count
 
@@ -281,6 +343,7 @@ def build_face():
     build_ears()
     return {
         "jaw_boundary_fairing": jaw_fairing,
+        "rear_return_added_faces": rear_count,
         "face_authoring_quads": sum(len(q) == 4 for q in shell_faces),
         "face_authoring_triangles": sum(len(q) == 3 for q in shell_faces),
         "semantic_rows": levels,

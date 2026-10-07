@@ -1,11 +1,13 @@
-# Reproducible head recipe, candidate147
+# Reproducible structure-first head recipe, candidate154
 
-This is the five-feature refinement following the owner's145 review: ears, eyes, eyebrows, a local frontal contour concavity, and nasal ramp slope. Other accepted form, center-face division, open wrapped ear construction and small chin follow are regression targets.
+This batch follows the owner's147 review. It calibrates both hollow ears, the posterior chin-to-ear return boundary, the three eye-adjacent ribbons, lower aperture curvature, and independent eye-layer construction. The accepted independent eyebrow, frontal silhouette, nasal ramp, central division and small chin follow remain regression targets.
 
-Workflow: natural-language specification → explicit semantic parameters → Beaver generation → actual MiDot/NPR comparison. The generator does not read reference mesh, UVs or pixels. Read-only sparse reference diagnostics remain separate.
+Workflow: natural-language specification → explicit semantic parameters → Beaver generation → native MiDot/NPR white and wireframe inspection → render and motion checks. The generator never loads reference meshes, UVs, pixels or connectivity. Separate read-only diagnostics distinguish true independent iris/pupil/catchlight sheets from imported UV-split components; raw component count is not a trustworthy layer count.
 
-146 adjusted the nasal ramp without moving its matched tip, eyebrow center/thickness, eye corner/pupil shape, a continuous lash wing instead of loose triangles, and the original ear cup/pigment.147 fixes the cause of an extra frontal pinch: previous SIDE-jaw fairing also moved lateral x. The new separate lateral relaxation defaults to zero, preserving front width while retaining depth/height fairing. Modest width support and a short procedural ear fold fork complete this candidate.
+The iris is an original shallow annular sheet around a separate recessed pupil, with a separate pupil accent and catchlight. Lower aperture curvature is independently adjustable without changing corner anchors. The upper lash ribbon uses a coherent shallow sloped plane after native white-mode inspection rejected a per-vertex projection heuristic. Attached peaks, a tapered eyelid fold, and the lateral liner are distinct from the preserved eyebrow.
 
-62 pure Python tests pass,13/13 generated input hashes match, and native MiDot validation passes. The model has actually run, with front, right90, both45-degree render, oblique white, rear runtime wireframe and MouthOpen0/.5/1 inspected. User aesthetic confirmation remains pending. Body/Hair and pinned MiDot/NPR1.3.0 are unchanged.
+Ears remain open sheets with a wider inward return, anterior lower-root calibration and independently authored fold pigment. The posterior jaw uses a connected inward return strip rather than narrowing the accepted exterior. Its end fades out before the ear-root interval. Body/Hair and the pinned MiDot/NPR runtime are unchanged.
 
-Project aggregate cf22a325-4f6c-450a-8625-9e8ba5d75e1b passed 7 tests with 0 failures at 2026-10-06T18:57:38UTC. Details are recorded in review-results.md. Keep PR draft until all applicable gates are satisfied. No release, production deployment or full-character/wardrobe acceptance is claimed. Run unittest discovery in this directory; bundle.py only packages a request for Beaver blender.start, never runs Blender itself.
+69 pure tests pass; generated source hashes match. Native validation passes and actual multi-angle white/wire/render views and MouthOpen0/.5/1 have been inspected. See review-results.md for exact evidence and project aggregate status. Owner aesthetic acceptance remains pending. Keep the existing PR draft until applicable gates pass; no release, deployment or full-character/wardrobe acceptance is claimed.
+
+Run unittest discovery in this directory. bundle.py packages a request for Beaver blender.start and never runs Blender itself.

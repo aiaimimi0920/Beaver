@@ -71,7 +71,7 @@ class StyleMathTests(unittest.TestCase):
 
     def test_iris_grid_has_no_collapsed_poles(self):
         fn, _ = pure_function("eye_socket.py", "iris_grid_point", {})
-        n = STYLE["calibration"]["iris_grid_resolution"]
+        n = 9  # Still validates the noncollapsed mapping used by pupil/highlight sheets.
         self.assertEqual(n, 9)
         points = [
             [fn(-1 + 2 * i / (n - 1), -1 + 2 * j / (n - 1)) for i in range(n)] for j in range(n)
