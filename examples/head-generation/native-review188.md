@@ -161,5 +161,9 @@ Captures:
 
 
 ## Native close-out checks
-The final verification child GUT39b052fa-0d7d-4618-85cd-fa13a1cf3fb9 passed10 tests and198 assertions. Both head-only initialization and comparison now explicitly load188. The parent aggregate was still pending when this source checkpoint was prepared.
+The final verification child GUT39b052fa-0d7d-4618-85cd-fa13a1cf3fb9 passed10 tests and198 assertions. Both head-only initialization and comparison now explicitly load188. Parent aggregate2a9bd608-0b55-4cae-b4fa-b96c8d27cd90 subsequently passed10 tests/198 assertions, and the parent task completed.
 Native NPR validation verified definition/model identity and the pinned framework package; assetDependencyHashesVerified remains false. No global all-pose collision proof, zero-warning claim or owner aesthetic acceptance is implied.
+
+
+## Hosted Python compatibility
+The first actual hosted recipe run used Python3.11 and exposed a serialization-only mismatch in the frozen AST contract: empty type_params metadata from Python3.12. The frozen fixture and protected source were not changed. The comparator now structurally ignores only that empty metadata field, retaining nonempty generics, function-body edits and literal text. Four regression cases cover those boundaries.106 pure tests pass locally. This test-only correction does not alter candidate188 geometry or its generation inputs. Hosted rerun status must be checked on the new commit.

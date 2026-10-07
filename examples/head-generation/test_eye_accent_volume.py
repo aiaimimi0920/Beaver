@@ -5,6 +5,7 @@ import math
 import unittest
 from pathlib import Path
 from test_style_math import pure_function, STYLE
+from ast_contract import canonical_function_dump
 
 ROOT = Path(__file__).parent
 C = STYLE['calibration']
@@ -66,7 +67,8 @@ class AccentVolumeTests(unittest.TestCase):
         tree=ast.parse((ROOT/'face.py').read_text())
         for node in tree.body:
             if isinstance(node,ast.FunctionDef) and node.name in frozen['face_functions']:
-                self.assertEqual(ast.dump(node,include_attributes=False),frozen['face_functions'][node.name])
+                self.assertEqual(canonical_function_dump(ast.dump(node,include_attributes=False)),
+                                 canonical_function_dump(frozen['face_functions'][node.name]))
 
     def test_actual_builder_uses_rolled_band_and_authored_normal_zones(self):
         face=(ROOT/'face.py').read_text();pipeline=(ROOT/'pipeline.py').read_text()
