@@ -29,3 +29,8 @@ Parent aggregate, final remote source verification and Library backup are tracke
 ## Review handoff
 
 Leave candidate 177 in the live comparison viewer. Use the near-framing slider, Shift-drag to pan both models, exact left/right 10-degree controls, white and wire modes. Owner manual aesthetic confirmation remains pending. The general customizable face template is a later step after the baseline appearance is accepted.
+
+
+## Final aggregate addendum
+
+The parent aggregate 86138d8b-3378-4971-85f3-88de6f7efd87 also autoPassed on 2026-10-07T09:16:07.874864807+00:00: 9 tests, 178 assertions, 0 failures. Both actual model and parent integration checks passed. Original source was remotely verified at ea64b9e939c90864972a83a9732cd741751827c4; the subsequent change preserves this verification addendum only. Hosted CI remains separate: exact-head jobs failed before runner allocation or test steps. Artifact backup publication and owner visual confirmation are separate from these test results.
