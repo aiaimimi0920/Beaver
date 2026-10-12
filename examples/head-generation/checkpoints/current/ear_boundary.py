@@ -246,3 +246,47 @@ def blend_rim_displacements(before,result,neighbors,boundary,eligible):
     output=list(result)
     for i in eligible:output[i]=tuple(before[i][k]+delta[i][k] for k in range(3))
     return output,set(eligible)
+
+
+def under_ear_lateral_offset(height, back_depth, lateral, amplitude):
+    t=max(0.,min(1.,(height-.13)/.09 if height<=.22 else (.29-height)/.07))
+    z=max(0.,min(1.,(back_depth-.18)/.05))
+    x=max(0.,min(1.,(lateral-.025)/.035))
+    return amplitude*t*t*(3-2*t)*z*z*(3-2*z)*x*x*(3-2*x)
+
+
+def fit_ear_under_width(data,reports):
+    from face import C,H,Y0,Z0
+    regions=data.attributes['NormalRegion']
+    skin={i for p in data.polygons if regions.data[p.index].value in (1,2) for i in p.vertices}
+    neighbors={}
+    for poly in data.polygons:
+        ids=list(poly.vertices)
+        for a,b in zip(ids,ids[1:]+ids[:1]):
+            neighbors.setdefault(a,set()).add(b);neighbors.setdefault(b,set()).add(a)
+    pending=list(skin)
+    while pending:
+        for j in neighbors.get(pending.pop(),()):
+            if j not in skin:skin.add(j);pending.append(j)
+    def shift(p):
+        x,y,z=p
+        d=under_ear_lateral_offset((z+.021-Y0)/H,(Z0+y)/H,abs(x),C['ear_under_lateral_width_m'])
+        return (x+(d if x>=0 else -d),y,z)
+    data.update();before=[tuple(v.co) for v in data.vertices]
+    normals=[p.normal.copy() for p in data.polygons];changed=set()
+    for i in skin:
+        target=shift(before[i])
+        if target!=before[i]:data.vertices[i].co=target;changed.add(i)
+    data.update()
+    for p,n in zip(data.polygons,normals):
+        if any(i in changed for i in p.vertices):
+            assert p.area>1e-12 and p.normal.dot(n)>0,'Under-ear width inverted a face'
+    assert all(tuple(data.vertices[i].co)==p for i,p in enumerate(before) if i not in changed)
+    for report in reports:
+        for key in ['root_positions','lower_bridge_root_position']:
+            points=report[key] if key=='root_positions' else [report[key]]
+            shifted=[]
+            for x,y,z in points:
+                a,b,c=shift((x,y,z-.021));shifted.append([a,b,c+.021])
+            report[key]=shifted if key=='root_positions' else shifted[0]
+    return {'changed_vertices':len(changed),'height_support':[.13,.29],'maximum_width_m':C['ear_under_lateral_width_m'],'posterior_only':True}
