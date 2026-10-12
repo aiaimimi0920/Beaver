@@ -1,0 +1,244 @@
+"""Shallow open-backed pinna membrane sharing evaluated face-root positions."""
+
+from face import *
+
+
+def build_ears():
+    # Deferred until the facial subdivision is evaluated, so root positions match.
+    return None
+
+
+def membrane_offset(t, u, config, root_depth):
+    envelope = sin(pi * t) ** (1 - (1-config["ear_lower_arc_power"])*(1-t)**3)
+    envelope *= 1 + config["ear_upper_fullness"] * (2 * t - 1)
+    envelope *= (
+        1
+        - config["ear_lower_taper"] * (1 - t) ** 2
+        - config["ear_upper_trim"] * max(0, (t - 0.7) / 0.3) ** 2
+    )
+    upper_return = max(0, min(1, (t - 0.55) / 0.45))
+    upper_return = upper_return * upper_return * (3 - 2 * upper_return)
+    outward = envelope * config["ear_outward_span"] * curve(u, 1, config["ear_outward_profile"])
+    ease = min(1.0, max(0.0, t / config["ear_lower_sweep_ease_end"]))
+    ease = ease * ease * (3.0 - 2.0 * ease)
+    outer_depth = (
+        config["ear_root_depth_base"]
+        + config["ear_root_depth_slope"] * t
+        - config["ear_posterior_span"] * envelope
+        - config["ear_lower_posterior_sweep"] * sin(pi*t)**0.4 * (1-t)**3 * ease
+        + config["ear_upper_depth_return"] * upper_return
+    )
+    outer_depth = min(outer_depth, root_depth - config["ear_min_posterior_clearance"] * sin(pi * t))
+    sweep = curve(u, 1, config["ear_depth_profile"])
+    posterior = (root_depth - outer_depth) * sweep
+    return outward, posterior
+
+
+def ear_arc_height(t, low, high):
+    return (
+        low + (high - low) * (1 - cos(pi * t)) / 2 + H * C["ear_upper_arc_bias"] * t * sin(pi * t)
+        + (high-low) * C["ear_lower_height_linear_blend"] * max(0,1-2*t)**2 * (t-(1-cos(pi*t))/2)
+    )
+
+
+def project_ear_uv(vertices):
+    depths = [p[1] for p in vertices]
+    heights = [p[2] for p in vertices]
+    low_d, high_d = min(depths), max(depths)
+    low_h, high_h = min(heights), max(heights)
+    assert high_d - low_d > 1e-8 and high_h - low_h > 1e-8
+    return [
+        (
+            0.02 + 0.96 * (p[1] - low_d) / (high_d - low_d),
+            0.02 + 0.96 * (p[2] - low_h) / (high_h - low_h),
+        )
+        for p in vertices
+    ]
+
+
+def lower_ear_bridge(lower_id, root_id, return_id):
+    return (lower_id, return_id, root_id)
+
+
+def fit_ear_roots(shell):
+    bpy.context.view_layer.update()
+    evaluated = shell.evaluated_get(bpy.context.evaluated_depsgraph_get())
+    data = evaluated.to_mesh()
+    reports = []
+    try:
+        uses = {}
+        for poly in data.polygons:
+            ids = list(poly.vertices)
+            for a, b in zip(ids, ids[1:] + ids[:1]):
+                key = tuple(sorted((a, b)))
+                uses[key] = uses.get(key, 0) + 1
+        boundary_edges = {e for e, n in uses.items() if n == 1}
+        boundary_ids = {v for e in boundary_edges for v in e}
+        for side in [-1, 1]:
+            roots = [
+                i
+                for i in boundary_ids
+                if side * data.vertices[i].co.x > 0
+                and C["ear_root_min_height"]
+                <= (data.vertices[i].co.z - Y0) / H
+                <= C["ear_root_max_height"]
+                and abs(data.vertices[i].co.x) > width(data.vertices[i].co.z) - 0.015 * H
+            ]
+            roots.sort(key=lambda i: data.vertices[i].co.z)
+            assert len(roots) >= 5, "Insufficient ear-root boundary samples"
+            assert all(
+                tuple(sorted((a, b))) in boundary_edges for a, b in zip(roots, roots[1:])
+            ), "Ear root must be a connected facial boundary chain"
+            root_points = [data.vertices[i].co.copy() for i in roots]
+            low, high = root_points[0].z, root_points[-1].z
+            vs, fs, rows, uvpoints = [], [], [], []
+            root_indices = []
+            for j, root in enumerate(root_points):
+                t = (root.z - low) / (high - low)
+                row = []
+                values = [0] if j in [0, len(root_points) - 1] else [0, 0.22, 0.5, 0.70, 0.88, 1]
+                for u in values:
+                    outward, posterior = membrane_offset(t, u, C, (-root.y - Z0) / H)
+                    row.append(len(vs))
+                    lift = (ear_arc_height(t, low, high) - root.z) * sqrt(max(0, sin(pi * u / 2)))
+                    vs.append((root.x + side * H * outward, root.y + H * posterior, root.z + lift))
+                    uvpoints.append((0.02 + 0.96 * u, 0.02 + 0.96 * t))
+                root_indices.append(row[0])
+                rows.append(row)
+            for a, b in zip(rows, rows[1:]):
+                if len(a) == 1:
+                    fs.extend((a[0], b[k + 1], b[k]) for k in range(len(b) - 1))
+                elif len(b) == 1:
+                    fs.extend((a[k], a[k + 1], b[0]) for k in range(len(a) - 1))
+                else:
+                    fs.extend((a[k], a[k + 1], b[k + 1], b[k]) for k in range(len(a) - 1))
+            main_face_count = len(fs)
+            # A narrow skin return lip supports back-side visibility without
+            # closing the ear basin or creating an independent dark stroke.
+            rim = []
+            for j, row in enumerate(rows):
+                outer = row[-1]
+                if j in [0, len(rows) - 1]:
+                    rim.append(outer)
+                    continue
+                t = (root_points[j].z - low) / (high - low)
+                end_weight = min(
+                    1, t / C["ear_return_end_fade"], (1 - t) / C["ear_return_end_fade"]
+                )
+                end_weight = end_weight * end_weight * (3 - 2 * end_weight)
+                x, y, z = vs[outer]
+                return_width = min(
+                    H * C["ear_return_lip_width"] * sin(pi * t) * end_weight,
+                    abs(x - root_points[j].x)
+                    * min(
+                        C["ear_return_basin_width_fraction"],
+                        curve(t, 1, C["ear_return_width_profile"]),
+                    ),
+                )
+                return_depth = min(
+                    H * C["ear_return_anterior_depth"] * sin(pi * t) * end_weight,
+                    max(0, y - root_points[j].y) * C["ear_return_basin_depth_fraction"],
+                )
+                rim.append(len(vs))
+                vs.append(
+                    (
+                        x - side * return_width,
+                        y - return_depth,
+                        z,
+                    )
+                )
+                uvpoints.append((0.86, 0.02 + 0.96 * t))
+            for j in range(len(rows) - 1):
+                corners = [rows[j][-1], rim[j], rim[j + 1], rows[j + 1][-1]]
+                clean = list(dict.fromkeys(corners))
+                if len(clean) >= 3:
+                    fs.append(tuple(clean))
+            # Join the lower rear wrap to the neighboring open facial edge.
+            # The anterior root chain remains unchanged; no third face is added
+            # to its already connected edges.
+            lower_neighbors = [
+                b if a == roots[0] else a
+                for a, b in boundary_edges
+                if roots[0] in (a, b) and data.vertices[b if a == roots[0] else a].co.z < low
+            ]
+            assert len(lower_neighbors) == 1, "Need one lower facial boundary neighbor"
+            lower = data.vertices[lower_neighbors[0]].co.copy()
+            lower_id = len(vs)
+            vs.append(tuple(lower))
+            bridge = lower_ear_bridge(lower_id, rows[0][0], rim[1])
+            # Oppose the existing root->rim edge. A world-y normal heuristic
+            # incorrectly flipped both shared edges of this lower bridge.
+            fs.append(bridge)
+            uvpoints = project_ear_uv(vs)
+            if side < 0:
+                fs = [tuple(reversed(f)) for f in fs]
+            # A single wrapped surface: the inward return has a free inner edge.
+            # Do not duplicate the whole front sheet into a nearly coincident back.
+            front_face_count = len(fs)
+            obj = mesh("Ear hollow pinna " + str(side), vs, fs, SKIN)
+            assert all(poly.area > 1e-12 for poly in obj.data.polygons), "Degenerate ear membrane"
+            reverse_measure = sum(
+                poly.normal.x * side * poly.area
+                for poly in list(obj.data.polygons)[main_face_count:]
+            )
+            assert reverse_measure < 0, "Ear return must wrap to the reverse lateral side"
+            obj["ear_return_side_normal_measure"] = reverse_measure
+            obj["ear_detail"] = True
+            obj["ear_main_faces"] = main_face_count
+            obj["ear_front_faces"] = front_face_count
+            detail = obj.data.uv_layers.new(name="DetailUV")
+            for loop in obj.data.loops:
+                detail.data[loop.index].uv = uvpoints[loop.vertex_index]
+            delta = obj.data.attributes.new("MouthOpenDelta", "FLOAT_VECTOR", "POINT")
+            for value in delta.data:
+                value.vector = (0, 0, 0)
+            error = max(
+                (obj.data.vertices[i].co - r).length for i, r in zip(root_indices, root_points)
+            )
+            assert error < 1e-7, "Ear-root seam must match actual evaluated skin"
+            reports.append(
+                {
+                    "name": obj.name,
+                    "root_vertices": len(roots),
+                    "return_side_normal_measure": reverse_measure,
+                    "max_root_position_error_m": error,
+                    "root_positions": [list(r) for r in root_points],
+                    "lower_bridge_root_position": list(lower),
+                    "geometry": "open-backed shallow membrane; no separate closed back shell",
+                }
+            )
+    finally:
+        evaluated.to_mesh_clear()
+    return reports
+
+
+def verify_ear_seams(data, reports):
+    from mathutils.kdtree import KDTree
+
+    tree = KDTree(len(data.vertices))
+    for vertex in data.vertices:
+        tree.insert(vertex.co, vertex.index)
+    tree.balance()
+    uses = {}
+    for poly in data.polygons:
+        ids = list(poly.vertices)
+        for a, b in zip(ids, ids[1:] + ids[:1]):
+            key = tuple(sorted((a, b)))
+            uses[key] = uses.get(key, 0) + 1
+    out = []
+    for report in reports:
+        ids = []
+        for x, y, z in report["root_positions"]:
+            _, index, distance = tree.find(Vector((x, y, z - 0.021)))
+            assert distance < 0.000002, "Missing joined ear-root vertex"
+            ids.append(index)
+        counts = [uses.get(tuple(sorted((a, b))), 0) for a, b in zip(ids, ids[1:])]
+        assert all(c == 2 for c in counts), "Ear-root edges must connect exactly two surfaces"
+        out.append(
+            {
+                "name": report["name"],
+                "shared_manifold_root_edges": len(counts),
+                "edge_face_usage": sorted(set(counts)),
+            }
+        )
+    return out
