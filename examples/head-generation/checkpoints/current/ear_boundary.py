@@ -246,3 +246,66 @@ def blend_rim_displacements(before,result,neighbors,boundary,eligible):
     output=list(result)
     for i in eligible:output[i]=tuple(before[i][k]+delta[i][k] for k in range(3))
     return output,set(eligible)
+
+
+def opening_lateral_offset(v, amplitude):
+    t=max(0.,min(1.,(v-.04)/.07 if v<=.11 else (.25-v)/.14))
+    return amplitude*t*t*(3-2*t)
+
+def fit_opening_lateral_arc(data,reports):
+    """Round the lower posterior opening in projection without moving ear roots."""
+    from face import C,H,Y0,Z0
+    from mathutils import Vector
+    data.update();before=[tuple(v.co) for v in data.vertices]
+    normals=[p.normal.copy() for p in data.polygons]
+    uses={};neighbors={}
+    for poly in data.polygons:
+        ids=list(poly.vertices)
+        for a,b in zip(ids,ids[1:]+ids[:1]):
+            key=tuple(sorted((a,b)));uses[key]=uses.get(key,0)+1
+            neighbors.setdefault(a,set()).add(b);neighbors.setdefault(b,set()).add(a)
+    regions=data.attributes['NormalRegion']
+    skin={i for p in data.polygons if regions.data[p.index].value in (1,2) for i in p.vertices}
+    pending=list(skin)
+    while pending:
+        for j in neighbors.get(pending.pop(),()):
+            if j not in skin:skin.add(j);pending.append(j)
+    anchors=[]
+    for report in reports:
+        entries={}
+        for key in ['root_positions','lower_bridge_root_position']:
+            points=report[key] if key=='root_positions' else [report[key]]
+            ids=[]
+            for p in points:
+                target=Vector((p[0],p[1],p[2]-.021))
+                idx=min(range(len(before)),key=lambda i:(Vector(before[i])-target).length_squared)
+                assert (Vector(before[idx])-target).length<.000002
+                ids.append(idx)
+            entries[key]=ids
+        anchors.append(entries)
+    boundary={i for edge,n in uses.items() if n==1 for i in edge if i in skin}
+    def allowed(i):
+        x,y,z=before[i]
+        return abs(x)>.003 and .04<(z+.021-Y0)/H<.25 and (Z0+y)/H>.18
+    chosen={i for i in boundary if allowed(i)}
+    eligible={i for i in skin-boundary if allowed(i)}
+    result=list(before)
+    for i in chosen:
+        x,y,z=before[i];v=(z+.021-Y0)/H
+        d=opening_lateral_offset(v,C['ear_jaw_opening_lateral_m'])
+        result[i]=(x+(d if x>0 else -d),y,z)
+    result,interior=blend_rim_displacements(before,result,neighbors,chosen,eligible)
+    changed=chosen|interior
+    for i in changed:data.vertices[i].co=result[i]
+    data.update()
+    for poly,n in zip(data.polygons,normals):
+        if any(i in changed for i in poly.vertices):
+            assert poly.area>1e-12 and poly.normal.dot(n)>0,'Opening arc inverted a face'
+    for report,entries in zip(reports,anchors):
+        for key,ids in entries.items():
+            points=[[result[i][0],result[i][1],result[i][2]+.021] for i in ids]
+            report[key]=points if key=='root_positions' else points[0]
+    maximum=max([(Vector(result[i])-Vector(before[i])).length for i in changed]or[0])
+    assert maximum<=C['ear_jaw_opening_lateral_m']+1e-7
+    assert all(tuple(data.vertices[i].co)==q for i,q in enumerate(before) if i not in changed)
+    return {'boundary_vertices':len(chosen),'interior_vertices':len(interior),'maximum_displacement_m':maximum,'height_range':[.04,.25],'topology_unchanged':True}
