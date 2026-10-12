@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "preset": "head_recovery_511",
+  "preset": "head_recovery_513",
   "note": "Explicit semantic calibration case; no character-name generation dependency.",
   "iris_half_width_m": 0.01534,
   "eye_lens_bulge_m": 0.0012,
@@ -1137,8 +1137,9 @@
     "ear_jaw_rim_fairing_iterations": 80,
     "ear_return_crown_m": 0.002,
     "ear_return_crease_normals": true,
-    "ear_post_return_width_m": 0.009,
-    "ear_post_return_depth_m": 0.002
+    "ear_post_return_width_m": 0.0105,
+    "ear_post_return_depth_m": 0.002,
+    "ear_post_lower_return_width_m": 0.007
   },
   "normal_policy": "actual_area_weighted_geometry",
   "surface_subdivision_levels": 1,

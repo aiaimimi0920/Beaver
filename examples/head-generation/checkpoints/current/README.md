@@ -1,13 +1,15 @@
-# Connected posterior ear return checkpoint 511
+# Connected posterior ear return checkpoint 513
 
-Source-only recovery checkpoint, 2026-10-12. Partial ear-under improvement, NOT final aesthetic acceptance. Supersedes rejected503, whose outward opening shift made the colored band thinner. Rejected510 moved existing roots and produced new frontal dark seams.511 keeps507 original geometry and adds a connected two-row open posterior return. No reference mesh or texture is included.
+Source-only recovery checkpoint,2026-10-12. Useful partial ear-under correction; final appearance and owner acceptance remain pending. Replaces rejected503 outward shift. No reference mesh or texture included.
 
 ## Reproduction
-Requires the owner's existing Beaver project, private assets/aster/head_recovery_49/aster_head_editable.blend, authoring/head_generation_guide.md and NPR runtime dependencies. Not standalone. Package using python3 bundle.py --output request.json, then load through native Beaver blender.start and validate/preview through native NPR. Do not execute pipeline.py directly. The editable blend is the intermediate authoring snapshot; runtime_morph blend and GLB include post-join return geometry. The recipe reproduces final outputs.
+Requires the owner's existing Beaver project, private assets/aster/head_recovery_49/aster_head_editable.blend, authoring/head_generation_guide.md and NPR runtime dependencies. Not standalone. Package with python3 bundle.py --output request.json, load through native Beaver blender.start, then native NPR validation and preview. Do not execute pipeline.py directly. Editable blend is an intermediate authoring snapshot; runtime_morph blend and GLB include final post-join changes.
 
-## Geometry and verification
-Two added rows extend inward by a smooth bounded width envelope, maximum9mm, with2mm posterior curvature. Original507 vertices and triangles remain unchanged.56 connected faces,108 exported triangles,56 unique vertices added; free back opening remains. Saved winding uses original boundary orientation for both rows. Native assertions reject forward-facing return faces, collapsed faces, non-manifold new edges or moved originals.
-279 pure tests passed in21.240s in the full working source; bundled focused tests are a subset. Native job0c819581-307b-46e3-9f33-4db17ced7d95 completed2026-10-12T14:36:22.590Z, exit0,46231ms,32 outputs SHA-verified. NPR validation2026-10-12T14:36:50.429Z ok:true,errors:[]. Both roots retain15 shared manifold edges. Actual507 to511 position audit: zero moved/removed original vertices, body/hair unchanged, Face5710 to5766 unique vertices.
+## Construction
+All507 original positions and triangles retained. Two connected posterior-return rows are added to the real skin/ear free boundary. Upper width peaks at10.5mm at normalized height .235, support .11 to .37; lower width7mm with support .01/.055/.115. Only the upper part has2mm posterior depth. Lower rows extend medially at original depth to avoid512's new side silhouette step. Stationary center vertices are reused, avoiding four degenerate exported triangles found in the first513 trial. Back opening remains open. Eyelashes and other separate components frozen.
 
-## Visual review and remaining work
-Actual front and90-degree render show no newly introduced diagonal ear-under seam.180-degree colored comparison shows a wider continuous return than503.150-degree white and render inspected. Reference skin-band widths and lower opening curve still differ; some lower white-surface faceting also existed in501. Further calibration and owner approval remain. This checkpoint is backup of useful incremental work, not an accepted final model, merged change, deployment, zero-warning claim or completed product. Eyelashes remain frozen.
+## Verified evidence
+280 pure tests passed in21.023s across the complete working source; bundled focused tests are a subset. Corrected native job6bb5b6da-4a27-4746-8895-9633e651746e completed2026-10-12T15:05:36.321Z, exit0,52813ms,32 output hashes verified. NPR2026-10-12T15:06:05.063Z ok:true,errors:[]. Actual507 to513: original vertices unchanged, Face5710 to5862 unique vertices; body/hair unchanged.304 added exported triangles have nonzero area and backward orientation. Both roots retain15 shared manifold edges. Tests do not imply zero warnings.
+
+## Visual limits
+Rear colored-band widths are much closer in the inspected same-camera comparison; ear-root transition and outer contour still differ. Front and90-degree render show no new black diagonal seam; the lower side step from512 is removed. Rear white and wire surface checks remain distinct from final aesthetic approval. This is a recovery checkpoint, not final acceptance, merge or deployment.

@@ -1,7 +1,12 @@
 """Attach a narrow open posterior return without moving the original ear root."""
 
 def return_weight(height):
-    t = max(0.0, min(1.0, (height-.12)/.14 if height <= .26 else (.38-height)/.12))
+    t = max(0.0, min(1.0, (height-.11)/.125 if height <= .235 else (.37-height)/.135))
+    return t*t*(3-2*t)
+
+
+def lower_return_weight(height):
+    t = max(0.0, min(1.0, (height-.01)/.045 if height <= .055 else (.115-height)/.06))
     return t*t*(3-2*t)
 
 
@@ -29,7 +34,7 @@ def add_final_return(data):
             continue
         a,b = edge.verts
         height = ((a.co.z+b.co.z)/2+.021-Y0)/H
-        if .12 < height < .38 and min((Z0+v.co.y)/H for v in edge.verts) > .18:
+        if .01 < height < .38 and min((Z0+v.co.y)/H for v in edge.verts) > .18:
             selected.append(edge)
     assert selected, 'No permitted posterior ear-under boundary'
     ids = {v for edge in selected for v in edge.verts}
@@ -43,14 +48,21 @@ def add_final_return(data):
     for fraction in (.5,1.0):
         row = {}
         for v in ids:
-            weight = return_weight((v.co.z+.021-Y0)/H)
+            height = (v.co.z+.021-Y0)/H
+            upper = return_weight(height)
+            lower = lower_return_weight(height)
+            width = C['ear_post_return_width_m']*upper + C['ear_post_lower_return_width_m']*lower
+            weight = max(upper,lower)
             if weight < 1e-8:
                 row[v] = v
                 continue
             point = v.co.copy()
             sign = 1 if point.x>0 else -1
-            point.x -= sign*min(C['ear_post_return_width_m']*weight,abs(point.x)*.5)*fraction
-            point.y += C['ear_post_return_depth_m']*weight*sin(pi*fraction/2)
+            point.x -= sign*min(width,abs(point.x)*.5)*fraction
+            point.y += C['ear_post_return_depth_m']*upper*sin(pi*fraction/2)
+            if (point-v.co).length < 1e-7:
+                row[v] = v
+                continue
             new = bm.verts.new(point, v)
             row[v] = new
         previous = maps[-1]
