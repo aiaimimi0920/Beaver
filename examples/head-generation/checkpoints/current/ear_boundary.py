@@ -123,7 +123,7 @@ def fit_final_ear_support(data,reports):
 def rear_curve_offset(v, back_depth, amplitude):
     # An asymmetric arc returns gradually through the lower ear attachment.
     # A short symmetric falloff creates an inward kink immediately below the ear.
-    t=max(0.0,min(1.0,(v-.035)/.075)) if v<=.11 else max(0.0,min(1.0,(.38-v)/.27))
+    t=max(0.0,min(1.0,(v-.025)/.085)) if v<=.11 else max(0.0,min(1.0,(.27-v)/.16))
     arch=t*t*(3-2*t)
     depth=max(0.0,min(1.0,(back_depth-.18)/.05))
     return amplitude*arch*depth*depth*(3-2*depth)
@@ -165,7 +165,7 @@ def fit_ear_to_jaw_curve(data,reports):
                 d=rear_curve_offset((p[2]-Y0)/H,(Z0+p[1])/H,C['ear_to_jaw_rear_curve_m'])
                 shifted.append([p[0],p[1]+d,p[2]])
             report[key]=shifted if key=='root_positions' else shifted[0]
-    return {'changed_vertices':len(changed),'maximum_displacement_m':maximum,'height_range':[.035,.38],'posterior_depth_start':.18,'skin_only':True,'front_and_other_parts_unchanged':True}
+    return {'changed_vertices':len(changed),'maximum_displacement_m':maximum,'height_range':[.025,.27],'posterior_depth_start':.18,'skin_only':True,'front_and_other_parts_unchanged':True}
 
 
 def fair_ear_jaw_rim(data,reports):

@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "preset": "head_recovery_516",
+  "preset": "head_recovery_518",
   "note": "Explicit semantic calibration case; no character-name generation dependency.",
   "iris_half_width_m": 0.01534,
   "eye_lens_bulge_m": 0.0012,
@@ -1132,7 +1132,7 @@
     "ear_lower_sweep_ease_end": 0.12,
     "ear_lower_fairing_blend_rings": 3,
     "ear_root_posterior_support_m": 0.003,
-    "ear_to_jaw_rear_curve_m": 0.006,
+    "ear_to_jaw_rear_curve_m": 0.014,
     "ear_jaw_rim_fairing_limit_m": 0.006,
     "ear_jaw_rim_fairing_iterations": 80,
     "ear_return_crown_m": 0.002,
