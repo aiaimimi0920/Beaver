@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "preset": "head_recovery_503",
+  "preset": "head_recovery_511",
   "note": "Explicit semantic calibration case; no character-name generation dependency.",
   "iris_half_width_m": 0.01534,
   "eye_lens_bulge_m": 0.0012,
@@ -633,7 +633,7 @@
     "chin_morph_fixed_height": 0.07,
     "chin_morph_blend_height": 0.145,
     "tongue_open_down": 0.025,
-    "ear_root_min_height": 0.26,
+    "ear_root_min_height": 0.25,
     "ear_root_max_height": 0.53,
     "top_warp_start_height": 0.58,
     "top_boundary_drop_profile": [
@@ -1113,7 +1113,7 @@
         0
       ]
     ],
-    "ear_lower_arc_power": 0.6,
+    "ear_lower_arc_power": 0.3,
     "ear_lower_posterior_sweep": 0.035,
     "final_return_fairing_max_height": 0.27,
     "final_return_fairing_iterations": 8,
@@ -1137,7 +1137,8 @@
     "ear_jaw_rim_fairing_iterations": 80,
     "ear_return_crown_m": 0.002,
     "ear_return_crease_normals": true,
-    "ear_jaw_opening_lateral_m": 0.006
+    "ear_post_return_width_m": 0.009,
+    "ear_post_return_depth_m": 0.002
   },
   "normal_policy": "actual_area_weighted_geometry",
   "surface_subdivision_levels": 1,
