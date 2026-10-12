@@ -7,7 +7,7 @@ from mouth import store_mouth_deltas
 from glb_merge import merge_face
 
 ROOT = Path(beaver_input("project.godot")).parent
-OUT = "assets/aster/head_recovery_490/"
+OUT = "assets/aster/head_recovery_496/"
 BASE = "assets/aster/head_recovery_49/"
 GUIDE = Path(beaver_input("authoring/head_generation_guide.md")).read_text()
 assert "去发侧脸轮廓检查" in GUIDE
@@ -301,6 +301,8 @@ for role in ["Face"]:
         report["ear_final_support"] = fit_final_ear_support(members[0].data, report["ear_root_fit"])
         from ear_boundary import fit_ear_to_jaw_curve
         report["ear_to_jaw_curve"] = fit_ear_to_jaw_curve(members[0].data, report["ear_root_fit"])
+        from ear_boundary import fair_ear_jaw_rim
+        report["ear_jaw_rim_fairing"] = fair_ear_jaw_rim(members[0].data, report["ear_root_fit"])
         bm = bmesh.new()
         bm.from_mesh(members[0].data)
         bmesh.ops.triangulate(bm, faces=list(bm.faces), quad_method="BEAUTY", ngon_method="BEAUTY")

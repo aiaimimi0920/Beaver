@@ -166,3 +166,83 @@ def fit_ear_to_jaw_curve(data,reports):
                 shifted.append([p[0],p[1]+d,p[2]])
             report[key]=shifted if key=='root_positions' else shifted[0]
     return {'changed_vertices':len(changed),'maximum_displacement_m':maximum,'height_range':[.035,.38],'posterior_depth_start':.18,'skin_only':True,'front_and_other_parts_unchanged':True}
+
+
+def fair_ear_jaw_rim(data,reports):
+    """Remove the residual rear-view S bend with bounded 3D boundary fairing."""
+    from face import C,H,Y0,Z0
+    from mathutils import Vector
+    from mathutils.kdtree import KDTree
+    data.update()
+    before=[tuple(v.co) for v in data.vertices]
+    normals=[p.normal.copy() for p in data.polygons]
+    uses={};all_neighbors={}
+    for poly in data.polygons:
+        ids=list(poly.vertices)
+        for a,b in zip(ids,ids[1:]+ids[:1]):
+            edge=tuple(sorted((a,b)));uses[edge]=uses.get(edge,0)+1
+            all_neighbors.setdefault(a,set()).add(b);all_neighbors.setdefault(b,set()).add(a)
+    regions=data.attributes['NormalRegion']
+    skin={i for p in data.polygons if regions.data[p.index].value in (1,2) for i in p.vertices}
+    pending=list(skin)
+    while pending:
+        for j in all_neighbors.get(pending.pop(),()):
+            if j not in skin:skin.add(j);pending.append(j)
+    neighbors={}
+    for (a,b),count in uses.items():
+        if count==1 and a in skin and b in skin:
+            neighbors.setdefault(a,[]).append(b);neighbors.setdefault(b,[]).append(a)
+    selected={i for i in neighbors if .06<(before[i][2]+.021-Y0)/H<.38 and (Z0+before[i][1])/H>.18}
+    tree=KDTree(len(before))
+    for i,p in enumerate(before):tree.insert(Vector(p),i)
+    tree.balance()
+    anchors=[]
+    for report in reports:
+        entries={}
+        for key in ['root_positions','lower_bridge_root_position']:
+            points=report[key] if key=='root_positions' else [report[key]]
+            ids=[]
+            for p in points:
+                _,i,d=tree.find(Vector((p[0],p[1],p[2]-.021)))
+                assert d<.000002;ids.append(i)
+            entries[key]=ids
+        anchors.append(entries)
+    result=fair_chain(before,neighbors,selected,iterations=C['ear_jaw_rim_fairing_iterations'],limit=C['ear_jaw_rim_fairing_limit_m'],blend_rings=3)
+    # Blend the moved rim through the permitted adjacent skin patch to avoid stretched strips.
+    boundary=set(neighbors)
+    eligible={i for i in skin-boundary if .06<(before[i][2]+.021-Y0)/H<.38 and (Z0+before[i][1])/H>.18}
+    result,interior=blend_rim_displacements(before,result,all_neighbors,selected,eligible)
+    changed=selected|interior
+    for i in changed:data.vertices[i].co=result[i]
+    data.update()
+    for poly,n in zip(data.polygons,normals):
+        if any(i in changed for i in poly.vertices):
+            assert poly.area>1e-12 and poly.normal.dot(n)>0,'Ear-jaw rim fairing inverted a face'
+    for report,entries in zip(reports,anchors):
+        for key,ids in entries.items():
+            points=[[result[i][0],result[i][1],result[i][2]+.021] for i in ids]
+            report[key]=points if key=='root_positions' else points[0]
+    assert all(tuple(data.vertices[i].co)==p for i,p in enumerate(before) if i not in changed)
+    return {'interior_blend_vertices':len(interior),'selected_vertices':len(selected),'maximum_displacement_m':max((Vector(result[i])-Vector(before[i])).length for i in selected),'scope':'connected skin free boundary only','height_range':[.06,.38],'topology_unchanged':True}
+
+
+def blend_rim_displacements(before,result,neighbors,boundary,eligible):
+    """Harmonic skin extension with fixed rim and zero displacement outside scope."""
+    from math import sqrt
+    delta={i:tuple(result[i][k]-before[i][k] for k in range(3)) for i in boundary}
+    weights={}
+    for i in eligible:
+        linked=list(neighbors.get(i,()))
+        weights[i]=[(j,1/max(1e-7,sqrt(sum((before[j][k]-before[i][k])**2 for k in range(3))))) for j in linked]
+        delta[i]=(0.,0.,0.)
+    for _ in range(240):
+        old=dict(delta);largest=0
+        for i in eligible:
+            linked=weights[i];total=sum(w for _,w in linked)
+            if not total:continue
+            d=tuple(sum(old.get(j,(0.,0.,0.))[k]*w for j,w in linked)/total for k in range(3))
+            largest=max(largest,max(abs(d[k]-old[i][k]) for k in range(3)));delta[i]=d
+        if largest<1e-9:break
+    output=list(result)
+    for i in eligible:output[i]=tuple(before[i][k]+delta[i][k] for k in range(3))
+    return output,set(eligible)
