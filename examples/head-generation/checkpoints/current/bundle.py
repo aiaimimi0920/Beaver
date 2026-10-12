@@ -25,7 +25,7 @@ ASSET_FILES = [
     "face_map.png",
     "hair_ilm.png",
 ]
-OUTPUT_PREFIX = "assets/aster/head_recovery_514/"
+OUTPUT_PREFIX = "assets/aster/head_recovery_515/"
 
 
 def build_request(source_dir=None):

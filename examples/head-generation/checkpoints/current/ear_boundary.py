@@ -250,7 +250,7 @@ def blend_rim_displacements(before,result,neighbors,boundary,eligible):
 
 def under_ear_lateral_offset(height, back_depth, lateral, amplitude):
     t=max(0.,min(1.,(height-.13)/.09 if height<=.22 else (.29-height)/.07))
-    z=max(0.,min(1.,(back_depth-.18)/.05))
+    z=max(0.,min(1.,(back_depth-.05)/.07))
     x=max(0.,min(1.,(lateral-.025)/.035))
     return amplitude*t*t*(3-2*t)*z*z*(3-2*z)*x*x*(3-2*x)
 
