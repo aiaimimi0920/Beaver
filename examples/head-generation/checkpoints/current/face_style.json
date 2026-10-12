@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "preset": "head_recovery_500",
+  "preset": "head_recovery_501",
   "note": "Explicit semantic calibration case; no character-name generation dependency.",
   "iris_half_width_m": 0.01534,
   "eye_lens_bulge_m": 0.0012,
@@ -1037,7 +1037,7 @@
       ],
       [
         0.7,
-        0.72
+        0.66
       ],
       [
         0.88,
