@@ -7,7 +7,7 @@ from mouth import store_mouth_deltas
 from glb_merge import merge_face
 
 ROOT = Path(beaver_input("project.godot")).parent
-OUT = "assets/aster/head_recovery_497/"
+OUT = "assets/aster/head_recovery_500/"
 BASE = "assets/aster/head_recovery_49/"
 GUIDE = Path(beaver_input("authoring/head_generation_guide.md")).read_text()
 assert "去发侧脸轮廓检查" in GUIDE
@@ -239,6 +239,9 @@ for part_index, part in enumerate(PARTS):
             count = part["ear_front_faces"]
             if poly.index % count >= part["ear_main_faces"]:
                 region += 100
+                fold_index = poly.index % count - part["ear_main_faces"]
+                if C["ear_return_crease_normals"] and fold_index < part["ear_return_band_faces"]:
+                    region += 10*(fold_index % 2)
             if poly.index >= count:
                 region += 200
         accent_zones = part.data.attributes.get("AccentNormalZone")

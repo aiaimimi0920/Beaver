@@ -116,10 +116,12 @@ def fit_ear_roots(shell):
             # A narrow skin return lip supports back-side visibility without
             # closing the ear basin or creating an independent dark stroke.
             rim = []
+            crown = []
             for j, row in enumerate(rows):
                 outer = row[-1]
                 if j in [0, len(rows) - 1]:
                     rim.append(outer)
+                    crown.append(outer)
                     continue
                 t = (root_points[j].z - low) / (high - low)
                 end_weight = min(
@@ -148,11 +150,15 @@ def fit_ear_roots(shell):
                     )
                 )
                 uvpoints.append((0.86, 0.02 + 0.96 * t))
+                crown.append(len(vs))
+                vs.append(return_crown_point(vs[outer],vs[rim[-1]],t,C["ear_return_crown_m"]))
+                uvpoints.append((0.93,0.02 + 0.96*t))
             for j in range(len(rows) - 1):
-                corners = [rows[j][-1], rim[j], rim[j + 1], rows[j + 1][-1]]
-                clean = list(dict.fromkeys(corners))
-                if len(clean) >= 3:
-                    fs.append(tuple(clean))
+                for first,second in [([r[-1] for r in rows],crown),(crown,rim)]:
+                    corners = [first[j],second[j],second[j+1],first[j+1]]
+                    clean = list(dict.fromkeys(corners))
+                    if len(clean) >= 3:
+                        fs.append(tuple(clean))
             # Join the lower rear wrap to the neighboring open facial edge.
             # The anterior root chain remains unchanged; no third face is added
             # to its already connected edges.
@@ -184,6 +190,7 @@ def fit_ear_roots(shell):
             assert reverse_measure < 0, "Ear return must wrap to the reverse lateral side"
             obj["ear_return_side_normal_measure"] = reverse_measure
             obj["ear_detail"] = True
+            obj["ear_return_band_faces"] = 2*(len(rows)-1)
             obj["ear_main_faces"] = main_face_count
             obj["ear_front_faces"] = front_face_count
             detail = obj.data.uv_layers.new(name="DetailUV")
@@ -242,3 +249,10 @@ def verify_ear_seams(data, reports):
             }
         )
     return out
+
+
+def return_crown_point(outer,inner,t,amplitude):
+    """A shallow posterior crown inside the existing open return; endpoints fixed."""
+    from math import sin,pi
+    fade=sin(pi*max(0,min(1,t)))**2
+    return tuple((outer[k]+inner[k])/2+(amplitude*fade if k==1 else 0) for k in range(3))
