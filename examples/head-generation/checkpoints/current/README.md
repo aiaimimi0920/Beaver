@@ -1,16 +1,13 @@
-# Upper ear attachment and nose contour checkpoint520
+# 529 耳下轮廓校准候选
 
-Source-only incremental repair,2026-10-13. Not final visual acceptance. No third-party reference mesh or texture included.
+状态：已实际生成并运行，可手动检查；未通过最终外观验收。
 
-## Reproduction
-Requires existing Beaver project, private assets/aster/head_recovery_49/aster_head_editable.blend, authoring/head_generation_guide.md and NPR runtime dependencies. Not standalone. Use bundle.py --output request.json through native Beaver blender.start, then NPR validation and actual preview. Editable blend is intermediate; runtime_morph blend and GLB contain final post-join changes.
+修复内容：保持原有正面宽度约束，改善耳根下端前后位置及耳下到下颌边界的平顺性；对邻接皮肤进行有界过渡。保持双侧对称，未修改眼睛、睫毛、嘴鼻参数。
 
-## Change and diagnosis
-519 repairs the annotated upper ear attachment notch. The old recipe connected the lower return to adjacent facial boundary but omitted the equivalent upper bridge. Add one triangle per side using existing evaluated upper-root, upper-neighbor and return-rim positions. Do not close the entire intentionally open ear basin. Topology verification maps vertices within1micrometre: every prior triangle retained and exactly2 added; each new triangle has2 manifold shared attachment edges and1 intentional free contour edge. Other positions effectively unchanged (max0.249micrometre).
-520 retains that repair and adjusts only nasal stations. Peak lower shoulder .280/.0945 -> .286/.099; upper shoulder .300/.095 -> .303/.095. Lower .250 relief .055 -> .050 and .220 .016 -> .014. These raise/sharpen the tip slightly and retract the lower transition; lip parameters, eyes and eyelashes are unchanged.
+验证：292 项纯逻辑测试通过。Beaver 原生生成任务 2efef472-6f8e-4aad-8e97-8de30ea75d87 退出码 0，32 个输出 SHA256 一致。实际网格比较：340 个面部顶点发生位移，限定区域外、身体和头发顶点保持一致。保存全周向每 45° 渲染对照，以及局部白模和线框。
 
-## Verification
-519:283 pure tests passed17.414s; native job f4207ab1-7bd8-4f90-9147-e7ba6015050e exit0,43192ms,32 hashes verified.520:284 tests passed19.327s; job6abb1ca0-b153-478d-8639-befc8bc48b40 exit0,51416ms,32 hashes verified. Native NPR validation and actual GUI520 preview succeeded. Actual519->520 nose-region maximum nearest vertex displacement1.0497mm; outside a30mm half-width nose/subdivision support envelope under1micrometre, body/hair unchanged. Native shared-root and collapsed/inverted face checks passed. Ear source241 effective lines; pipeline455. Legacy unchanged oversized modules remain technical debt.
+定量诊断：同取景的耳下轮廓局部像素误差，520→529：正面 1.12→1.54，15° 3.54→3.35，30° 5.46→2.51 像素。只是指定区域的栅格诊断，不能代表整体模型验收；正面存在轻微退步。
 
-## Visual review and limitations
-Rendered comparison at0,+/-45,+/-90,+/-135,180 degrees, plus right90 and135 white/wire checks. Upper attachment notch now has a bridge in wire view with no observed new black seam at examined angles. Nose underside transition is closer at side90; pixel samples are diagnostic only. Ear shape/texture and existing cheek white-mode shading differ from reference; broader aesthetic equality has not been achieved. Draft PR remains unmerged; CI success is not zero findings or product acceptance.
+未完成：耳下到下颌仍有局部折感，白模侧脸仍有横向条带状曲面不平顺，侧后视图与参考的收束关系仍有差别。下一轮应针对对应边界和相邻面带继续优化，不能以生成成功或测试通过宣布全部修复。
+
+恢复：需要已有 Beaver 工作区、私有基线 head_recovery_49 和 NPR 项目。运行 blend/GLB 才是最终网格，editable.blend 是中间编辑状态。参考模型不在公开源码中。

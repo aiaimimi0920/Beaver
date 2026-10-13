@@ -9,4 +9,4 @@ class EarUnderWidth(unittest.TestCase):
    for d in (0,.05,.08,.12,.23,.4):
     for x in (0,.025,.04,.06,.09):
      y=f(v,d,x,.003);self.assertGreaterEqual(y,0);self.assertLessEqual(y,.0030000001)
-     if v<=.13 or v>=.29 or d<=.05 or x<=.025:self.assertEqual(y,0)
+     if v<=.13 or v>=.36 or d<=.05 or x<=.025:self.assertEqual(y,0)

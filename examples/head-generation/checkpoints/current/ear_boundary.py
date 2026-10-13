@@ -115,7 +115,7 @@ def fit_final_ear_support(data,reports):
                 x,y,z=shift((p[0],p[1],p[2]-.021));shifted.append([x,y,z+.021])
             report[key]=shifted if key=='root_positions' else shifted[0]
     maximum=max([(Vector(data.vertices[i].co)-Vector(before[i])).length for i in changed] or [0])
-    assert maximum<=C['ear_root_posterior_support_m']+1e-7
+    assert maximum<=abs(C['ear_root_posterior_support_m'])+1e-7
     assert all(tuple(data.vertices[i].co)==p for i,p in enumerate(before) if i not in changed)
     return {'changed_vertices':len(changed),'maximum_displacement_m':maximum,'final_stage':True,'compact_height_range':[.18,.34],'minimum_lateral_fraction':.9}
 
@@ -208,10 +208,13 @@ def fair_ear_jaw_rim(data,reports):
             entries[key]=ids
         anchors.append(entries)
     result=fair_chain(before,neighbors,selected,iterations=C['ear_jaw_rim_fairing_iterations'],limit=C['ear_jaw_rim_fairing_limit_m'],blend_rings=3)
+    preserved=fair_chain(before,neighbors,selected,iterations=80,limit=.006,blend_rings=3)
+    result=[(preserved[i][0],point[1],preserved[i][2]) for i,point in enumerate(result)]
     # Blend the moved rim through the permitted adjacent skin patch to avoid stretched strips.
     boundary=set(neighbors)
-    eligible={i for i in skin-boundary if .06<(before[i][2]+.021-Y0)/H<.38 and (Z0+before[i][1])/H>.18}
+    eligible={i for i in skin-boundary if .06<(before[i][2]+.021-Y0)/H<.38 and (Z0+before[i][1])/H>.05}
     result,interior=blend_rim_displacements(before,result,all_neighbors,selected,eligible)
+    result=fair_interior_depth(result,all_neighbors,eligible)
     changed=selected|interior
     for i in changed:data.vertices[i].co=result[i]
     data.update()
@@ -249,7 +252,7 @@ def blend_rim_displacements(before,result,neighbors,boundary,eligible):
 
 
 def under_ear_lateral_offset(height, back_depth, lateral, amplitude):
-    t=max(0.,min(1.,(height-.13)/.09 if height<=.22 else (.29-height)/.07))
+    t=max(0.,min(1.,(height-.13)/.09 if height<=.22 else (.36-height)/.14))
     z=max(0.,min(1.,(back_depth-.05)/.07))
     x=max(0.,min(1.,(lateral-.025)/.035))
     return amplitude*t*t*(3-2*t)*z*z*(3-2*z)*x*x*(3-2*x)
@@ -289,4 +292,21 @@ def fit_ear_under_width(data,reports):
             for x,y,z in points:
                 a,b,c=shift((x,y,z-.021));shifted.append([a,b,c+.021])
             report[key]=shifted if key=='root_positions' else shifted[0]
-    return {'changed_vertices':len(changed),'height_support':[.13,.29],'maximum_width_m':C['ear_under_lateral_width_m'],'posterior_only':True}
+    return {'changed_vertices':len(changed),'height_support':[.13,.36],'maximum_width_m':C['ear_under_lateral_width_m'],'posterior_only':True}
+
+
+def fair_interior_depth(points,neighbors,eligible,iterations=60,strength=.25,limit=.003):
+    """Smooth actual depth only, with every boundary and other coordinate fixed."""
+    from math import sqrt
+    original=[tuple(p) for p in points];result=list(original)
+    weights={i:[(j,1/max(1e-7,sqrt(sum((original[i][k]-original[j][k])**2 for k in range(3))))) for j in neighbors.get(i,())] for i in eligible}
+    for _ in range(iterations):
+        old=list(result)
+        for i in eligible:
+            linked=weights[i];total=sum(w for _,w in linked)
+            if not total:continue
+            target=sum(old[j][1]*w for j,w in linked)/total
+            depth=old[i][1]+strength*(target-old[i][1])
+            depth=max(original[i][1]-limit,min(original[i][1]+limit,depth))
+            result[i]=(original[i][0],depth,original[i][2])
+    return result

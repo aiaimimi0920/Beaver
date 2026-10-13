@@ -1,1 +1,1 @@
-520: preserve519 upper root bridge. Nose stations: move lower tip shoulder height .280 to .286 with relief .0945 to .099; upper tip shoulder .300 to .303 keeping relief .095; reduce lower transition relief .055 to .050 at .250 and .016 to .014 at .220. Keep .340/.400 bridge controls and all lip parameters. Validate localized actual geometry differences and all45-degree renders, white/wire side.
+528同角度数据表明，正面耳下宽度已接近参考，而15/30度在耳根下方上段仍分别外凸约7/11像素；下段已接近。位置差随旋转增大，指向局部前后位置而非全脸宽度。529将0.18至0.34高度范围内、峰值0.26处的耳下支撑由后移3毫米改为前移6毫米（参数沿后方为正），并保留共享面与面方向检查。须确认侧面和背面没有新穿模或缺口。
