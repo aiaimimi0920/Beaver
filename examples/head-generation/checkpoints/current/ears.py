@@ -175,6 +175,20 @@ def fit_ear_roots(shell):
             # Oppose the existing root->rim edge. A world-y normal heuristic
             # incorrectly flipped both shared edges of this lower bridge.
             fs.append(bridge)
+            # Mirror the lower attachment at the upper root. Without this
+            # bridge the return lip stops below the neighboring face edge,
+            # leaving the visible notch marked in the side/back wireframe.
+            upper_neighbors = [
+                b if a == roots[-1] else a
+                for a, b in boundary_edges
+                if roots[-1] in (a, b)
+                and data.vertices[b if a == roots[-1] else a].co.z > high
+            ]
+            assert len(upper_neighbors) == 1, "Need one upper facial boundary neighbor"
+            upper = data.vertices[upper_neighbors[0]].co.copy()
+            upper_id = len(vs)
+            vs.append(tuple(upper))
+            fs.append((upper_id, rows[-1][0], rim[-2]))
             uvpoints = project_ear_uv(vs)
             if side < 0:
                 fs = [tuple(reversed(f)) for f in fs]
