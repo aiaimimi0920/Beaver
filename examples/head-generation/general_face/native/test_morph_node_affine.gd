@@ -38,7 +38,7 @@ func test_same_job_imported_baseline_affine() -> void:
 		var result := {"name": case_data.name, "failures": [], "weights": []}
 		report.cases.append(result)
 		var hashes_ok := true
-		for entry in [[case_data.base_resource, case_data.base_sha256], [case_data.variant_resource, case_data.variant_sha256], [case_data.intent_resource, case_data.intent_sha256], [case_data.definition_resource, case_data.definition_sha256]]:
+		for entry in [[case_data.base_resource, case_data.base_sha256], [case_data.variant_resource, case_data.variant_sha256], [case_data.intent_resource, case_data.intent_sha256], [case_data.definition_resource, case_data.definition_sha256], [case_data.report_resource, case_data.report_sha256]]:
 			var actual_hash := FileAccess.get_sha256(entry[0])
 			assert_eq(actual_hash, entry[1], "Actual resource hash: " + str(entry[0]))
 			hashes_ok = hashes_ok and actual_hash == entry[1]
@@ -51,7 +51,10 @@ func test_same_job_imported_baseline_affine() -> void:
 		var intent = JSON.parse_string(FileAccess.get_file_as_string(case_data.intent_resource))
 		var scales := Vector3(intent.proportions.width, intent.proportions.height, intent.proportions.depth)
 		assert_eq(scales, vector3(case_data.declared_scale), "Intent scale binding")
-		var pivot := vector3(case_data.declared_pivot)
+		var generation_report = JSON.parse_string(FileAccess.get_file_as_string(case_data.report_resource))
+		var authored_pivot := vector3(generation_report.general_face.pivot_blender_xyz)
+		var pivot := Vector3(authored_pivot.x, authored_pivot.z, -authored_pivot.y)
+		assert_eq(pivot, vector3(case_data.declared_pivot), "Generation report pivot binding")
 		var affine := Transform3D(Basis.from_scale(scales), pivot - scales * pivot)
 		var base_scene: PackedScene = load(case_data.base_resource)
 		assert_not_null(base_scene, "Independent same-job imported Face scene")

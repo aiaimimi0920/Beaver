@@ -281,6 +281,26 @@ and final model hashes and checks the supported profile scope.
 CPU unittest discovery validates fixtures, schema, guards and CLI packaging only;
 it does not execute Godot or establish native acceptance. The retained reusable
 probe has extra schema/hash/scope checks beyond the historical executed probe;
-its own native execution must be recorded separately. The current 30 pure tests
+its own native execution must be recorded separately. The current 32 pure tests
 pass. No generated models, fixture requests or local acceptance paths are needed
 by these reusable source files.
+
+### Recovery and report-bound probe updates
+
+SDF retries accept an already complete owned atlas binding. The adapter validates
+its reconstructed unbound form with the upstream binder, then changes only the
+owned atlas path; a same-path retry is byte-identical and unrelated bindings are
+preserved. Incomplete or ambiguous bindings fail explicitly.
+
+The standalone probe now hashes `generation_report.json` and converts its recorded
+`general_face.pivot_blender_xyz` to Godot `(x, z, -y)`, rather than assuming a
+fixed calibration. The retained GUT source verifies the report hash and pivot
+binding before its unchanged affine comparison. CPU fixtures cover a changed
+pivot and normalized color streams. Actual 669 manifests preserve the same
+`(0, 1.641, 0)` pivot; this source update does not modify any delivered model.
+
+The preceding retained GUT version was executed in native run
+`49fd8400-37aa-4016-b11a-02d809e92a5e`: 8 tests and 364 assertions passed,
+with all three cases passing. Later report-binding assertion changes and the
+SDF retry adapter require their own recorded verification; this earlier result
+is not presented as execution of those new lines.

@@ -45,7 +45,7 @@ def build_request(intent, output_prefix, workspace):
     style = json.loads((RECIPE / "face_style.json").read_text())
     sources = {"face": (RECIPE / "face.py").read_text(),
                "distance_field": (NPR / "distance_field.py").read_text(),
-               "definition_output": (NPR / "definition_output.py").read_text()}
+               "definition_output": (NPR / "definition_output.py").read_text() + "\n" + (HERE / "sdf_definition.py").read_text()}
     bake = adapted_bake(config, out)
     code = 'import sys, types, json, hashlib\nfrom pathlib import Path\n'
     guard_source = (HERE / "definition_guard.py").read_text()

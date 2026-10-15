@@ -4,7 +4,7 @@ import hashlib
 import json
 from pathlib import Path
 import re
-from controls import validate
+from controls import validate, vector
 from definition_guard import require_head_only_definition
 from glb_affine import read_glb, read_rows, require
 
@@ -84,15 +84,18 @@ def build_case(name, local, resource):
     local = Path(local)
     paths = {key: local / filename for key, filename in (
         ('base', 'general_base_export.glb'), ('variant', 'aster_head.glb'),
-        ('definition', 'aster_definition.tres'), ('intent', 'general_intent.json'))}
+        ('definition', 'aster_definition.tres'), ('intent', 'general_intent.json'),
+        ('report', 'generation_report.json'))}
     require(all(p.is_file() for p in paths.values()), 'Missing generated probe input')
     require_head_only_definition(paths['definition'].read_text())
     require(streams(paths['base'].read_bytes()) == streams(paths['variant'].read_bytes()),
             'Local Face joint streams, morphs or indices/order differ')
     intent = json.loads(paths['intent'].read_text())
     proportions = validate(intent['proportions'])
+    report = json.loads(paths['report'].read_text())
+    pivot = vector(report['general_face']['pivot_blender_xyz'])
     result = {'name': name, 'declared_scale': [proportions[k] for k in ('width', 'height', 'depth')],
-              'declared_pivot': [0., 1.641, 0.], 'raw_face_streams_and_indices_exact': True}
+              'declared_pivot': [pivot[0], pivot[2], -pivot[1]], 'raw_face_streams_and_indices_exact': True}
     for key, path in paths.items():
         result[key + '_resource'] = resource + '/' + path.name
         result[key + '_sha256'] = sha(path)

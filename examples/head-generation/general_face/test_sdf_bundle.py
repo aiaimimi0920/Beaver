@@ -6,7 +6,7 @@ import subprocess
 import sys
 import tempfile
 import unittest
-from sdf_bundle import adapted_bake, build_request, NPR
+from sdf_bundle import adapted_bake, build_request, NPR, HERE
 from prompt_contract import select_intent
 
 
@@ -25,6 +25,24 @@ class SdfBundleTests(unittest.TestCase):
             "new_glb_sha256": hashlib.sha256((target / "aster_head.glb").read_bytes()).hexdigest(),
         }))
         return root
+
+    def test_rebake_retains_unrelated_bindings(self):
+        scope = {}
+        exec((NPR / 'definition_output.py').read_text() + '\n' + (HERE / 'sdf_definition.py').read_text(), scope)
+        bind = scope['bind_directional_atlas']
+        source = ('[ext_resource type="Script" path="' + scope['BASE_SCRIPT'] + '" id="mat"]\n'
+                  '[ext_resource type="Texture2D" path="res://unrelated.png" id="other"]\n'
+                  '[sub_resource type="Resource" id="Materials"]\n'
+                  'sdf_on_uv2 = true\nunrelated = ExtResource("other")\n')
+        first = bind(source, 'assets/first.png')
+        self.assertEqual(bind(first, 'assets/first.png'), first)
+        second = bind(first, 'assets/second.png')
+        self.assertEqual(second, first.replace('assets/first.png', 'assets/second.png'))
+        self.assertIn('unrelated = ExtResource("other")', second)
+        with self.assertRaises(ValueError):
+            bind(first, '../invalid.png')
+        with self.assertRaisesRegex(ValueError, 'Incomplete'):
+            bind(first.replace('face_sdf360 = ExtResource("sdf360_atlas")', ''), 'assets/new.png')
 
     def test_adaptation_order_axes_and_paths(self):
         config = select_intent({"proportions": {"width": 1.06, "height": .96, "depth": 1.02}})

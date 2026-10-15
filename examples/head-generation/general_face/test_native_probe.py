@@ -62,19 +62,27 @@ class NativeProbeTests(unittest.TestCase):
             (root / 'aster_definition.tres').write_text('[resource]\n')
             intent = root / 'general_intent.json'
             intent.write_text(json.dumps({'proportions': {'width': 1.06, 'height': .96, 'depth': 1.}}))
+            report = root / 'generation_report.json'
+            report.write_text(json.dumps({'general_face': {'pivot_blender_xyz': [.01, -.02, 1.7]}}))
             case = ('soft', directory, 'res://assets/aster/general_face_soft')
             manifest = build_manifest([case])
+            self.assertEqual(manifest['cases'][0]['declared_pivot'], [.01, 1.7, .02])
             self.assertEqual(manifest['schema'], SCHEMA)
             self.assertEqual(manifest['contract'], CONTRACT)
             self.assertEqual(manifest['weights'], [0., .25, .5, .75, 1.])
             self.assertEqual(manifest['cases'][0]['declared_scale'], [1.06, .96, 1.])
             self.assertTrue(manifest['cases'][0]['raw_face_streams_and_indices_exact'])
-            for key in ('base', 'variant', 'definition', 'intent'):
+            for key in ('base', 'variant', 'definition', 'intent', 'report'):
                 self.assertRegex(manifest['cases'][0][key + '_sha256'], r'^[0-9a-f]{64}$')
             output = root / 'manifest.json'
             subprocess.run([sys.executable, str(Path(__file__).with_name('native_probe.py')),
                             '--case', *case, '--output', str(output)], check=True)
             self.assertEqual(json.loads(output.read_text()), manifest)
+            report.write_text('{"general_face":{"pivot_blender_xyz":[0,0,true]}}')
+            with self.assertRaises(ValueError):
+                build_manifest([case])
+            report.write_text('{"general_face":{"pivot_blender_xyz":[0,0,1.641]}}')
+            self.assertNotEqual(build_manifest([case])['cases'][0]['report_sha256'], manifest['cases'][0]['report_sha256'])
             for cases in ([], [case, case], [('soft', directory, 'res://../bad')]):
                 with self.assertRaises(ValueError):
                     build_manifest(cases)
