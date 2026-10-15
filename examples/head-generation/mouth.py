@@ -7,31 +7,68 @@ REST_GAP = H * C["mouth_rest_half_gap"]
 
 
 def rest_seam_y(x):
-    t = max(-1, min(1, x / 0.0195))
+    t = max(-1, min(1, x / (H * C["mouth_half_width"])))
     return MOUTH_Y + H * C["mouth_corner_lift"] * t * t
 
 
 def mouth_half_contour(a):
-    x = 0.0195 * cos(a)
+    x = H * C["mouth_half_width"] * cos(a)
     return (x, rest_seam_y(x) + REST_GAP * sin(a))
 
 
+def boundary_mouth_angles(points):
+    half_width = max(abs(x) for x, y in points)
+    vertical_span = max(y for x, y in points)-min(y for x, y in points)
+    assert half_width>0 and vertical_span>0
+    return [math.atan2((y-MOUTH_Y)/(vertical_span/2), x/half_width) for x,y in points]
+
+
 def jaw_delta(x, y, z):
-    side = exp(-((abs(x) / 0.049) ** 4))
+    side = exp(-((abs(x) / (H * C["mouth_lateral_falloff"])) ** 4))
     relative = y - rest_seam_y(x)
     upper = max(0, min(1, relative / REST_GAP))
     lower = max(0, min(1, -relative / REST_GAP))
+    corner = -H * C["mouth_corner_down"]
     if relative >= 0:
-        dy = (-0.0065 + 0.0095 * upper) * exp(-((relative / 0.012) ** 2))
+        dy = (corner + (H * C["mouth_open_upper"] - corner) * upper) * exp(
+            -((relative / (H * C["mouth_upper_falloff"])) ** 2)
+        )
     else:
-        dy = (-0.0065 - 0.0095 * lower) * exp(-((relative / 0.066) ** 4))
-    return Vector((0, 0.0035 * lower * side, dy * side))
+        dy = (corner + (-H * C["mouth_open_lower"] - corner) * lower) * exp(
+            -((relative / (H * C["mouth_lower_falloff"])) ** 4)
+        )
+    height = (y - Y0) / H
+    gate = max(
+        0,
+        min(
+            1,
+            (height - C["chin_morph_fixed_height"])
+            / (C["chin_morph_blend_height"] - C["chin_morph_fixed_height"]),
+        ),
+    )
+    gate = gate * gate * (3 - 2 * gate)
+    follow = C["chin_follow_down_m"] * exp(-((height / C["chin_follow_height"]) ** 4))
+    follow *= exp(-((abs(x) / (H * C["chin_follow_lateral"])) ** 4))
+    return Vector((0, 0.0035 * lower * side * gate, dy * side * gate - follow))
 
 
 def store_mouth_deltas(obj, override=None):
     attr = obj.data.attributes.new("MouthOpenDelta", "FLOAT_VECTOR", "POINT")
     for v in obj.data.vertices:
         attr.data[v.index].vector = override(v) if override else jaw_delta(v.co.x, v.co.z, -v.co.y)
+
+
+def oral_ring_xy(x, y, index, count, ring, scale, upper_h, lower_h):
+    t = (y-rest_seam_y(x))/REST_GAP
+    xx = x*scale
+    yy = y+t*H*(upper_h if t>0 else lower_h)
+    blend = ring/max(1,len(C["oral_rings"])-1)
+    blend = blend*blend*(3-2*blend)
+    angle = -pi/2+2*pi*index/count
+    target_x = H*C["mouth_half_width"]*scale*cos(angle)
+    sy = sin(angle)
+    target_y = MOUTH_Y+sy*(REST_GAP+H*(upper_h if sy>0 else lower_h))
+    return xx*(1-blend)+target_x*blend, yy*(1-blend)+target_y*blend
 
 
 def build_oral_cavity(half_edge):
@@ -45,25 +82,18 @@ def build_oral_cavity(half_edge):
     colors = [(0.58, 0.27, 0.25), (0.26, 0.065, 0.072), (0.115, 0.019, 0.026)]
     # Lips attach exactly to the shell; interior expands behind the tiny rest gap.
     rings = []
-    for ring, (back, scale, height) in enumerate(
-        [
-            (0, 1, 0),
-            (0.0025, 0.98, 0.0005),
-            (0.010, 1.45, 0.009),
-            (0.031, 1.28, 0.013),
-            (0.049, 0.52, 0.008),
-        ]
-    ):
+    for ring, (back_h, scale, upper_h, lower_h) in enumerate(C["oral_rings"]):
+        back = back_h * H
         ids = []
         for k, (x, negz, y) in enumerate(edge):
             t = (y - rest_seam_y(x)) / REST_GAP
-            xx = x * scale
-            yy = y + t * height * (1.12 if t > 0 else 0.85)
-            p = (xx, negz + back, yy)
+            xx, yy = oral_ring_xy(x, y, k, n, ring, scale, upper_h, lower_h)
+            rear_depth = -depth(0, MOUTH_Y) if ring >= 2 else negz
+            p = (xx, rear_depth + back, yy)
             ids.append(len(vs))
             vs.append(p)
             d = jaw_delta(x, y, -negz)
-            d *= 1 - 0.25 * ring / 4
+            d *= 1 - 0.25 * ring / (len(C["oral_rings"]) - 1)
             deltas.append(d)
         rings.append(ids)
     for j in range(len(rings) - 1):
@@ -79,6 +109,12 @@ def build_oral_cavity(half_edge):
     )
     assert facing > 0, "Oral side walls must face the cavity interior"
     oral["inward_facing_measure"] = facing
+    oral.data.polygons[-1].use_smooth = False
+    cap_depths = [vs[i][1] for i in rings[-1]]
+    oral["rear_cap_planarity_m"] = max(cap_depths) - min(cap_depths)
+    assert oral["rear_cap_planarity_m"] < 1e-8
+    assert all(p.area > 1e-12 for p in oral.data.polygons), "Degenerate oral wall"
+
     attr = oral.data.attributes.new("MouthOpenDelta", "FLOAT_VECTOR", "POINT")
     for i, d in enumerate(deltas):
         attr.data[i].vector = d
@@ -111,4 +147,33 @@ def build_oral_cavity(half_edge):
             )
     tf.extend([tuple(reversed(range(cols))), tuple((rows - 1) * cols + k for k in range(cols))])
     tongue = mesh("Tongue with thickness", tv, [tuple(reversed(f)) for f in tf], (0.66, 0.24, 0.28))
-    store_mouth_deltas(tongue, lambda v: Vector((0, 0.002, -0.010)))
+    store_mouth_deltas(tongue, lambda v: Vector((0, 0.002, -H * C["tongue_open_down"])))
+
+
+def validate_oral_clearance(shell):
+    """Check neutral hidden wall samples against actual evaluated facial skin."""
+    from mathutils.bvhtree import BVHTree
+
+    oral = next(o for o in PARTS if o.name == "Oral cavity inner lips and back wall")
+    bpy.context.view_layer.update()
+    evaluated = shell.evaluated_get(bpy.context.evaluated_depsgraph_get())
+    data = evaluated.to_mesh()
+    count = len(oral.data.vertices) // len(C["oral_rings"])
+    signed_distances = []
+    try:
+        tree = BVHTree.FromPolygons(
+            [v.co.copy() for v in data.vertices], [tuple(p.vertices) for p in data.polygons]
+        )
+        for vertex in list(oral.data.vertices)[2 * count :]:
+            point, normal, _, _ = tree.find_nearest(vertex.co)
+            assert point is not None, "Missing oral containment surface"
+            signed_distances.append((vertex.co - point).dot(normal))
+        assert max(signed_distances) < 0, "Hidden oral wall sample lies outside facial skin"
+    finally:
+        evaluated.to_mesh_clear()
+    return {
+        "scope": "neutral hidden wall vertices against evaluated skin; not a global collision test",
+        "sampled_vertices": len(signed_distances),
+        "maximum_signed_distance_m": max(signed_distances),
+        "rear_cap_planarity_m": oral["rear_cap_planarity_m"],
+    }

@@ -5,6 +5,7 @@ var _wire_nodes: Array[MeshInstance3D] = []
 var _flat: ShaderMaterial
 var _original_visibility: Dictionary = {}
 
+
 func setup(actor: NPRCharacter, _unused_driver: Node) -> void:
 	_actor = actor
 	white_material = StandardMaterial3D.new()
@@ -55,6 +56,7 @@ func setup(actor: NPRCharacter, _unused_driver: Node) -> void:
 		wire.visible = false
 		_wire_nodes.append(wire)
 
+
 func set_mode(value: String) -> void:
 	if value not in ["render", "white", "facet", "edges"]:
 		return
@@ -72,15 +74,23 @@ func set_mode(value: String) -> void:
 		if node in _wire_nodes:
 			continue
 		if node in _actor.meshes:
-			material_snapshots.append({"geometry": node, "override": node.material_override, "overlay": node.material_overlay})
+			material_snapshots.append(
+				{
+					"geometry": node,
+					"override": node.material_override,
+					"overlay": node.material_overlay
+				}
+			)
 			node.material_override = _flat if value in ["facet", "edges"] else white_material
 			node.material_overlay = null
 		else:
 			_original_visibility[node] = node.visible
 			node.visible = false
 
+
 func refresh() -> void:
 	set_mode(mode)
+
 
 func sync_morphs() -> void:
 	for wire in _wire_nodes:

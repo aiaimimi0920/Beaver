@@ -11,6 +11,7 @@ var drive_mouth := false
 var mouth_index := -1
 var source_face_height := 0.0
 
+
 func configure(definition: NPRCharacterDefinition, neutralize_head: bool) -> bool:
 	stretch = true
 	mouse_filter = Control.MOUSE_FILTER_STOP
@@ -57,7 +58,18 @@ func configure(definition: NPRCharacterDefinition, neutralize_head: bool) -> boo
 			head.rotation = Vector3.ZERO
 	var face: MeshInstance3D = actor.meshes[1]
 	mouth_index = face.find_blend_shape_by_name("MouthOpen")
-	print("MODEL_COMPARE_MORPH=" + JSON.stringify({"source": source_path, "MouthOpen": mouth_index, "count": face.mesh.get_blend_shape_count()}))
+	print(
+		(
+			"MODEL_COMPARE_MORPH="
+			+ JSON.stringify(
+				{
+					"source": source_path,
+					"MouthOpen": mouth_index,
+					"count": face.mesh.get_blend_shape_count()
+				}
+			)
+		)
+	)
 	var base_bounds := AABB()
 	var has_vertex := false
 	for surface in face.mesh.get_surface_count():
@@ -70,7 +82,9 @@ func configure(definition: NPRCharacterDefinition, neutralize_head: bool) -> boo
 				base_bounds = base_bounds.expand(position)
 	if not has_vertex:
 		return false
-	var bounds: AABB = normalized.global_transform.affine_inverse() * face.global_transform * base_bounds
+	var bounds: AABB = (
+		normalized.global_transform.affine_inverse() * face.global_transform * base_bounds
+	)
 	source_face_height = bounds.size.y
 	if not is_finite(source_face_height) or source_face_height <= 0.0:
 		return false
@@ -82,14 +96,28 @@ func configure(definition: NPRCharacterDefinition, neutralize_head: bool) -> boo
 	display = DISPLAY.new()
 	actor.add_child(display)
 	display.setup(actor, null)
+	preload("res://showcase_extensions/head_geometry_audit.gd").summarize(self)
 	return true
+
 
 func apply_state(state: Dictionary) -> void:
 	if not is_instance_valid(actor) or not actor.initialized:
 		return
 	pivot.rotation_degrees = Vector3(state.pitch, state.yaw, 0)
 	camera.set_orthogonal(state.zoom, 0.01, 100.0)
+	camera.position.x = state.get("pan_x", 0.0)
+	camera.position.y = state.get("pan_y", 0.0)
 	actor.light_yaw = state.light
+	actor.light_elevation = state.get("elevation", 25.0)
+	if (
+		actor.definition.material_set != null
+		and (
+			actor.definition.material_set.get_script().resource_path
+			== "res://showcase_extensions/sdf360/sdf_materials.gd"
+		)
+	):
+		actor.materials[1].set_shader_parameter("u_npr_sdf360_enabled", state.get("sdf360", true))
+		actor.materials[1].set_shader_parameter("u_npr_sdf360_debug", state.get("sdf_debug", false))
 	actor.meshes[0].visible = state.body
 	actor.meshes[2].visible = state.hair
 	if display.mode != state.mode:

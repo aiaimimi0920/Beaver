@@ -1,0 +1,1 @@
+Resolved in candidate 388: reusable thin-ribbon construction was extracted without changing function ASTs. Current effective lines: eye_accents.py=608, pipeline.py=405, shell.py=355, face.py=247. Earlier diagnostic size exceptions do not apply to this revision. Verify test_refactor388 and native geometry equivalence before delivery.

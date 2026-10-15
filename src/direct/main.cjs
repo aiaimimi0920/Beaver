@@ -76,8 +76,8 @@ app.whenReady().then(async () => {
       const result = await run(
         "python3",
         [
-          path.join(__dirname, "restore.py"),
-          path.join(base, "recovered-library/Aster-NPR-lab-source.zip"),
+          path.join(__dirname, "restore_latest.py"),
+          path.join(base, "recovered185/Aster-head-recovery-source-checkpoint.zip"),
           project.path,
         ],
         { maxBuffer: 1024 * 1024 },

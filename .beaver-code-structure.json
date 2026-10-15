@@ -10,6 +10,15 @@
         "npm run typecheck",
         "npx tsx --test tests/object-import-file-contract.test.ts tests/object-import-file-session.test.ts"
       ]
+    },
+    "examples/head-generation/checkpoints/current/eye_accents.py": {
+      "effectiveLines": 623,
+      "sha256": "217ae3c6279d8a65569c688542490996ed36a2d01f3546d159d02b1b1438a28f",
+      "responsibility": "Integrated evaluated upper and lateral lash fitting with shared attachment safety checks",
+      "reason": "Preserve the accepted fitting orchestration and frozen AST contracts during publication. Separate new construction modules already own side leaves, curve fitting and ribbons; further extraction requires a dedicated behavior-preserving change.",
+      "tests": [
+        "python -m unittest discover -s examples/head-generation/checkpoints/current -p 'test_*.py'"
+      ]
     }
   }
 }

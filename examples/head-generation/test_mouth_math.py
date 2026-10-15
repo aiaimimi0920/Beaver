@@ -9,11 +9,13 @@ import unittest
 ROOT = Path(__file__).parent
 
 
-def load_math(half_gap=None):
+def load_math(half_gap=None, corner_lift=None):
     style = json.loads((ROOT / "face_style.json").read_text())
     calibration = style["calibration"]
     if half_gap is not None:
         calibration["mouth_rest_half_gap"] = half_gap
+    if corner_lift is not None:
+        calibration["mouth_corner_lift"] = corner_lift
     scope = dict(
         C=calibration,
         H=calibration["height_m"],
@@ -40,6 +42,40 @@ def load_math(half_gap=None):
 
 
 class MouthMathTests(unittest.TestCase):
+    def test_chin_follow_is_small_positive_and_adjustable(self):
+        scope = load_math()
+        maximum = scope["C"]["chin_follow_down_m"]
+        self.assertGreater(maximum, 0)
+        self.assertLessEqual(maximum, 0.0025)
+        for x in [0, 0.008, 0.025, 0.045]:
+            for height in [0, 0.025, 0.05, 0.07]:
+                d = scope["jaw_delta"](x, scope["Y0"] + scope["H"] * height, 0)
+                self.assertGreaterEqual(d[2], -maximum - 1e-9)
+                self.assertLess(d[2], 0)
+        scope["C"]["chin_follow_down_m"] = 0
+        self.assertEqual(scope["jaw_delta"](0, scope["Y0"], 0)[2], 0)
+
+    def test_lower_mouth_deformation_does_not_fold_vertical_samples(self):
+        scope = load_math()
+        for x in [0, 0.005, 0.012, 0.019, 0.03, 0.045]:
+            seam = scope["rest_seam_y"](x)
+            ys = [
+                scope["Y0"] + (seam - scope["REST_GAP"] - scope["Y0"]) * i / 600 for i in range(601)
+            ]
+            for strength in [0.5, 1]:
+                moved = [y + strength * scope["jaw_delta"](x, y, 0)[2] for y in ys]
+                self.assertTrue(all(b > a for a, b in zip(moved, moved[1:])))
+
+    def test_oral_profile_keeps_attachment_and_expands_rear(self):
+        c = json.loads((ROOT / "face_style.json").read_text())["calibration"]
+        rings = c["oral_rings"]
+        self.assertEqual(rings[0], [0, 1, 0, 0])
+        self.assertGreaterEqual(len(rings), 4)
+        self.assertTrue(all(a[0] < b[0] for a, b in zip(rings, rings[1:])))
+        self.assertGreater(rings[-1][1], 1)
+        self.assertGreater(rings[-1][2] + rings[-1][3], 0.15)
+        self.assertTrue(all(r[1] > 0 and r[2] >= 0 and r[3] >= 0 for r in rings))
+
     def test_aperture_and_cavity_share_curved_seam(self):
         scope = load_math()
         for i in range(25):
@@ -49,11 +85,11 @@ class MouthMathTests(unittest.TestCase):
             self.assertAlmostEqual(normalized, math.sin(angle), places=10)
 
     def test_raised_corner_lower_lip_moves_down(self):
-        scope = load_math()
+        scope = load_math(corner_lift=0.003)
         x, y = scope["mouth_half_contour"](-math.pi / 6)
         self.assertGreater(y, scope["MOUTH_Y"])
         delta = scope["jaw_delta"](x, y, 0)
-        self.assertLess(delta[2], -0.010)
+        self.assertLess(delta[2], -0.005)
         self.assertGreater(delta[1], 0)
 
     def test_gap_change_preserves_lip_classification(self):
@@ -73,10 +109,23 @@ class MouthMathTests(unittest.TestCase):
         x, y = scope["mouth_half_contour"](0)
         self.assertEqual(y, scope["rest_seam_y"](x))
         for fraction in (0, 0.3, 0.8, 1):
-            x = 0.0195 * fraction
+            x = scope["H"] * scope["C"]["mouth_half_width"] * fraction
             y = scope["rest_seam_y"](x)
             self.assertEqual(scope["jaw_delta"](x, y, 0), scope["jaw_delta"](-x, y, 0))
 
 
 if __name__ == "__main__":
     unittest.main()
+
+class NeutralCornerRegression(unittest.TestCase):
+    def test_both_corner_styles_keep_upper_and_lower_motion_separate(self):
+        for lift in [-0.003, -0.001, 0.0, 0.003]:
+            scope=load_math(corner_lift=lift)
+            for a in [0.2, 0.5, 1.0]:
+                x,up=scope["mouth_half_contour"](a)
+                _,low=scope["mouth_half_contour"](-a)
+                du=scope["jaw_delta"](x,up,0); dl=scope["jaw_delta"](x,low,0)
+                self.assertEqual(du[1],0)
+                self.assertGreater(dl[1],0)
+                self.assertLess(dl[2],0)
+                self.assertGreater(up+du[2],low+dl[2])

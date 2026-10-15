@@ -1,0 +1,17 @@
+{
+  "format": "canonical_function_dump-v1",
+  "original_python312_sha256": {
+    "outline_sections": "59b8c640f89c013f63558676e6beb669a98be75a4e51382c9dc07bd4b59e0b39",
+    "accent_sections": "7ed0f72f869e84d9a5b5539467db505b6142465520cd3a4dabf060feb6465464",
+    "signed_volume": "430bcbae1f379cc4fa717994d6caadf0eec6c277bf45dd81a533809241d9cff6",
+    "closed_ribbon_mesh": "261baa59e5433286b8b25fbfa4963353c2cb55025bfbb37c1d1137ac9c0c1f4f",
+    "accent_mesh": "470f8297e8122442d43bfc23ef22a65f7bd3ec931b93d39569ca84b0e52f740c"
+  },
+  "canonical_sha256": {
+    "outline_sections": "db0ffc1cbfd256051a88720367b1af6c64a9c02898f4950b39ed91ce6e85ba31",
+    "accent_sections": "6da756e6333f13187591f311cbe4c5682f2c276e20776acc54aec3e04ca1cdd8",
+    "signed_volume": "e03f3b2f87f886dc36281f3ec1a465b17fcf81994da5e7b49f62de2726a1c886",
+    "closed_ribbon_mesh": "af6c8846d59ac11834fa783c9698b43235b4e6dfff56f8988825eb5dcc267c2c",
+    "accent_mesh": "7dad5108c21568f031f34eacb1c65b3a7bb3ae6188a1a7b30683f3003a8bddc0"
+  }
+}

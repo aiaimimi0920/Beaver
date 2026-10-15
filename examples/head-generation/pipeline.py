@@ -6,7 +6,7 @@ from mouth import store_mouth_deltas
 from glb_merge import merge_face
 
 ROOT = Path(beaver_input("project.godot")).parent
-OUT = "assets/aster/head_recovery_81/"
+OUT = "assets/aster/head_recovery_188/"
 BASE = "assets/aster/head_recovery_49/"
 GUIDE = Path(beaver_input("authoring/head_generation_guide.md")).read_text()
 assert "去发侧脸轮廓检查" in GUIDE
@@ -49,7 +49,14 @@ under_count = shell.get("underside_face_count", len(shell.data.polygons) - front
 bad_return = sum(
     p.normal.z >= 0 for p in list(shell.data.polygons)[front_count : front_count + under_count]
 )
-bad_side = sum(p.normal.x <= 0 for p in list(shell.data.polygons)[front_count + under_count :])
+bad_side = sum(
+    p.normal.x <= 0
+    for p in list(shell.data.polygons)[
+        front_count + under_count : front_count + under_count + shell["chin_side_face_count"]
+    ]
+)
+rear_faces = list(shell.data.polygons)[front_count + under_count + shell["chin_side_face_count"] :]
+assert all(p.normal.y > 0 for p in rear_faces), "Posterior return must face backwards"
 assert bad_side == 0, "Chin side closure must face outward"
 assert bad_return == 0, "Chin underside winding must face downward"
 if zero_faces or reversed_faces:
@@ -80,40 +87,59 @@ report["shell_geometry_checks"] = {
 report["authoring_guide_sha256"] = hashlib.sha256(GUIDE.encode()).hexdigest()
 normal_checks = {}
 for obj in PARTS:
-    if any(tag in obj.name for tag in ["skin lid", "lash ", "Eye sclera"]):
-        weighted = sum(poly.normal.y * poly.area for poly in obj.data.polygons)
+    if obj.get("accent_front_faces") or any(tag in obj.name for tag in ["skin lid", "lash ", "Eye sclera", "eye liner"]):
+        front_ids = obj.get("accent_front_faces", range(len(obj.data.polygons)))
+        weighted = sum(obj.data.polygons[i].normal.y * obj.data.polygons[i].area for i in front_ids)
         normal_checks[obj.name] = weighted
         assert weighted < 0, "Reversed facial surface: " + obj.name
 report["front_surface_normal_checks"] = normal_checks
-# Preserve meaningful aperture boundaries without dense artificial support rails.
-edge_use = {tuple(sorted(e.vertices)): 0 for e in shell.data.edges}
-for poly in shell.data.polygons:
-    ids = list(poly.vertices)
-    for a, b in zip(ids, ids[1:] + ids[:1]):
-        edge_use[tuple(sorted((a, b)))] += 1
-crease = shell.data.attributes.new("crease_edge", "FLOAT", "EDGE")
-for edge in shell.data.edges:
-    if edge_use[tuple(sorted(edge.vertices))] != 1:
+from collections import Counter
+accent_checks = {}
+for obj in PARTS:
+    if not obj.get("accent_front_faces"):
         continue
-    verts = [shell.data.vertices[i].co for i in edge.vertices]
-    x = sum(v.x for v in verts) / 2
-    y = sum(v.z for v in verts) / 2
-    # Positive half shell: eye/mouth boundaries only. Mirror seam stays smooth.
-    aperture = (0.018 < x < 0.087 and 1.610 < y < 1.671) or (
-        x > 0.00001 and x < 0.021 and abs(y - Y0 - H * C["mouth_height"]) < 0.002
-    )
-    crease.data[edge.index].value = 1.0 if aperture else 0.0
+    edges = Counter(tuple(sorted((a, b))) for poly in obj.data.polygons
+                    for a, b in zip(list(poly.vertices), list(poly.vertices)[1:] + list(poly.vertices)[:1]))
+    assert all(count == 2 for count in edges.values()), "Open accent return: " + obj.name
+    accent_checks[obj.name] = {"closed_edges": len(edges), "volume_m3": obj["accent_positive_volume_m3"],
+                              "front_y_area": normal_checks[obj.name]}
+report["eye_accent_geometry_checks"] = accent_checks
+from crease_rules import assign_creases, measure_crease_effect
+
+new_crease_edges, crease_counts = assign_creases(shell, front_count, H, Y0, width, C)
 sub = shell.modifiers.new("Semantic quad surface refinement", "SUBSURF")
 sub.subdivision_type = "CATMULL_CLARK"
 sub.levels = STYLE["surface_subdivision_levels"]
 sub.render_levels = sub.levels
 report["surface_subdivision_levels"] = sub.levels
+report["facial_crease"] = {
+    "edge_counts": crease_counts,
+    "evaluated_effect": measure_crease_effect(shell, new_crease_edges),
+}
+
 from eye_socket import fit_pocket_clearance
 
 report["pocket_skin_clearance"] = fit_pocket_clearance(shell)
+from eye_accents import fit_evaluated_accent_roots
+report["eye_accent_surface_fit"] = fit_evaluated_accent_roots(shell)
+report["pocket_rear_closure"] = [
+    {
+        "name": o.name,
+        "planarity_before_m": o["rear_cap_planarity_before_m"],
+        "planarity_after_m": o["rear_cap_planarity_after_m"],
+        "posterior_planarization_shift_m": o["rear_cap_planarization_shift_m"],
+        "rear_boundary_vertices": o["pocket_back_count"],
+    }
+    for o in PARTS
+    if o.get("pocket_back_count")
+]
+
 from ears import fit_ear_roots
 
 report["ear_root_fit"] = fit_ear_roots(shell)
+from mouth import validate_oral_clearance
+
+report["oral_clearance"] = validate_oral_clearance(shell)
 
 report["face_atlas_layout"] = "spatial_skin_eye_ear_flat_swatches_v2"
 assert body == {o.name: object_hash(o) for o in bpy.data.objects if o.name in body}
@@ -177,7 +203,22 @@ from textures import bake_control_maps
 
 bake_control_maps(OUT)
 # Assemble the complete head 12 mm lower onto the frozen original neck.
-for part in PARTS:
+for part_index, part in enumerate(PARTS):
+    regions = part.data.attributes.new("NormalRegion", "INT", "FACE")
+    for poly in part.data.polygons:
+        region = part_index + 10
+        if part == shell:
+            region = 1 if poly.index < front_count else 2
+        elif part.get("ear_front_faces"):
+            count = part["ear_front_faces"]
+            if poly.index % count >= part["ear_main_faces"]:
+                region += 100
+            if poly.index >= count:
+                region += 200
+        accent_zones = part.data.attributes.get("AccentNormalZone")
+        if accent_zones is not None:
+            region += 1000 * (accent_zones.data[poly.index].value + 1)
+        regions.data[poly.index].value = region
     for vertex in part.data.vertices:
         vertex.co.z -= 0.021
 report["head_assembly_y_offset_m"] = -0.021
@@ -230,13 +271,72 @@ for role in ["Face"]:
         # Honest geometry-consistent normals; no unmatched analytic shading field.
         data = members[0].data
         data.update()
+        from ears import verify_ear_seams
+
+        report["ear_shared_seams"] = verify_ear_seams(data, report["ear_root_fit"])
         normals = [Vector((0, 0, 0)) for _ in data.vertices]
+        region_normals = {}
+        regions = data.attributes.get("NormalRegion")
+        assert regions is not None, "Missing authored normal regions"
         for poly in data.polygons:
+            if not poly.use_smooth:
+                continue
+            region = regions.data[poly.index].value
             for index in poly.vertices:
                 normals[index] += poly.normal * poly.area
+                side = (
+                    (1 if poly.center.x >= 0 else -1)
+                    if abs(data.vertices[index].co.x) < 1e-7
+                    else 0
+                )
+                key = (index, region, side)
+                region_normals.setdefault(key, Vector((0, 0, 0)))
+                region_normals[key] += poly.normal * poly.area
         for normal in normals:
             normal.normalize()
-        data.normals_split_custom_set_from_vertices(normals)
+        for normal in region_normals.values():
+            normal.normalize()
+        report["regional_normal_groups"] = len(region_normals)
+        report["center_partition_normal_corners"] = sum(key[2] != 0 for key in region_normals)
+        from mathutils.kdtree import KDTree
+
+        ear_tree = KDTree(len(data.vertices))
+        for vertex in data.vertices:
+            ear_tree.insert(vertex.co, vertex.index)
+        ear_tree.balance()
+        ear_root_ids = set()
+        ear_root_max_error = 0.0
+        expected_ear_roots = 0
+        for ear_report in report["ear_root_fit"]:
+            for point in ear_report["root_positions"]:
+                _, index, distance = ear_tree.find(Vector((point[0], point[1], point[2] - 0.021)))
+                assert distance < 0.000002, "Missing actual shared ear-root normal vertex"
+                ear_root_ids.add(index)
+                expected_ear_roots += 1
+                ear_root_max_error = max(ear_root_max_error, distance)
+        assert len(ear_root_ids) == expected_ear_roots
+        report["ear_common_normal_root_vertices"] = len(ear_root_ids)
+        report["ear_common_normal_root_max_error_m"] = ear_root_max_error
+        corner_normals = [Vector((0, 0, 0)) for _ in data.loops]
+        for poly in data.polygons:
+            region = regions.data[poly.index].value
+            for loop_index in poly.loop_indices:
+                index = data.loops[loop_index].vertex_index
+                side = (
+                    (1 if poly.center.x >= 0 else -1)
+                    if abs(data.vertices[index].co.x) < 1e-7
+                    else 0
+                )
+                normal = region_normals.get((index, region, side), poly.normal)
+                if region in (1, 2) and side == 0:
+                    normal = (
+                        normals[index].lerp(normal, C["jaw_normal_boundary_strength"]).normalized()
+                    )
+                if index in ear_root_ids:
+                    normal = normal.lerp(normals[index], C["ear_root_normal_blend"]).normalized()
+                corner_normals[loop_index] = normal if poly.use_smooth else poly.normal.copy()
+        data.normals_split_custom_set(corner_normals)
+        report["flat_geometric_triangles"] = sum(not poly.use_smooth for poly in data.polygons)
         delta = members[0].data.attributes.get("MouthOpenDelta")
         assert delta is not None
         moves = [Vector(v.vector) for v in delta.data]

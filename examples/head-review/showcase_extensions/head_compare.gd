@@ -3,14 +3,31 @@ extends Control
 
 signal closed
 const PANE = preload("res://showcase_extensions/head_compare_pane.gd")
+const EYE_SWEEP = preload("res://showcase_extensions/head_eye_sweep.gd")
+var sdf_sweep
+var eye_sweep
 var panes: Array = []
-var state := {"yaw": 0.0, "pitch": 0.0, "zoom": 1.8, "light": -45.0, "mode": "render", "hair": false, "body": false, "mouth": 0.0}
+var state := {
+	"yaw": 0.0,
+	"pitch": 0.0,
+	"zoom": 1.8,
+	"light": -45.0,
+	"mode": "render",
+	"hair": false,
+	"body": false,
+	"mouth": 0.0,
+	"pan_x": 0.0,
+	"pan_y": 0.0
+}
 var dragging := false
+var panning := false
+var angle_label: Label
 var capture_pending := false
 var status: Label
 var zoom_slider: HSlider
 var candidate_path := ""
 var reference_path := ""
+
 
 func configure(candidate: NPRCharacterDefinition, reference: NPRCharacterDefinition) -> void:
 	set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
@@ -45,9 +62,19 @@ func configure(candidate: NPRCharacterDefinition, reference: NPRCharacterDefinit
 	for pair in [["正面", 0], ["左45°", -45], ["右45°", 45], ["左侧", -90], ["右侧", 90], ["背面", 180]]:
 		button(toolbar, pair[0], set_angle.bind(float(pair[1]), 0.0))
 	button(toolbar, "俯视", set_angle.bind(0.0, 55.0))
+	var angle_row := HBoxContainer.new()
+	column.add_child(angle_row)
+	button(angle_row, "左转10°", step_angle.bind(-10.0))
+	button(angle_row, "右转10°", step_angle.bind(10.0))
+	button(angle_row, "左5°", step_angle.bind(-5.0))
+	button(angle_row, "右5°", step_angle.bind(5.0))
+	button(angle_row, "取景复位", reset_framing)
+	button(angle_row, "右眼5°采集", start_eye_sweep)
+	angle_label = Label.new()
+	angle_row.add_child(angle_label)
 	var controls := HBoxContainer.new()
 	column.add_child(controls)
-	zoom_slider = slider(controls, "取景", 1.0, 3.0, 1.8, set_zoom)
+	zoom_slider = slider(controls, "取景", 0.25, 3.0, 1.8, set_zoom)
 	slider(controls, "主光", -180.0, 180.0, -45.0, set_light)
 	var hair := CheckButton.new()
 	hair.text = "头发"
@@ -57,6 +84,36 @@ func configure(candidate: NPRCharacterDefinition, reference: NPRCharacterDefinit
 	body.text = "身体"
 	body.toggled.connect(set_visibility.bind("body"))
 	controls.add_child(body)
+	var sdf_row := HBoxContainer.new()
+	column.add_child(sdf_row)
+	slider(
+		sdf_row,
+		"光源仰角",
+		-90.0,
+		90.0,
+		25.0,
+		func(v):
+			state.elevation = v
+			apply()
+	)
+	var sdf_enabled := CheckButton.new()
+	sdf_enabled.text = "360 SDF"
+	sdf_enabled.button_pressed = true
+	sdf_enabled.toggled.connect(
+		func(v):
+			state.sdf360 = v
+			apply()
+	)
+	sdf_row.add_child(sdf_enabled)
+	var sdf_debug := CheckButton.new()
+	sdf_debug.text = "阴影诊断"
+	sdf_debug.toggled.connect(
+		func(v):
+			state.sdf_debug = v
+			apply()
+	)
+	sdf_row.add_child(sdf_debug)
+	button(sdf_row, "光照采集", start_sdf_sweep)
 	var mouth_row := HBoxContainer.new()
 	column.add_child(mouth_row)
 	slider(mouth_row, "候选张嘴", 0.0, 1.0, 0.0, set_mouth)
@@ -68,7 +125,10 @@ func configure(candidate: NPRCharacterDefinition, reference: NPRCharacterDefinit
 	pair_row.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	column.add_child(pair_row)
 	var success := true
-	for entry in [[candidate, "Aster · " + candidate_path.get_base_dir().get_file(), false], [reference, "银狼 · 参考（头部中立姿态）", true]]:
+	for entry in [
+		[candidate, "Aster · " + candidate_path.get_base_dir().get_file(), false],
+		[reference, "银狼 · 参考（头部中立姿态）", true]
+	]:
 		var box := VBoxContainer.new()
 		box.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		box.size_flags_stretch_ratio = 1.0
@@ -86,14 +146,27 @@ func configure(candidate: NPRCharacterDefinition, reference: NPRCharacterDefinit
 		pane.gui_input.connect(pane_input)
 		panes.append(pane)
 	status = Label.new()
-	status.text = "拖动任一模型同步旋转；滚轮同步缩放；F12 保存对比。仅预览归一化，不修改源模型。"
+	status.text = "拖动同步旋转；Shift+拖动同步平移；滚轮缩放；10°按钮逐档检查；F12 保存。仅预览归一化，不修改源模型。"
 	column.add_child(status)
 	if success:
 		apply()
-		print("MODEL_COMPARE_READY=" + JSON.stringify({"candidate": candidate_path, "reference": reference_path, "face_heights": [panes[0].source_face_height, panes[1].source_face_height], "state": state}))
+		print(
+			(
+				"MODEL_COMPARE_READY="
+				+ JSON.stringify(
+					{
+						"candidate": candidate_path,
+						"reference": reference_path,
+						"face_heights": [panes[0].source_face_height, panes[1].source_face_height],
+						"state": state
+					}
+				)
+			)
+		)
 	else:
 		status.text = "比较载入失败，请返回审查查看日志；不能将此画面视为有效对比。"
 		push_error("Comparison failed to initialize both models")
+
 
 func button(row: Control, text: String, callback: Callable) -> void:
 	var control := Button.new()
@@ -101,7 +174,10 @@ func button(row: Control, text: String, callback: Callable) -> void:
 	control.pressed.connect(callback)
 	row.add_child(control)
 
-func slider(row: Control, title: String, low: float, high: float, value: float, callback: Callable) -> HSlider:
+
+func slider(
+	row: Control, title: String, low: float, high: float, value: float, callback: Callable
+) -> HSlider:
 	var label := Label.new()
 	label.custom_minimum_size.x = 94
 	label.text = title + " " + str(snappedf(value, 0.01))
@@ -119,59 +195,104 @@ func slider(row: Control, title: String, low: float, high: float, value: float, 
 	row.add_child(control)
 	return control
 
+
 func apply() -> void:
+	if is_instance_valid(angle_label):
+		angle_label.text = "水平角 %.1f° / 俯仰 %.1f°" % [state.yaw, state.pitch]
 	for pane in panes:
 		pane.apply_state(state)
+
 
 func set_visibility(value: bool, key: String) -> void:
 	state[key] = value
 	apply()
 
+
 func set_mode(value: String) -> void:
 	state.mode = value
 	apply()
 
+
 func set_angle(yaw: float, pitch: float) -> void:
 	dragging = false
+	panning = false
 	state.yaw = yaw
 	state.pitch = pitch
 	apply()
 
-func set_zoom(value: float) -> void:
-	state.zoom = value
+
+func step_angle(delta: float) -> void:
+	set_angle(wrapf(state.yaw + delta, -180.0, 180.0), state.pitch)
+
+
+func reset_framing() -> void:
+	state.pan_x = 0.0
+	state.pan_y = 0.0
+	zoom_slider.value = 1.8
 	apply()
+
+
+func set_zoom(value: float) -> void:
+	state.zoom = clampf(value, 0.25, 3.0)
+	apply()
+
 
 func set_mouth(value: float) -> void:
 	state.mouth = value
 	apply()
 
+
 func set_light(value: float) -> void:
 	state.light = value
 	apply()
 
+
 func pane_input(event: InputEvent) -> void:
+	if eye_sweep != null and eye_sweep.running:
+		return
 	if event is InputEventMouseButton:
 		if event.button_index == MOUSE_BUTTON_LEFT:
 			dragging = event.pressed
-		elif event.pressed and event.button_index in [MOUSE_BUTTON_WHEEL_UP, MOUSE_BUTTON_WHEEL_DOWN]:
+			panning = event.pressed and event.shift_pressed
+		elif (
+			event.pressed and event.button_index in [MOUSE_BUTTON_WHEEL_UP, MOUSE_BUTTON_WHEEL_DOWN]
+		):
 			zoom_slider.value *= 0.9 if event.button_index == MOUSE_BUTTON_WHEEL_UP else 1.1
 	elif event is InputEventMouseMotion and dragging:
-		state.yaw = wrapf(state.yaw + event.relative.x * 0.4, -180, 180)
-		state.pitch = clampf(state.pitch + event.relative.y * 0.25, -60, 60)
+		if panning:
+			var scale_per_pixel: float = state.zoom / maxf(panes[0].size.y, 1.0)
+			state.pan_x = clampf(state.pan_x - event.relative.x * scale_per_pixel, -1.5, 1.5)
+			state.pan_y = clampf(state.pan_y + event.relative.y * scale_per_pixel, -1.5, 1.5)
+		else:
+			state.yaw = wrapf(state.yaw + event.relative.x * 0.4, -180, 180)
+			state.pitch = clampf(state.pitch + event.relative.y * 0.25, -60, 60)
 		apply()
 
+
 func _input(event: InputEvent) -> void:
-	if event is InputEventMouseButton and not event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
+	if eye_sweep != null and eye_sweep.running:
+		if event is InputEventKey and event.pressed and event.keycode == KEY_ESCAPE:
+			eye_sweep.cancel_requested = true
+		return
+	if (
+		event is InputEventMouseButton
+		and not event.pressed
+		and event.button_index == MOUSE_BUTTON_LEFT
+	):
 		dragging = false
+		panning = false
 	if event is InputEventKey and event.pressed and not event.echo:
 		if event.keycode == KEY_ESCAPE:
 			closed.emit()
 		elif event.keycode == KEY_F12:
 			save_capture()
 
+
 func _notification(what: int) -> void:
 	if what == NOTIFICATION_WM_WINDOW_FOCUS_OUT:
 		dragging = false
+		panning = false
+
 
 func save_capture() -> void:
 	if capture_pending:
@@ -189,6 +310,23 @@ func save_capture() -> void:
 		return
 	var file := FileAccess.open(stem + ".json", FileAccess.WRITE)
 	if file != null:
-		file.store_string(JSON.stringify({"candidate": candidate_path, "reference": reference_path, "state": saved_state}, "  "))
+		file.store_string(
+			JSON.stringify(
+				{"candidate": candidate_path, "reference": reference_path, "state": saved_state},
+				"  "
+			)
+		)
 	status.text = "已保存同屏对比与参数；请等待保存后再切换视角。"
 	print("MODEL_COMPARE_CAPTURE=" + stem + ".png")
+
+
+func start_eye_sweep() -> void:
+	if eye_sweep == null:
+		eye_sweep = EYE_SWEEP.new(self)
+	await eye_sweep.run_or_cancel()
+
+
+func start_sdf_sweep() -> void:
+	if sdf_sweep == null:
+		sdf_sweep = preload("res://showcase_extensions/head_sdf_sweep.gd").new(self)
+	sdf_sweep.run_or_cancel()
