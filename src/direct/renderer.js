@@ -131,6 +131,12 @@ $("history").onclick = () =>
   action(() =>
     window.beaver.call("external.history", { taskId: $("task").value }),
   ).catch(() => {});
+$("interrupt").onclick = () =>
+  action(() => {
+    const selectedTask = $("task").value;
+    if (!selectedTask) throw Error("先选择要中止的任务");
+    return window.beaver.call("task.interrupt", { id: selectedTask });
+  }).catch(() => {});
 $("create").onclick = () =>
   action(async () => {
     if (!state?.projects?.length) throw Error("先恢复/读取工程");
