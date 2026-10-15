@@ -28,3 +28,6 @@ jobs:
       - run: python -m unittest discover -s examples/head-generation/sdf360 -p 'test_*.py'
       - run: python examples/head-generation/checkpoints/current/bundle.py --output /tmp/head-current.json
       - run: python examples/head-generation/sdf360/bundle.py --output /tmp/head-sdf.json
+      - run: python -m unittest discover -s examples/head-generation/general_face -p 'test_*.py'
+      - run: python examples/head-generation/general_face/bundle.py --intent '{"preset":"soft_wide"}' --prefix assets/aster/general_face_ci/ --output /tmp/general-face.json
+      - run: python examples/head-generation/general_face/sdf_bundle.py --intent '{"preset":"soft_wide"}' --prefix assets/aster/general_face_ci/ --output /tmp/general-face-sdf.json
