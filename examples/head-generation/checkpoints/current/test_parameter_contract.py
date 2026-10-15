@@ -20,6 +20,7 @@ class ParameterContractTests(unittest.TestCase):
             "mouth",
             "eye_socket",
             "eye_accents",
+            "accent_attachment",
             "textures",
             "crease_rules",
             "pipeline",

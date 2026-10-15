@@ -23,6 +23,18 @@ menu. The production actor, runtime, validators and authoring resources are reta
 For character appearance work, also read blender-production's authored-character
 and reference-to-construction guidance before planning or making detailed geometry.
 Use Blender MCP for actual modeling, saving editable `.blend` and exported GLB.
+Before the first Godot import, establish which files are runtime inputs. For a
+new GLB-runtime project whose `.blend` files are editable sources only, set
+`import/blender/enabled=false` under `[filesystem]` in `project.godot`. This keeps
+Godot from importing those sources through its separately configured Blender
+path; Beaver's managed Blender session does not configure Godot's importer.
+Keep the `.blend` files in the delivery and point definitions/scenes at the GLB.
+For an existing project, inspect its setting and resource references first. Do
+not override an explicit enabled setting or disable intentional `.blend` runtime
+imports; preserve that workflow and resolve its Godot Blender configuration.
+Do not add a duplicate `[filesystem]` section or replace unrelated project settings.
+After changing the setting, rerun the normal workflow import/validate and inspect
+the logs; an import error disappearing is not a character-validation pass.
 For NPR execution tasks, Beaver starts an isolated empty Blender GUI session,
 binds its MCP client to a dedicated localhost port, and closes only that session
 when this execution ends. Planning tasks only inspect workflows and need no

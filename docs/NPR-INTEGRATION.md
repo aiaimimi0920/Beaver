@@ -124,6 +124,29 @@ actual model through Blender MCP, and decides how to correct validation failures
 The editable `.blend`, exported model, required textures, definition and usable
 scene belong to the ordinary task snapshot/merge and approval lifecycle.
 
+### GLB runtime and editable Blender sources
+
+Before importing a new character project, distinguish runtime assets from source
+artifacts. When scenes and definitions use exported GLB and `.blend` files are
+retained only for editing, configure `project.godot` as follows (merge the key into
+an existing `[filesystem]` section rather than duplicating it):
+
+```ini
+[filesystem]
+import/blender/enabled=false
+```
+
+This prevents Godot's automatic `.blend` import from requiring its own Blender
+executable configuration. Beaver's managed Blender session and Godot's importer
+are separate; a working Beaver modeling session does not establish a valid
+Godot Blender path. Keep the editable sources and runtime exports in the delivery.
+Rerun `validate` after the change and inspect the import log and validation result.
+
+This is a GLB-only authoring choice, not a blanket installation default. Existing
+projects with an explicit enabled setting or runtime `.blend` references must
+keep their chosen import workflow and have its Blender configuration resolved.
+Neither the generic blank template nor NPR installation disables their importer.
+
 Public install/run operations reject concurrent active creation tasks. During
 creation, Codex uses the task-scoped MCP to avoid mutating the merged project.
 Task interruption owns and terminates its workflow process tree. Public workflow
