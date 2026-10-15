@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "preset": "head_recovery_529",
+  "preset": "head_recovery_662",
   "note": "Explicit semantic calibration case; no character-name generation dependency.",
   "iris_half_width_m": 0.01534,
   "eye_lens_bulge_m": 0.0012,
@@ -1137,7 +1137,7 @@
     "ear_jaw_rim_fairing_iterations": 240,
     "ear_return_crown_m": 0.002,
     "ear_return_crease_normals": true,
-    "ear_post_return_width_m": 0.0105,
+    "ear_post_return_width_m": 0.007,
     "ear_post_return_depth_m": 0.002,
     "ear_post_lower_return_width_m": 0.007,
     "ear_under_lateral_width_m": 0.003
@@ -1248,40 +1248,40 @@
   "lateral_accent_profile": [
     [
       0,
-      0
+      0.0
     ],
     [
       0.18,
-      0
+      0.0
     ],
     [
-      0.4,
-      0
-    ],
-    [
-      0.55,
-      0.013
+      0.52,
+      0.0
     ],
     [
       0.65,
-      0
+      0.0176
     ],
     [
-      0.77,
-      0
+      0.76,
+      0.0
     ],
     [
-      0.88,
-      0.008
+      0.8,
+      0.0
+    ],
+    [
+      0.9,
+      0.011200000000000002
     ],
     [
       1,
-      0
+      0.0
     ]
   ],
   "accent_surface_clearance_m": 0.00012,
-  "accent_lateral_branch_separation_H": 0.003,
-  "accent_lateral_branch_width_H": 0.0042,
+  "accent_lateral_branch_separation_H": 0.0,
+  "accent_lateral_branch_width_H": 0.0022,
   "accent_lower_tip_t": 0.56,
   "accent_lower_tip_width_t": 0.07,
   "accent_lower_tip_drop_H": 0.011,
@@ -1310,15 +1310,15 @@
     ],
     [
       0.49,
-      0.04
+      0.05
     ],
     [
       0.32,
-      0.032
+      0.045
     ],
     [
       0.18,
-      0.03103165348
+      0.036
     ],
     [
       0.1,
@@ -1365,17 +1365,17 @@
     ],
     [
       -0.7040000000000001,
-      0.019773839930582654,
+      0.015,
       0.034
     ],
     [
       -0.44000000000000006,
-      0.02840790390913777,
+      0.017,
       0.044
     ],
     [
       -0.144,
-      0.026309741598038387,
+      0.019,
       0.053
     ],
     [
@@ -1409,36 +1409,36 @@
       0.048
     ]
   ],
-  "accent_lateral_branch_start": 0.16,
-  "accent_lateral_branch_span": 0.76,
-  "accent_lateral_bottom_t": 0.7,
+  "accent_lateral_branch_start": 0.04,
+  "accent_lateral_branch_span": 0.92,
+  "accent_lateral_bottom_t": 0.5,
   "accent_lateral_bow_t": 0.05,
   "accent_sheet_slope": 0.35,
   "accent_tuft_flare_m": 0.009350001886579574,
   "accent_lateral_center_profile": [
     [
       0,
-      0.99
+      1.0
     ],
     [
       0.16,
-      0.98
+      0.9872
     ],
     [
       0.38,
-      0.955
+      0.9278
     ],
     [
       0.62,
-      0.91
+      0.8078
     ],
     [
       0.82,
-      0.82
+      0.6638000000000001
     ],
     [
       1,
-      0.7
+      0.5
     ]
   ],
   "outer_lash_wing_rails": [
@@ -1450,22 +1450,22 @@
     [
       0.782,
       0.018377448860166904,
-      0.028377448860166906
+      0.03
     ],
     [
       0.9404,
       0.01711026231426827,
-      0.03061026231426827
+      0.038
     ],
     [
       1.0812,
       0.015952924638713617,
-      0.025952924638713615
+      0.032
     ],
     [
       1.1868,
       0.01714804472827193,
-      0.020148044728271933
+      0.0235
     ],
     [
       1.2484,
@@ -1480,26 +1480,26 @@
     ],
     [
       0.25,
-      0.8754640796961114
+      0.66
     ],
     [
       0.5,
-      0.85
+      0.48
     ],
     [
       0.75,
-      0.7277048546888596
+      0.24
     ],
     [
       1,
-      0.0
+      0
     ]
   ],
   "accent_fold_ridge_fraction": 0.42,
   "accent_outer_forward_m": 0.0009,
   "accent_outer_forward_start_t": 0.72,
   "accent_outer_forward_end_t": 1.15,
-  "accent_lateral_join_t": 0.95,
+  "accent_lateral_join_t": 1.0,
   "accent_lateral_join_span": 0.65,
   "accent_wing_fold_relief_m": 0.00055,
   "accent_free_edge_envelope_m": 0.005,
@@ -1565,17 +1565,41 @@
     ]
   ],
   "accent_inner_fork_lower_recede_m": 0.001,
-  "accent_final_crown_relief_m": 0.003,
+  "accent_final_crown_relief_m": 0.0018,
   "accent_final_min_forward_slope": -0.3,
   "accent_final_max_hinge_shift_m": 0.004,
   "accent_lateral_guide_bow_fraction": 0.35,
-  "accent_lateral_guide_inward_power": 2.0,
+  "accent_lateral_guide_inward_power": 3.0,
   "accent_cross_section_profile": "creased",
   "accent_final_crown_height_fraction": 0.45,
   "accent_tuft_rear_scoop_m": 0.004,
   "accent_tuft_root_cover_m": 0.0006,
   "accent_tuft_free_bow_m": 0.0015,
   "accent_section_soft_curve": 0.25,
-  "accent_main_lower_flank_drop_m": 0.0012,
-  "accent_main_lower_flank_recede_m": 0.0018
+  "accent_main_lower_flank_drop_m": 0.00035,
+  "accent_main_lower_flank_recede_m": 0.0008,
+  "accent_lateral_front_bias": 0.5,
+  "accent_lateral_taper_anchor_profile": [
+    [
+      0,
+      0.6857142857142856
+    ],
+    [
+      0.25,
+      0.8
+    ],
+    [
+      0.5,
+      0.75
+    ],
+    [
+      0.75,
+      0.5
+    ],
+    [
+      1,
+      0
+    ]
+  ],
+  "accent_lateral_eye_rim_follow": true
 }

@@ -5,7 +5,7 @@ import hashlib
 import json
 from pathlib import Path
 
-MODULES = ["face", "main_flank", "tuft_fit", "ear_boundary", "ear_return", "lateral_fit", "thin_ribbon", "main_curve", "eye_accents", "eye_socket", "mouth", "ears", "shell", "textures", "glb_merge", "crease_rules"]
+MODULES = ["eye_rim_refine", "face", "preserve_accepted", "bridge_pairs", "nose_refine", "nose_fair", "main_flank", "tuft_fit", "ear_boundary", "ear_surface", "ear_topology", "ear_width", "ear_shoulder", "ear_fair", "ear_fold", "ear_silhouette", "ear_return", "lateral_fit", "thin_ribbon", "main_curve", "side_leaf", "eye_accents", "eye_socket", "mouth", "ears", "shell", "textures", "glb_merge", "crease_rules"]
 SOURCE_FILES = [name + ".py" for name in MODULES] + [
     "pipeline.py",
     "authoring-brief.md",
@@ -25,7 +25,7 @@ ASSET_FILES = [
     "face_map.png",
     "hair_ilm.png",
 ]
-OUTPUT_PREFIX = "assets/aster/head_recovery_529/"
+OUTPUT_PREFIX = "assets/aster/head_recovery_662/"
 
 
 def build_request(source_dir=None):

@@ -1,12 +1,15 @@
 extends RefCounted
 ## Stage assembly reuses the NPR wardrobe's production actor and presentation.
 
+
 static func build(host: Control) -> bool:
 	var backdrop := ColorRect.new()
 	backdrop.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	backdrop.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	host._backdrop_material = ShaderMaterial.new()
-	host._backdrop_material.shader = load("res://addons/npr_character_frame/showcase/shaders/wardrobe_background.gdshader")
+	host._backdrop_material.shader = load(
+		"res://addons/npr_character_frame/showcase/shaders/wardrobe_background.gdshader"
+	)
 	backdrop.material = host._backdrop_material
 	host.add_child(backdrop)
 	host._stage = SubViewportContainer.new()

@@ -7,7 +7,7 @@ from mouth import store_mouth_deltas
 from glb_merge import merge_face
 
 ROOT = Path(beaver_input("project.godot")).parent
-OUT = "assets/aster/head_recovery_529/"
+OUT = "assets/aster/head_recovery_662/"
 BASE = "assets/aster/head_recovery_49/"
 GUIDE = Path(beaver_input("authoring/head_generation_guide.md")).read_text()
 assert "去发侧脸轮廓检查" in GUIDE
@@ -124,6 +124,8 @@ report["pocket_skin_clearance"] = fit_pocket_clearance(shell)
 from eye_accents import fit_evaluated_accent_roots, measure_accent_connections
 report["eye_accent_surface_fit"] = fit_evaluated_accent_roots(shell)
 report["eye_accent_connections"] = measure_accent_connections()
+from side_leaf import measure_side_leaves
+report["independent_lateral_children"] = measure_side_leaves(PARTS)
 # Revalidate the final fitted meshes, not just their pre-subdivision recipe.
 from eye_accents import signed_volume
 final_checks = {}
@@ -158,6 +160,9 @@ report["pocket_rear_closure"] = [
 from ears import fit_ear_roots
 
 report["ear_root_fit"] = fit_ear_roots(shell)
+# Preserve established semantic-region ordinals for every original component.
+from side_leaf import stable_part_order
+PARTS[:] = stable_part_order(PARTS)
 from mouth import validate_oral_clearance
 
 report["oral_clearance"] = validate_oral_clearance(shell)
@@ -310,6 +315,16 @@ for role in ["Face"]:
         report["ear_jaw_rim_fairing"] = fair_ear_jaw_rim(members[0].data, report["ear_root_fit"])
         from ear_return import add_final_return
         report["ear_post_return"] = add_final_return(members[0].data)
+        from ear_boundary import refine_local_skin
+        report['ear_under_topology_refinement']=refine_local_skin(members[0].data)
+        from ear_surface import relax_local_skin
+        report['ear_under_surface_relaxation']=relax_local_skin(members[0].data,report["ear_root_fit"])
+        from ear_width import fit_front_width
+        report["ear_under_front_envelope"]=fit_front_width(members[0].data,report["ear_root_fit"])
+        from ear_shoulder import fit_ear_under_shoulder
+        report["ear_under_shoulder"]=fit_ear_under_shoulder(members[0].data,report["ear_root_fit"])
+        from ear_fair import fair_skin_sections
+        report["ear_under_quadratic_fairing"]=fair_skin_sections(members[0].data,report["ear_root_fit"])
         bm = bmesh.new()
         bm.from_mesh(members[0].data)
         bmesh.ops.triangulate(bm, faces=list(bm.faces), quad_method="BEAUTY", ngon_method="BEAUTY")
@@ -319,7 +334,23 @@ for role in ["Face"]:
         data = members[0].data
         data.update()
         from ears import verify_ear_seams
+        from ear_fold import fair_attachment_folds
+        report["ear_lower_attachment_fold_fairing"]=fair_attachment_folds(data,report["ear_root_fit"])
 
+        from ear_topology import improve_lower_root_diagonals
+        report["ear_root_diagonal_quality"]=improve_lower_root_diagonals(data,report["ear_root_fit"])
+        from nose_refine import refine_nose
+        report["nose_refinement"] = refine_nose(data)
+        from nose_fair import fair_nasal_arcs
+        report["nose_arc_fairing"] = fair_nasal_arcs(data)
+        from ear_silhouette import fit_ear_silhouette
+        report["ear_side_silhouette"] = fit_ear_silhouette(data, report["ear_root_fit"])
+        from ear_silhouette import fit_upper_join
+        report["ear_upper_junction"] = fit_upper_join(data, report["ear_root_fit"])
+        from preserve_accepted import preserve_non_eye
+        report["accepted_non_eye_preservation"] = preserve_non_eye(data,ROOT,report)
+        from eye_rim_refine import refine_outer_eye
+        report["outer_eye_local_depth"] = refine_outer_eye(data)
         report["ear_shared_seams"] = verify_ear_seams(data, report["ear_root_fit"])
         normals = [Vector((0, 0, 0)) for _ in data.vertices]
         region_normals = {}
@@ -372,6 +403,17 @@ for role in ["Face"]:
                 expected_ear_roots += 1
                 ear_root_max_error = max(ear_root_max_error, distance)
         assert len(ear_root_ids) == expected_ear_roots
+        ear_skin_normals = {}
+        for poly in data.polygons:
+            if regions.data[poly.index].value not in (1,2):
+                continue
+            for index in poly.vertices:
+                if index in ear_root_ids:
+                    ear_skin_normals.setdefault(index,Vector((0,0,0)))
+                    ear_skin_normals[index] += poly.normal * poly.area
+        ear_skin_normals = {i:n.normalized() for i,n in ear_skin_normals.items() if n.length>1e-12}
+        assert set(ear_skin_normals)==ear_root_ids, "Missing geometric skin seam normal"
+        report["ear_skin_dominant_seam_normals"] = len(ear_skin_normals)
         report["ear_common_normal_root_vertices"] = len(ear_root_ids)
         report["ear_common_normal_root_max_error_m"] = ear_root_max_error
         # Interpolate shading across collinear refinement vertices from the
@@ -426,7 +468,7 @@ for role in ["Face"]:
                         normals[index].lerp(normal, C["jaw_normal_boundary_strength"]).normalized()
                     )
                 if index in ear_root_ids:
-                    normal = normal.lerp(normals[index], C["ear_root_normal_blend"]).normalized()
+                    normal = normal.lerp(ear_skin_normals[index], C["ear_root_normal_blend"]).normalized()
                 corner_normals[loop_index] = normal if poly.use_smooth else poly.normal.copy()
         data.normals_split_custom_set(corner_normals)
         report["flat_geometric_triangles"] = sum(not poly.use_smooth for poly in data.polygons)

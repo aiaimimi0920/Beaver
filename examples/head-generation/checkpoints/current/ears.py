@@ -225,6 +225,7 @@ def fit_ear_roots(shell):
                     "max_root_position_error_m": error,
                     "root_positions": [list(r) for r in root_points],
                     "lower_bridge_root_position": list(lower),
+                    "lower_bridge_triangle_positions": [list(vs[i]) for i in bridge],
                     "geometry": "open-backed shallow membrane; no separate closed back shell",
                 }
             )

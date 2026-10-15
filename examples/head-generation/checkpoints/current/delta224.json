@@ -1,0 +1,18 @@
+{
+  "preset": {
+    "old": "semantic_calibration_a_223",
+    "new": "semantic_calibration_a_224"
+  },
+  "accent_sheet_slope": {
+    "old": 0.45,
+    "new": 0.5
+  },
+  "accent_free_edge_envelope_blend": {
+    "old": 0.28,
+    "new": 0.36
+  },
+  "accent_outer_forward_m": {
+    "old": 0.0015,
+    "new": 0.0009
+  }
+}

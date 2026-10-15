@@ -3,7 +3,7 @@ import path from "node:path";
 import { createHash } from "node:crypto";
 import { execFileSync } from "node:child_process";
 
-export const NPR_COMMIT = "a08b47a6cc229b6978afda26d74d13af690a67ba";
+export const NPR_COMMIT = "b1e2ce8cad2e4c900d940f3e87fb59d8b12b4382";
 export const NPR_SOURCE_PATH = "addons/npr_character_frame";
 const REPOSITORY = "https://github.com/aiaimimi0920/NPRCharacterFrame";
 const SAMPLE_LAUNCHERS = new Set([

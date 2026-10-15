@@ -203,10 +203,13 @@ def build_upper_accents(side):
 
 def lateral_sections():
     controls = [p[0] for p in STYLE["lateral_accent_profile"]]
-    stations = sorted(controls + [(a+b)/2 for a,b in zip(controls, controls[1:])
-                                  if b-a > .15])
+    stations=set(controls)
+    for a,b in zip(controls,controls[1:]):
+        n=max(1,int((b-a)/.065+.999999))
+        stations.update(a+(b-a)*i/n for i in range(1,n))
+    stations=sorted(stations)
     return [(f, -C["outer_liner_width"] * curve(f,1,STYLE["accent_lateral_inner_width_profile"]),
-             curve(f, 1, STYLE["lateral_accent_profile"])) for f in stations]
+             0.0) for f in stations]
 
 
 def lateral_position(side, f, offset):
@@ -601,6 +604,8 @@ def fit_evaluated_accent_roots(shell):
         wing_seating = seat_outer_wings(PARTS, STYLE, obstacle_trees[0][1])
         lateral_join = reattach_lateral_to_final_wing()
         lateral_curve = regularize_lateral_sections(PARTS, lateral_sections(), STYLE, obstacle_trees[0][1])
+        from side_leaf import build_side_leaves
+        build_side_leaves(PARTS, lateral_sections(), STYLE)
         report = {"short_leaf_parent_seating":tuft_seating,"lower_main_flank":lower_flank}
         for obj in PARTS:
             if not obj.get('accent_front_faces'):

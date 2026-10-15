@@ -3,6 +3,7 @@ on:
   pull_request:
     paths:
       - 'examples/head-generation/**'
+      - 'examples/head-review/**'
       - '.github/workflows/head-generation-example.yml'
   push:
     branches: [main]
@@ -19,6 +20,11 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
+      - run: python -m pip install numpy
       - run: python -m compileall -q examples/head-generation
       - run: python -m unittest discover -s examples/head-generation -p 'test_*.py'
       - run: python examples/head-generation/bundle.py --output /tmp/head-recipe.json
+      - run: python -m unittest discover -s examples/head-generation/checkpoints/current -p 'test_*.py'
+      - run: python -m unittest discover -s examples/head-generation/sdf360 -p 'test_*.py'
+      - run: python examples/head-generation/checkpoints/current/bundle.py --output /tmp/head-current.json
+      - run: python examples/head-generation/sdf360/bundle.py --output /tmp/head-sdf.json

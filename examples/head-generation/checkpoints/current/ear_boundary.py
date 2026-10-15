@@ -39,6 +39,14 @@ def fair_lower_ear_boundaries(data,reports):
     tree=KDTree(len(data.vertices))
     for v in data.vertices:tree.insert(v.co,v.index)
     tree.balance()
+    for report in reports:
+        ids=[]
+        for p in report['lower_bridge_triangle_positions']:
+            _,i,d=tree.find(Vector((p[0],p[1],p[2]-.021)))
+            assert d<.000002,'Authored bridge vertex missing after welding'
+            ids.append(i)
+        assert len(set(ids))==3
+        report['lower_bridge_vertex_ids']=ids
     locked=set()
     for report in reports:
         for p in report['root_positions']:
@@ -216,8 +224,69 @@ def fair_ear_jaw_rim(data,reports):
     result,interior=blend_rim_displacements(before,result,all_neighbors,selected,eligible)
     result=fair_interior_depth(result,all_neighbors,eligible)
     changed=selected|interior
-    for i in changed:data.vertices[i].co=result[i]
+    safe=list(result)
+    proposed=constrain_lower_envelope(before,result,changed)
+    envelope_factors={i:1.0 for i in changed}
+    rejected_faces=[]
+    for attempt in range(25):
+        result=[tuple(a[k]+envelope_factors.get(i,0)*(b[k]-a[k]) for k in range(3)) for i,(a,b) in enumerate(zip(safe,proposed))]
+        for i in changed:data.vertices[i].co=result[i]
+        data.update()
+        invalid=[poly.index for poly,n in zip(data.polygons,normals) if any(i in changed for i in poly.vertices) and (poly.area<=1e-12 or poly.normal.dot(n)<=0)]
+        if not invalid:break
+        rejected_faces.append({'iteration':attempt,'faces':invalid})
+        affected={i for index in invalid for i in data.polygons[index].vertices if i in changed}
+        for i in affected:envelope_factors[i]*=.5
+        if attempt==23:envelope_factors={i:0.0 for i in changed}
+    opening_safe=list(result)
+    opening_proposed=calibrate_opening_sweep(before,result,selected,C)
+    opening_proposed,_=blend_rim_displacements(result,opening_proposed,all_neighbors,selected,eligible)
+    # Preserve each small bridge coherently before independent vertex backtracking.
+    for i in changed:data.vertices[i].co=opening_proposed[i]
     data.update()
+    initial_invalid=[p.index for p,n in zip(data.polygons,normals) if any(i in changed for i in p.vertices) and (p.area<=1e-12 or p.normal.dot(n)<=0)]
+    bridge_roots={i for report in reports for i in report['lower_bridge_vertex_ids']}
+    from bridge_pairs import paired_bridge_indices
+    candidates={p.index:list(p.vertices) for p in data.polygons if len(p.vertices)==3 and 40<=regions.data[p.index].value<50 and bridge_roots.intersection(p.vertices)}
+    initial_bridge_indices=paired_bridge_indices(before,candidates,[i for i in initial_invalid if i in candidates])
+    initial_bridge_groups=[candidates[i] for i in initial_bridge_indices]
+    assert len(initial_bridge_groups)==2, 'Expected two initial constrained bridges'
+    bridge_ids_initial={i for g in initial_bridge_groups for i in g}
+    coherent=coherent_bridge_targets(before,opening_proposed,initial_bridge_groups)
+    opening_proposed,_=blend_rim_displacements(opening_proposed,coherent,all_neighbors,bridge_ids_initial,eligible-bridge_ids_initial)
+    for i in changed:data.vertices[i].co=opening_safe[i]
+    data.update()
+    opening_factors={i:1.0 for i in changed}
+    opening_rejected=[]
+    for attempt in range(25):
+        result=[tuple(a[k]+opening_factors.get(i,0)*(b[k]-a[k]) for k in range(3)) for i,(a,b) in enumerate(zip(opening_safe,opening_proposed))]
+        for i in changed:data.vertices[i].co=result[i]
+        data.update()
+        invalid=[poly.index for poly,n in zip(data.polygons,normals) if any(i in changed for i in poly.vertices) and (poly.area<=1e-12 or poly.normal.dot(n)<=0)]
+        if not invalid:break
+        opening_rejected.append({'iteration':attempt,'faces':invalid})
+        affected={i for index in invalid for i in data.polygons[index].vertices if i in changed}
+        for i in affected:opening_factors[i]*=.5
+        if attempt==23:opening_factors={i:0.0 for i in changed}
+    opening_factor=min(opening_factors.values(),default=0.)
+    bridge_roots={i for report in reports for i in report['lower_bridge_vertex_ids']}
+    limiting_faces={i for step in opening_rejected for i in step['faces']} | set(initial_invalid) | set(initial_bridge_indices)
+    bridge_groups=[list(data.polygons[i].vertices) for i in sorted(limiting_faces) if len(data.polygons[i].vertices)==3 and 40<=regions.data[i].value<50 and bridge_roots.intersection(data.polygons[i].vertices)]
+    assert len(bridge_groups)==2,('Expected symmetric constrained ear-root faces',bridge_groups,sorted(bridge_roots),[(i,list(data.polygons[i].vertices),regions.data[i].value) for i in sorted(limiting_faces)])
+    bridge_ids={i for group in bridge_groups for i in group}
+    assert bridge_ids.issubset(changed),'Bridge outside authorized local support'
+    bridge_safe=list(result)
+    bridge_proposed=coherent_bridge_targets(before,result,bridge_groups)
+    bridge_proposed,_=blend_rim_displacements(result,bridge_proposed,all_neighbors,bridge_ids,eligible-bridge_ids)
+    bridge_factor=1.
+    for attempt in range(13):
+        result=[tuple(a[k]+bridge_factor*(b[k]-a[k]) for k in range(3)) if i in changed else a for i,(a,b) in enumerate(zip(bridge_safe,bridge_proposed))]
+        for i in changed:data.vertices[i].co=result[i]
+        data.update()
+        invalid=[poly.index for poly,n in zip(data.polygons,normals) if any(i in changed for i in poly.vertices) and (poly.area<=1e-12 or poly.normal.dot(n)<=0)]
+        if not invalid:break
+        bridge_factor=bridge_factor*.5 if attempt<11 else 0.
+    envelope_factor=min(envelope_factors.values(),default=0.0)
     for poly,n in zip(data.polygons,normals):
         if any(i in changed for i in poly.vertices):
             assert poly.area>1e-12 and poly.normal.dot(n)>0,'Ear-jaw rim fairing inverted a face'
@@ -226,7 +295,7 @@ def fair_ear_jaw_rim(data,reports):
             points=[[result[i][0],result[i][1],result[i][2]+.021] for i in ids]
             report[key]=points if key=='root_positions' else points[0]
     assert all(tuple(data.vertices[i].co)==p for i,p in enumerate(before) if i not in changed)
-    return {'interior_blend_vertices':len(interior),'selected_vertices':len(selected),'maximum_displacement_m':max((Vector(result[i])-Vector(before[i])).length for i in selected),'scope':'connected skin free boundary only','height_range':[.06,.38],'topology_unchanged':True}
+    return {'opening_initial_invalid':initial_invalid,'bridge_preconditioned':True,'bridge_shape_factor':bridge_factor,'bridge_groups':bridge_groups,'opening_constraint_faces':[{'index':i,'vertices':list(data.polygons[i].vertices),'original':[before[v] for v in data.polygons[i].vertices],'final':[result[v] for v in data.polygons[i].vertices],'region':regions.data[i].value} for i in sorted({i for step in opening_rejected for i in step['faces']})],'opening_rejected_faces':opening_rejected,'opening_full_weight_vertices':sum(f==1 for f in opening_factors.values()),'opening_factor':opening_factor,'envelope_factor':envelope_factor,'envelope_full_weight_vertices':sum(f==1 for f in envelope_factors.values()),'rejected_envelope_faces':rejected_faces,'interior_blend_vertices':len(interior),'selected_vertices':len(selected),'maximum_displacement_m':max((Vector(result[i])-Vector(before[i])).length for i in selected),'scope':'connected skin free boundary only','height_range':[.06,.38],'topology_unchanged':True}
 
 
 def blend_rim_displacements(before,result,neighbors,boundary,eligible):
@@ -310,3 +379,94 @@ def fair_interior_depth(points,neighbors,eligible,iterations=60,strength=.25,lim
             depth=max(original[i][1]-limit,min(original[i][1]+limit,depth))
             result[i]=(original[i][0],depth,original[i][2])
     return result
+
+
+def constrain_lower_envelope(before,points,selected,limit=.003):
+    """Bounded semantic silhouette envelope; normalized aggregate support, no mesh dependency."""
+    from math import cos,sin,radians,sqrt
+    profiles = [[-0.4, [0.1994, 0.2001, 0.1961, 0.1876, 0.1761, 0.1574, 0.1281]], [-0.375, [0.2285, 0.2334, 0.2311, 0.223, 0.2072, 0.1821, 0.1446]], [-0.35, [0.2527, 0.26, 0.2601, 0.2511, 0.2323, 0.2021, 0.1581]], [-0.325, [0.2714, 0.2817, 0.2841, 0.2732, 0.2542, 0.2197, 0.1702]], [-0.3, [0.2846, 0.2986, 0.3047, 0.2947, 0.275, 0.2365, 0.1819]], [-0.275, [0.2967, 0.315, 0.3242, 0.3133, 0.2918, 0.2504, 0.192]], [-0.25, [0.3074, 0.331, 0.3422, 0.3319, 0.3086, 0.2644, 0.2021]], [-0.225, [0.3472, 0.3914, 0.409, 0.3986, 0.3611, 0.299, 0.2166]], [-0.2, [0.3761, 0.4262, 0.4472, 0.4378, 0.3985, 0.3321, 0.2441]], [-0.175, [0.3911, 0.4445, 0.4676, 0.4589, 0.4188, 0.3502, 0.2596]], [-0.15, [0.4062, 0.4629, 0.488, 0.4799, 0.4391, 0.3684, 0.2751]], [-0.125, [0.4209, 0.4797, 0.5057, 0.4973, 0.455, 0.382, 0.2864]], [-0.1, [0.4357, 0.4962, 0.523, 0.5141, 0.4702, 0.3942, 0.2928]]]
+    height=max(p[2] for p in before)-min(p[2] for p in before)
+    midheight=(max(p[2] for p in before)+min(p[2] for p in before))*.5
+    middepth=(max(p[1] for p in before)+min(p[1] for p in before))*.5
+    output=list(points)
+    for i in selected:
+        p=points[i];v=(p[2]-midheight)/height
+        if v<=-.4 or v>=-.225:continue
+        q=[abs(p[0])/height,-(p[1]-middepth)/height]
+        source=list(q)
+        band=next((j for j in range(len(profiles)-1) if profiles[j][0]<=v<=profiles[j+1][0]),None)
+        if band is None:continue
+        t=(v-profiles[band][0])/(profiles[band+1][0]-profiles[band][0])
+        supports=[a*(1-t)+b*t for a,b in zip(profiles[band][1],profiles[band+1][1])]
+        for iteration in range(8):
+            for angle,support in zip(range(0,91,15),supports):
+                nx,nz=cos(radians(angle)),-sin(radians(angle))
+                excess=q[0]*nx+q[1]*nz-support-.001
+                if excess>0:q[0]-=nx*excess;q[1]-=nz*excess
+        weight=max(0,min(1,(v+.4)/.025,(-.225-v)/.025));weight=weight*weight*(3-2*weight)
+        dx,dz=(q[0]-source[0])*height,(q[1]-source[1])*height
+        factor=min(1,limit/max(sqrt(dx*dx+dz*dz),1e-12))*weight
+        output[i]=(p[0]+(dx if p[0]>=0 else -dx)*factor,p[1]-dz*factor,p[2])
+    return output
+
+
+def calibrate_opening_sweep(before,points,selected,config,limit=.004):
+    """Bounded lower posterior edge sweep in normalized head coordinates."""
+    from math import sqrt
+    from ear_return import return_weight,lower_return_weight
+    profile=[[-.40,.1303,-.1281],[-.375,.1639,-.1446],[-.35,.1907,-.1581],[-.325,.2136,-.1702],[-.30,.2349,-.1819],[-.275,.2511,-.1920],[-.25,.2672,-.2021],[-.225,.2811,-.2125],[-.20,.2932,-.2232],[-.175,.3055,-.2339],[-.15,.3180,-.2445]]
+    height=max(p[2] for p in before)-min(p[2] for p in before)
+    midheight=(max(p[2] for p in before)+min(p[2] for p in before))*.5
+    middepth=(max(p[1] for p in before)+min(p[1] for p in before))*.5
+    result=list(points)
+    for i in selected:
+        x,y,z=points[i];v=(z-midheight)/height
+        if not -.40<v<-.15:continue
+        for (a,xa,da),(b,xb,db) in zip(profile,profile[1:]):
+            if a<=v<=b:
+                t=(v-a)/(b-a);target_x=(xa+(xb-xa)*t)*height*(1 if x>=0 else -1);target_y=middepth-height*(da+(db-da)*t);break
+        weight=max(0.,min(1.,(v+.40)/.04,(-.15-v)/.04));weight=weight*weight*(3-2*weight)
+        authored_height=(z+.021-config['origin_y_m'])/config['height_m']
+        upper=return_weight(authored_height);lower=lower_return_weight(authored_height)
+        return_width=config['ear_post_return_width_m']*upper+config['ear_post_lower_return_width_m']*lower
+        target_x+=(1 if x>=0 else -1)*return_width
+        target_y-=config['ear_post_return_depth_m']*upper
+        dx,dy=target_x-x,target_y-y;factor=min(1.,limit/max(sqrt(dx*dx+dy*dy),1e-12))*weight
+        result[i]=(x+dx*factor,y+dy*factor,z)
+    return result
+
+
+def coherent_bridge_targets(before,points,groups):
+    """Keep a small semantic bridge triangle coherent under skin translation."""
+    result=list(points)
+    for ids in groups:
+        delta=tuple(sum(points[i][k]-before[i][k] for i in ids)/len(ids) for k in range(3))
+        for i in ids:result[i]=tuple(before[i][k]+delta[k] for k in range(3))
+    return result
+
+
+def refine_local_skin(data):
+    """Split overly long interior skin edges without moving the welded rim."""
+    import bmesh
+    from face import H,Y0,Z0
+    bm=bmesh.new();bm.from_mesh(data)
+    regions=bm.faces.layers.int['NormalRegion']
+    original=[v.co.copy() for v in bm.verts]
+    def inside(v):
+        p=v.co
+        return .12<(p.z+.021-Y0)/H<.38 and (Z0+p.y)/H>.05 and abs(p.x)>.035
+    edges=[e for e in bm.edges if not e.is_boundary and e.calc_length()>.008 and all(inside(v) for v in e.verts) and all(f[regions] in (1,2) for f in e.link_faces)]
+    assert edges,'No local skin edges selected'
+    before_faces=len(bm.faces)
+    result=bmesh.ops.subdivide_edges(bm,edges=edges,cuts=2,use_grid_fill=True,smooth=0.)
+    bm.normal_update()
+    from mathutils.kdtree import KDTree
+    tree=KDTree(len(bm.verts))
+    for i,v in enumerate(bm.verts):tree.insert(v.co,i)
+    tree.balance()
+    assert all(tree.find(p)[2]<1e-9 for p in original),'Original skin vertices moved'
+    assert all(f.calc_area()>1e-12 for f in bm.faces),'Refinement collapsed a face'
+    assert all(len(e.link_faces)<=2 for e in bm.edges),'Refinement became non-manifold'
+    report={'split_edges':len(edges),'added_faces':len(bm.faces)-before_faces,'new_vertices':len(bm.verts)-len(original),'original_vertices_fixed':True,'ear_rim_fixed':True}
+    bm.to_mesh(data);bm.free();data.update()
+    return report
