@@ -2,24 +2,34 @@ name: Head generation example
 on:
   pull_request:
     paths:
-      - 'examples/head-generation/**'
-      - 'examples/head-review/**'
-      - '.github/workflows/head-generation-example.yml'
+      - "examples/head-generation/**"
+      - "resources/packages/npr-characters/addons/npr_character_frame/.ci_script/tools/sdf360/**"
+      - "examples/head-review/**"
+      - ".github/workflows/head-generation-example.yml"
+      - "src/direct/preview.cjs"
+      - "tests/head-preview.test.ts"
+      - "package.json"
+      - "package-lock.json"
   push:
     branches: [main]
     paths:
-      - 'examples/head-generation/**'
-      - '.github/workflows/head-generation-example.yml'
+      - "examples/head-generation/**"
+      - "resources/packages/npr-characters/addons/npr_character_frame/.ci_script/tools/sdf360/**"
+      - ".github/workflows/head-generation-example.yml"
+      - "src/direct/preview.cjs"
+      - "tests/head-preview.test.ts"
+      - "package.json"
+      - "package-lock.json"
 permissions:
   contents: read
 jobs:
   recipe-tests:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
         with:
-          python-version: '3.11'
+          python-version: "3.11"
       - run: python -m pip install numpy
       - run: python -m compileall -q examples/head-generation
       - run: python -m unittest discover -s examples/head-generation -p 'test_*.py'
@@ -28,3 +38,16 @@ jobs:
       - run: python -m unittest discover -s examples/head-generation/sdf360 -p 'test_*.py'
       - run: python examples/head-generation/checkpoints/current/bundle.py --output /tmp/head-current.json
       - run: python examples/head-generation/sdf360/bundle.py --output /tmp/head-sdf.json
+      - run: python -m unittest discover -s examples/head-generation/general_face -p 'test_*.py'
+      - run: python examples/head-generation/general_face/bundle.py --intent '{"preset":"soft_wide"}' --prefix assets/aster/general_face_ci/ --output /tmp/general-face.json
+  preview-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: "22"
+          cache: npm
+      - run: npm ci --ignore-scripts
+      - run: node --check src/direct/preview.cjs
+      - run: node --import tsx --test tests/head-preview.test.ts
