@@ -5,7 +5,7 @@ import hashlib
 import json
 from pathlib import Path
 
-MODULES = ["eye_rim_refine", "face", "preserve_accepted", "bridge_pairs", "nose_refine", "nose_fair", "main_flank", "tuft_fit", "ear_boundary", "ear_surface", "ear_topology", "ear_width", "ear_shoulder", "ear_fair", "ear_fold", "ear_silhouette", "ear_return", "lateral_fit", "thin_ribbon", "main_curve", "side_leaf", "eye_accents", "eye_socket", "mouth", "ears", "shell", "textures", "glb_merge", "crease_rules"]
+MODULES = ["eye_rim_refine", "face", "preserve_accepted", "bridge_pairs", "nose_refine", "nose_fair", "main_flank", "tuft_fit", "ear_boundary", "ear_surface", "ear_topology", "ear_width", "ear_shoulder", "ear_fair", "ear_fold", "ear_silhouette", "ear_return", "lateral_fit", "thin_ribbon", "main_curve", "side_leaf", "accent_attachment", "eye_accents", "eye_socket", "mouth", "ears", "shell", "textures", "glb_merge", "crease_rules"]
 SOURCE_FILES = [name + ".py" for name in MODULES] + [
     "pipeline.py",
     "authoring-brief.md",
@@ -31,12 +31,13 @@ OUTPUT_PREFIX = "assets/aster/head_recovery_662/"
 def build_request(source_dir=None):
     root = Path(source_dir) if source_dir else Path(__file__).parent
     style = json.loads((root / "face_style.json").read_text())
-    code = "import types, sys\n"
+    code = "import copy, types, sys\n"
+    code += f"_beaver_bundle_style = {style!r}\n"
     for name in MODULES:
         source = (root / (name + ".py")).read_text()
         code += f"module = types.ModuleType({name!r}); sys.modules[{name!r}] = module\n"
         code += "module.beaver_output = beaver_output\n"
-        code += f"module.STYLE = {style!r}\n"
+        code += "module.STYLE = copy.deepcopy(_beaver_bundle_style)\n"
         code += f'exec(compile({source!r}, {name!r}, "exec"), module.__dict__)\n'
     code += (root / "pipeline.py").read_text()
     for name in SOURCE_FILES:

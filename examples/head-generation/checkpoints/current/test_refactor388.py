@@ -9,9 +9,9 @@ class Refactor388(unittest.TestCase):
   self.assertEqual(actual,expected)
  def test_modules_stay_below_soft_limit_and_report_active_profile(self):
   p=Path(__file__).parent
-  for name in ['eye_accents.py','thin_ribbon.py','lateral_fit.py']:
+  for name in ['eye_accents.py','accent_attachment.py','thin_ribbon.py','lateral_fit.py']:
    lines=(p/name).read_text().splitlines()
-   self.assertLessEqual(sum(bool(x.strip()) and not x.lstrip().startswith('#') for x in lines),700)
+   self.assertLessEqual(sum(bool(x.strip()) and not x.lstrip().startswith('#') for x in lines),500)
   pipeline=(p/'pipeline.py').read_text()
   self.assertIn('report["main_lash_crease_normal_blend_profile"]',pipeline)
   self.assertNotIn('report["main_lash_crease_normal_blend"]',pipeline)

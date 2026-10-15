@@ -14,6 +14,10 @@ STYLE = json.loads((ROOT / "face_style.json").read_text())
 def pure_function(module, name, extra):
     if module == "eye_accents.py" and name in {"outline_sections", "accent_sections", "signed_volume", "closed_ribbon_mesh", "accent_mesh"}:
         module = "thin_ribbon.py"
+    if module == "eye_accents.py":
+        contract = json.loads((ROOT / "accent-attachment-refactor-contract.json").read_text())
+        if name in contract["attachment_functions"]:
+            module = "accent_attachment.py"
     tree = ast.parse((ROOT / module).read_text())
     nodes = [n for n in tree.body if isinstance(n, ast.FunctionDef) and n.name == name]
     scope = {key: getattr(math, key) for key in ["sin", "cos", "pi", "exp", "sqrt", "atan2"]}
