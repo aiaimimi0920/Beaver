@@ -27,9 +27,19 @@ def adapted_bake(config, out):
     return source
 
 
-def build_request(intent, output_prefix, workspace=None):
+def build_request(intent, output_prefix, workspace):
     config = select_intent(intent)
     out = validate_prefix(output_prefix)
+    if workspace is None:
+        raise ValueError("A current generated workspace is required for SDF output hashes")
+    root = Path(workspace)
+    if not root.is_dir():
+        raise ValueError("SDF workspace must be an existing directory")
+    required = ["project.godot", out + "aster_head.glb",
+                out + "aster_definition.tres", out + "generation_report.json"]
+    missing = [path for path in required if not (root / path).is_file()]
+    if missing:
+        raise ValueError("SDF workspace is missing required generation inputs: " + ", ".join(missing))
     style = json.loads((RECIPE / "face_style.json").read_text())
     sources = {"face": (RECIPE / "face.py").read_text(),
                "distance_field": (NPR / "distance_field.py").read_text(),
@@ -59,8 +69,12 @@ def build_request(intent, output_prefix, workspace=None):
         code += f'Path(beaver_output({path!r})).write_text({source!r})\n'
     outputs = []
     for path in paths:
-        local = Path(workspace) / path if workspace else None
-        digest = hashlib.sha256(local.read_bytes()).hexdigest() if local and local.is_file() else None
+        local = root / path
+        if local.exists() and not local.is_file():
+            raise ValueError("SDF output path is not a regular file: " + path)
+        digest = hashlib.sha256(local.read_bytes()).hexdigest() if local.is_file() else None
+        if path in required and digest is None:
+            raise ValueError("Required generated output disappeared while packaging: " + path)
         outputs.append({"path": path, "expectedSha256": digest})
     compile(code, "<general face native SDF job>", "exec")
     return {"code": code, "outputs": outputs, "timeoutSeconds": 240}
@@ -71,6 +85,7 @@ if __name__ == "__main__":
     parser.add_argument("--intent", required=True)
     parser.add_argument("--prefix", required=True)
     parser.add_argument("--output", type=Path, required=True)
-    parser.add_argument("--workspace", type=Path)
+    parser.add_argument("--workspace", type=Path, required=True,
+                        help="Current generated project workspace; required to hash overwritten outputs")
     args = parser.parse_args()
     args.output.write_text(json.dumps(build_request(json.loads(args.intent), args.prefix, args.workspace)))

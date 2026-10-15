@@ -49,7 +49,7 @@ NPR distance transform/binding implementation, remapping proxy normals by
 Godot diag(width,height,depth) inverse transpose before the lighting dot product.
 UV2 remains fixed. Nonidentity profiles always get a fresh atlas; old atlas reuse
 is unsupported. Adapted bake source and all helper sources are retained. Existing
-outputs receive optimistic hashes when `--workspace` is supplied; use the current
+outputs always receive optimistic hashes: `--workspace` is mandatory. Use the current
 project snapshot for the SDF step, which updates definition and generation report.
 
 ## Scope and sampled acceptance
@@ -163,3 +163,10 @@ Blender exports. The current active Face shader, with outline mode 0 and no norm
 maps, does not depend on these tangents. This conclusion does not cover future
 normal-map use or other tangent-dependent shader/outline modes. The discrepancy
 remains documented rather than being hidden by a relaxed equality check.
+
+SDF packaging requires an existing workspace containing `project.godot` and the
+selected generation's GLB, definition and report. The function also requires the
+workspace argument and rejects missing inputs before emitting a request. Existing
+definition/report outputs always carry their current SHA-256; no null-hash overwrite
+fallback exists. CLI smoke tests use an isolated temporary input fixture, compile
+the resulting code without executing it, and remove all fixture/request artifacts.
