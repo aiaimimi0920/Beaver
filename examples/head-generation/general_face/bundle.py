@@ -54,7 +54,7 @@ def build_request(intent, output_prefix, workspace=None):
         request = base.build_request(root)
     extra = ["general_base_export.glb", "general_face_export.glb", "controls.py",
              "prompt_contract.py", "postprocess_blender.py", "general_intent.json",
-             "general_manifest.json", "general_bundle.py", "glb_affine.py", "general_face_transported.glb"]
+             "general_manifest.json", "general_bundle.py", "glb_affine.py", "glb_node_affine.py", "general_face_transported.glb"]
     request["outputs"].extend({"path": out + name, "expectedSha256": None} for name in extra)
     declared = [entry["path"] for entry in request["outputs"]]
     source = (HERE / "controls.py").read_text()
@@ -65,12 +65,15 @@ def build_request(intent, output_prefix, workspace=None):
         + '\n_glb_module = types.ModuleType("general_face_glb_affine")\n'
         + 'sys.modules["general_face_glb_affine"] = _glb_module\n'
         + f'exec(compile({(HERE / "glb_affine.py").read_text()!r}, "glb_affine.py", "exec"), _glb_module.__dict__)\n'
+        + '\n_node_module = types.ModuleType("general_face_glb_node_affine")\n'
+        + 'sys.modules["general_face_glb_node_affine"] = _node_module\n'
+        + f'exec(compile({(HERE / "glb_node_affine.py").read_text()!r}, "glb_node_affine.py", "exec"), _node_module.__dict__)\n'
         + (HERE / "postprocess_blender.py").read_text()
         + f'\napply_general_face({config!r}, {pivot!r}, {out!r}, {declared!r})\n'
     )
     manifest = {}
     for name, local in [("controls.py", "controls.py"), ("prompt_contract.py", "prompt_contract.py"),
-                        ("postprocess_blender.py", "postprocess_blender.py"), ("general_bundle.py", "bundle.py"), ("glb_affine.py", "glb_affine.py")]:
+                        ("postprocess_blender.py", "postprocess_blender.py"), ("general_bundle.py", "bundle.py"), ("glb_affine.py", "glb_affine.py"), ("glb_node_affine.py", "glb_node_affine.py")]:
         source = (HERE / local).read_text()
         manifest[name] = hashlib.sha256(source.encode()).hexdigest()
         request["code"] += f'Path(beaver_output({(out + name)!r})).write_text({source!r})\n'

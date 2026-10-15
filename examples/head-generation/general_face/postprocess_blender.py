@@ -8,7 +8,9 @@ from general_face_controls import (
     transform_point, mouth_delta, inverse_transpose_normal, measure_profile, jacobian,
 )
 from glb_merge import merge_face
-from general_face_glb_affine import transport_glb, assert_blender_positions
+from general_face_glb_node_affine import (
+    RUNTIME_POLICY, transport_face_node, merge_runtime_face, assert_native_world_positions,
+)
 
 
 def frozen_hashes():
@@ -122,10 +124,10 @@ def apply_general_face(config, pivot, out, declared_paths):
     base_raw = (ROOT / BASE / "aster_head.glb").read_bytes()
     # Start from this job's freshly generated Face, never accepted final assets.
     fresh_face = Path(output("general_base_export.glb")).read_bytes()
-    transported = transport_glb(fresh_face, proportions, pivot)
-    position_agreement = assert_blender_positions(transported, tmp.read_bytes())
+    transported = transport_face_node(fresh_face, proportions, pivot, RUNTIME_POLICY)
+    position_agreement = assert_native_world_positions(fresh_face, tmp.read_bytes(), proportions, pivot)
     Path(output("general_face_transported.glb")).write_bytes(transported)
-    raw, merge_report = merge_face(base_raw, transported)
+    raw, merge_report = merge_runtime_face(base_raw, transported, merge_face, proportions, pivot, RUNTIME_POLICY)
     Path(output("aster_head.glb")).write_bytes(raw)
     bpy.ops.wm.open_mainfile(filepath=output("aster_head_editable.blend"), load_ui=False, use_scripts=False)
     frozen_editable = frozen_hashes()
@@ -145,7 +147,10 @@ def apply_general_face(config, pivot, out, declared_paths):
     report["new_glb_sha256"] = hashlib.sha256(raw).hexdigest()
     report["general_face"] = {
         "schema_version": 1, "intent": config, "pivot_blender_xyz": pivot,
-        "delivery_attribute_transport": "float32 accessor transport from same-job fresh Face export; Blender export retained as diagnostic",
+        "delivery_attribute_transport": "Unchanged same-job fresh Face streams with Face-only node affine after baseline engine morph interpolation",
+        "runtime_affine_policy": RUNTIME_POLICY,
+        "runtime_direction_reference": "Godot-imported same-job baseline, not raw GLB endpoint lengths discarded by importer packing",
+        "runtime_tangent_shader_limit": "Current Face shaders use normal matrix for tangent variables; active Face lighting and outline mode0 do not consume them. No general tangent-shader correctness claim.",
         "fresh_face_export_sha256": hashlib.sha256(fresh_face).hexdigest(),
         "transported_face_export_sha256": hashlib.sha256(transported).hexdigest(),
         "blender_position_agreement": position_agreement,

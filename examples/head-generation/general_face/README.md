@@ -60,12 +60,30 @@ Pure-math, aliasing, contract and packaging tests run without Blender:
 python -m unittest discover -s examples/head-generation/general_face -v
 ```
 
+### Current engine validation: 2026-10-15, node-affine policy
+
+Native run `c2858ee8-cb86-4c3c-9ba7-c9a2a95c71b9` passed 8 Godot/GUT tests
+and 338 assertions. All three profiles were checked against the actual imported
+same-job baseline at MouthOpen weights 0, 0.25, 0.5, 0.75, and 1, across every
+vertex. The native `morph_node_affine_report.json` records the imported arrays,
+relative node transforms, input hashes, and per-weight errors. The source passes
+27 pure tests. Fresh node-affine visual acceptance and GPU capture are still
+pending; these numerical engine checks do not establish either.
+
+The earlier 668 raw-stream correction failed actual engine-import probes despite
+passing source algebra checks: Godot normalizes shape-target direction endpoints,
+losing magnitudes needed by that representation. That failed result is retained
+as historical evidence, not relabeled as passing. The 669 node-affine policy
+supersedes it with the explicit affine-of-actual-imported-baseline contract below.
+It does not promise recovery of raw endpoint lengths already lost in import.
+
 ### Validation record: 2026-10-15 (before morph-interpolation correction)
 
 The native and visual evidence in this section predates the shared-base-scale
 morph-direction correction below. It does not validate the corrected native
-artifacts, whose regeneration and visual checks are pending. The corrected source
-passes 20 pure tests, including intermediate-weight direction checks.
+artifacts, whose regeneration and visual checks are pending. The current source additionally uses the node-affine runtime policy described
+below; earlier artifacts and their failures remain separate evidence. The
+current source passes 27 pure tests, including node/merge and direction checks.
 
 Three native generation jobs and three matching fresh SDF jobs completed with
 exit code 0. The real Godot/GUT run passed 7 tests and 234 assertions, including
@@ -113,15 +131,56 @@ Some inherited replacement lash cages have neither shape keys nor a
 be POINT-domain. A mesh with shape keys requires the delta; runtime Face always
 requires both Basis/MouthOpen and the delta, including the identity preset.
 
-## Precise GLB attribute transport
+## Runtime Face-node affine policy
+
+Runtime delivery now explicitly uses `face_node_affine_imported_baseline_v1`.
+`glb_node_affine.py` preserves every mesh/accessor/buffer byte from the same native
+job's fresh `general_base_export.glb`. It sets only the Face node to Godot scale
+S=diag(width,height,depth) and translation c−S*c, with c=(0,1.641,0). The original
+49 Body/Hair nodes, mesh records and binary prefix remain frozen. The merge wrapper
+explicitly propagates the Face transform because the legacy mesh-only merger
+does not copy incoming node transforms. Existing nonidentity Face frames, shared
+Face mesh instances, or unsupported runtime policies fail.
+
+Godot normal packing normalizes absolute shape-target directions and discards
+their lengths. Baking the affine into morph normal streams before import is
+therefore not sufficient, even when raw GLB interpolation is algebraically correct.
+The node policy instead applies S inverse transpose after the original imported
+normal interpolation. Since normalization is homogeneous, this preserves the
+affine direction of the engine-imported same-job baseline at every nonzero weight
+mixture. It does not claim exact preservation of raw GLB endpoint lengths already
+lost by baseline import. Baseline packing error and earlier raw-GLB failures remain
+separate diagnostics. Existing generated assets are not retroactively updated.
+
+The native runtime blend continues to hold transformed editable geometry; the
+GLB holds equivalent world geometry through a node affine. Strict paired neutral/
+MouthOpen position checks compare its mathematical world positions with the actual
+native Blender export. UVs and all original local streams are unchanged. Identity
+keeps the original Face-only GLB bytes exactly. Fresh proportion-aware SDF baking
+still happens once: positive diagonal node scaling preserves normalized world
+basis axes, so it does not double-apply the atlas's normal-space correction.
+
+Static integration audit: model validation accepts nonsingular affine transforms;
+GEOMETRY maintains local bounds and source world transforms; depth/auxiliary
+proxies use source global transforms, shadow proxies inherit the Face node, and
+outline mode 0 uses the model-view normal matrix. The current Face shaders apply
+the normal matrix to tangent variables too, rather than the mathematically correct
+forward tangent matrix. Active Face lighting and outline mode 0 do not consume
+those tangent variables. This policy is not a general tangent-shader fix; tangent
+shader consumers require separate validation or correction before being enabled.
+Native imported-baseline probes passed as recorded above; new visual acceptance
+and GPU capture remain pending.
+
+## Historical float32 accessor transport (diagnostic helper)
+
+The following helper remains available for strict mathematical and native-world
+position comparisons. It is no longer used as the runtime delivery representation.
 
 Blender re-encodes custom normals and regenerates tangents/morph normals during
-export. The diagnostic `general_face_export.glb` therefore remains separate from
-`general_face_transported.glb`, the delivery Face stream. The latter is an affine
-transport of `general_base_export.glb` generated earlier in the very same native
-job. It never reads accepted final geometry. The resulting Face is merged into
-the original body/hair GLB. The runtime blend still contains the native transformed
-geometry and shape keys; its shading serialization can differ from delivery GLB.
+export. The diagnostic `general_face_export.glb` remains separate from runtime
+`general_face_transported.glb`; the latter now uses the node policy above. Both
+originate from generation in the same native job, never accepted final geometry.
+The runtime blend retains native transformed geometry and shape keys.
 
 `glb_affine.py` reads float32 strided and sparse vector accessors, materializing
 implicit zero deltas. It transforms neutral positions, inverse-transpose unit
