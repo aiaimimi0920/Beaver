@@ -5,11 +5,19 @@ on:
       - 'examples/head-generation/**'
       - 'examples/head-review/**'
       - '.github/workflows/head-generation-example.yml'
+      - 'src/direct/preview.cjs'
+      - 'tests/head-preview.test.ts'
+      - 'package.json'
+      - 'package-lock.json'
   push:
     branches: [main]
     paths:
       - 'examples/head-generation/**'
       - '.github/workflows/head-generation-example.yml'
+      - 'src/direct/preview.cjs'
+      - 'tests/head-preview.test.ts'
+      - 'package.json'
+      - 'package-lock.json'
 permissions:
   contents: read
 jobs:
@@ -31,3 +39,14 @@ jobs:
       - run: python -m unittest discover -s examples/head-generation/general_face -p 'test_*.py'
       - run: python examples/head-generation/general_face/bundle.py --intent '{"preset":"soft_wide"}' --prefix assets/aster/general_face_ci/ --output /tmp/general-face.json
       - run: python examples/head-generation/general_face/sdf_bundle.py --intent '{"preset":"soft_wide"}' --prefix assets/aster/general_face_ci/ --output /tmp/general-face-sdf.json
+  preview-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci --ignore-scripts
+      - run: node --check src/direct/preview.cjs
+      - run: node --import tsx --test tests/head-preview.test.ts

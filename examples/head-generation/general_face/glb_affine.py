@@ -134,9 +134,12 @@ def transport_glb(raw, proportions, pivot_blender):
                         if semantic not in ('POSITION', 'NORMAL', 'TANGENT')}
     frozen_accessors.update(primitive['indices'] for primitive in primitives if 'indices' in primitive)
 
-    def direction(row, semantic):
+    def linear_direction(row, semantic):
         factors = tuple(1 / s for s in scales) if semantic == 'NORMAL' else scales
-        return unit(tuple(v * s for v, s in zip(row[:3], factors)))
+        return tuple(v * s for v, s in zip(row[:3], factors))
+
+    def direction(row, semantic):
+        return unit(linear_direction(row, semantic))
 
     def remember(index, semantic, rows):
         require(index not in frozen_accessors, "Transformed accessor aliases a preserved semantic")
@@ -170,9 +173,15 @@ def transport_glb(raw, proportions, pivot_blender):
             else:
                 mapped = []
                 for base, delta in zip(originals[semantic], rows):
-                    start = direction(base, semantic)
-                    end = direction(tuple(a + b for a, b in zip(base[:3], delta)), semantic)
-                    mapped.append(tuple(b - a for a, b in zip(start, end)))
+                    transformed_base = linear_direction(base, semantic)
+                    base_length = math.sqrt(sum(v * v for v in transformed_base))
+                    require(math.isfinite(base_length) and base_length > 1e-20, "Invalid direction")
+                    # Keep the existing endpoint validity guard, but never use
+                    # an independently normalized endpoint to form the delta.
+                    direction(tuple(a + b for a, b in zip(base[:3], delta)), semantic)
+                    mapped.append(tuple(v / base_length for v in linear_direction(delta, semantic)))
+                    # Base + w*delta is L(base + w*delta)/|L(base)|.
+                    # Runtime normalization therefore preserves every weight.
             remember(index, 'MORPH_' + semantic, mapped)
     # Validate the full supported geometry even for the byte-exact identity path.
     if scales == (1.0, 1.0, 1.0):

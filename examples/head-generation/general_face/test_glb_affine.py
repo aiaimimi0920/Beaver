@@ -98,7 +98,7 @@ class GlbAffineTests(unittest.TestCase):
             for base, delta, target_base, target_delta in zip(rows(base_id, width), rows(delta_id), rows(base_id, width, True), rows(delta_id, transformed=True)):
                 factors = tuple(1 / s for s in scales) if inverse else scales
                 expected = unit(tuple((a + d) * f for a, d, f in zip(base, delta, factors)))
-                for actual, correct in zip((a + d for a, d in zip(target_base, target_delta)), expected):
+                for actual, correct in zip(unit(tuple(a + d for a, d in zip(target_base, target_delta))), expected):
                     self.assertAlmostEqual(actual, correct, places=6)
                 self.assertAlmostEqual(sum(x * x for x in target_base[:3]), 1, places=6)
                 if width == 4:
@@ -113,6 +113,53 @@ class GlbAffineTests(unittest.TestCase):
         self.assertEqual(rows(4, transformed=True)[0], (0, 0, 0))
         self.assertEqual(rows(5, transformed=True)[0], (0, 0, 0))
         self.assertEqual(rows(6, transformed=True)[0], (0, 0, 0))
+
+    def test_direction_interpolation_uses_shared_base_scale(self):
+        for sparse in (False, True):
+            doc, binary = read_glb(fixture())
+            binary = bytearray(binary)
+            index_view = doc['accessors'][4]['sparse']['indices']['bufferView']
+            # Deliberately nonunit endpoints distinguish shared-scale transport
+            # from the old independently normalized endpoint implementation.
+            for index, delta in [(5, (.4, -.2, .7)), (6, (.3, .8, -.4))]:
+                if sparse:
+                    binary.extend(b'\0' * (-len(binary) % 4))
+                    view_id = len(doc['bufferViews'])
+                    doc['bufferViews'].append({'buffer': 0, 'byteOffset': len(binary), 'byteLength': 12})
+                    binary.extend(struct.pack('<fff', *delta))
+                    doc['accessors'][index].pop('bufferView')
+                    doc['accessors'][index]['sparse'] = {
+                        'count': 1, 'indices': {'bufferView': index_view, 'componentType': 5121},
+                        'values': {'bufferView': view_id}}
+                else:
+                    offset = doc['bufferViews'][doc['accessors'][index]['bufferView']]['byteOffset']
+                    struct.pack_into('<fff', binary, offset + 12, *delta)
+            source = write_glb(doc, binary)
+            old, oldbin = read_glb(source)
+            target = transport_glb(source, self.config, self.pivot)
+            new, newbin = read_glb(target)
+            scales = (self.config['width'], self.config['height'], self.config['depth'])
+            for base_id, delta_id, dimensions, inverse in [(1, 5, 3, True), (2, 6, 4, False)]:
+                bases = accessor_values(old, oldbin, base_id, dimensions)
+                deltas = accessor_values(old, oldbin, delta_id, 3)
+                new_bases = accessor_values(new, newbin, base_id, dimensions)
+                new_deltas = accessor_values(new, newbin, delta_id, 3)
+                factors = tuple(1 / value for value in scales) if inverse else scales
+                endpoint = tuple(a + b for a, b in zip(bases[1], deltas[1]))
+                self.assertGreater(abs(math.sqrt(sum(v * v for v in endpoint)) - 1), .1)
+                for base, delta, mapped_base, mapped_delta in zip(bases, deltas, new_bases, new_deltas):
+                    length = math.sqrt(sum((a * f) ** 2 for a, f in zip(base, factors)))
+                    for actual, expected in zip(mapped_delta, (d * f / length for d, f in zip(delta, factors))):
+                        self.assertAlmostEqual(actual, expected, places=6)
+                    for weight in (0, .25, .5, .75, 1):
+                        expected = unit(tuple((a + weight * d) * f for a, d, f in zip(base, delta, factors)))
+                        actual = unit(tuple(a + weight * d for a, d in zip(mapped_base, mapped_delta)))
+                        self.assertLess(max(abs(a - b) for a, b in zip(actual, expected)), 1e-7)
+                    if dimensions == 4:
+                        self.assertEqual(mapped_base[3], base[3])
+                self.assertEqual(new_deltas[0], (0, 0, 0))
+                self.assertEqual(new_deltas[2], (0, 0, 0))
+            self.assertIs(transport_glb(source, {}, self.pivot), source)
 
     def test_invalid_layout_frames_semantics_and_sparse(self):
         raw = fixture()

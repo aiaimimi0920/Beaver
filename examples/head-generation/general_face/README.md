@@ -60,7 +60,12 @@ Pure-math, aliasing, contract and packaging tests run without Blender:
 python -m unittest discover -s examples/head-generation/general_face -v
 ```
 
-### Validation record: 2026-10-15
+### Validation record: 2026-10-15 (before morph-interpolation correction)
+
+The native and visual evidence in this section predates the shared-base-scale
+morph-direction correction below. It does not validate the corrected native
+artifacts, whose regeneration and visual checks are pending. The corrected source
+passes 20 pure tests, including intermediate-weight direction checks.
 
 Three native generation jobs and three matching fresh SDF jobs completed with
 exit code 0. The real Godot/GUT run passed 7 tests and 234 assertions, including
@@ -121,8 +126,20 @@ geometry and shape keys; its shading serialization can differ from delivery GLB.
 `glb_affine.py` reads float32 strided and sparse vector accessors, materializing
 implicit zero deltas. It transforms neutral positions, inverse-transpose unit
 normals, forward-transformed unit tangents (handedness unchanged), linear morph
-position deltas, and transformed direction endpoint differences for morph normals
-and tangents. Changed accessor bounds are recalculated from serialized float32
+position deltas, and linearly transformed direction deltas divided by the same
+transformed-base length used to normalize each neutral normal or tangent.
+For direction operator L, base b and delta d, delivery stores L(b)/|L(b)| and
+L(d)/|L(b)|. Thus normalizing their weighted sum yields normalize(L(b + w*d))
+at every weight, including 0, 0.25, 0.5, 0.75 and 1. Independently normalizing the
+morph endpoint before constructing its delta would break intermediate weights
+and is deliberately avoided. Nonunit endpoint vectors are allowed; zero direction
+endpoints are rejected. A zero mixed direction has no defined normalized direction.
+The runtime must add the raw weighted direction deltas before normalizing the
+result; it must not normalize deltas or endpoint vectors independently. Current
+Face shaders normalize the incoming morphed NORMAL for world-space lighting;
+engine import/runtime blend order and tangent handling still require native
+verification. Identity leaves every original byte, including morph deltas, intact.
+This source correction does not update previously generated native assets. Changed accessor bounds are recalculated from serialized float32
 values. Indices, UV/color streams, embedded image data and original binary prefix
 are untouched. Identity returns the original bytes exactly after validation.
 Unsupported node transforms, skinning, animation, geometry extensions, semantics,
