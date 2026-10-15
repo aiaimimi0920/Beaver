@@ -132,10 +132,11 @@ $("history").onclick = () =>
     window.beaver.call("external.history", { taskId: $("task").value }),
   ).catch(() => {});
 $("interrupt").onclick = () =>
-  action(() => {
+  action(async () => {
     const selectedTask = $("task").value;
     if (!selectedTask) throw Error("先选择要中止的任务");
-    return window.beaver.call("task.interrupt", { id: selectedTask });
+    await window.beaver.call("task.interrupt", { id: selectedTask });
+    return refresh();
   }).catch(() => {});
 $("create").onclick = () =>
   action(async () => {

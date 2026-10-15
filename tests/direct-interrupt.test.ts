@@ -13,6 +13,13 @@ function fixture(call: (method: string, args: unknown) => Promise<unknown>) {
       value: "",
       textContent: "",
       disabled: false,
+      children: [] as unknown[],
+      replaceChildren() {
+        this.children = [];
+      },
+      append(child: unknown) {
+        this.children.push(child);
+      },
     });
   }
   const buttons = [...html.matchAll(/<button\s+id="([^"]+)"/g)].map((match) =>
@@ -21,6 +28,7 @@ function fixture(call: (method: string, args: unknown) => Promise<unknown>) {
   elements.get("role").value = "user";
   vm.runInNewContext(renderer, {
     document: {
+      createElement: () => ({ value: "", textContent: "" }),
       getElementById: (id: string) => {
         assert.ok(elements.has(id), `Missing DOM element ${id}`);
         return elements.get(id);
@@ -41,7 +49,14 @@ test("interrupt sends only selected task ID and suppresses busy duplicate clicks
   const pending = new Promise((resolve) => (finish = resolve));
   const elements = fixture(async (method, args) => {
     calls.push([method, args]);
-    return pending;
+    if (method === "task.interrupt") return pending;
+    assert.equal(method, "state");
+    return {
+      tasks: [
+        { id: "selected-task", title: "Selected", status: "interrupted" },
+        { id: "other-task", title: "Other", status: "queued" },
+      ],
+    };
   });
   elements.get("task").value = "selected-task";
   const first = elements.get("interrupt").onclick();
@@ -51,10 +66,16 @@ test("interrupt sends only selected task ID and suppresses busy duplicate clicks
   assert.deepEqual(JSON.parse(JSON.stringify(calls)), [
     ["task.interrupt", { id: "selected-task" }],
   ]);
-  finish({ status: "interrupted" });
+  finish(null);
   await first;
   assert.equal(elements.get("interrupt").disabled, false);
   assert.match(elements.get("result").textContent, /interrupted/);
+  assert.equal(calls.length, 2);
+  assert.equal(
+    elements.get("task").children[0].textContent,
+    "Selected · interrupted",
+  );
+  assert.equal(elements.get("task").value, "other-task");
 });
 
 test("interrupt rejects empty selection without calling Core", async () => {
