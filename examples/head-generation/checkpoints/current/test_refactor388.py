@@ -1,10 +1,11 @@
 import ast,hashlib,json,unittest
 from pathlib import Path
+from ast_contract import canonical_function_dump
 class Refactor388(unittest.TestCase):
  def test_moved_functions_are_identical(self):
   p=Path(__file__).parent
-  expected=json.loads((p/'thin-ribbon-refactor-contract388.json').read_text())
-  actual={n.name:hashlib.sha256(ast.dump(n,include_attributes=False).encode()).hexdigest() for n in ast.parse((p/'thin_ribbon.py').read_text()).body if isinstance(n,ast.FunctionDef)}
+  expected=json.loads((p/'thin-ribbon-refactor-contract388.json').read_text())['canonical_sha256']
+  actual={n.name:hashlib.sha256(canonical_function_dump(ast.dump(n,include_attributes=False)).encode()).hexdigest() for n in ast.parse((p/'thin_ribbon.py').read_text()).body if isinstance(n,ast.FunctionDef)}
   self.assertEqual(actual,expected)
  def test_modules_stay_below_soft_limit_and_report_active_profile(self):
   p=Path(__file__).parent
