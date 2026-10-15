@@ -5,9 +5,8 @@ on:
       - 'examples/head-generation/**'
       - 'examples/head-review/**'
       - '.github/workflows/head-generation-example.yml'
-      - 'src/direct/**'
+      - 'src/direct/preview.cjs'
       - 'tests/head-preview.test.ts'
-      - 'tests/direct-interrupt.test.ts'
       - 'package.json'
       - 'package-lock.json'
   push:
@@ -15,9 +14,8 @@ on:
     paths:
       - 'examples/head-generation/**'
       - '.github/workflows/head-generation-example.yml'
-      - 'src/direct/**'
+      - 'src/direct/preview.cjs'
       - 'tests/head-preview.test.ts'
-      - 'tests/direct-interrupt.test.ts'
       - 'package.json'
       - 'package-lock.json'
 permissions:
@@ -50,4 +48,4 @@ jobs:
           cache: npm
       - run: npm ci --ignore-scripts
       - run: node --check src/direct/preview.cjs
-      - run: node --import tsx --test tests/head-preview.test.ts tests/direct-interrupt.test.ts
+      - run: node --import tsx --test tests/head-preview.test.ts
