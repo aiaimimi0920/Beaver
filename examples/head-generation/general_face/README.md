@@ -52,7 +52,7 @@ is unsupported. Adapted bake source and all helper sources are retained. Existin
 outputs receive optimistic hashes when `--workspace` is supplied; use the current
 project snapshot for the SDF step, which updates definition and generation report.
 
-## Scope and pending acceptance
+## Scope and sampled acceptance
 
 Pure-math, aliasing, contract and packaging tests run without Blender:
 
@@ -60,14 +60,35 @@ Pure-math, aliasing, contract and packaging tests run without Blender:
 python -m unittest discover -s examples/head-generation/general_face -v
 ```
 
-Native Blender execution, actual object frames/custom-normal APIs, editable and
-runtime visual inspection, neck/hair fit, mouth clearance, GLB round-trip and
-front/side/back light-sweep checks are still required. Global scaling can move
-face boundaries relative to the unchanged body and hair. Positive determinant
-prevents affine folds but does not guarantee those external clearances.
+### Validation record: 2026-10-15
+
+Three native generation jobs and three matching fresh SDF jobs completed with
+exit code 0. The real Godot/GUT run passed 7 tests and 234 assertions, including
+runtime dimensions, mouth keys, UV2, and SDF/report hashes. Pure regressions
+passed: 19 general-face, 106 head-generation, 362 current-checkpoint, and 9 SDF
+tests. Three preview path/containment tests also passed.
+
+Native MiDot visual inspection compared both `soft_wide` and `slender` against
+the actual generated baseline: 47 paired captures per variant, 94 total. Samples
+covered eight yaw directions in render/white/wireframe modes, pitch 55 degrees,
+MouthOpen 0/0.25/0.5/1 at yaw 0/45/90 degrees, and four light directions at yaw
+0/45 degrees. No new facial silhouette, lash attachment, mouth, or lighting
+regression was observed in these samples.
+
+This is scoped acceptance of the bounded head-only experiment, not whole-character
+acceptance or exhaustive clearance proof. Unchanged hair visibly intersects the
+forehead, and the open-back face shell is inherited. Arbitrary local-feature
+editing and natural-language identity generation remain unsupported. Global
+scaling can move face boundaries relative to the unchanged body and hair;
+positive determinant prevents affine folds but does not guarantee those external
+clearances. Editable final-surface inspection and full-character fit require
+separate acceptance when those are delivery requirements.
+
 Legacy report geometry measurements describe the pre-transform generation;
 `general_face.runtime_measurements` and editable measurements describe new bounds.
-The report deliberately leaves visual approval false. This module changes no
+Generated reports deliberately leave visual approval false: job execution cannot
+approve its own appearance. This dated record captures the separate sampled
+visual review and does not change that generator behavior. This module changes no
 upstream checkpoint or NPR source and performs no commit, deployment or release.
 
 The inherited editable cage is saved before 617 restoration and final runtime
@@ -78,7 +99,8 @@ and conservative transported bounds sigma_min × baseline. Requested margins
 (including 0.35 mm) are not final measured minima. Historical samples may precede
 final refinements; bounds are conditional on those same face sets and pose, and
 do not cover unchanged body/hair. Actual mesh axis ratios and finite custom
-normals are asserted. MouthOpen 0, 0.25, 0.5 and 1 still require validation.
+normals are asserted. MouthOpen 0, 0.25, 0.5 and 1 were visually sampled as
+described above; these samples do not prove exact clearance at every pose.
 
 Some inherited replacement lash cages have neither shape keys nor a
 `MouthOpenDelta` attribute. Their absence is preserved and reported as
@@ -113,3 +135,14 @@ normal checks. Sharing a transformed accessor with a preserved color, UV or inde
 semantic is explicitly rejected. Tests also cover
 sparse normal/tangent deltas and rejection of invalid layouts/geometry. This
 format-level guard does not replace native visual or topology acceptance.
+
+### Cross-run tangent limitation
+
+Same-job geometric, normal, and tangent affine transport passes, as do the checked
+non-tangent neutral invariants. Strict cross-run Face tangent equality still
+**fails** at 1–2 upstream fresh-export vertices, with a maximum observed difference
+of approximately 1.0002e-4. Do not claim bitwise reproducibility across independent
+Blender exports. The current active Face shader, with outline mode 0 and no normal
+maps, does not depend on these tangents. This conclusion does not cover future
+normal-map use or other tangent-dependent shader/outline modes. The discrepancy
+remains documented rather than being hidden by a relaxed equality check.
