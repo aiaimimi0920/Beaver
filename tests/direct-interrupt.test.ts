@@ -9,14 +9,14 @@ const renderer = readFileSync("src/direct/renderer.js", "utf8");
 function fixture(call: (method: string, args: unknown) => Promise<unknown>) {
   const elements = new Map<string, any>();
   for (const match of html.matchAll(/id="([^"]+)"/g)) {
-    elements.set(match[1], {
+    elements.set(match[1]!, {
       value: "",
       textContent: "",
       disabled: false,
     });
   }
   const buttons = [...html.matchAll(/<button\s+id="([^"]+)"/g)].map((match) =>
-    elements.get(match[1]),
+    elements.get(match[1]!),
   );
   elements.get("role").value = "user";
   vm.runInNewContext(renderer, {
