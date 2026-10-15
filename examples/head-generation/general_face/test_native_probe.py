@@ -6,11 +6,11 @@ import sys
 import tempfile
 import unittest
 from definition_guard import FORBIDDEN_PROFILES, require_head_only_definition
-from native_probe import build_manifest, CONTRACT, SCHEMA
+from native_probe import build_manifest, CONTRACT, SCHEMA, streams
 from test_glb_affine import fixture
 from glb_node_affine import transport_face_node, RUNTIME_POLICY
 from bundle import build_request
-from glb_affine import transport_glb
+from glb_affine import transport_glb, read_glb, write_glb
 import test_sdf_bundle
 import sdf_bundle
 
@@ -25,6 +25,23 @@ class NativeProbeTests(unittest.TestCase):
         request = build_request({'preset': 'baseline'}, 'assets/aster/general_face_test/')
         self.assertIn('require_head_only_definition(definition)', request['code'])
         self.assertTrue(any(p['path'].endswith('/definition_guard.py') for p in request['outputs']))
+
+    def test_normalized_color_bytes_and_semantics(self):
+        doc, binary = read_glb(fixture())
+        offset = len(binary)
+        color = bytes([0, 127, 255, 255, 20, 40, 60, 255, 255, 0, 128, 255])
+        doc['bufferViews'].append({'buffer': 0, 'byteOffset': offset, 'byteLength': len(color)})
+        doc['accessors'].append({'bufferView': len(doc['bufferViews']) - 1,
+                                 'componentType': 5121, 'type': 'VEC4', 'normalized': True, 'count': 3})
+        doc['meshes'][0]['primitives'][0]['attributes']['COLOR_0'] = len(doc['accessors']) - 1
+        raw = write_glb(doc, binary + color)
+        expected = streams(raw)
+        self.assertEqual(streams(transport_face_node(raw, {'width': 1.06}, (0, 0, 1.641), RUNTIME_POLICY)), expected)
+        changed = bytearray(binary + color)
+        changed[offset + 1] += 1
+        self.assertNotEqual(streams(write_glb(doc, changed)), expected)
+        doc['accessors'][-1]['normalized'] = False
+        self.assertNotEqual(streams(write_glb(doc, binary + color)), expected)
 
     def test_sdf_rejects_optional_profiles(self):
         with tempfile.TemporaryDirectory() as directory:

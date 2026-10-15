@@ -6,7 +6,7 @@ from pathlib import Path
 import re
 from controls import validate
 from definition_guard import require_head_only_definition
-from glb_affine import read_glb, read_rows, accessor_values, require
+from glb_affine import read_glb, read_rows, require
 
 SCHEMA = "native-node-affine-probe-v1"
 CONTRACT = "affine-of-actual-imported-same-job-baseline"
@@ -17,15 +17,46 @@ def sha(path):
 
 
 def values(doc, binary, index):
+    """Canonical raw component bytes plus semantics; ignore only storage layout.
+
+    Normalized integers must retain both their bits and normalization flag.
+    Float bytes also retain signed zero, with no rounding or tolerance comparison.
+    Sparse implicit entries expand to zero bytes before exact comparison.
+    """
+    require(isinstance(index, int) and 0 <= index < len(doc['accessors']), 'Invalid accessor')
     accessor = doc['accessors'][index]
-    kind = accessor['type']
-    if kind in ('VEC2', 'VEC3', 'VEC4'):
-        return accessor_values(doc, binary, index, int(kind[-1]))
-    require(kind == 'SCALAR' and accessor['componentType'] in (5121, 5123, 5125)
-            and not accessor.get('normalized') and not accessor.get('sparse')
-            and not accessor.get('extensions'), 'Unsupported index accessor')
-    return read_rows(doc, binary, accessor['bufferView'], accessor.get('byteOffset', 0),
-                     accessor['count'], {5121: '<B', 5123: '<H', 5125: '<I'}[accessor['componentType']])
+    kind, component = accessor['type'], accessor['componentType']
+    widths = {'SCALAR': 1, 'VEC2': 2, 'VEC3': 3, 'VEC4': 4}
+    sizes = {5120: 1, 5121: 1, 5122: 2, 5123: 2, 5125: 4, 5126: 4}
+    require(kind in widths and component in sizes and not accessor.get('extensions'),
+            'Unsupported accessor format')
+    normalized = accessor.get('normalized', False)
+    require(isinstance(normalized, bool) and (not normalized or component in (5120, 5121, 5122, 5123)),
+            'Invalid accessor normalization')
+    count, size = accessor['count'], widths[kind] * sizes[component]
+    require(isinstance(count, int) and count > 0, 'Invalid accessor count')
+
+    def raw_rows(view, offset, length, packed=False):
+        require((doc['bufferViews'][view].get('byteOffset', 0) + offset) % sizes[component] == 0,
+                'Misaligned component bytes')
+        return [bytes(r) for r in read_rows(doc, binary, view, offset, length,
+                                          '<' + 'B' * size, packed=packed)]
+
+    rows = (raw_rows(accessor['bufferView'], accessor.get('byteOffset', 0), count)
+            if 'bufferView' in accessor else [bytes(size)] * count)
+    if 'sparse' in accessor:
+        sparse = accessor['sparse']
+        require(not sparse.get('extensions') and 0 < sparse['count'] <= count, 'Invalid sparse accessor')
+        indices, replacements = sparse['indices'], sparse['values']
+        require(indices['componentType'] in (5121, 5123, 5125), 'Invalid sparse index type')
+        ids = [r[0] for r in read_rows(doc, binary, indices['bufferView'], indices.get('byteOffset', 0),
+                                     sparse['count'], {5121: '<B', 5123: '<H', 5125: '<I'}[indices['componentType']],
+                                     packed=True)]
+        require(ids == sorted(set(ids)) and ids[-1] < count, 'Invalid sparse indices')
+        for idx, row in zip(ids, raw_rows(replacements['bufferView'], replacements.get('byteOffset', 0),
+                                         sparse['count'], packed=True)):
+            rows[idx] = row
+    return kind, component, normalized, rows
 
 
 def streams(raw):
