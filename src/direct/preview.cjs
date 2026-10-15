@@ -20,7 +20,8 @@ class HeadPreview {
       throw Error("Preview workspace outside project root");
     if (
       typeof definition !== "string" ||
-      !/^assets\/aster\/head_recovery_[0-9]+\/aster_definition\.tres$/.test(
+      definition.trim() !== definition ||
+      !/^assets\/aster\/(?:head_recovery_[0-9]+|general_face_[A-Za-z0-9_]+)\/aster_definition\.tres$/.test(
         definition,
       )
     )
