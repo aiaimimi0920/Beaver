@@ -3,6 +3,7 @@ on:
   pull_request:
     paths:
       - "examples/head-generation/**"
+      - "resources/packages/npr-characters/addons/npr_character_frame/.ci_script/tools/sdf360/**"
       - "examples/head-review/**"
       - ".github/workflows/head-generation-example.yml"
       - "src/direct/preview.cjs"
@@ -13,6 +14,7 @@ on:
     branches: [main]
     paths:
       - "examples/head-generation/**"
+      - "resources/packages/npr-characters/addons/npr_character_frame/.ci_script/tools/sdf360/**"
       - ".github/workflows/head-generation-example.yml"
       - "src/direct/preview.cjs"
       - "tests/head-preview.test.ts"

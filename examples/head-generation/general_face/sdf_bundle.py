@@ -5,6 +5,7 @@ import json
 from pathlib import Path
 from bundle import HERE, RECIPE, validate_prefix, replace_once
 from prompt_contract import select_intent
+from definition_guard import require_head_only_definition
 
 NPR = HERE.parents[2] / "resources/packages/npr-characters/addons/npr_character_frame/.ci_script/tools/sdf360"
 
@@ -40,12 +41,16 @@ def build_request(intent, output_prefix, workspace):
     missing = [path for path in required if not (root / path).is_file()]
     if missing:
         raise ValueError("SDF workspace is missing required generation inputs: " + ", ".join(missing))
+    require_head_only_definition((root / out / "aster_definition.tres").read_text())
     style = json.loads((RECIPE / "face_style.json").read_text())
     sources = {"face": (RECIPE / "face.py").read_text(),
                "distance_field": (NPR / "distance_field.py").read_text(),
                "definition_output": (NPR / "definition_output.py").read_text()}
     bake = adapted_bake(config, out)
     code = 'import sys, types, json, hashlib\nfrom pathlib import Path\n'
+    guard_source = (HERE / "definition_guard.py").read_text()
+    code += f'exec(compile({guard_source!r}, "definition_guard.py", "exec"))\n'
+    code += f'require_head_only_definition(Path(beaver_input({(out + "aster_definition.tres")!r})).read_text())\n'
     code += f'_general_report_path = Path(beaver_input({(out + "generation_report.json")!r}))\n'
     code += '_general_report = json.loads(_general_report_path.read_text())\n'
     code += f'assert _general_report["general_face"]["intent"] == {config!r}, "Geometry/atlas intent mismatch"\n'
@@ -57,7 +62,7 @@ def build_request(intent, output_prefix, workspace):
     code += f'\n_general_report["general_face"]["sdf_status"] = "fresh proportion-aware atlas baked; visual validation pending"\n'
     code += '_general_report["general_face"]["sdf_atlas_sha256"] = hashlib.sha256(Path(beaver_output(OUT + "face_sdf360.png")).read_bytes()).hexdigest()\n'
     code += f'Path(beaver_output({(out + "generation_report.json")!r})).write_text(json.dumps(_general_report, indent=2))\n'
-    artifacts = {"bake.py": bake, "sdf_bundle.py": (HERE / "sdf_bundle.py").read_text()}
+    artifacts = {"definition_guard.py": guard_source, "bake.py": bake, "sdf_bundle.py": (HERE / "sdf_bundle.py").read_text()}
     artifacts.update({name + ".py": source for name, source in sources.items()})
     paths = [out + "sdf/face_sdf360.png", out + "sdf/bake_report.json",
              out + "aster_definition.tres", out + "generation_report.json"]

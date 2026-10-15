@@ -67,8 +67,8 @@ and 338 assertions. All three profiles were checked against the actual imported
 same-job baseline at MouthOpen weights 0, 0.25, 0.5, 0.75, and 1, across every
 vertex. The native `morph_node_affine_report.json` records the imported arrays,
 relative node transforms, input hashes, and per-weight errors. The source passes
-27 pure tests. Fresh node-affine visual acceptance and GPU capture are still
-pending; these numerical engine checks do not establish either.
+27 pure tests. Fresh node-affine visual acceptance is recorded below. These numerical checks
+are engine-array evidence, not a GPU-normal capture.
 
 The earlier 668 raw-stream correction failed actual engine-import probes despite
 passing source algebra checks: Godot normalizes shape-target direction endpoints,
@@ -76,6 +76,28 @@ losing magnitudes needed by that representation. That failed result is retained
 as historical evidence, not relabeled as passing. The 669 node-affine policy
 supersedes it with the explicit affine-of-actual-imported-baseline contract below.
 It does not promise recovery of raw endpoint lengths already lost in import.
+
+### Final bounded visual acceptance: 2026-10-15
+
+Final native run `4599e539-a23b-4d1e-b1ae-4524e0322b3b` passed 8 tests and
+356 assertions, including explicit absence of optional performance/FaceRig
+profiles and eye layers. The three native imported-baseline/node-affine cases
+remained passing. A preceding visual validation run
+`3c08a0b7-3da7-4b77-b4da-11d9cd88f9ce` also passed 8 tests/356 assertions.
+
+Fresh 669 baseline, soft-wide and slender artifacts were used for visual review.
+Each variant has 47 indexed paired captures (94 total), covering eight yaw
+angles in render/white/wireframe modes, pitch 55 degrees, MouthOpen weights
+0/0.25/0.5/0.75/1 at yaw 0/45/90 degrees, and four light directions at yaw 0/45.
+No new sampled facial silhouette, lash attachment, mouth or lighting defect was
+observed relative to the freshly generated baseline. Actual rendered captures
+were inspected; no claim of a separate GPU-normal capture is made.
+
+Acceptance covers the explicit head-only review path and direct imported
+MouthOpen use. Full wardrobe/performance-driven morph rebuilding and optional
+FaceRig eye/lid layers are unsupported by this example. Unchanged hair remains
+outside head-only acceptance, including visible forehead intersection, and the
+open-back face shell is inherited. The samples are not exhaustive clearance proof.
 
 ### Validation record: 2026-10-15 (before morph-interpolation correction)
 
@@ -168,8 +190,8 @@ the normal matrix to tangent variables too, rather than the mathematically corre
 forward tangent matrix. Active Face lighting and outline mode 0 do not consume
 those tangent variables. This policy is not a general tangent-shader fix; tangent
 shader consumers require separate validation or correction before being enabled.
-Native imported-baseline probes passed as recorded above; new visual acceptance
-and GPU capture remain pending.
+Native imported-baseline probes and sampled head-only visuals passed as recorded
+above. Direct GPU-normal capture was not performed.
 
 ## Historical float32 accessor transport (diagnostic helper)
 
@@ -229,3 +251,36 @@ workspace argument and rejects missing inputs before emitting a request. Existin
 definition/report outputs always carry their current SHA-256; no null-hash overwrite
 fallback exists. CLI smoke tests use an isolated temporary input fixture, compile
 the resulting code without executing it, and remove all fixture/request artifacts.
+
+## Fail-fast scope guard and reusable native regression
+
+This bounded example supports the head-only imported MouthOpen path. Generation
+and SDF packaging reject explicit `face_motion_profile`, `face_atlas_profile`,
+`eye_geometry_profile`, and `performance_data_path` assignments, including null.
+Full-performance morph replacement and separately authored eye/lid geometry are
+outside this contract; the node-affine policy is not general compatibility for
+those optional systems.
+
+Build a hash-bound manifest from current generated outputs, repeating `--case`
+for additional profiles:
+
+```sh
+python examples/head-generation/general_face/native_probe.py \
+  --case soft /path/to/generated/output res://assets/aster/general_face_soft \
+  --output node_affine_probe.json
+```
+
+Stage the manifest at `res://tests/node_affine_probe.json` and the retained
+`native/test_morph_node_affine.gd` through an authorized Beaver native validation
+request in the NPR/GUT project. Do not launch Godot directly. The probe compares
+actual imports of the same-job baseline and final character at weights
+0/0.25/0.5/0.75/1, requires exact local arrays before vertex correspondence, then
+checks affine world positions and normals. It binds definition, intent, baseline,
+and final model hashes and checks the supported profile scope.
+
+CPU unittest discovery validates fixtures, schema, guards and CLI packaging only;
+it does not execute Godot or establish native acceptance. The retained reusable
+probe has extra schema/hash/scope checks beyond the historical executed probe;
+its own native execution must be recorded separately. The current 30 pure tests
+pass. No generated models, fixture requests or local acceptance paths are needed
+by these reusable source files.

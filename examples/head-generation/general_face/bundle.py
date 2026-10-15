@@ -46,6 +46,12 @@ def build_request(intent, output_prefix, workspace=None):
         'tmp = Path(beaver_output(OUT + "aster_head.glb")).parent / "runtime_new.glb"',
         'tmp = Path(beaver_output(OUT + "general_base_export.glb"))')
     pipeline = replace_once(pipeline, 'tmp.unlink()', '# Retain declared fresh face-only export.')
+    guard_source = (HERE / "definition_guard.py").read_text()
+    pipeline = replace_once(pipeline,
+        'Path(beaver_output(OUT + "aster_definition.tres")).write_text(definition)',
+        f'exec(compile({guard_source!r}, "definition_guard.py", "exec"))\n'
+        + 'require_head_only_definition(definition)\n'
+        + 'Path(beaver_output(OUT + "aster_definition.tres")).write_text(definition)')
     with tempfile.TemporaryDirectory() as directory:
         root = Path(directory)
         for name in base.SOURCE_FILES:
@@ -54,7 +60,7 @@ def build_request(intent, output_prefix, workspace=None):
         request = base.build_request(root)
     extra = ["general_base_export.glb", "general_face_export.glb", "controls.py",
              "prompt_contract.py", "postprocess_blender.py", "general_intent.json",
-             "general_manifest.json", "general_bundle.py", "glb_affine.py", "glb_node_affine.py", "general_face_transported.glb"]
+             "general_manifest.json", "general_bundle.py", "definition_guard.py", "glb_affine.py", "glb_node_affine.py", "general_face_transported.glb"]
     request["outputs"].extend({"path": out + name, "expectedSha256": None} for name in extra)
     declared = [entry["path"] for entry in request["outputs"]]
     source = (HERE / "controls.py").read_text()
@@ -72,7 +78,7 @@ def build_request(intent, output_prefix, workspace=None):
         + f'\napply_general_face({config!r}, {pivot!r}, {out!r}, {declared!r})\n'
     )
     manifest = {}
-    for name, local in [("controls.py", "controls.py"), ("prompt_contract.py", "prompt_contract.py"),
+    for name, local in [("definition_guard.py", "definition_guard.py"), ("controls.py", "controls.py"), ("prompt_contract.py", "prompt_contract.py"),
                         ("postprocess_blender.py", "postprocess_blender.py"), ("general_bundle.py", "bundle.py"), ("glb_affine.py", "glb_affine.py"), ("glb_node_affine.py", "glb_node_affine.py")]:
         source = (HERE / local).read_text()
         manifest[name] = hashlib.sha256(source.encode()).hexdigest()
