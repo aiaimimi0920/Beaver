@@ -171,13 +171,17 @@ helper inside the preflight JSON.
 The separate opt-in `emerald_layered` profile retains the original
 `clean_emerald` profile unchanged. It moves the coupled iris layers farther
 behind the lid, enlarges the hidden pocket support, increases eye contour
-sampling, and uses restrained submillimeter short-leaf depth relief.
+sampling, and uses restrained submillimeter short-leaf depth relief. This broader art
+profile also reduces nose-plane pigment strength and footprint; it does not
+change nose geometry. Both generated scope fields explicitly report that
+pigment change, so it must not be described as an eye-only image ablation.
 `emerald-layered-eyes.json` is the explicit numeric eye-control example.
 
 The `short_upper_tuft` control defaults to zero. Enabling it requires
 `supplemental_lashes=0` and `lash_contour_follow=1`; it derives one tapered
 child outline from the adapted main-band rails and retains only that optional
-child. Every vertex in its root column must remain within 0.8 mm of the actual
+child. Bounded depth relief is applied by this control even when used directly
+without a facial style profile. Every vertex in its root column must remain within 0.8 mm of the actual
 parent surface after fitting. Existing closed-volume, front-normal and main
 attachment checks remain active. This bounded root check is not an all-surface
 collision proof.

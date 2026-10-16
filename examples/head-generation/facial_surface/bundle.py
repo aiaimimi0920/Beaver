@@ -135,7 +135,15 @@ def depth(x, y):"""
     preamble += f'exec(compile({module!r}, "facial_surface_runtime.py", "exec"), _facial.__dict__)\n'
     preamble += f"_facial.DATA = {data!r}\n_facial.REVIEWED_BOUND = {reviewed_support_bound_m!r}\n"
     request["code"] = preamble + request["code"]
+    profile_scope = (
+        "Layered eye art direction plus reduced nose-plane pigment; nose geometry unchanged"
+        if style_profile == "emerald_layered"
+        else "Inherited or clean eye art direction"
+    )
+    if style_profile == "emerald_layered":
+        request["code"] += f'report["semantic_eyes"]["scope"] = {profile_scope!r}\n'
     report.update(
+        style_profile_scope=profile_scope,
         parameters=data["parameters"],
         style_profile=style_profile,
         reviewed_support_bound_m=reviewed_support_bound_m,

@@ -211,6 +211,14 @@ def adapt_style(original, request):
             for t in [r[0]]
         ]
     if p["short_upper_tuft"]:
+        # The control is safe independently of the optional facial art profile.
+        style.update(
+            accent_tuft_flare_m=0.0006,
+            accent_tuft_free_bow_m=0.0003,
+            accent_tuft_rear_scoop_m=0.0004,
+            accent_tuft_root_cover_m=0.00015,
+            accent_tuft_mid_recede_m=0.00015,
+        )
         rails = style["upper_lash_rails"]
 
         def mid(t):

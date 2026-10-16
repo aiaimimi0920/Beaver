@@ -28,6 +28,22 @@ class ShortTuftTests(unittest.TestCase):
             with self.assertRaises(ValueError):
                 validate(request)
 
+    def test_direct_control_limits_depth_without_art_profile(self):
+        p = {"short_upper_tuft": 1, "supplemental_lashes": 0, "lash_contour_follow": 1}
+        result = adapt_style(self.style, p)
+        expected = {
+            "accent_tuft_flare_m": 0.0006,
+            "accent_tuft_free_bow_m": 0.0003,
+            "accent_tuft_rear_scoop_m": 0.0004,
+            "accent_tuft_root_cover_m": 0.00015,
+            "accent_tuft_mid_recede_m": 0.00015,
+        }
+        for key, value in expected.items():
+            self.assertEqual(result[key], value)
+        self.assertEqual(
+            result["nose_plane_tint_strength"], self.style["nose_plane_tint_strength"]
+        )
+
     def test_leaf_is_derived_from_adapted_parent(self):
         p = {"short_upper_tuft": 1, "supplemental_lashes": 0, "lash_contour_follow": 1}
         a = adapt_style(self.style, p)
