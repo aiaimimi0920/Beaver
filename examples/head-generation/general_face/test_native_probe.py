@@ -68,6 +68,9 @@ class NativeProbeTests(unittest.TestCase):
             manifest = build_manifest([case])
             self.assertEqual(manifest['cases'][0]['declared_pivot'], [.01, 1.7, .02])
             self.assertEqual(manifest['schema'], SCHEMA)
+            import hashlib
+            helper = Path(__file__).with_name('glb_components.py')
+            self.assertEqual(manifest['accessor_helper_sha256'], hashlib.sha256(helper.read_bytes()).hexdigest())
             self.assertEqual(manifest['contract'], CONTRACT)
             self.assertEqual(manifest['weights'], [0., .25, .5, .75, 1.])
             self.assertEqual(manifest['cases'][0]['declared_scale'], [1.06, .96, 1.])
