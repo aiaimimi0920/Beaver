@@ -1,0 +1,24 @@
+{
+  "schema_version": 1,
+  "vertices": 7926,
+  "triangles": 10884,
+  "glb_sha256": "bfa157af02253eb1336058f7e3ef4917e64308d5e64bd4f19d73626648508373",
+  "embedded_png_sha256": "2296d0c2a29cf32f3188239cba65b8930db026ca0d1bb98072740426c60ad370",
+  "source_png_sha256": "2296d0c2a29cf32f3188239cba65b8930db026ca0d1bb98072740426c60ad370",
+  "image_size": [1024, 1024],
+  "decoded_rgba_equal": true,
+  "encoded_png_equal": true,
+  "scope": "Face-only static assembly with MouthOpen and base-color PBR; NPR shaders/control maps/SDF require separate definition. Structural validation is not visual acceptance.",
+  "native_case": "701",
+  "native_job_id": "b095cb40-d647-4e4f-aca5-04acc3368a2b",
+  "baseline_case": "697",
+  "baseline_embedded_png_sha256": "a311abadba78d8921356e8e441bfb595a13426b632cec9b910b1e2960b3b9690",
+  "baseline_failure": "Embedded image is byte-identical to inherited head49 atlas, not same-job atlas.",
+  "geometry_regression": {
+    "same_joint_geometry_morphs_and_oriented_triangles": true,
+    "vertices": 7926,
+    "triangles": 10884,
+    "scope": "Geometry-only regression; embedded material image intentionally changed."
+  },
+  "visual_acceptance": "not claimed by this structural fix"
+}
