@@ -127,7 +127,7 @@ func configure(candidate: NPRCharacterDefinition, reference: NPRCharacterDefinit
 	var success := true
 	for entry in [
 		[candidate, "Aster · " + candidate_path.get_base_dir().get_file(), false],
-		[reference, "银狼 · 参考（头部中立姿态）", true]
+		[reference, "参考 · " + reference_path.get_base_dir().get_file(), true]
 	]:
 		var box := VBoxContainer.new()
 		box.size_flags_horizontal = Control.SIZE_EXPAND_FILL
@@ -248,7 +248,7 @@ func set_light(value: float) -> void:
 
 
 func pane_input(event: InputEvent) -> void:
-	if eye_sweep != null and eye_sweep.running:
+	if _sweep_running():
 		return
 	if event is InputEventMouseButton:
 		if event.button_index == MOUSE_BUTTON_LEFT:
@@ -270,9 +270,12 @@ func pane_input(event: InputEvent) -> void:
 
 
 func _input(event: InputEvent) -> void:
-	if eye_sweep != null and eye_sweep.running:
+	if _sweep_running():
 		if event is InputEventKey and event.pressed and event.keycode == KEY_ESCAPE:
-			eye_sweep.cancel_requested = true
+			if eye_sweep != null and eye_sweep.running:
+				eye_sweep.cancel_requested = true
+			if sdf_sweep != null and sdf_sweep.running:
+				sdf_sweep.cancel_requested = true
 		return
 	if (
 		event is InputEventMouseButton
@@ -330,3 +333,7 @@ func start_sdf_sweep() -> void:
 	if sdf_sweep == null:
 		sdf_sweep = preload("res://showcase_extensions/head_sdf_sweep.gd").new(self)
 	sdf_sweep.run_or_cancel()
+
+
+func _sweep_running() -> bool:
+	return (eye_sweep != null and eye_sweep.running) or (sdf_sweep != null and sdf_sweep.running)

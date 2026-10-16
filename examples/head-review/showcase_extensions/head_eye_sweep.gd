@@ -42,12 +42,13 @@ func source_identities() -> Array[Dictionary]:
 	return result
 
 
-func lock_controls() -> Array:
+func lock_controls(active_button := "右眼5°采集") -> Array:
 	var previous: Array = []
 	for control in host.find_children("*", "Control", true, false):
 		if control is Button:
 			previous.append([control, "disabled", control.disabled])
-			if control.text == "右眼5°采集":
+			if control.text == active_button:
+				previous.append([control, "text", control.text])
 				control.text = "停止采集"
 			else:
 				control.disabled = true
@@ -61,8 +62,6 @@ func unlock_controls(previous: Array) -> void:
 	for entry in previous:
 		if is_instance_valid(entry[0]):
 			entry[0].set(entry[1], entry[2])
-			if entry[0] is Button and entry[0].text == "停止采集":
-				entry[0].text = "右眼5°采集"
 
 
 func write_json(path: String, value: Dictionary) -> bool:

@@ -1,0 +1,26 @@
+{
+  "schema_version": 1,
+  "native_checks": 65,
+  "failures": [],
+  "shader_paths_tested": [
+    "res://showcase_extensions/sdf360/face_base.gdshader",
+    "res://addons/npr_character_frame/shaders/face/sdf360/face_base.gdshader"
+  ],
+  "actual_uniform_roundtrips": 16,
+  "full_sweep_captures": 250,
+  "full_sweep_applied_material_states": 500,
+  "source_identity_preserved": true,
+  "manual_escape_cancel": {
+    "status": "cancelled",
+    "captures_before_cancel": 60,
+    "identity_preserved": true,
+    "controls_restored": true
+  },
+  "native_source_hashes": {
+    "head_compare.gd": "edd77ea8030bb9e536f1341552e9f1cb3902ec32035927a1123911080f44881f",
+    "head_compare_pane.gd": "13119e86ac8ebad003861d8e62b8db2200fb77707d98f3532d68d632557a38df",
+    "head_sdf_sweep.gd": "5ce888f08a4f45e8d9ae6b00294829bb1415d7d8b37a25f420dec39aea393a2b",
+    "head_eye_sweep.gd": "43905e33e2d159818670668358d7ce33b5a9aea6ec28167c1f8361ded8b78fa3"
+  },
+  "scope": "Control/render-evidence validation, not complete model beauty or arbitrary lighting correctness. Full sweep preceded cancellation-error-precedence-only hardening; final65-check probe and real Escape cancellation cover finalsource."
+}

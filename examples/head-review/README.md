@@ -27,3 +27,23 @@ scene at this script, open through the existing Beaver preview, and inspect
 `HEAD_ZOOM_PROBE` in the owned preview log. Restore the ordinary scene script
 afterward. It checks actual camera projection, picked-surface anchoring, clamps
 and perspective fallback; source parsing alone does not establish those results.
+
+## Directional SDF control verification
+
+Comparison controls detect the actual face shader's enabled/debug uniforms,
+so both the project-level and upstream package SDF material paths are supported.
+The light sweep records both applied material states for each frame and fails
+if the candidate lacks SDF controls or a capable material cannot apply the
+requested state. Unsupported references are explicitly recorded, without
+claiming a paired SDF diagnostic. A UI toggle alone is not
+proof of a changed render. Plain materials without these uniforms remain
+untouched and cannot pass the directional-SDF sweep.
+
+`tests/head_sdf_controls_probe.gd` is a temporary native GUI regression harness.
+Use an authorized candidate and reference definition with bound SDF atlases,
+point a temporary review scene at the probe, and open it through Beaver. It
+checks shader capabilities, actual uniform round trips, active materials,
+unsupported references, input locking and cancellation. Restore the ordinary
+scene afterward. The retained observation records65 native checks and a separate
+250-frame light sweep with500 actual material-state records. Cancelled captures
+are not counted as completed sweeps.
