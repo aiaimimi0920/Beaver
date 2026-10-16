@@ -56,6 +56,8 @@ func run_or_cancel() -> void:
 		await RenderingServer.frame_post_draw
 		await host.get_tree().process_frame
 		await RenderingServer.frame_post_draw
+		if cancel_requested:
+			break
 		applied.clear()
 		for pane in host.panes:
 			applied.append(pane.sdf_control_state())
@@ -79,7 +81,7 @@ func run_or_cancel() -> void:
 	report["identity_preserved"] = before == report.source_after
 	report.status = (
 		"completed"
-		if report.captures.size() == 250 and report.identity_preserved
+		if report.captures.size() == 250 and report.identity_preserved and not cancel_requested
 		else (
 			"cancelled"
 			if cancel_requested and report.identity_preserved and not report.has("error")

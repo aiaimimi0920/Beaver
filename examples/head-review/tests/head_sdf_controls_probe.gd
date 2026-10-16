@@ -5,6 +5,7 @@ const PANE = preload("res://showcase_extensions/head_compare_pane.gd")
 const SWEEP = preload("res://showcase_extensions/head_sdf_sweep.gd")
 var failures: Array[String] = []
 var checks := 0
+var late_cancel: Dictionary = {}
 
 
 func check(value: bool, message: String) -> void:
@@ -120,11 +121,45 @@ func _ready() -> void:
 	host.sdf_sweep.running = false
 	host.dragging = false
 	host.panning = false
+	var before_folders := DirAccess.get_directories_at("res://artifacts/sdf_sweep")
+	host.start_sdf_sweep()
+	while host.sdf_sweep.running:
+		await get_tree().process_frame
+		if host.status.text.contains("250 / 250"):
+			host._input(escape)
+	var folders := DirAccess.get_directories_at("res://artifacts/sdf_sweep")
+	var new_folders: Array[String] = []
+	for folder in folders:
+		if folder not in before_folders:
+			new_folders.append(folder)
+	check(new_folders.size() == 1, "Exactly one owned sweep folder")
+	if new_folders.size() != 1:
+		finish(states)
+		return
+	var result = JSON.parse_string(
+		FileAccess.get_file_as_string(
+			"res://artifacts/sdf_sweep/" + new_folders[0] + "/manifest.json"
+		)
+	)
+	check(result is Dictionary, "Late cancellation manifest exists")
+	if result is Dictionary:
+		check(result.identity_preserved, "Cancelled sweep preserves source identity")
+		late_cancel = {
+			"status": result.status,
+			"captures": result.captures.size(),
+			"identity_preserved": result.identity_preserved
+		}
+		check(
+			result.status == "cancelled" and result.captures.size() == 249,
+			"Final awaited frame cancellation never completes"
+		)
 	finish(states)
 
 
 func finish(states: Array) -> void:
-	var report := {"checks": checks, "failures": failures, "actual_states": states}
+	var report := {
+		"checks": checks, "failures": failures, "actual_states": states, "late_cancel": late_cancel
+	}
 	DirAccess.make_dir_recursive_absolute("res://artifacts/head_sdf_probe")
 	var file := FileAccess.open("res://artifacts/head_sdf_probe/result.json", FileAccess.WRITE)
 	file.store_string(JSON.stringify(report, "  "))

@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "native_checks": 65,
+  "native_checks": 69,
   "failures": [],
   "shader_paths_tested": [
     "res://showcase_extensions/sdf360/face_base.gdshader",
@@ -19,8 +19,13 @@
   "native_source_hashes": {
     "head_compare.gd": "edd77ea8030bb9e536f1341552e9f1cb3902ec32035927a1123911080f44881f",
     "head_compare_pane.gd": "13119e86ac8ebad003861d8e62b8db2200fb77707d98f3532d68d632557a38df",
-    "head_sdf_sweep.gd": "5ce888f08a4f45e8d9ae6b00294829bb1415d7d8b37a25f420dec39aea393a2b",
+    "head_sdf_sweep.gd": "c22535c677035e330295c0eb82a4c78b0119dfc0ff235fefccaad322f7b47c2d",
     "head_eye_sweep.gd": "43905e33e2d159818670668358d7ce33b5a9aea6ec28167c1f8361ded8b78fa3"
   },
-  "scope": "Control/render-evidence validation, not complete model beauty or arbitrary lighting correctness. Full sweep preceded cancellation-error-precedence-only hardening; final65-check probe and real Escape cancellation cover finalsource."
+  "scope": "Control/render-evidence validation, not complete model beauty or arbitrary lighting correctness. Full sweep precedes cancellation-only fixes; final69-check probe includes real cancellation during final frame wait, resulting in249 captures and cancelled status.",
+  "late_frame_cancel": {
+    "captures": 249,
+    "identity_preserved": true,
+    "status": "cancelled"
+  }
 }

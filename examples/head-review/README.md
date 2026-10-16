@@ -44,6 +44,6 @@ Use an authorized candidate and reference definition with bound SDF atlases,
 point a temporary review scene at the probe, and open it through Beaver. It
 checks shader capabilities, actual uniform round trips, active materials,
 unsupported references, input locking and cancellation. Restore the ordinary
-scene afterward. The retained observation records65 native checks and a separate
+scene afterward. The retained observation records69 native checks and a separate
 250-frame light sweep with500 actual material-state records. Cancelled captures
 are not counted as completed sweeps.
