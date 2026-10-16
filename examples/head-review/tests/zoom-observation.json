@@ -1,0 +1,854 @@
+{
+  "observed_events": 45,
+  "min_magnification": 0.500000003147188,
+  "max_magnification": 6.00000003776625,
+  "max_anchor_error_px": 0.00048828125,
+  "scope": "Native manual off-center interaction and75actual projection/anchor cases across5poses,3cursor locations,5zoom steps. Includes reset and unchanged perspective fallback.",
+  "date_utc": "2026-10-16",
+  "automated_probe": {
+    "cases": [
+      {
+        "anchor_error_px": 0.0,
+        "cursor_fraction": [
+          0.5,
+          0.5
+        ],
+        "magnification": 1.13636363636364,
+        "pitch": 0.0,
+        "steps": 1.0,
+        "yaw": 0.0
+      },
+      {
+        "anchor_error_px": 0.0,
+        "cursor_fraction": [
+          0.5,
+          0.5
+        ],
+        "magnification": 1.46741174197989,
+        "pitch": 0.0,
+        "steps": 2.0,
+        "yaw": 0.0
+      },
+      {
+        "anchor_error_px": 0.0,
+        "cursor_fraction": [
+          0.5,
+          0.5
+        ],
+        "magnification": 1.29132229095849,
+        "pitch": 0.0,
+        "steps": -1.0,
+        "yaw": 0.0
+      },
+      {
+        "anchor_error_px": 0.0,
+        "cursor_fraction": [
+          0.5,
+          0.5
+        ],
+        "magnification": 6.00000003776625,
+        "pitch": 0.0,
+        "steps": 50.0,
+        "yaw": 0.0
+      },
+      {
+        "anchor_error_px": 0.0,
+        "cursor_fraction": [
+          0.5,
+          0.5
+        ],
+        "magnification": 0.500000003147188,
+        "pitch": 0.0,
+        "steps": -100.0,
+        "yaw": 0.0
+      },
+      {
+        "anchor_error_px": 0.0,
+        "cursor_fraction": [
+          0.479999989271164,
+          0.5
+        ],
+        "magnification": 1.13636363636364,
+        "pitch": 0.0,
+        "steps": 1.0,
+        "yaw": 0.0
+      },
+      {
+        "anchor_error_px": 0.0,
+        "cursor_fraction": [
+          0.479999989271164,
+          0.5
+        ],
+        "magnification": 1.46741174197989,
+        "pitch": 0.0,
+        "steps": 2.0,
+        "yaw": 0.0
+      },
+      {
+        "anchor_error_px": 0.0,
+        "cursor_fraction": [
+          0.479999989271164,
+          0.5
+        ],
+        "magnification": 1.29132229095849,
+        "pitch": 0.0,
+        "steps": -1.0,
+        "yaw": 0.0
+      },
+      {
+        "anchor_error_px": 0.0,
+        "cursor_fraction": [
+          0.479999989271164,
+          0.5
+        ],
+        "magnification": 6.00000003776625,
+        "pitch": 0.0,
+        "steps": 50.0,
+        "yaw": 0.0
+      },
+      {
+        "anchor_error_px": 0.0,
+        "cursor_fraction": [
+          0.479999989271164,
+          0.5
+        ],
+        "magnification": 0.500000003147188,
+        "pitch": 0.0,
+        "steps": -100.0,
+        "yaw": 0.0
+      },
+      {
+        "anchor_error_px": 0.000311219453578815,
+        "cursor_fraction": [
+          0.519999980926514,
+          0.479999989271164
+        ],
+        "magnification": 1.13636363636364,
+        "pitch": 0.0,
+        "steps": 1.0,
+        "yaw": 0.0
+      },
+      {
+        "anchor_error_px": 8.63167442730628e-05,
+        "cursor_fraction": [
+          0.519999980926514,
+          0.479999989271164
+        ],
+        "magnification": 1.46741174197989,
+        "pitch": 0.0,
+        "steps": 2.0,
+        "yaw": 0.0
+      },
+      {
+        "anchor_error_px": 6.82393801980652e-05,
+        "cursor_fraction": [
+          0.519999980926514,
+          0.479999989271164
+        ],
+        "magnification": 1.29132229095849,
+        "pitch": 0.0,
+        "steps": -1.0,
+        "yaw": 0.0
+      },
+      {
+        "anchor_error_px": 0.000341196893714368,
+        "cursor_fraction": [
+          0.519999980926514,
+          0.479999989271164
+        ],
+        "magnification": 6.00000003776625,
+        "pitch": 0.0,
+        "steps": 50.0,
+        "yaw": 0.0
+      },
+      {
+        "anchor_error_px": 0.0,
+        "cursor_fraction": [
+          0.519999980926514,
+          0.479999989271164
+        ],
+        "magnification": 0.500000003147188,
+        "pitch": 0.0,
+        "steps": -100.0,
+        "yaw": 0.0
+      },
+      {
+        "anchor_error_px": 0.0,
+        "cursor_fraction": [
+          0.5,
+          0.5
+        ],
+        "magnification": 1.13636363636364,
+        "pitch": 0.0,
+        "steps": 1.0,
+        "yaw": -45.0
+      },
+      {
+        "anchor_error_px": 0.0,
+        "cursor_fraction": [
+          0.5,
+          0.5
+        ],
+        "magnification": 1.46741174197989,
+        "pitch": 0.0,
+        "steps": 2.0,
+        "yaw": -45.0
+      },
+      {
+        "anchor_error_px": 0.0,
+        "cursor_fraction": [
+          0.5,
+          0.5
+        ],
+        "magnification": 1.29132229095849,
+        "pitch": 0.0,
+        "steps": -1.0,
+        "yaw": -45.0
+      },
+      {
+        "anchor_error_px": 0.0,
+        "cursor_fraction": [
+          0.5,
+          0.5
+        ],
+        "magnification": 6.00000003776625,
+        "pitch": 0.0,
+        "steps": 50.0,
+        "yaw": -45.0
+      },
+      {
+        "anchor_error_px": 0.0,
+        "cursor_fraction": [
+          0.5,
+          0.5
+        ],
+        "magnification": 0.500000003147188,
+        "pitch": 0.0,
+        "steps": -100.0,
+        "yaw": -45.0
+      },
+      {
+        "anchor_error_px": 0.0,
+        "cursor_fraction": [
+          0.479999989271164,
+          0.5
+        ],
+        "magnification": 1.13636363636364,
+        "pitch": 0.0,
+        "steps": 1.0,
+        "yaw": -45.0
+      },
+      {
+        "anchor_error_px": 0.0,
+        "cursor_fraction": [
+          0.479999989271164,
+          0.5
+        ],
+        "magnification": 1.46741174197989,
+        "pitch": 0.0,
+        "steps": 2.0,
+        "yaw": -45.0
+      },
+      {
+        "anchor_error_px": 0.0,
+        "cursor_fraction": [
+          0.479999989271164,
+          0.5
+        ],
+        "magnification": 1.29132229095849,
+        "pitch": 0.0,
+        "steps": -1.0,
+        "yaw": -45.0
+      },
+      {
+        "anchor_error_px": 0.0,
+        "cursor_fraction": [
+          0.479999989271164,
+          0.5
+        ],
+        "magnification": 6.00000003776625,
+        "pitch": 0.0,
+        "steps": 50.0,
+        "yaw": -45.0
+      },
+      {
+        "anchor_error_px": 0.0,
+        "cursor_fraction": [
+          0.479999989271164,
+          0.5
+        ],
+        "magnification": 0.500000003147188,
+        "pitch": 0.0,
+        "steps": -100.0,
+        "yaw": -45.0
+      },
+      {
+        "anchor_error_px": 0.000311219453578815,
+        "cursor_fraction": [
+          0.519999980926514,
+          0.479999989271164
+        ],
+        "magnification": 1.13636363636364,
+        "pitch": 0.0,
+        "steps": 1.0,
+        "yaw": -45.0
+      },
+      {
+        "anchor_error_px": 8.63167442730628e-05,
+        "cursor_fraction": [
+          0.519999980926514,
+          0.479999989271164
+        ],
+        "magnification": 1.46741174197989,
+        "pitch": 0.0,
+        "steps": 2.0,
+        "yaw": -45.0
+      },
+      {
+        "anchor_error_px": 6.82393801980652e-05,
+        "cursor_fraction": [
+          0.519999980926514,
+          0.479999989271164
+        ],
+        "magnification": 1.29132229095849,
+        "pitch": 0.0,
+        "steps": -1.0,
+        "yaw": -45.0
+      },
+      {
+        "anchor_error_px": 0.000341196893714368,
+        "cursor_fraction": [
+          0.519999980926514,
+          0.479999989271164
+        ],
+        "magnification": 6.00000003776625,
+        "pitch": 0.0,
+        "steps": 50.0,
+        "yaw": -45.0
+      },
+      {
+        "anchor_error_px": 0.0,
+        "cursor_fraction": [
+          0.519999980926514,
+          0.479999989271164
+        ],
+        "magnification": 0.500000003147188,
+        "pitch": 0.0,
+        "steps": -100.0,
+        "yaw": -45.0
+      },
+      {
+        "anchor_error_px": 0.0,
+        "cursor_fraction": [
+          0.5,
+          0.5
+        ],
+        "magnification": 1.13636363636364,
+        "pitch": 0.0,
+        "steps": 1.0,
+        "yaw": 45.0
+      },
+      {
+        "anchor_error_px": 0.0,
+        "cursor_fraction": [
+          0.5,
+          0.5
+        ],
+        "magnification": 1.46741174197989,
+        "pitch": 0.0,
+        "steps": 2.0,
+        "yaw": 45.0
+      },
+      {
+        "anchor_error_px": 0.0,
+        "cursor_fraction": [
+          0.5,
+          0.5
+        ],
+        "magnification": 1.29132229095849,
+        "pitch": 0.0,
+        "steps": -1.0,
+        "yaw": 45.0
+      },
+      {
+        "anchor_error_px": 0.0,
+        "cursor_fraction": [
+          0.5,
+          0.5
+        ],
+        "magnification": 6.00000003776625,
+        "pitch": 0.0,
+        "steps": 50.0,
+        "yaw": 45.0
+      },
+      {
+        "anchor_error_px": 0.0,
+        "cursor_fraction": [
+          0.5,
+          0.5
+        ],
+        "magnification": 0.500000003147188,
+        "pitch": 0.0,
+        "steps": -100.0,
+        "yaw": 45.0
+      },
+      {
+        "anchor_error_px": 0.0,
+        "cursor_fraction": [
+          0.479999989271164,
+          0.5
+        ],
+        "magnification": 1.13636363636364,
+        "pitch": 0.0,
+        "steps": 1.0,
+        "yaw": 45.0
+      },
+      {
+        "anchor_error_px": 0.0,
+        "cursor_fraction": [
+          0.479999989271164,
+          0.5
+        ],
+        "magnification": 1.46741174197989,
+        "pitch": 0.0,
+        "steps": 2.0,
+        "yaw": 45.0
+      },
+      {
+        "anchor_error_px": 0.0,
+        "cursor_fraction": [
+          0.479999989271164,
+          0.5
+        ],
+        "magnification": 1.29132229095849,
+        "pitch": 0.0,
+        "steps": -1.0,
+        "yaw": 45.0
+      },
+      {
+        "anchor_error_px": 0.0,
+        "cursor_fraction": [
+          0.479999989271164,
+          0.5
+        ],
+        "magnification": 6.00000003776625,
+        "pitch": 0.0,
+        "steps": 50.0,
+        "yaw": 45.0
+      },
+      {
+        "anchor_error_px": 0.0,
+        "cursor_fraction": [
+          0.479999989271164,
+          0.5
+        ],
+        "magnification": 0.500000003147188,
+        "pitch": 0.0,
+        "steps": -100.0,
+        "yaw": 45.0
+      },
+      {
+        "anchor_error_px": 0.000311219453578815,
+        "cursor_fraction": [
+          0.519999980926514,
+          0.479999989271164
+        ],
+        "magnification": 1.13636363636364,
+        "pitch": 0.0,
+        "steps": 1.0,
+        "yaw": 45.0
+      },
+      {
+        "anchor_error_px": 8.63167442730628e-05,
+        "cursor_fraction": [
+          0.519999980926514,
+          0.479999989271164
+        ],
+        "magnification": 1.46741174197989,
+        "pitch": 0.0,
+        "steps": 2.0,
+        "yaw": 45.0
+      },
+      {
+        "anchor_error_px": 6.82393801980652e-05,
+        "cursor_fraction": [
+          0.519999980926514,
+          0.479999989271164
+        ],
+        "magnification": 1.29132229095849,
+        "pitch": 0.0,
+        "steps": -1.0,
+        "yaw": 45.0
+      },
+      {
+        "anchor_error_px": 0.000341196893714368,
+        "cursor_fraction": [
+          0.519999980926514,
+          0.479999989271164
+        ],
+        "magnification": 6.00000003776625,
+        "pitch": 0.0,
+        "steps": 50.0,
+        "yaw": 45.0
+      },
+      {
+        "anchor_error_px": 0.0,
+        "cursor_fraction": [
+          0.519999980926514,
+          0.479999989271164
+        ],
+        "magnification": 0.500000003147188,
+        "pitch": 0.0,
+        "steps": -100.0,
+        "yaw": 45.0
+      },
+      {
+        "anchor_error_px": 0.0,
+        "cursor_fraction": [
+          0.5,
+          0.5
+        ],
+        "magnification": 1.13636363636364,
+        "pitch": 0.0,
+        "steps": 1.0,
+        "yaw": 90.0
+      },
+      {
+        "anchor_error_px": 0.0,
+        "cursor_fraction": [
+          0.5,
+          0.5
+        ],
+        "magnification": 1.46741174197989,
+        "pitch": 0.0,
+        "steps": 2.0,
+        "yaw": 90.0
+      },
+      {
+        "anchor_error_px": 0.0,
+        "cursor_fraction": [
+          0.5,
+          0.5
+        ],
+        "magnification": 1.29132229095849,
+        "pitch": 0.0,
+        "steps": -1.0,
+        "yaw": 90.0
+      },
+      {
+        "anchor_error_px": 0.0,
+        "cursor_fraction": [
+          0.5,
+          0.5
+        ],
+        "magnification": 6.00000003776625,
+        "pitch": 0.0,
+        "steps": 50.0,
+        "yaw": 90.0
+      },
+      {
+        "anchor_error_px": 0.0,
+        "cursor_fraction": [
+          0.5,
+          0.5
+        ],
+        "magnification": 0.500000003147188,
+        "pitch": 0.0,
+        "steps": -100.0,
+        "yaw": 90.0
+      },
+      {
+        "anchor_error_px": 0.0,
+        "cursor_fraction": [
+          0.479999989271164,
+          0.5
+        ],
+        "magnification": 1.13636363636364,
+        "pitch": 0.0,
+        "steps": 1.0,
+        "yaw": 90.0
+      },
+      {
+        "anchor_error_px": 0.0,
+        "cursor_fraction": [
+          0.479999989271164,
+          0.5
+        ],
+        "magnification": 1.46741174197989,
+        "pitch": 0.0,
+        "steps": 2.0,
+        "yaw": 90.0
+      },
+      {
+        "anchor_error_px": 0.0,
+        "cursor_fraction": [
+          0.479999989271164,
+          0.5
+        ],
+        "magnification": 1.29132229095849,
+        "pitch": 0.0,
+        "steps": -1.0,
+        "yaw": 90.0
+      },
+      {
+        "anchor_error_px": 0.0,
+        "cursor_fraction": [
+          0.479999989271164,
+          0.5
+        ],
+        "magnification": 6.00000003776625,
+        "pitch": 0.0,
+        "steps": 50.0,
+        "yaw": 90.0
+      },
+      {
+        "anchor_error_px": 0.0,
+        "cursor_fraction": [
+          0.479999989271164,
+          0.5
+        ],
+        "magnification": 0.500000003147188,
+        "pitch": 0.0,
+        "steps": -100.0,
+        "yaw": 90.0
+      },
+      {
+        "anchor_error_px": 0.000311219453578815,
+        "cursor_fraction": [
+          0.519999980926514,
+          0.479999989271164
+        ],
+        "magnification": 1.13636363636364,
+        "pitch": 0.0,
+        "steps": 1.0,
+        "yaw": 90.0
+      },
+      {
+        "anchor_error_px": 8.63167442730628e-05,
+        "cursor_fraction": [
+          0.519999980926514,
+          0.479999989271164
+        ],
+        "magnification": 1.46741174197989,
+        "pitch": 0.0,
+        "steps": 2.0,
+        "yaw": 90.0
+      },
+      {
+        "anchor_error_px": 6.82393801980652e-05,
+        "cursor_fraction": [
+          0.519999980926514,
+          0.479999989271164
+        ],
+        "magnification": 1.29132229095849,
+        "pitch": 0.0,
+        "steps": -1.0,
+        "yaw": 90.0
+      },
+      {
+        "anchor_error_px": 0.000341196893714368,
+        "cursor_fraction": [
+          0.519999980926514,
+          0.479999989271164
+        ],
+        "magnification": 6.00000003776625,
+        "pitch": 0.0,
+        "steps": 50.0,
+        "yaw": 90.0
+      },
+      {
+        "anchor_error_px": 0.0,
+        "cursor_fraction": [
+          0.519999980926514,
+          0.479999989271164
+        ],
+        "magnification": 0.500000003147188,
+        "pitch": 0.0,
+        "steps": -100.0,
+        "yaw": 90.0
+      },
+      {
+        "anchor_error_px": 6.103515625e-05,
+        "cursor_fraction": [
+          0.5,
+          0.5
+        ],
+        "magnification": 1.13636363636364,
+        "pitch": 55.0,
+        "steps": 1.0,
+        "yaw": 0.0
+      },
+      {
+        "anchor_error_px": 9.1552734375e-05,
+        "cursor_fraction": [
+          0.5,
+          0.5
+        ],
+        "magnification": 1.46741174197989,
+        "pitch": 55.0,
+        "steps": 2.0,
+        "yaw": 0.0
+      },
+      {
+        "anchor_error_px": 6.103515625e-05,
+        "cursor_fraction": [
+          0.5,
+          0.5
+        ],
+        "magnification": 1.29132229095849,
+        "pitch": 55.0,
+        "steps": -1.0,
+        "yaw": 0.0
+      },
+      {
+        "anchor_error_px": 0.000335693359375,
+        "cursor_fraction": [
+          0.5,
+          0.5
+        ],
+        "magnification": 6.00000003776625,
+        "pitch": 55.0,
+        "steps": 50.0,
+        "yaw": 0.0
+      },
+      {
+        "anchor_error_px": 3.0517578125e-05,
+        "cursor_fraction": [
+          0.5,
+          0.5
+        ],
+        "magnification": 0.500000003147188,
+        "pitch": 55.0,
+        "steps": -100.0,
+        "yaw": 0.0
+      },
+      {
+        "anchor_error_px": 6.103515625e-05,
+        "cursor_fraction": [
+          0.479999989271164,
+          0.5
+        ],
+        "magnification": 1.13636363636364,
+        "pitch": 55.0,
+        "steps": 1.0,
+        "yaw": 0.0
+      },
+      {
+        "anchor_error_px": 9.1552734375e-05,
+        "cursor_fraction": [
+          0.479999989271164,
+          0.5
+        ],
+        "magnification": 1.46741174197989,
+        "pitch": 55.0,
+        "steps": 2.0,
+        "yaw": 0.0
+      },
+      {
+        "anchor_error_px": 6.103515625e-05,
+        "cursor_fraction": [
+          0.479999989271164,
+          0.5
+        ],
+        "magnification": 1.29132229095849,
+        "pitch": 55.0,
+        "steps": -1.0,
+        "yaw": 0.0
+      },
+      {
+        "anchor_error_px": 0.000335693359375,
+        "cursor_fraction": [
+          0.479999989271164,
+          0.5
+        ],
+        "magnification": 6.00000003776625,
+        "pitch": 55.0,
+        "steps": 50.0,
+        "yaw": 0.0
+      },
+      {
+        "anchor_error_px": 3.0517578125e-05,
+        "cursor_fraction": [
+          0.479999989271164,
+          0.5
+        ],
+        "magnification": 0.500000003147188,
+        "pitch": 55.0,
+        "steps": -100.0,
+        "yaw": 0.0
+      },
+      {
+        "anchor_error_px": 8.63167442730628e-05,
+        "cursor_fraction": [
+          0.519999980926514,
+          0.479999989271164
+        ],
+        "magnification": 1.13636363636364,
+        "pitch": 55.0,
+        "steps": 1.0,
+        "yaw": 0.0
+      },
+      {
+        "anchor_error_px": 6.82393801980652e-05,
+        "cursor_fraction": [
+          0.519999980926514,
+          0.479999989271164
+        ],
+        "magnification": 1.46741174197989,
+        "pitch": 55.0,
+        "steps": 2.0,
+        "yaw": 0.0
+      },
+      {
+        "anchor_error_px": 0.000222171322093345,
+        "cursor_fraction": [
+          0.519999980926514,
+          0.479999989271164
+        ],
+        "magnification": 1.29132229095849,
+        "pitch": 55.0,
+        "steps": -1.0,
+        "yaw": 0.0
+      },
+      {
+        "anchor_error_px": 0.00134415982756764,
+        "cursor_fraction": [
+          0.519999980926514,
+          0.479999989271164
+        ],
+        "magnification": 6.00000003776625,
+        "pitch": 55.0,
+        "steps": 50.0,
+        "yaw": 0.0
+      },
+      {
+        "anchor_error_px": 0.0,
+        "cursor_fraction": [
+          0.519999980926514,
+          0.479999989271164
+        ],
+        "magnification": 0.500000003147188,
+        "pitch": 55.0,
+        "steps": -100.0,
+        "yaw": 0.0
+      }
+    ],
+    "failures": [],
+    "passed": true,
+    "perspective_checked": true
+  },
+  "source_sha256": {
+    "showcase_extensions/head_review.gd": "e1e359074afcac1425cf9938002b6e014b42b3e7930ad1651ce46482bbfdcc87",
+    "tests/head_zoom_probe.gd": "979e31693ba47ce89324aec701548495dec335f34887f485316cd0f7b7d83f26"
+  },
+  "tested_native_source_sha256": {
+    "showcase_extensions/head_review.gd": "f03c62b557015eafbf0b31792e5df74c1ce915af920d0430bdaee970192387ab",
+    "tests/head_zoom_probe.gd": "979e31693ba47ce89324aec701548495dec335f34887f485316cd0f7b7d83f26"
+  },
+  "tested_zoom_function_sha256": {
+    "_zoom_at": "8ef4c05f09af9de622e3e1e71766dbce478123b016be5dc76d3f200e16b3668a",
+    "_reset_view": "0bb5991b32794ef22469bbc5f2b6019ee716c2251142bd2631bedee11be3e42c"
+  },
+  "source_note": "Full viewer differs only in existing project context; tested changed functions match retained source exactly. Probe source is byte-identical.",
+  "model_sha256": "af827b4163952f9ed467961a0a22b115aaf910e84c25116ed2fe518b231abc18"
+}
