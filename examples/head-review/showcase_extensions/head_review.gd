@@ -234,7 +234,10 @@ func set_view(value: String) -> void:
 
 
 func _reset_view() -> void:
+	if camera.projection == Camera3D.PROJECTION_ORTHOGONAL:
+		camera.size = _head_view_size
 	_head_angle(0, 0)
+	_status.text = "头部取景已重置"
 
 
 func reset_scheme() -> void:
@@ -265,6 +268,41 @@ func _stage_input(event: InputEvent) -> void:
 			turntable.rotation_degrees.y = _model_yaw_degrees
 			_camera_pitch = clampf(_camera_pitch + event.relative.y * 0.25, -70.0, 70.0)
 			_update_camera()
+
+
+func _zoom_at(stage_point: Vector2, steps: float) -> void:
+	if camera.projection != Camera3D.PROJECTION_ORTHOGONAL:
+		super._zoom_at(stage_point, steps)
+		return
+	var point := stage_point * Vector2(viewport.size) / _stage.size
+	var hit: Dictionary = preview.pick_surface(
+		camera.project_ray_origin(point), camera.project_ray_normal(point)
+	)
+	if hit.is_empty():
+		return
+	var focus: Vector3 = hit.position
+	camera.size = clampf(
+		camera.size * pow(0.88, steps), _head_view_size / 6.0, _head_view_size * 2.0
+	)
+	# Orthographic magnification changes size, not camera distance. Translate
+	# parallel to the image plane so the picked surface stays under the cursor.
+	var right := camera.global_transform.basis.x.normalized()
+	var up := camera.global_transform.basis.y.normalized()
+	var shift := focus - camera.project_ray_origin(point)
+	_target += right * shift.dot(right) + up * shift.dot(up)
+	_update_camera()
+	_status.text = "正交取景：%.2f×" % (_head_view_size / camera.size)
+	print(
+		(
+			"HEAD_REVIEW_ZOOM="
+			+ JSON.stringify(
+				{
+					"magnification": _head_view_size / camera.size,
+					"anchor_error_px": (camera.unproject_position(focus) - point).length()
+				}
+			)
+		)
+	)
 
 
 func _open_comparison() -> void:

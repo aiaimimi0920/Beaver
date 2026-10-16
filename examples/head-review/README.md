@@ -13,3 +13,17 @@ The SDF implementation uses project-level extensions in sdf360, preserving pinne
 See ../head-generation/checkpoints/current/README.md for authorized baseline dependencies and ../head-generation/sdf360/README.md for native bake requests. The head-only scope does not claim full-wardrobe or general cast-shadow acceptance.
 
 Historical implementation records remain in Git history; the current source is the 664 publication checkpoint. No task databases, credentials, imported reference textures, runtime logs or user-local absolute paths are part of this source delivery.
+
+## Single-model close-up review
+
+The default orthographic viewer now changes camera size on mouse-wheel zoom,
+keeping the picked surface under the cursor. The range is0.5–6× the initial
+head framing. Reset View restores1×; perspective mode keeps its existing zoom
+behavior. Model geometry, materials and definition resources are not changed.
+
+`tests/head_zoom_probe.gd` is a temporary native GUI regression harness extending
+the ordinary viewer. In an authorized test workspace, point a copy of the review
+scene at this script, open through the existing Beaver preview, and inspect
+`HEAD_ZOOM_PROBE` in the owned preview log. Restore the ordinary scene script
+afterward. It checks actual camera projection, picked-surface anchoring, clamps
+and perspective fallback; source parsing alone does not establish those results.
