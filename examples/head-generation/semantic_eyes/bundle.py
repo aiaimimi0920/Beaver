@@ -29,8 +29,18 @@ def replace_once(source, old, new):
     return source.replace(old, new, 1)
 
 
-def build_request(parameters, output_prefix, workspace):
+def build_request(parameters, output_prefix, workspace, *, blink=False):
     p = validate(parameters)
+    if type(blink) is not bool:
+        raise ValueError("blink must be a boolean")
+    if blink and (
+        p["supplemental_lashes"] != 0
+        or p["lid_fold"] != 0
+        or p["lash_contour_follow"] != 1
+    ):
+        raise ValueError(
+            "Blink requires contour-following main lashes without supplemental lashes or lid fold"
+        )
     if not re.fullmatch(r"assets/aster/general_face_eyes_[a-z0-9_]+/", output_prefix):
         raise ValueError("Use assets/aster/general_face_eyes_<case>/")
     root = Path(workspace)
@@ -129,6 +139,27 @@ def build_request(parameters, output_prefix, workspace):
             "semantic_eye_runtime.py": (HERE / "runtime.py").read_text(),
         }
     )
+    if blink:
+        sources["semantic_eye_runtime.py"] += (
+            "\n\n" + (HERE / "blink_runtime.py").read_text()
+        )
+        sources["pipeline.py"] = replace_once(
+            sources["pipeline.py"],
+            "        opened.value = 0.0",
+            "        opened.value = 0.0\n"
+            "        from semantic_eye_runtime import build_blink_shapes\n"
+            '        report["eyelid_closure"] = build_blink_shapes(members[0], semantic_part_ordinals, C)',
+        )
+        sources["glb_merge.py"] = replace_once(
+            sources["glb_merge.py"],
+            '== ["MouthOpen"]',
+            '== ["MouthOpen", "blink.L", "blink.R"]',
+        )
+        sources["glb_merge.py"] = replace_once(
+            sources["glb_merge.py"],
+            'node["weights"] = [0.0]',
+            'node["weights"] = [0.0, 0.0, 0.0]',
+        )
     sources["textures.py"] = replace_once(
         sources["textures.py"],
         '    image.filepath = "//" + role.lower() + "_base.png"',
@@ -217,9 +248,17 @@ if __name__ == "__main__":
     parser.add_argument("--prefix", required=True)
     parser.add_argument("--workspace", type=Path, required=True)
     parser.add_argument("--output", type=Path, required=True)
+    parser.add_argument(
+        "--blink", action="store_true", help="Experimental independent eyelid closure"
+    )
     args = parser.parse_args()
     args.output.write_text(
         json.dumps(
-            build_request(json.loads(args.parameters), args.prefix, args.workspace)
+            build_request(
+                json.loads(args.parameters),
+                args.prefix,
+                args.workspace,
+                blink=args.blink,
+            )
         )
     )

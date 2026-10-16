@@ -26,7 +26,14 @@ from source_styles import apply_style_profile
 
 
 def build_request(
-    parameters, eyes, prefix, workspace, reviewed_support_bound_m, style_profile=None
+    parameters,
+    eyes,
+    prefix,
+    workspace,
+    reviewed_support_bound_m,
+    style_profile=None,
+    *,
+    blink=False,
 ):
     if (
         isinstance(reviewed_support_bound_m, bool)
@@ -127,7 +134,7 @@ def depth(x, y):"""
             (snapshot / "face.py").write_text(face)
             (snapshot / "eye_socket.py").write_text(socket)
             builder.RECIPE = snapshot
-            request = builder.build_request(eyes, prefix, workspace)
+            request = builder.build_request(eyes, prefix, workspace, blink=blink)
     finally:
         sys.path.remove(str(EYES))
     module = (HERE / "runtime_field.py").read_text()
@@ -221,6 +228,9 @@ if __name__ == "__main__":
     parser.add_argument("--reviewed-support-bound-m", type=float, required=True)
     parser.add_argument("--style-profile", choices=["clean_emerald", "emerald_layered"])
     parser.add_argument("--output", type=Path, required=True)
+    parser.add_argument(
+        "--blink", action="store_true", help="Experimental independent eyelid closure"
+    )
     args = parser.parse_args()
     args.output.write_text(
         json.dumps(
@@ -231,6 +241,7 @@ if __name__ == "__main__":
                 args.workspace,
                 args.reviewed_support_bound_m,
                 args.style_profile,
+                blink=args.blink,
             )
         )
     )

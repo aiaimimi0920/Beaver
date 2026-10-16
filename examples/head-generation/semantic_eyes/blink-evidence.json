@@ -1,0 +1,78 @@
+{
+  "schema": "optional-eyelid-native-evidence-v1",
+  "observed_utc": "2026-10-16T23:29:00Z",
+  "candidate": "general_face_eyes_709_blink_repeat",
+  "generation_job": "1a67a9ff-7799-436e-9cce-2d42cbb6a277",
+  "sdf_job": "e05aacc7-43b9-42b6-b681-58a2667dbd46",
+  "eyelid_closure": {
+    "blink.L": {
+      "moved_vertices": 792,
+      "maximum_displacement_m": 0.014168479999999928,
+      "neutral_weight": 0.0
+    },
+    "blink.R": {
+      "moved_vertices": 792,
+      "maximum_displacement_m": 0.014168479999999928,
+      "neutral_weight": 0.0
+    },
+    "continuous_orientation": {
+      "triangles": 10980,
+      "minimum_orientation_ratio": 0.03567719284164872,
+      "worst_blink_weight": 1.0,
+      "worst_mouth_weight": 0.0,
+      "worst_triangle": 6985,
+      "scope": "Floating-point analytic quadratic minimum over blink and MouthOpen [0,1]; no triangle couples both eyes. Not an intersection proof."
+    },
+    "scope": "Experimental independent eyelid shapes; native posed visual acceptance pending"
+  },
+  "repeat": {
+    "schema": "exact-face-export-permutation-v1",
+    "scope": "Joint attributes, morphs, oriented triangles, uniquely identified/unreferenced vertices, materials and embedded images; ordering alone ignored",
+    "exact_permutation_equivalent": true,
+    "raw_bytes_equal": false,
+    "first": {
+      "sha256": "53c064e06485bc7d79d0d2cc543c1b3e823e7123cfe4a16ed7a63894579c26ae",
+      "canonical_sha256": "3654e0f770646209bb52d0504024e9d2a79ea99832acb5fd4f91a1299a9516bf",
+      "vertices": 8183,
+      "triangles": 10980
+    },
+    "second": {
+      "sha256": "422ba518db50804cbac5955485219ce772fdb7207f138acc5e1fbe5396481d04",
+      "canonical_sha256": "3654e0f770646209bb52d0504024e9d2a79ea99832acb5fd4f91a1299a9516bf",
+      "vertices": 8183,
+      "triangles": 10980
+    },
+    "not_proven": [
+      "visual quality",
+      "collision freedom",
+      "all-parameter stability",
+      "engine import behavior"
+    ]
+  },
+  "face_export_contract": {
+    "schema_version": 1,
+    "morph_names": ["MouthOpen", "blink.L", "blink.R"],
+    "vertices": 8183,
+    "triangles": 10980,
+    "glb_sha256": "422ba518db50804cbac5955485219ce772fdb7207f138acc5e1fbe5396481d04",
+    "embedded_png_sha256": "2296d0c2a29cf32f3188239cba65b8930db026ca0d1bb98072740426c60ad370",
+    "source_png_sha256": "2296d0c2a29cf32f3188239cba65b8930db026ca0d1bb98072740426c60ad370",
+    "image_size": [1024, 1024],
+    "decoded_rgba_equal": true,
+    "encoded_png_equal": true,
+    "scope": "Face-only assembly with explicitly selected neutral morphs and base-color PBR; NPR shaders/control maps/SDF require separate definition. Structural validation is not visual acceptance."
+  },
+  "native_poses": {
+    "captures": 69,
+    "manifest_sha256": "88fbb76baaaf85fb20e995d50a2853d5d5dce9f8d4de942e2159f8241ab42e75",
+    "source_identity_unchanged": true,
+    "requested_weights_match_readback": true,
+    "root_visual_review": "All 69 rendered/white pose images reviewed; smooth closed-lash curve and no obvious exposed iris at full closure in sampled views. Not final user acceptance."
+  },
+  "limitations": [
+    "Floating-point orientation gate is not intersection proof",
+    "Only tested profile and sampled views; no all-parameter beauty guarantee",
+    "Neutral directional SDF is not expression-dependent physical shadow",
+    "Inherited lateral cheek white-model bands remain an independent issue"
+  ]
+}

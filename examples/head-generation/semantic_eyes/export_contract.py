@@ -25,7 +25,10 @@ def rgba(raw):
         return image.size, image.convert("RGBA").tobytes()
 
 
-def validate(raw, source_png):
+def validate(raw, source_png, *, with_blinks=False):
+    require(type(with_blinks) is bool, "with_blinks must be boolean")
+    names = ["MouthOpen", "blink.L", "blink.R"] if with_blinks else ["MouthOpen"]
+    neutral = [0] * len(names)
     doc, binary = read_glb(raw)
     require(
         doc.get("asset", {}).get("version") == "2.0", "Unsupported glTF asset version"
@@ -65,11 +68,12 @@ def validate(raw, source_png):
         "Expected one Face primitive",
     )
     require(
-        mesh.get("extras", {}).get("targetNames") == ["MouthOpen"],
-        "Expected MouthOpen target name",
+        mesh.get("extras", {}).get("targetNames") == names,
+        "Unexpected morph target names",
     )
     require(
-        mesh.get("weights", [0]) == [0] and node.get("weights", [0]) == [0],
+        mesh.get("weights", neutral) == neutral
+        and node.get("weights", neutral) == neutral,
         "Nonneutral default morph",
     )
     primitive = mesh["primitives"][0]
@@ -113,10 +117,11 @@ def validate(raw, source_png):
     )
     targets = primitive.get("targets", [])
     require(
-        len(targets) == 1 and set(targets[0]) == {"POSITION", "NORMAL"},
-        "Expected position/normal MouthOpen",
+        len(targets) == len(names)
+        and all(set(t) == {"POSITION", "NORMAL"} for t in targets),
+        "Expected position/normal streams for every morph",
     )
-    for accessor_id in targets[0].values():
+    for accessor_id in (a for target in targets for a in target.values()):
         kind, component, normalized, rows = values(doc, binary, accessor_id)
         require(
             component == 5126
@@ -253,6 +258,7 @@ def validate(raw, source_png):
     )
     return {
         "schema_version": 1,
+        "morph_names": names,
         "vertices": counts[0],
         "triangles": len(ids) // 3,
         "glb_sha256": hashlib.sha256(raw).hexdigest(),
@@ -261,7 +267,7 @@ def validate(raw, source_png):
         "image_size": list(size),
         "decoded_rgba_equal": True,
         "encoded_png_equal": embedded == source_png,
-        "scope": "Face-only static assembly with MouthOpen and base-color PBR; NPR shaders/control maps/SDF require separate definition. Structural validation is not visual acceptance.",
+        "scope": "Face-only assembly with explicitly selected neutral morphs and base-color PBR; NPR shaders/control maps/SDF require separate definition. Structural validation is not visual acceptance.",
     }
 
 
@@ -273,10 +279,15 @@ if __name__ == "__main__":
     parser.add_argument("face_glb", type=Path)
     parser.add_argument("same_job_base_png", type=Path)
     parser.add_argument("--output", type=Path, required=True)
+    parser.add_argument("--with-blinks", action="store_true")
     args = parser.parse_args()
     args.output.write_text(
         json.dumps(
-            validate(args.face_glb.read_bytes(), args.same_job_base_png.read_bytes()),
+            validate(
+                args.face_glb.read_bytes(),
+                args.same_job_base_png.read_bytes(),
+                with_blinks=args.with_blinks,
+            ),
             indent=2,
         )
         + "\n"
