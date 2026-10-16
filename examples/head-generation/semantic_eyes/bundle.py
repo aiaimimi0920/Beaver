@@ -122,6 +122,12 @@ def build_request(parameters, output_prefix, workspace):
             "semantic_eye_runtime.py": (HERE / "runtime.py").read_text(),
         }
     )
+    sources["textures.py"] = replace_once(
+        sources["textures.py"],
+        '    image.filepath = "//" + role.lower() + "_base.png"',
+        "    # Keep the same-job absolute atlas path; the inherited blend is still open.\n"
+        "    image.pack()",
+    )
     sources["eye_socket.py"] = replace_once(
         sources["eye_socket.py"],
         "/ 0.044 + 0.5",

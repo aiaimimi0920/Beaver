@@ -188,3 +188,34 @@ and 9,852 oriented triangles. They are exactly permutation-equivalent although
 their raw GLB hashes differ. All three face texture PNGs are byte-identical. This
 is evidence for that one configuration, not all-parameter stability, collision
 freedom, aesthetic acceptance, or identical engine-import behavior.
+
+### Standalone Face export and atlas identity
+
+`semantic_face_export.glb` contains the assembled Face mesh, including eyes,
+small facial parts and the `MouthOpen` morph. It has no body or hair node.
+Its embedded base-color PBR material requires `KHR_texture_transform` support.
+The NPR shaders, ILM, map and SDF resources remain separate and are referenced
+by the generated character definition; a standalone GLB is not the complete
+NPR presentation.
+
+The semantic packager keeps the generated atlas's same-job absolute path and
+packs its bytes before saving or exporting. Setting `//face_base.png` while
+the inherited source blend was still open previously rebound the image to the
+inherited atlas. Native case 701 fixes that: the embedded PNG is byte-identical
+to its declared same-job atlas, while the joint geometry, morph streams and
+oriented triangles remain identical to case 697. See `export-evidence.json`.
+The frozen checkpoint is unchanged.
+
+Run the separate structural check after generation (Pillow 12.3.0):
+
+```sh
+python examples/head-generation/semantic_eyes/export_contract.py \
+  path/to/semantic_face_export.glb path/to/face_base.png \
+  --output /tmp/face-export-contract.json
+```
+
+This checks scene reachability, the narrow Face/morph/material contract,
+finite streams, reference indices, embedded PNG decoding and same-job RGBA
+identity. It is separate from `repeat_streams.py`: equality alone cannot prove
+that either file is valid. Neither check establishes aesthetic quality,
+continuous collision freedom, or native importer compatibility.
