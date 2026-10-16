@@ -20,6 +20,10 @@ def select_components(parts, parameters):
         omit = parameters["supplemental_lashes"] == 0 and obj.name.startswith(
             SUPPLEMENTAL_PREFIXES
         )
+        if parameters.get("short_upper_tuft", 0) and obj.name.startswith(
+            "Upper swept lash tuft "
+        ):
+            omit = False
         omit = omit or (
             parameters["lid_fold"] == 0
             and obj.name.startswith("Tapered upper eyelid fold ")
@@ -34,7 +38,12 @@ def select_components(parts, parameters):
             bpy.data.objects.remove(obj, do_unlink=True)
     if parameters["supplemental_lashes"] == 0:
         assert not any(
-            obj.name.startswith(SUPPLEMENTAL_PREFIXES) for obj in parts
+            obj.name.startswith(SUPPLEMENTAL_PREFIXES)
+            and not (
+                parameters.get("short_upper_tuft", 0)
+                and obj.name.startswith("Upper swept lash tuft ")
+            )
+            for obj in parts
         ), "Omitted supplemental part retained"
     # Evaluated lash reconstruction replaces mesh datablocks and may discard
     # their earlier delta attributes. Recreate only missing data before joining.
@@ -68,3 +77,29 @@ def final_runtime_evidence(path):
         "ear_region_ids": [47, 48],
         "ear_region_face_counts": {47: counts[47], 48: counts[48]},
     }
+
+
+def validate_retained_tuft_roots(parts):
+    from mathutils.bvhtree import BVHTree
+
+    result = {}
+    for side in (-1, 1):
+        upper = next(o for o in parts if o.name == "Upper lash " + str(side))
+        tuft = next(o for o in parts if o.name == "Upper swept lash tuft " + str(side))
+        tree = BVHTree.FromPolygons(
+            [v.co.copy() for v in upper.data.vertices],
+            [tuple(p.vertices) for p in upper.data.polygons],
+        )
+        root_x = min(abs(v.co.x) for v in tuft.data.vertices)
+        roots = [v for v in tuft.data.vertices if abs(abs(v.co.x) - root_x) < 1e-7]
+        distances = [tree.find_nearest(v.co)[3] for v in roots]
+        assert roots and all(
+            d is not None and d < 0.0008 for d in distances
+        ), "Retained short tuft root disconnected"
+        result[str(side)] = {
+            "retained_child": tuft.name,
+            "sampled_root_vertices": len(roots),
+            "maximum_root_distance_m": max(distances),
+            "maximum_allowed_distance_m": 0.0008,
+        }
+    return result

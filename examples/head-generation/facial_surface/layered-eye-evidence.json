@@ -1,0 +1,67 @@
+{
+  "schema_version": 1,
+  "native_case": 704,
+  "reference_case": 702,
+  "job_id": "340c82ba-1cc1-44b6-a85a-e92d1b906099",
+  "native_status": "succeeded",
+  "profile": "emerald_layered",
+  "eyes_example": "emerald-layered-eyes.json",
+  "surface_parameters": {
+    "axial_smoothing": 0.5,
+    "cheek_roundness": 0.05,
+    "orbit_shallowing": 0.25
+  },
+  "support_bound_m": 0.0042,
+  "root_attachment": {
+    "-1": {
+      "retained_child": "Upper swept lash tuft -1",
+      "sampled_root_vertices": 1,
+      "maximum_root_distance_m": 2.5477918825345114e-5,
+      "maximum_allowed_distance_m": 0.0008
+    },
+    "1": {
+      "retained_child": "Upper swept lash tuft 1",
+      "sampled_root_vertices": 1,
+      "maximum_root_distance_m": 2.550236604292877e-5,
+      "maximum_allowed_distance_m": 0.0008
+    }
+  },
+  "repeatability": {
+    "schema": "exact-face-export-permutation-v1",
+    "scope": "Joint attributes, morphs, oriented triangles, uniquely identified/unreferenced vertices, materials and embedded images; ordering alone ignored",
+    "exact_permutation_equivalent": true,
+    "raw_bytes_equal": false,
+    "first": {
+      "sha256": "b2436a18ac24958886168b66205a2f499959649e535c98a73f59698613b301cc",
+      "canonical_sha256": "79296d7815534525192914e626602324d706e3b956d3ed51f312aced6316886f",
+      "vertices": 8157,
+      "triangles": 10980
+    },
+    "second": {
+      "sha256": "188d5e445aa3e596b81978b3d02f49c4b3a6ca250420a9ff63b3422cda4ab44d",
+      "canonical_sha256": "79296d7815534525192914e626602324d706e3b956d3ed51f312aced6316886f",
+      "vertices": 8157,
+      "triangles": 10980
+    },
+    "not_proven": [
+      "visual quality",
+      "collision freedom",
+      "all-parameter stability",
+      "engine import behavior"
+    ]
+  },
+  "face_export": {
+    "schema_version": 1,
+    "vertices": 8157,
+    "triangles": 10980,
+    "glb_sha256": "188d5e445aa3e596b81978b3d02f49c4b3a6ca250420a9ff63b3422cda4ab44d",
+    "embedded_png_sha256": "2296d0c2a29cf32f3188239cba65b8930db026ca0d1bb98072740426c60ad370",
+    "source_png_sha256": "2296d0c2a29cf32f3188239cba65b8930db026ca0d1bb98072740426c60ad370",
+    "image_size": [1024, 1024],
+    "decoded_rgba_equal": true,
+    "encoded_png_equal": true,
+    "scope": "Face-only static assembly with MouthOpen and base-color PBR; NPR shaders/control maps/SDF require separate definition. Structural validation is not visual acceptance."
+  },
+  "face_textures_byte_identical_to_reference": true,
+  "visual_scope": "Reference702 reviewed in native renderer including 5-degree rotation captures, white/wire views and sampled mouth weights. This proves repeatability of that internal candidate, not final beauty acceptance or all-parameter stability."
+}

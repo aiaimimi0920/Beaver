@@ -17,6 +17,7 @@ LIMITS = {
     "iris_height": (1.0, 0.90, 1.08),
     "iris_vertical_offset": (0.0, -0.01, 0.01),
     "simple_iris": (0.0, 0.0, 1.0),
+    "short_upper_tuft": (0.0, 0.0, 1.0),
     "brow_height_offset": (0.0, -0.012, 0.012),
     "brow_rise_offset": (0.0, -0.012, 0.012),
     "brow_thickness": (1.0, 0.70, 1.20),
@@ -41,12 +42,23 @@ def validate(request):
             raise ValueError("Expected finite number: " + key)
         if not LIMITS[key][1] <= value <= LIMITS[key][2]:
             raise ValueError("Outside bounded eye-family range: " + key)
-        if key in ("supplemental_lashes", "lid_fold", "simple_iris") and value not in (
+        if key in (
+            "supplemental_lashes",
+            "lid_fold",
+            "simple_iris",
+            "short_upper_tuft",
+        ) and value not in (
             0,
             1,
         ):
             raise ValueError("Layer control must be numeric zero or one: " + key)
         result[key] = float(value)
+    if result["short_upper_tuft"] and (
+        result["supplemental_lashes"] != 0 or result["lash_contour_follow"] != 1
+    ):
+        raise ValueError(
+            "Short upper tuft requires isolated layers and full contour following"
+        )
     return result
 
 
@@ -197,6 +209,20 @@ def adapt_style(original, request):
             ]
             for r in rails
             for t in [r[0]]
+        ]
+    if p["short_upper_tuft"]:
+        rails = style["upper_lash_rails"]
+
+        def mid(t):
+            return (sample(rails, t, 1) + sample(rails, t, 2)) / 2
+
+        style["upper_swept_tuft_outline"] = [
+            [0.42, mid(0.42)],
+            [0.55, mid(0.55) + 0.002],
+            [0.70, sample(rails, 0.55, 2) + 0.003],
+            [0.95, sample(rails, 0.55, 2) + 0.012],
+            [0.83, sample(rails, 0.55, 2) - 0.004],
+            [0.60, mid(0.60) - 0.001],
         ]
     # Geometry must remain within the fixed inherited feature-patch footprint.
     low = c["origin_y_m"] + c["height_m"] * (

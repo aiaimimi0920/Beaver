@@ -98,7 +98,10 @@ class SemanticEyeTests(unittest.TestCase):
             for bound in LIMITS[key][1:]:
                 # Single-axis supported endpoints must be valid; combinations
                 # are additionally protected by the geometric envelope guard.
-                adapt_style(self.style, {key: bound})
+                request = {key: bound}
+                if key == "short_upper_tuft" and bound:
+                    request.update(supplemental_lashes=0, lash_contour_follow=1)
+                adapt_style(self.style, request)
 
     def test_roundness_tracks_actual_upper_rim(self):
         request = dict(
