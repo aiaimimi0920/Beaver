@@ -147,3 +147,21 @@ Actual native case688 reproduced case685 exactly under joint Face-stream compari
 The source-speed helper is embedded verbatim in the preflight JSON, itself
 covered by the source manifest, so the request retains all sources within the
 64-output native limit. It is not silently discarded to fit the limit.
+
+## Optional lower-ear bridge repair
+
+A changed crease calibration exposed a shape-specific assumption: the old
+postprocess required one or two initially inverted bridge triangles even when
+none needed repair. The derived snapshot now accepts zero repair candidates as
+an explicit no-op. A single failing side still requires one unambiguous mirrored
+counterpart; asymmetry, ambiguity and more than two candidates still fail. The
+later limiting-face pass applies the same pairing rule. Final area, orientation,
+local-support and unchanged-outside-scope assertions remain intact.
+
+Native case693 exercised the zero-required branch without removing those checks.
+Its reduced crease weights did not adequately improve the white-model cheek
+transition, so that style change was not retained. Case694 repeated the existing
+689 configuration with this repair logic and produced exactly permutation-equal
+joint Face streams and byte-identical face texture PNGs. The immutable checkpoint
+source remains unchanged; the adaptation is retained as a hashed packaging
+helper inside the preflight JSON.

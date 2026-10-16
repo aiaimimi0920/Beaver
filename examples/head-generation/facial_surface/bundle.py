@@ -10,6 +10,7 @@ import sys
 import tempfile
 from preflight import prepare
 from source_speed import skip_zero_weight_sections
+from source_optional_bridges import adapt_bridge_pair_source, adapt_ear_boundary_source
 
 HERE = Path(__file__).resolve().parent
 EYES = HERE.parent / "semantic_eyes"
@@ -151,6 +152,12 @@ def depth(x, y):"""
                 "                normal = blend_medial_normal(normal, normals[index], region, side, data.vertices[index].co.z, C, DATA)\n"
                 "                if index in ear_root_ids:\n                    normal = normal.lerp",
             )
+            (snapshot / "bridge_pairs.py").write_text(
+                adapt_bridge_pair_source((recipe / "bridge_pairs.py").read_text())
+            )
+            (snapshot / "ear_boundary.py").write_text(
+                adapt_ear_boundary_source((recipe / "ear_boundary.py").read_text())
+            )
             (snapshot / "pipeline.py").write_text(pipeline)
             (snapshot / "face.py").write_text(face)
             (snapshot / "eye_socket.py").write_text(socket)
@@ -188,7 +195,7 @@ def depth(x, y):"""
     artifacts = {
         f"facial_surface_{path.name}": path.read_text()
         for path in HERE.glob("*.py")
-        if not path.name.startswith("test_") and path.name != "source_speed.py"
+        if not path.name.startswith("test_") and not path.name.startswith("source_")
     }
     for name in ("fit.py", "curve_profile.py", "diagnostics.py"):
         artifacts["coherent_dependency_" + name] = (
@@ -199,7 +206,7 @@ def depth(x, y):"""
             data=data,
             report=report,
             packager_helpers={
-                "source_speed.py": (HERE / "source_speed.py").read_text()
+                path.name: path.read_text() for path in HERE.glob("source_*.py")
             },
         ),
         indent=2,

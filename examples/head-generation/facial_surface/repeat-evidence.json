@@ -95,5 +95,47 @@
         "face_map.png": "4c6cfe8b05f7eb7e284fa832bc778e4a2371361c528e1b096221e7b1868b8a54"
       }
     }
+  },
+  "optional_bridge_regression": {
+    "comparison": {
+      "schema": "exact-face-export-permutation-v1",
+      "scope": "Joint attributes, morphs, oriented triangles, uniquely identified/unreferenced vertices, materials and embedded images; ordering alone ignored",
+      "exact_permutation_equivalent": true,
+      "raw_bytes_equal": false,
+      "first": {
+        "sha256": "9d487a1e09d72a2f048bd795b5db915fea3269b107c888062a54a0822ea42894",
+        "canonical_sha256": "bdb2f8f1d78768938791d941391c17583407ebf318bf3ed3243f54502b13f0ea",
+        "vertices": 7287,
+        "triangles": 9860
+      },
+      "second": {
+        "sha256": "21ff36f06fb368c9040fa983faa2a66e50e117891c5c3ac0375f565bd119ea66",
+        "canonical_sha256": "bdb2f8f1d78768938791d941391c17583407ebf318bf3ed3243f54502b13f0ea",
+        "vertices": 7287,
+        "triangles": 9860
+      },
+      "not_proven": [
+        "visual quality",
+        "collision freedom",
+        "all-parameter stability",
+        "engine import behavior"
+      ]
+    },
+    "native_jobs": {
+      "693": "ac45e5f2-549a-4e82-b7cc-a61ae3eadf57",
+      "694": "1504d033-e51d-4534-9ff4-3215be19f9a3"
+    },
+    "zero_required_case": {
+      "opening_initial_invalid": [],
+      "bridge_preconditioned": false,
+      "bridge_groups": [],
+      "topology_unchanged": true
+    },
+    "same_texture_sha256": {
+      "face_base.png": "2296d0c2a29cf32f3188239cba65b8930db026ca0d1bb98072740426c60ad370",
+      "face_ilm.png": "d83cc7376572e38aac9227c537af330b4cbabdea818979ef67f3198e78f58d84",
+      "face_map.png": "4c6cfe8b05f7eb7e284fa832bc778e4a2371361c528e1b096221e7b1868b8a54"
+    },
+    "limits": "Case693 crease appearance was not retained. Evidence concerns optional repair eligibility and same-case preservation, not all-calibration stability."
   }
 }
