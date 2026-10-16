@@ -109,13 +109,7 @@ func apply_state(state: Dictionary) -> void:
 	camera.position.y = state.get("pan_y", 0.0)
 	actor.light_yaw = state.light
 	actor.light_elevation = state.get("elevation", 25.0)
-	if (
-		actor.definition.material_set != null
-		and (
-			actor.definition.material_set.get_script().resource_path
-			== "res://showcase_extensions/sdf360/sdf_materials.gd"
-		)
-	):
+	if supports_sdf_controls(actor.materials[1]):
 		actor.materials[1].set_shader_parameter("u_npr_sdf360_enabled", state.get("sdf360", true))
 		actor.materials[1].set_shader_parameter("u_npr_sdf360_debug", state.get("sdf_debug", false))
 	actor.meshes[0].visible = state.body
@@ -126,3 +120,31 @@ func apply_state(state: Dictionary) -> void:
 	if drive_mouth and mouth_index >= 0:
 		actor.meshes[1].set_blend_shape_value(mouth_index, state.get("mouth", 0.0))
 		display.sync_morphs()
+
+
+static func supports_sdf_controls(material: ShaderMaterial) -> bool:
+	if material == null or material.shader == null:
+		return false
+	var names := {}
+	for entry in material.shader.get_shader_uniform_list():
+		if entry.type == TYPE_BOOL:
+			names[String(entry.name)] = true
+	return names.has("u_npr_sdf360_enabled") and names.has("u_npr_sdf360_debug")
+
+
+func sdf_control_state() -> Dictionary:
+	if not is_instance_valid(actor) or not actor.initialized:
+		return {"available": false}
+	var material: ShaderMaterial = actor.materials[1]
+	if not supports_sdf_controls(material):
+		return {"available": false}
+	var atlas = material.get_shader_parameter("u_npr_sdf360_atlas")
+	return {
+		"available": true,
+		"atlas_bound": atlas is Texture2D and atlas.get_width() > 0,
+		"atlas_path": atlas.resource_path if atlas is Texture2D else "",
+		"render_material_active":
+		display.mode == "render" and actor.meshes[1].get_active_material(0) == material,
+		"enabled": material.get_shader_parameter("u_npr_sdf360_enabled"),
+		"debug": material.get_shader_parameter("u_npr_sdf360_debug")
+	}

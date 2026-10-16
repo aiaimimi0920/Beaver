@@ -16,8 +16,10 @@ func run_or_cancel() -> void:
 	running = true
 	cancel_requested = false
 	var helper = preload("res://showcase_extensions/head_eye_sweep.gd").new(host)
+	host.dragging = false
+	host.panning = false
 	var saved: Dictionary = host.state.duplicate(true)
-	var controls: Array = helper.lock_controls()
+	var controls: Array = helper.lock_controls("光照采集")
 	var before: Array = helper.source_identities()
 	var folder := (
 		"res://artifacts/sdf_sweep/sdf-" + str(Time.get_unix_time_from_system()).replace(".", "-")
@@ -43,11 +45,25 @@ func run_or_cancel() -> void:
 		host.state.elevation = item.elevation
 		host.state.sdf_debug = item.debug
 		host.apply()
+		var applied: Array[Dictionary] = []
+		for pane in host.panes:
+			applied.append(pane.sdf_control_state())
+		if not controls_match(applied, item.debug):
+			report["error"] = "Candidate SDF material unavailable or requested state not applied"
+			break
 		host.status.text = "SDF 光照采集 %d / 250" % (report.captures.size() + 1)
 		await host.get_tree().process_frame
 		await RenderingServer.frame_post_draw
 		await host.get_tree().process_frame
 		await RenderingServer.frame_post_draw
+		if cancel_requested:
+			break
+		applied.clear()
+		for pane in host.panes:
+			applied.append(pane.sdf_control_state())
+		if not controls_match(applied, item.debug):
+			report["error"] = "Applied SDF material state changed before capture"
+			break
 		var path := folder + "/frame_%03d.png" % report.captures.size()
 		if host.get_viewport().get_texture().get_image().save_png(path) != OK:
 			report["error"] = "Screenshot write failed"
@@ -55,6 +71,7 @@ func run_or_cancel() -> void:
 		report.captures.append(
 			{
 				"state": host.state.duplicate(true),
+				"applied_sdf_controls": applied,
 				"image": path,
 				"sha256": FileAccess.get_sha256(path)
 			}
@@ -63,7 +80,13 @@ func run_or_cancel() -> void:
 	report["source_after"] = helper.source_identities()
 	report["identity_preserved"] = before == report.source_after
 	report.status = (
-		"completed" if report.captures.size() == 250 and report.identity_preserved else "failed"
+		"completed"
+		if report.captures.size() == 250 and report.identity_preserved and not cancel_requested
+		else (
+			"cancelled"
+			if cancel_requested and report.identity_preserved and not report.has("error")
+			else "failed"
+		)
 	)
 	helper.write_json(folder + "/manifest.json", report)
 	host.state = saved
@@ -72,3 +95,16 @@ func run_or_cancel() -> void:
 	running = false
 	host.status.text = "SDF 光照采集 %s：%d / 250" % [report.status, report.captures.size()]
 	print("SDF_SWEEP_RESULT=" + JSON.stringify({"folder": folder, "status": report.status}))
+
+
+static func controls_match(applied: Array[Dictionary], debug: bool) -> bool:
+	if applied.size() != 2 or not applied[0].get("available", false):
+		return false
+	for value in applied:
+		if not value.get("available", false):
+			continue
+		if not value.get("enabled", false) or value.get("debug") != debug:
+			return false
+		if not value.get("atlas_bound", false) or not value.get("render_material_active", false):
+			return false
+	return true
