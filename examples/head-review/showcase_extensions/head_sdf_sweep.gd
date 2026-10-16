@@ -72,6 +72,7 @@ func run_or_cancel() -> void:
 			{
 				"state": host.state.duplicate(true),
 				"applied_sdf_controls": applied,
+				"actual_morphs": [host.panes[0].morph_state(), host.panes[1].morph_state()],
 				"image": path,
 				"sha256": FileAccess.get_sha256(path)
 			}

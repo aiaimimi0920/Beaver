@@ -47,3 +47,24 @@ unsupported references, input locking and cancellation. Restore the ordinary
 scene afterward. The retained observation records69 native checks and a separate
 250-frame light sweep with500 actual material-state records. Cancelled captures
 are not counted as completed sweeps.
+
+## Optional eyelid review controls
+
+Candidates with both `blink.L` and `blink.R` expose independent [0,1] sliders and
+an eye-only reset button in the comparison panel. The reference remains neutral;
+`MouthOpen` remains independent. Assets missing either blink shape show no blink
+controls and do not receive implicit blink writes. These controls modify only
+preview-instance weights, never the source model.
+
+F12 and both automated sweeps record actual candidate/reference morph weights
+alongside requested state. Capture locks include these sliders; cancellation
+restores their prior values and labels. F12 reports metadata-write failure rather
+than presenting an incomplete evidence pair as success.
+
+`tests/blink_controls_probe.gd` is an explicit native GUI regression, not the
+ordinary scene. The retained observation records 135 checks on the primary
+three-morph asset and six on a legacy MouthOpen-only asset, with no failures.
+It covers real capture/cancel/restore and persisted weight metadata, in addition
+to render/white/wire synchronization and source identity. A separate supported
+variation passed 127 earlier checks. Manual slider clicks and reset were also
+captured. Restore the ordinary head-review scene after running the probe.

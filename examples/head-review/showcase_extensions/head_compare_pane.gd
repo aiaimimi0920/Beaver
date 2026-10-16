@@ -9,6 +9,7 @@ var display
 var source_path := ""
 var drive_mouth := false
 var mouth_index := -1
+var blink_indices := {}
 var source_face_height := 0.0
 
 
@@ -58,6 +59,8 @@ func configure(definition: NPRCharacterDefinition, neutralize_head: bool) -> boo
 			head.rotation = Vector3.ZERO
 	var face: MeshInstance3D = actor.meshes[1]
 	mouth_index = face.find_blend_shape_by_name("MouthOpen")
+	for key in ["blink.L", "blink.R"]:
+		blink_indices[key] = face.find_blend_shape_by_name(key)
 	print(
 		(
 			"MODEL_COMPARE_MORPH="
@@ -117,8 +120,12 @@ func apply_state(state: Dictionary) -> void:
 	if display.mode != state.mode:
 		display.set_mode(state.mode)
 
-	if drive_mouth and mouth_index >= 0:
-		actor.meshes[1].set_blend_shape_value(mouth_index, state.get("mouth", 0.0))
+	if drive_mouth:
+		if mouth_index >= 0:
+			actor.meshes[1].set_blend_shape_value(mouth_index, state.get("mouth", 0.0))
+		if supports_blinks():
+			for key in blink_indices:
+				actor.meshes[1].set_blend_shape_value(blink_indices[key], state.get(key, 0.0))
 		display.sync_morphs()
 
 
@@ -148,3 +155,19 @@ func sdf_control_state() -> Dictionary:
 		"enabled": material.get_shader_parameter("u_npr_sdf360_enabled"),
 		"debug": material.get_shader_parameter("u_npr_sdf360_debug")
 	}
+
+
+func supports_blinks() -> bool:
+	return blink_indices.get("blink.L", -1) >= 0 and blink_indices.get("blink.R", -1) >= 0
+
+
+func morph_state() -> Dictionary:
+	if not is_instance_valid(actor) or not actor.initialized:
+		return {}
+	var face: MeshInstance3D = actor.meshes[1]
+	var result := {}
+	for key in ["MouthOpen", "blink.L", "blink.R"]:
+		var index := face.find_blend_shape_by_name(key)
+		if index >= 0:
+			result[key] = face.get_blend_shape_value(index)
+	return result

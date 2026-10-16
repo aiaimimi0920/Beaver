@@ -151,6 +151,7 @@ func run_or_cancel() -> void:
 		record["state"] = host.state.duplicate(true)
 		record["image"] = stem + ".png"
 		record["sha256"] = FileAccess.get_sha256(stem + ".png")
+		record["actual_morphs"] = [host.panes[0].morph_state(), host.panes[1].morph_state()]
 		record["cameras"] = []
 		for pane in host.panes:
 			record.cameras.append(
