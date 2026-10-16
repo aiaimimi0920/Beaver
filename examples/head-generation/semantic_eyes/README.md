@@ -219,3 +219,46 @@ finite streams, reference indices, embedded PNG decoding and same-job RGBA
 identity. It is separate from `repeat_streams.py`: equality alone cannot prove
 that either file is valid. Neither check establishes aesthetic quality,
 continuous collision freedom, or native importer compatibility.
+
+## Optional independent eyelid closure
+
+Both packagers accept the explicit `--blink` flag (Python: `blink=True`). The
+unchanged default exports only `MouthOpen`. The optional mode adds neutral
+`blink.L` and `blink.R` shapes, requiring `supplemental_lashes=0`, `lid_fold=0`,
+and `lash_contour_follow=1`. The supported short upper tuft may remain enabled.
+Positive X is `blink.R`; negative X is `blink.L` in the model coordinate frame.
+
+Skin closure inside the aperture retains a 2% vertical span, while the lash/lid
+boundaries meet on a gently curved seam. This prevents the collapsed or reversed
+corner triangles found in the rejected full-translation prototype. Eyebrows,
+iris, ears and rear shell remain fixed by the explicit semantic membership.
+The neutral shape and existing mouth shape are not edited.
+
+The native generator rejects any triangle coupling both independent eye
+controls. For every triangle it minimizes the quadratic oriented-area projection
+onto its neutral normal over blink and MouthOpen weights in [0,1]. A positive
+margin above 1e-5 is required. This floating-point calculation is not an interval
+proof, collision test, or evidence of attractive poses. Native multiview renders
+and actual imported blend-shape readback are still required.
+
+`export_contract.py --with-blinks` explicitly selects the three-name morph
+contract and validates every position/normal stream. Without that flag it still
+rejects extra targets. Both modes require zero default weights and the actual
+same-job embedded atlas. The optional runtime helper is retained inside the
+hashed generated `semantic_eye_runtime.py`, without exceeding the facial
+wrapper's 64-output limit. No automatic blink driver is enabled.
+
+The retained `blink-evidence.json` records native case709: all three morph streams
+repeat case708 exactly up to a unique vertex permutation, with 8,183 exported
+vertices and 10,980 triangles. Its independent SDF bake matches case708. The
+native orientation minimum is 0.03567719. All 69 actual render/white/wink-with-mouth
+captures were inspected and read-back weights checked. Case707 was rejected for
+eight reversed eye-corner triangles and is not the retained implementation.
+
+For explicit native review, stage `examples/head-review/tests/blink_pose_probe.gd`
+in the existing Beaver project and temporarily point the head-review scene at it.
+It records six views at five bilateral closure values in render/white modes,
+then independent winks and bilateral closure with MouthOpen 0.6. Check its
+manifest hashes, requested/read-back weights, images, and unchanged source hash;
+restore the ordinary head-review scene afterward. The probe does not establish
+acceptance merely by writing a manifest.
