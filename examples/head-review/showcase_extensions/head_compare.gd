@@ -27,6 +27,7 @@ var status: Label
 var zoom_slider: HSlider
 var candidate_path := ""
 var reference_path := ""
+var expression_controls
 
 
 func configure(candidate: NPRCharacterDefinition, reference: NPRCharacterDefinition) -> void:
@@ -145,6 +146,8 @@ func configure(candidate: NPRCharacterDefinition, reference: NPRCharacterDefinit
 		pane.drive_mouth = not entry[2]
 		pane.gui_input.connect(pane_input)
 		panes.append(pane)
+	expression_controls = preload("res://showcase_extensions/head_expression_controls.gd").new()
+	expression_controls.setup(self, column, pair_row)
 	status = Label.new()
 	status.text = "拖动同步旋转；Shift+拖动同步平移；滚轮缩放；10°按钮逐档检查；F12 保存。仅预览归一化，不修改源模型。"
 	column.add_child(status)
@@ -201,6 +204,8 @@ func apply() -> void:
 		angle_label.text = "水平角 %.1f° / 俯仰 %.1f°" % [state.yaw, state.pitch]
 	for pane in panes:
 		pane.apply_state(state)
+	if expression_controls != null:
+		expression_controls.sync_labels()
 
 
 func set_visibility(value: bool, key: String) -> void:
@@ -312,13 +317,26 @@ func save_capture() -> void:
 		status.text = "对比截图保存失败"
 		return
 	var file := FileAccess.open(stem + ".json", FileAccess.WRITE)
-	if file != null:
-		file.store_string(
-			JSON.stringify(
-				{"candidate": candidate_path, "reference": reference_path, "state": saved_state},
-				"  "
-			)
+	if file == null:
+		status.text = "截图已保存，但参数文件写入失败"
+		return
+	file.store_string(
+		JSON.stringify(
+			{
+				"candidate": candidate_path,
+				"reference": reference_path,
+				"state": saved_state,
+				"actual_morphs": [panes[0].morph_state(), panes[1].morph_state()]
+			},
+			"  "
 		)
+	)
+	file.flush()
+	if file.get_error() != OK:
+		status.text = "截图已保存，但参数文件写入失败"
+		file.close()
+		return
+	file.close()
 	status.text = "已保存同屏对比与参数；请等待保存后再切换视角。"
 	print("MODEL_COMPARE_CAPTURE=" + stem + ".png")
 

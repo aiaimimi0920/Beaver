@@ -1,0 +1,85 @@
+{
+  "observed_utc": "2026-10-16T23:51:00Z",
+  "supported_primary": {
+    "checks": 135,
+    "failures": [],
+    "source": "res://assets/aster/general_face_eyes_709_blink_repeat/aster_head.glb",
+    "source_unchanged": true,
+    "supports_blinks": true
+  },
+  "supported_variation": {
+    "checks": 127,
+    "failures": [],
+    "source": "res://assets/aster/general_face_eyes_710_round/aster_head.glb",
+    "source_unchanged": true,
+    "supports_blinks": true
+  },
+  "unsupported_asset": {
+    "checks": 6,
+    "failures": [],
+    "source": "res://assets/aster/general_face_eyes_702_target/aster_head.glb",
+    "source_unchanged": true,
+    "supports_blinks": false
+  },
+  "manual": [
+    {
+      "metadata": "artifacts/model_comparison/compare-1792194672-33658.json",
+      "state": {
+        "blink.L": 0.51,
+        "blink.R": 1.0,
+        "body": false,
+        "hair": false,
+        "light": -45.0,
+        "mode": "render",
+        "mouth": 0.0,
+        "pan_x": 0.0,
+        "pan_y": 0.0,
+        "pitch": 0.0,
+        "yaw": 0.0,
+        "zoom": 1.07
+      },
+      "actual_morphs": [
+        {
+          "MouthOpen": 0.0,
+          "blink.L": 0.509999990463257,
+          "blink.R": 1.0
+        },
+        {
+          "MouthOpen": 0.0
+        }
+      ],
+      "image_sha256": "331532f1cdbbe914fc14223b7ded304dd96877e8f08d2a9878ec0b963b262d08"
+    },
+    {
+      "metadata": "artifacts/model_comparison/compare-1792194701-14696.json",
+      "state": {
+        "blink.L": 0.0,
+        "blink.R": 0.0,
+        "body": false,
+        "hair": false,
+        "light": -45.0,
+        "mode": "render",
+        "mouth": 0.0,
+        "pan_x": 0.0,
+        "pan_y": 0.0,
+        "pitch": 0.0,
+        "yaw": 0.0,
+        "zoom": 1.07
+      },
+      "actual_morphs": [
+        {
+          "MouthOpen": 0.0,
+          "blink.L": 0.0,
+          "blink.R": 0.0
+        },
+        {
+          "MouthOpen": 0.0
+        }
+      ],
+      "image_sha256": "327b2da7f57c9452473eda699e2f5a0304feff15d6e22d79aeee7e2636faad1e"
+    }
+  ],
+  "checks": "Candidate-only slider changes, render/white/wire sync, partial capability untouched, reset preserves mouth, actual eye/SDF capture then Escape restores state, actual morph metadata, source hashes unchanged",
+  "probe_sha256": "ca426329d6a48e70c05428e1ff0b7998e9f2b2e1f19b15783c09e3e68df95465",
+  "scope": "Actual engine observations, not all-asset or visual acceptance. Earlier variation probe cancelled before first frame; primary probe verified persisted frames."
+}
