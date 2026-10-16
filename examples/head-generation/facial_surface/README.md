@@ -165,3 +165,30 @@ transition, so that style change was not retained. Case694 repeated the existing
 joint Face streams and byte-identical face texture PNGs. The immutable checkpoint
 source remains unchanged; the adaptation is retained as a hashed packaging
 helper inside the preflight JSON.
+
+### Layered emerald eye profile
+
+The separate opt-in `emerald_layered` profile retains the original
+`clean_emerald` profile unchanged. It moves the coupled iris layers farther
+behind the lid, enlarges the hidden pocket support, increases eye contour
+sampling, and uses restrained submillimeter short-leaf depth relief. This broader art
+profile also reduces nose-plane pigment strength and footprint; it does not
+change nose geometry. Both generated scope fields explicitly report that
+pigment change, so it must not be described as an eye-only image ablation.
+`emerald-layered-eyes.json` is the explicit numeric eye-control example.
+
+The `short_upper_tuft` control defaults to zero. Enabling it requires
+`supplemental_lashes=0` and `lash_contour_follow=1`; it derives one tapered
+child outline from the adapted main-band rails and retains only that optional
+child. Bounded depth relief is applied by this control even when used directly
+without a facial style profile. Every vertex in its root column must remain within 0.8 mm of the actual
+parent surface after fitting. Existing closed-volume, front-normal and main
+attachment checks remain active. This bounded root check is not an all-surface
+collision proof.
+
+Use the existing packager with `--style-profile emerald_layered`, the example
+JSON as `--eyes`, and the explicit surface parameters
+`{"axial_smoothing":0.5,"cheek_roundness":0.05,"orbit_shallowing":0.25}`.
+The reviewed support bound remains 0.0042 m. Do not raise it merely to force an
+incompatible parameter combination through. Generated candidates still require
+fresh native geometry, texture validation and multi-angle visual review.

@@ -81,7 +81,14 @@ def build_request(parameters, output_prefix, workspace):
         "        region = part_index + 10",
         "        region = semantic_part_ordinals[part.name]",
     )
-    if p["supplemental_lashes"] == 0:
+    if p["short_upper_tuft"]:
+        pipeline = replace_once(
+            pipeline,
+            'report["eye_accent_connections"] = measure_accent_connections()',
+            "from semantic_eye_runtime import validate_retained_tuft_roots\n"
+            'report["eye_accent_connections"] = validate_retained_tuft_roots(PARTS)',
+        )
+    elif p["supplemental_lashes"] == 0:
         pipeline = replace_once(
             pipeline,
             'report["eye_accent_connections"] = measure_accent_connections()',

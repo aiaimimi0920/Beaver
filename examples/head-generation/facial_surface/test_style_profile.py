@@ -27,6 +27,24 @@ class StyleProfileTests(unittest.TestCase):
             with self.assertRaises(ValueError):
                 apply_style_profile(self.base, bad)
 
+    def test_layered_profile_keeps_original_profile_and_anatomy(self):
+        clean = apply_style_profile(self.base, "clean_emerald")
+        layered = apply_style_profile(self.base, "emerald_layered")
+        self.assertEqual(clean["calibration"]["iris_rim_depth"], -0.0348)
+        self.assertEqual(layered["calibration"]["iris_rim_depth"], -0.0448)
+        self.assertEqual(layered["calibration"]["iris_radial_samples"], 64)
+        self.assertEqual(layered["calibration"]["pocket_body_height_ratio"], 1.9)
+        self.assertEqual(layered["accent_tuft_flare_m"], 0.0006)
+        self.assertEqual(
+            layered["calibration"]["nose_stations"],
+            self.base["calibration"]["nose_stations"],
+        )
+        self.assertEqual(
+            layered["calibration"]["continuous_lateral_power"],
+            self.base["calibration"]["continuous_lateral_power"],
+        )
+        self.assertEqual(apply_style_profile(self.base, "clean_emerald"), clean)
+
     def test_eye_style_changes_and_preserved_anatomy(self):
         clean = apply_style_profile(self.base, "clean_emerald")
         old, new = self.base["calibration"], clean["calibration"]

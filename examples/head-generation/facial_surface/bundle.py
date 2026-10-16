@@ -22,42 +22,7 @@ def once(source, old, new):
     return source.replace(old, new, 1)
 
 
-PROFILE_STYLE = {
-    "accent_band_roll_m": 0.0006,
-    "accent_cross_arch_ratio": 0.0,
-    "accent_cross_section_profile": "rounded",
-    "accent_final_crown_relief_m": 0.0005,
-    "accent_main_lower_flank_drop_m": 0.0001,
-    "accent_main_lower_flank_recede_m": 0.0002,
-    "accent_outer_tint_rgb": [0.045, 0.023, 0.035],
-    "accent_section_soft_curve": 1.0,
-    "brow_arch_m": 0.0018,
-    "brow_rgb": [0.055, 0.025, 0.04],
-    "iris_crescent_rgb": [0.52, 0.91, 0.69],
-    "iris_dark_rgb": [0.025, 0.11, 0.1],
-    "iris_light_rgb": [0.28, 0.62, 0.46],
-    "iris_rim_rgb": [0.014, 0.04, 0.035],
-    "lash_rgb": [0.022, 0.013, 0.022],
-    "lower_lash_width_scale": 0.4,
-}
-PROFILE_CALIBRATION = {
-    "iris_concavity": 0.01,
-    "iris_rim_depth": -0.0348,
-    "pupil_half_height": 0.0243,
-    "pupil_half_width": 0.014875000000000001,
-}
-
-
-def apply_style_profile(style, name):
-    """Opt-in original eye-art direction; the inherited baseline stays intact."""
-    if name is None:
-        return json.loads(json.dumps(style))
-    if name != "clean_emerald":
-        raise ValueError("Unknown face style profile: " + str(name))
-    result = json.loads(json.dumps(style))
-    result.update(PROFILE_STYLE)
-    result["calibration"].update(PROFILE_CALIBRATION)
-    return result
+from source_styles import apply_style_profile
 
 
 def build_request(
@@ -170,7 +135,15 @@ def depth(x, y):"""
     preamble += f'exec(compile({module!r}, "facial_surface_runtime.py", "exec"), _facial.__dict__)\n'
     preamble += f"_facial.DATA = {data!r}\n_facial.REVIEWED_BOUND = {reviewed_support_bound_m!r}\n"
     request["code"] = preamble + request["code"]
+    profile_scope = (
+        "Layered eye art direction plus reduced nose-plane pigment; nose geometry unchanged"
+        if style_profile == "emerald_layered"
+        else "Inherited or clean eye art direction"
+    )
+    if style_profile == "emerald_layered":
+        request["code"] += f'report["semantic_eyes"]["scope"] = {profile_scope!r}\n'
     report.update(
+        style_profile_scope=profile_scope,
         parameters=data["parameters"],
         style_profile=style_profile,
         reviewed_support_bound_m=reviewed_support_bound_m,
@@ -246,7 +219,7 @@ if __name__ == "__main__":
     parser.add_argument("--prefix", required=True)
     parser.add_argument("--workspace", type=Path, required=True)
     parser.add_argument("--reviewed-support-bound-m", type=float, required=True)
-    parser.add_argument("--style-profile", choices=["clean_emerald"])
+    parser.add_argument("--style-profile", choices=["clean_emerald", "emerald_layered"])
     parser.add_argument("--output", type=Path, required=True)
     args = parser.parse_args()
     args.output.write_text(
