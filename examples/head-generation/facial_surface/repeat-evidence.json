@@ -1,0 +1,99 @@
+{
+  "date_utc": "2026-10-16",
+  "scope": "Observed same-parameter native regeneration, not product acceptance",
+  "comparison_685_687": {
+    "schema": "exact-face-export-permutation-v1",
+    "scope": "Joint attributes, morphs, oriented triangles, uniquely identified/unreferenced vertices, materials and embedded images; ordering alone ignored",
+    "exact_permutation_equivalent": true,
+    "raw_bytes_equal": false,
+    "first": {
+      "sha256": "92ebfa486c3e83dbb0cb04ed7831713d9684e01b5949e11aff76449ab244b311",
+      "canonical_sha256": "634a8ae26480b622a1883cdc6b546ec692e92c5c59fb1bbd9ae61dfbcf94f692",
+      "vertices": 7284,
+      "triangles": 9852
+    },
+    "second": {
+      "sha256": "c926eda3afa79821a5d03be6911590cd8971e86ab6a463e12e8a21a9291b9f02",
+      "canonical_sha256": "634a8ae26480b622a1883cdc6b546ec692e92c5c59fb1bbd9ae61dfbcf94f692",
+      "vertices": 7284,
+      "triangles": 9852
+    },
+    "not_proven": [
+      "visual quality",
+      "collision freedom",
+      "all-parameter stability",
+      "engine import behavior"
+    ]
+  },
+  "comparison_685_688": {
+    "schema": "exact-face-export-permutation-v1",
+    "scope": "Joint attributes, morphs, oriented triangles, uniquely identified/unreferenced vertices, materials and embedded images; ordering alone ignored",
+    "exact_permutation_equivalent": true,
+    "raw_bytes_equal": false,
+    "first": {
+      "sha256": "92ebfa486c3e83dbb0cb04ed7831713d9684e01b5949e11aff76449ab244b311",
+      "canonical_sha256": "634a8ae26480b622a1883cdc6b546ec692e92c5c59fb1bbd9ae61dfbcf94f692",
+      "vertices": 7284,
+      "triangles": 9852
+    },
+    "second": {
+      "sha256": "45aecf2053f1fdfeb638b40ffe785d8a2e423ec31b4883375df8e2f859448bdc",
+      "canonical_sha256": "634a8ae26480b622a1883cdc6b546ec692e92c5c59fb1bbd9ae61dfbcf94f692",
+      "vertices": 7284,
+      "triangles": 9852
+    },
+    "not_proven": [
+      "visual quality",
+      "collision freedom",
+      "all-parameter stability",
+      "engine import behavior"
+    ]
+  },
+  "native_jobs": {
+    "685": "8aa2249e-b62d-436c-a267-1394962036a1",
+    "687": "b7762b68-1750-4e25-97a2-4230e3cf8d34",
+    "688": "8815bb26-a1b2-4c64-9935-8c70bfae844d"
+  },
+  "cases": {
+    "685": {
+      "phase_timings_seconds": null,
+      "sha256": {
+        "aster_head.glb": "8fe04475245e7143114c1c8eb0d594ff7fc3d030c7bc7cbf37302846866fafae",
+        "semantic_face_export.glb": "92ebfa486c3e83dbb0cb04ed7831713d9684e01b5949e11aff76449ab244b311",
+        "face_base.png": "2e98b2facee9804b1b9ecedaa8cf1a4fd06f3eb860fde4ec9012788a56010769",
+        "face_ilm.png": "35b7ce8a0c003acb3c7b24ba4e0c4bcde3bc98c0e127631c38987c83b44c346e",
+        "face_map.png": "4c6cfe8b05f7eb7e284fa832bc778e4a2371361c528e1b096221e7b1868b8a54"
+      }
+    },
+    "687": {
+      "phase_timings_seconds": {
+        "face": 0.4888402720098384,
+        "eyes": 83.01953060697997,
+        "base_atlas": 5.426850888004992,
+        "control_maps": 97.22058765700785
+      },
+      "sha256": {
+        "aster_head.glb": "a485d6b05f0b8c2a6b254329e072d6bf6c3e586a6e50ab7b11eac7dede7817d5",
+        "semantic_face_export.glb": "c926eda3afa79821a5d03be6911590cd8971e86ab6a463e12e8a21a9291b9f02",
+        "face_base.png": "2e98b2facee9804b1b9ecedaa8cf1a4fd06f3eb860fde4ec9012788a56010769",
+        "face_ilm.png": "35b7ce8a0c003acb3c7b24ba4e0c4bcde3bc98c0e127631c38987c83b44c346e",
+        "face_map.png": "4c6cfe8b05f7eb7e284fa832bc778e4a2371361c528e1b096221e7b1868b8a54"
+      }
+    },
+    "688": {
+      "phase_timings_seconds": {
+        "face": 0.23858459095936269,
+        "eyes": 36.373963690013625,
+        "base_atlas": 6.173138157988433,
+        "control_maps": 52.47484409698518
+      },
+      "sha256": {
+        "aster_head.glb": "9b069c61c9e74615c3a2b5dbaf8399a820b79cfc12d8d43d55a97503367728ca",
+        "semantic_face_export.glb": "45aecf2053f1fdfeb638b40ffe785d8a2e423ec31b4883375df8e2f859448bdc",
+        "face_base.png": "2e98b2facee9804b1b9ecedaa8cf1a4fd06f3eb860fde4ec9012788a56010769",
+        "face_ilm.png": "35b7ce8a0c003acb3c7b24ba4e0c4bcde3bc98c0e127631c38987c83b44c346e",
+        "face_map.png": "4c6cfe8b05f7eb7e284fa832bc778e4a2371361c528e1b096221e7b1868b8a54"
+      }
+    }
+  }
+}

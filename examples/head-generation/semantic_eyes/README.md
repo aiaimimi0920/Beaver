@@ -1,102 +1,103 @@
-# Bounded semantic eye family
+# Procedural eye-family experiment
 
-This separate recipe exposes numeric eye/iris/brow/lash controls. It contains no
-character-name selector. A reference-informed planner chooses explicit values;
-matching a character is a visual acceptance goal, not a consequence of accepting
-valid parameters. Existing `general_face` / 669 code and evidence are unchanged.
+This packages source and numeric controls for the existing Beaver `blender.start`
+workflow. It does not run Blender or Godot itself. A valid request or passing CPU
+tests do not establish visual quality, freedom from intersections, or a generally
+accepted character-generation pipeline.
 
-## Package for Beaver
+## Inputs and scope
 
-From this directory:
+The procedural Face is regenerated, with no restoration from a final accepted
+Face mesh. The private `head_recovery_49` blend/GLB still supplies frozen Body/Hair
+and the definition. Required files are `project.godot`,
+`authoring/head_generation_guide.md`, and that baseline's editable blend, GLB,
+definition, `hair_base.png`, and `hair_ilm.png`. The current renderer has three
+mandatory roles; hiding non-face roles in review is not a standalone-face export.
 
-```sh
-python bundle.py --workspace '/path/to/current/workspace' \
-  --parameters '{"eye_width":1.04,"upper_arch":0.78,"lower_arch":0.70,"corner_slope_offset":0.002,"iris_width":0.96,"iris_height":0.92,"brow_thickness":0.70,"brow_arch":1.10,"brow_height_offset":0.004,"brow_rise_offset":0.004,"lash_band_thickness":0.65,"supplemental_lashes":0,"lid_fold":0}' \
-  --prefix assets/aster/general_face_eyes_target/ --output request.json
-```
+The packager retains input/source hashes, adapted style, controls, editable and
+runtime blends, and the same-job generated Face export. Existing outputs require
+current hashes. The facial-surface wrapper currently uses all 64 native output
+slots; do not silently omit an evidence file when extending it.
 
-The sample is a qualitative first-pass proposal, not measured reference data.
-Use `{}` for the new procedural baseline. Submit the resulting code/outputs/
-timeout through an authorized Beaver native job. This command only packages.
-Required inputs: `project.godot`, `authoring/head_generation_guide.md`, and
-`assets/aster/head_recovery_49/{aster_head_editable.blend,aster_head.glb,
-aster_definition.tres,hair_base.png,hair_ilm.png}`. The old Face is removed and
-procedurally regenerated; original49 supplies frozen body/hair and definition.
-No accepted617/662/669 final Face is read or restored.
+## Controls
 
-The bundle retains adapted source/style, input/source hashes, numeric controls,
-editable and runtime blends, and the same-job Face export. Existing output hashes
-are mandatory optimistic-overwrite guards when outputs exist.
-
-## Numeric contract
-
-All multipliers default to 1:
+Multipliers default to 1:
 
 - eye_spacing .96–1.04; eye_width .92–1.08
-- upper_arch / lower_arch .70–1.12
-- iris_width / iris_height .90–1.08
+- upper_arch .70–1.40; lower_arch .50–1.12
+- upper_roundness 1–2; upper_horizontal_roundness .70–1
+- iris_width and iris_height .90–1.08
 - brow_thickness .70–1.20; brow_arch .50–1.50
-- lash_band_thickness .55–1.15 (rail width, not mesh extrusion thickness)
+- lash_band_thickness .55–1.15
 
-Offsets default to 0 and are fractions of face height H=.236 m:
+Offsets default to 0, in fractions of calibrated face height:
 
 - corner_slope_offset ±.008; eye_height_offset ±.006
-- brow_height_offset / brow_rise_offset ±.012
+- iris_vertical_offset ±.01
+- brow_height_offset and brow_rise_offset ±.012
 
-supplemental_lashes and lid_fold accept numeric 0 or 1 (default1). Zero removes
-supplemental tuft/fork/outer-wing/lateral components or the fold after inherited
-attachment validation, before atlas/normal-region/join assembly. Upper lash band,
-skin lids and eyebrows remain. Removed geometry is absent, not hidden by alpha.
-Booleans, unknown fields, nonfinite and out-of-range values are rejected. Combined
-controls must also remain inside the inherited eye-patch vertical envelope.
+Numeric layer controls accept only 0 or 1. `supplemental_lashes` and `lid_fold`
+default 1. `simple_iris` defaults 0. Booleans, unknown keys, nonfinite values and
+out-of-range values fail. Combined values must also satisfy the inherited
+aperture-height envelope.
 
-## Boundaries and validation scope
+`lash_contour_follow` is 0–1, default 0. Full follow uses 21 stations, variable
+width, pointed ends and a Hermite outer continuation after t=.75. The outer tip
+returns toward the eye corner instead of continuing the old raised curl.
+Fractional values blend sampled inherited rails; they are not visually approved.
+Actual retained-band attachment, obstacle, volume and degeneracy checks remain.
 
-- This is a new procedural baseline, not byte-identical669: accepted617 restoration
-  and its fixed outer-eye postwarp are intentionally absent. Other inherited
-  procedural nose/ear/jaw calibration remains; there are no new controls for them.
-- Eye centers/widths, iris UV dimensions and brow placement are coupled explicitly.
-  Lash rails follow changed upper contour; evaluated support fitting is retained.
-- Supplemental pieces are constructed and validated before omission; their legacy
-  checks can still reject a candidate. No thresholds are reduced to force success.
-- Fixed patch topology and inherited normal/ear fitting need native validation.
-  CPU checks do not prove zero intersections, visual likeness, or mouth-open safety.
-- Generated control maps use the adapted procedural field. For directional SDF,
-  use this directory’s `sdf_bundle.py` with the same `--parameters`, `--prefix`,
-  `--workspace`, and `--output` arguments after geometry completes, plus
-  `--generation-receipt /path/to/native_poll_receipt.json`. The trusted captured
-  successful Beaver receipt must bind blend/GLB/parameters from the same job
-  and workspace; receipt hash/job/script identities are retained. New generation
-  reports also bind the saved runtime blend and final semantic-region counts. It hashes the
-  current runtime blend/GLB/report/definition/parameters and verifies them before
-  execution. Existing output hashes and idempotent atlas binding are retained.
-  The default `smooth_proxy` policy fits the current neutral front-shell silhouette
-  and dominant authored UV2-to-Blender-XZ map. It uses explicit art-direction gains
-  0.83 lateral / 0.62 vertical and excludes local eye/nose/lip/depth relief from
-  shading directions. It is not a physical mesh-normal field. At least 70% of
-  interior samples must support the map within 2 micrometers; fit conditioning,
-  bounds, inlier coverage and excluded local-refinement residuals are reported.
-  This is an approximation to the current geometry, not an exact global map.
-  Static neutral SDF excludes expression-dependent shading and cast occlusion.
-  Native multi-light visual review remains required.
+When supplemental components are omitted, the supplemental-only connection
+check is explicitly not applicable; final assembly asserts that all those
+components are absent. This does not waive checks for retained geometry.
 
-  The diagnostic `--shading-policy mesh_normals` retains the failed visual
-  experiment: geometrically front-facing NormalRegion1 triangles, strict UV
-  coverage/degeneracy/overlap gates and bounded uncovered-pixel continuation.
-  Successful rasterization did not prevent disconnected NPR shadow islands.
-  Do not treat that diagnostic policy as visually accepted.
+`simple_iris=1` removes the separate pupil-accent geometry and lower graphic
+circle/outline, shortens pupil height to 84% and scales catchlight dimensions to
+80%. Iris height/width and UV mapping remain coupled. The iris vertical offset
+moves the eye layers together without moving eyebrows or skin.
 
-  By default the generation receipt must name this workspace. To bake a verified
-  copy in a separate Beaver workspace, explicitly pass `--allow-workspace-copy`.
-  This still requires all three immutable blend/GLB/parameter hashes to match the
-  original successful generation job; both workspace identities and the copy
-  verification are retained. It does not authorize unmatched or stale geometry.
+## Visual case and limitations
 
-- Native review should compare baseline/target front, three-quarter, profile and
-  mouth weights 0/.25/.5/1; inspect actual bounds, iris/lid containment, lash roots,
-  nondegeneracy and body/hair hashes before retaining results.
+The optional `clean_emerald` style profile belongs to
+`../facial_surface/bundle.py`. It keeps the inherited default unchanged and
+reproduces the original eye-art direction inspected in case685: shallow rounded
+lash section, restrained dark outer tint, thinner lower line, a recessed iris rim
+with shallower concavity, and softer arched brows. It is a reviewed case, not a
+claim that every control combination is attractive or collision-free.
 
-CPU verification: `python -m unittest discover -s . -q` and `python -m compileall -q .`.
+Case683 was rejected after rendered close-ups revealed iris-rim slivers above
+the upper band and an overlong plum tail. Cases684/685 resolved the visible
+slivers in the inspected front and three-quarter views. Five MouthOpen samples
+had no degenerate triangles. BVH overlap candidates between the hidden iris,
+pocket and upper lid remain to be classified; these are not zero-collision
+results. White-model cheek curvature remains a separate open issue.
+
+## Matching SDF and validation
+
+After successful geometry generation, `sdf_bundle.py` requires a trusted captured
+Beaver poll receipt. It verifies the same job's blend, GLB and numeric-control
+hashes and the current workspace. It never substitutes a previous atlas.
+
+The default `smooth_proxy` policy fits a smooth art-directed normal field to the
+actual runtime front shell and excludes eye/nose/lip microrelief from the SDF.
+It is not physical mesh-normal shading. Explicit `mesh_normals` instead uses the
+actual front-shell UV2 corner normals with coverage, overlap and continuation
+gates. Both policies require native rendered light-sweep review; static neutral
+SDF does not establish expression-dependent shadow correctness.
+
+Inspect neutral front, both three-quarter views, side and pitched views; inspect
+white/wire geometry independently. Check saved runtime morphs and visible
+layering before retaining a candidate. Do not equate a `workflow.run` technical
+pass with visual acceptance.
+
+Run pure regressions with `python -m unittest discover -s . -q` from this folder.
+
+## Verified-copy SDF mode
+
+`--allow-workspace-copy` explicitly permits baking an unchanged verified copy in
+a different workspace. All three immutable blend/GLB/parameter hashes must still
+match the original successful job. Both workspace identities are retained; this
+does not authorize stale or unmatched geometry.
 
 ## Retained native regression
 
@@ -170,3 +171,20 @@ generative eye controls and NPR shading samples; full Faye likeness is incomplet
 matched within 2 micrometers, with condition number 7.62. Excluded local
 refinements reached 9.16 mm residual; they are reported and are not claimed to
 follow the dominant map. The previous failed mesh-normal atlas remains separate.
+
+## Exact repeat-export comparison
+
+`repeat_streams.py --first face-a.glb --second face-b.glb --output comparison.json`
+compares standalone same-job Face exports. It joins every attribute and morph
+component per vertex before canonicalizing oriented triangles. Vertex/triangle
+ordering may differ, but values are not rounded; winding, unused vertices,
+materials and embedded image payloads remain part of the comparison. Duplicate
+joint vertex records make a unique topology bijection ambiguous and fail closed.
+Animations, skins, node transforms and unsupported extensions are rejected.
+The supported material texture-transform extension is compared in full.
+
+The native 685 and independent 687 exports have 7,284 unique joint vertex records
+and 9,852 oriented triangles. They are exactly permutation-equivalent although
+their raw GLB hashes differ. All three face texture PNGs are byte-identical. This
+is evidence for that one configuration, not all-parameter stability, collision
+freedom, aesthetic acceptance, or identical engine-import behavior.
