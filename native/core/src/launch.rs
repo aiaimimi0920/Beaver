@@ -31,7 +31,13 @@ pub fn prepare(
     tools: &BTreeMap<String, String>,
     inherited: BTreeMap<OsString, OsString>,
 ) -> Result<Launch> {
-    anyhow::ensure!(!crate::workflows::upgrade_blocked(store, task["projectId"].as_str().context("Project id missing")?)?, "NPR upgrade recovery pending");
+    anyhow::ensure!(
+        !crate::workflows::upgrade_blocked(
+            store,
+            task["projectId"].as_str().context("Project id missing")?
+        )?,
+        "NPR upgrade recovery pending"
+    );
     if crate::validation::task_gate::validation_only(task) {
         return Ok(Launch {
             external: None,
@@ -121,7 +127,13 @@ pub fn prepare_external(
     tools: &BTreeMap<String, String>,
     registry: crate::external_runs::ExternalRegistry,
 ) -> Result<Launch> {
-    anyhow::ensure!(!crate::workflows::upgrade_blocked(store, task["projectId"].as_str().context("Project id missing")?)?, "NPR upgrade recovery pending");
+    anyhow::ensure!(
+        !crate::workflows::upgrade_blocked(
+            store,
+            task["projectId"].as_str().context("Project id missing")?
+        )?,
+        "NPR upgrade recovery pending"
+    );
     anyhow::ensure!(
         crate::external_run_contract::enabled(task),
         "External execution mode required"

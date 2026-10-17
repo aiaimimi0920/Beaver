@@ -184,8 +184,14 @@ async fn supervise(
 impl Players {
     /// Retain the launch gate while a host-owned dependency transaction mutates files.
     pub fn with_idle<T>(&self, work: impl FnOnce() -> Result<T>) -> Result<T> {
-        let state = self.0.lock().map_err(|_| anyhow::anyhow!("Game player lock unavailable"))?;
-        anyhow::ensure!(!state.jobs.values().any(|job| !job.task.is_finished()), "Close running game players before upgrading dependencies");
+        let state = self
+            .0
+            .lock()
+            .map_err(|_| anyhow::anyhow!("Game player lock unavailable"))?;
+        anyhow::ensure!(
+            !state.jobs.values().any(|job| !job.task.is_finished()),
+            "Close running game players before upgrading dependencies"
+        );
         work()
     }
 

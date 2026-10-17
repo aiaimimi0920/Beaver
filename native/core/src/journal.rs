@@ -72,20 +72,22 @@ impl<'a> Journal<'a> {
         Ok(())
     }
     pub fn blocked(&self, project: &str) -> Result<bool> {
-        Ok(crate::workflows::upgrade_blocked(self.store, project)? || crate::object_run_recovery::candidate::publication::blocked(
-            &self.store.connection,
-            project,
-        )? || self
-            .store
-            .list::<FileOperation>("operation")?
-            .iter()
-            .any(|operation| {
-                operation.project_id == project
-                    && matches!(
-                        operation.state,
-                        OperationState::Applying | OperationState::Aborting
-                    )
-            }))
+        Ok(crate::workflows::upgrade_blocked(self.store, project)?
+            || crate::object_run_recovery::candidate::publication::blocked(
+                &self.store.connection,
+                project,
+            )?
+            || self
+                .store
+                .list::<FileOperation>("operation")?
+                .iter()
+                .any(|operation| {
+                    operation.project_id == project
+                        && matches!(
+                            operation.state,
+                            OperationState::Applying | OperationState::Aborting
+                        )
+                }))
     }
     fn project(&self, operation: &FileOperation) -> Result<PathBuf> {
         let project: Value = self

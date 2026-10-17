@@ -130,12 +130,23 @@ fn validation_only_needs_no_provider_decryption_or_codex() -> Result<()> {
         assert!(launch.command.is_none());
         assert!(launch.secrets.is_empty());
     }
-    host.put("npr-upgrade", "pending", &json!({"operationId":"pending","createdAt":"fixture",
+    host.put(
+        "npr-upgrade",
+        "pending",
+        &json!({"operationId":"pending","createdAt":"fixture",
         "projectId":"project-a","taskId":null,"status":"applying","changes":[],
-        "transitionalRuntime":"fixture","runtime":{},"previousProjectNpr":null}))?;
-    assert!(launch::prepare(&Files::new(temp.path().to_owned()), &host, &snapshot,
-        &json!({"validationOnly":true,"projectId":"project-a"}), &resources,
-        &BTreeMap::new(), BTreeMap::new()).is_err());
+        "transitionalRuntime":"fixture","runtime":{},"previousProjectNpr":null}),
+    )?;
+    assert!(launch::prepare(
+        &Files::new(temp.path().to_owned()),
+        &host,
+        &snapshot,
+        &json!({"validationOnly":true,"projectId":"project-a"}),
+        &resources,
+        &BTreeMap::new(),
+        BTreeMap::new()
+    )
+    .is_err());
     assert!(ExecutionSettings::read(&host, &TestVault, Value::Null, Some("code")).is_err());
     Ok(())
 }

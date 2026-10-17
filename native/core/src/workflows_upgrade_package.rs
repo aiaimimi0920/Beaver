@@ -20,7 +20,10 @@ pub(super) fn hash(bytes: &[u8]) -> String {
 
 pub(super) fn identity(root: &Path) -> Result<(Value, String)> {
     let path = safe_path(root, RUNTIME_FILE)?;
-    ensure!(fs::metadata(&path)?.len() <= 65536, "Runtime manifest too large");
+    ensure!(
+        fs::metadata(&path)?.len() <= 65536,
+        "Runtime manifest too large"
+    );
     let bytes = fs::read(path)?;
     Ok((serde_json::from_slice(&bytes)?, hash(&bytes)))
 }
@@ -29,34 +32,52 @@ pub(super) fn old_manifest(commit: &str) -> Result<&'static [u8]> {
     match commit {
         OLD_COMMIT => Ok(OLD_MANIFEST),
         EARLIER_COMMIT => Ok(EARLIER_MANIFEST),
-        _ => anyhow::bail!("Unsupported NPR upgrade source; a compiled trusted manifest is required"),
+        _ => {
+            anyhow::bail!("Unsupported NPR upgrade source; a compiled trusted manifest is required")
+        }
     }
 }
 
 pub(super) fn old_hashes(commit: &str) -> Result<BTreeMap<String, String>> {
     let bytes = old_manifest(commit)?;
     let manifest: Value = serde_json::from_slice(bytes)?;
-    ensure!(manifest["sourceCommit"] == commit
-        && manifest["sourcePath"] == package::PACKAGE_ROOT,
-        "Invalid compiled upgrade source");
+    ensure!(
+        manifest["sourceCommit"] == commit && manifest["sourcePath"] == package::PACKAGE_ROOT,
+        "Invalid compiled upgrade source"
+    );
     let files: BTreeMap<String, String> = serde_json::from_value(manifest["files"].clone())?;
-    let mut hashes: BTreeMap<_, _> = files.into_iter()
+    let mut hashes: BTreeMap<_, _> = files
+        .into_iter()
         .map(|(name, hash)| (format!("{}/{name}", package::PACKAGE_ROOT), hash))
         .collect();
-    hashes.insert(format!("{}/beaver-provenance.json", package::PACKAGE_ROOT), hash(bytes));
+    hashes.insert(
+        format!("{}/beaver-provenance.json", package::PACKAGE_ROOT),
+        hash(bytes),
+    );
     Ok(hashes)
 }
 
 pub(super) fn bundled() -> Result<BTreeMap<String, Vec<u8>>> {
     let bundle: BTreeMap<String, String> =
         serde_json::from_str(include_str!("../../../dist-native/npr-package.json"))?;
-    bundle.into_iter().map(|(name, encoded)| {
-        let name = if name == "provenance.json" {
-            format!("{}/beaver-provenance.json", package::PACKAGE_ROOT)
-        } else { name };
-        ensure!(name.starts_with(&format!("{}/", package::PACKAGE_ROOT)), "Invalid bundled path");
-        Ok((name, base64::engine::general_purpose::STANDARD.decode(encoded)?))
-    }).collect()
+    bundle
+        .into_iter()
+        .map(|(name, encoded)| {
+            let name = if name == "provenance.json" {
+                format!("{}/beaver-provenance.json", package::PACKAGE_ROOT)
+            } else {
+                name
+            };
+            ensure!(
+                name.starts_with(&format!("{}/", package::PACKAGE_ROOT)),
+                "Invalid bundled path"
+            );
+            Ok((
+                name,
+                base64::engine::general_purpose::STANDARD.decode(encoded)?,
+            ))
+        })
+        .collect()
 }
 
 pub(super) struct Plan {
@@ -70,34 +91,68 @@ pub(super) struct Plan {
 
 pub(super) fn plan(root: &Path) -> Result<Plan> {
     let (config, runtime_hash) = identity(root)?;
-    ensure!(config["schemaVersion"] == 1 && config["packages"]["npr-characters"]["status"] == "ready", "NPR runtime is not ready");
+    ensure!(
+        config["schemaVersion"] == 1 && config["packages"]["npr-characters"]["status"] == "ready",
+        "NPR runtime is not ready"
+    );
     let old = &config["packages"]["npr-characters"];
-    let source_commit = old["sourceCommit"].as_str().context("Missing old source commit")?.to_owned();
+    let source_commit = old["sourceCommit"]
+        .as_str()
+        .context("Missing old source commit")?
+        .to_owned();
     old_manifest(&source_commit)?;
-    ensure!(old["sourcePath"] == package::PACKAGE_ROOT
-        && old["contractVersion"] == "1.1.0" && old["pluginVersion"] == "1.3.0",
-        "Unsupported NPR upgrade source; only compiled previous pins are supported");
-    ensure!(!safe_path(root, "addons/npr_characters")?.exists(), "Legacy package must not coexist");
+    ensure!(
+        old["sourcePath"] == package::PACKAGE_ROOT
+            && old["contractVersion"] == "1.1.0"
+            && old["pluginVersion"] == "1.3.0",
+        "Unsupported NPR upgrade source; only compiled previous pins are supported"
+    );
+    ensure!(
+        !safe_path(root, "addons/npr_characters")?.exists(),
+        "Legacy package must not coexist"
+    );
     let before = old_hashes(&source_commit)?;
     for (relative, expected) in &before {
         let path = safe_path(root, relative)?;
-        ensure!(fs::symlink_metadata(&path)?.is_file(), "Not a regular dependency: {relative}");
-        ensure!(file_hash_limited(&path, Some(16 * 1024 * 1024))?.as_ref() == Some(expected),
-            "Customized or missing NPR dependency; upgrade refused: {relative}");
+        ensure!(
+            fs::symlink_metadata(&path)?.is_file(),
+            "Not a regular dependency: {relative}"
+        );
+        ensure!(
+            file_hash_limited(&path, Some(16 * 1024 * 1024))?.as_ref() == Some(expected),
+            "Customized or missing NPR dependency; upgrade refused: {relative}"
+        );
     }
     let after = bundled()?;
     let mut changed = Vec::new();
     for (relative, bytes) in &after {
         if let Some(expected) = before.get(relative) {
-            if *expected != hash(bytes) { changed.push(relative.clone()); }
+            if *expected != hash(bytes) {
+                changed.push(relative.clone());
+            }
         } else {
-            ensure!(!safe_path(root, relative)?.exists(), "New NPR path conflicts with an existing file: {relative}");
+            ensure!(
+                !safe_path(root, relative)?.exists(),
+                "New NPR path conflicts with an existing file: {relative}"
+            );
             changed.push(relative.clone());
         }
     }
-    changed.extend(before.keys().filter(|name| !after.contains_key(*name)).cloned());
+    changed.extend(
+        before
+            .keys()
+            .filter(|name| !after.contains_key(*name))
+            .cloned(),
+    );
     changed.sort();
     let mut updated = config;
     updated["packages"]["npr-characters"]["sourceCommit"] = json!(package::SOURCE_COMMIT);
-    Ok(Plan { source_commit, runtime: updated, runtime_hash, before, after, changed })
+    Ok(Plan {
+        source_commit,
+        runtime: updated,
+        runtime_hash,
+        before,
+        after,
+        changed,
+    })
 }

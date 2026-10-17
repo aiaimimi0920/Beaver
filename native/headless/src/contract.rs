@@ -79,19 +79,33 @@ mod upgrade_tests {
 
     #[test]
     fn upgrade_contract_requires_cas_and_explicit_review() -> Result<()> {
-        validate("project.npr.inspectUpgrade", &json!({"id":"p","taskId":"t"}))?;
-        let upgrade = json!({"id":"p","taskId":"t","expectedOldCommit":"old","expectedRuntimeSha256":"hash"});
+        validate(
+            "project.npr.inspectUpgrade",
+            &json!({"id":"p","taskId":"t"}),
+        )?;
+        let upgrade =
+            json!({"id":"p","taskId":"t","expectedOldCommit":"old","expectedRuntimeSha256":"hash"});
         validate("project.npr.upgrade", &upgrade)?;
         for missing in ["expectedOldCommit", "expectedRuntimeSha256"] {
             let mut invalid = upgrade.clone();
             invalid.as_object_mut().unwrap().remove(missing);
             assert!(validate("project.npr.upgrade", &invalid).is_err());
         }
-        assert!(validate("project.npr.upgrade", &json!({"id":"p","path":"/arbitrary"})).is_err());
-        validate("project.npr.reviewUpgrade", &json!({"id":"p","taskId":"t","operationId":"o",
+        assert!(validate(
+            "project.npr.upgrade",
+            &json!({"id":"p","path":"/arbitrary"})
+        )
+        .is_err());
+        validate(
+            "project.npr.reviewUpgrade",
+            &json!({"id":"p","taskId":"t","operationId":"o",
             "expectedRuntimeSha256":"hash","expectedFrozenWorkflow":{},"reviewedWorkflow":{},
-            "reviewReason":"Reviewed dependency changes","acceptance":"Unchanged scope"}))?;
-        validate("project.npr.rollbackUpgrade", &json!({"id":"p","operationId":"o"}))?;
+            "reviewReason":"Reviewed dependency changes","acceptance":"Unchanged scope"}),
+        )?;
+        validate(
+            "project.npr.rollbackUpgrade",
+            &json!({"id":"p","operationId":"o"}),
+        )?;
         Ok(())
     }
 }

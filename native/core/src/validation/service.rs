@@ -151,7 +151,11 @@ impl Service {
         Ok(result)
     }
 
-    pub fn with_closed_preview<T>(&self, project: &str, work: impl FnOnce() -> Result<T>) -> Result<T> {
+    pub fn with_closed_preview<T>(
+        &self,
+        project: &str,
+        work: impl FnOnce() -> Result<T>,
+    ) -> Result<T> {
         self.previews.with_closed(project, work)
     }
 

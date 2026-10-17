@@ -45,8 +45,16 @@ pub fn verify(root: &Path, task: &Value) -> Result<()> {
 
 /// A superseding dependency binding is accepted only from the host-owned reviewed receipt.
 pub fn verify_for_execution(root: &Path, task: &Value, store: &crate::store::Store) -> Result<()> {
-    anyhow::ensure!(!crate::workflows::upgrade_blocked(store, task["projectId"].as_str().context("Project id missing")?)?, "NPR upgrade recovery pending");
-    if verify(root, task).is_ok() { return Ok(()); }
+    anyhow::ensure!(
+        !crate::workflows::upgrade_blocked(
+            store,
+            task["projectId"].as_str().context("Project id missing")?
+        )?,
+        "NPR upgrade recovery pending"
+    );
+    if verify(root, task).is_ok() {
+        return Ok(());
+    }
     crate::workflows::verify_upgrade_review(store, root, task)
 }
 

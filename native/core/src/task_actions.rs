@@ -30,7 +30,10 @@ pub fn continue_task(store: &mut Store, id: &str, text: &str, fresh_context: boo
     if store.get::<Value>("project", project)?.is_none() {
         bail!("项目不存在");
     }
-    anyhow::ensure!(!crate::workflows::upgrade_blocked(store, project)?, "NPR upgrade recovery pending");
+    anyhow::ensure!(
+        !crate::workflows::upgrade_blocked(store, project)?,
+        "NPR upgrade recovery pending"
+    );
     let status = task["status"].as_str().context("任务状态无效")?;
     if fresh_context {
         anyhow::ensure!(
