@@ -4,6 +4,7 @@ on:
     paths:
       - "src/direct/**"
       - "tests/direct-interrupt.test.ts"
+      - "tests/direct-display.test.ts"
       - "package.json"
       - "package-lock.json"
       - ".github/workflows/direct-task-interrupt.yml"
@@ -12,6 +13,7 @@ on:
     paths:
       - "src/direct/**"
       - "tests/direct-interrupt.test.ts"
+      - "tests/direct-display.test.ts"
       - "package.json"
       - "package-lock.json"
       - ".github/workflows/direct-task-interrupt.yml"
@@ -29,4 +31,4 @@ jobs:
       - run: npm ci --ignore-scripts
       - run: npm run typecheck
       - run: node --check src/direct/renderer.js
-      - run: node --import tsx --test tests/direct-interrupt.test.ts
+      - run: node --import tsx --test tests/direct-interrupt.test.ts tests/direct-display.test.ts
