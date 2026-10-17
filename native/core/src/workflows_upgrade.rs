@@ -147,8 +147,24 @@ fn inspect(
     if task["accepted"] == true {
         blockers.push("Accepted task workspaces are immutable".into());
     }
-    let changed = match trust::plan(root) {
-        Ok(plan) => plan.changed,
+    let current_pin =
+        config["packages"]["npr-characters"]["sourceCommit"] == package::SOURCE_COMMIT;
+    let checked = if current_pin {
+        (|| -> Result<Vec<String>> {
+            ensure!(
+                config["schemaVersion"] == 1
+                    && config["packages"]["npr-characters"]["status"] == "ready",
+                "NPR runtime is not ready"
+            );
+            package::require_current(root, &config)?;
+            Ok(Vec::new())
+        })()
+    } else {
+        trust::plan(root).map(|plan| plan.changed)
+    };
+    let already_current = current_pin && checked.is_ok();
+    let changed = match checked {
+        Ok(changed) => changed,
         Err(error) => {
             blockers.push(error.to_string());
             Vec::new()
@@ -173,7 +189,9 @@ fn inspect(
         "reviewRequired":review_required(task) && !review_satisfied,"reviewSatisfied":review_satisfied,"frozenWorkflow":task["productionWorkflow"],
         "latestOperation":latest.map(|r| json!({"operationId":r.operation_id,"status":r.status})),
         "currentWorkflow":crate::task_workflows::selection(root, super::WORKFLOW).ok(),
-        "eligible":blockers.is_empty(),"blockers":blockers,"pendingOperations":pending,
+        "alreadyCurrent":already_current,
+        "upgradeNotice":already_current.then_some("Current bundled NPR dependency is verified; no upgrade needed."),
+        "eligible":!already_current && blockers.is_empty(),"blockers":blockers,"pendingOperations":pending,
         "reviewNotice":"Frozen plans and accepted artifacts are preserved. A frozen NPR plan with another pin requires a new reviewed plan before resumption."}),
     )
 }
@@ -248,6 +266,10 @@ pub fn call(runtime: &ProjectRuntime, method: &str, input: Value) -> Result<Valu
         "Unknown NPR upgrade method"
     );
     let inspected = inspect(runtime, &mut store, &root, &task)?;
+    ensure!(
+        inspected["alreadyCurrent"] != true,
+        "Current bundled NPR dependency is verified; no upgrade needed"
+    );
     ensure!(
         inspected["eligible"] == true,
         "NPR upgrade blocked: {}",

@@ -7,6 +7,7 @@ interface Inspection {
   targetCommit: string;
   runtimeSha256: string;
   changedFiles: string[];
+  alreadyCurrent: boolean;
   eligible: boolean;
   blockers: string[];
   reviewRequired: boolean;
@@ -75,6 +76,9 @@ export function NprUpgradePanel({ id, run }: { id: string; run: Run }) {
           <p>
             变更文件：{inspection.changedFiles.length}；原计划和已验收版本保留。
           </p>
+          {inspection.alreadyCurrent && (
+            <p>当前 NPR 依赖已完整核验，无需升级。</p>
+          )}
           {inspection.blockers.map((blocker) => (
             <p role="alert" key={blocker}>
               {blocker}

@@ -117,6 +117,73 @@ fn supported_upgrades_preserve_engine_metadata_and_have_exact_rollback() -> Resu
 }
 
 #[test]
+fn current_package_inspection_is_verified_read_only_and_needs_no_upgrade() -> Result<()> {
+    let f = Fixture::new(trust::EARLIER_COMMIT)?;
+    let upgraded = f.upgrade(None)?;
+    let root = f.runtime.project_root();
+    let runtime_path = root.join(super::super::RUNTIME_FILE);
+    let original = fs::read(&runtime_path)?;
+    let receipts = f.runtime.store().lock().unwrap().list::<Value>(KIND)?;
+    for _ in 0..2 {
+        let inspected = f.inspect(None)?;
+        assert_eq!(inspected["alreadyCurrent"], true);
+        assert_eq!(inspected["eligible"], false);
+        assert_eq!(inspected["blockers"], json!([]));
+        assert_eq!(inspected["changedFiles"], json!([]));
+        assert_eq!(inspected["runtimeSha256"], upgraded["runtimeSha256"]);
+        assert!(inspected["upgradeNotice"]
+            .as_str()
+            .unwrap()
+            .contains("no upgrade needed"));
+    }
+    assert!(f
+        .upgrade(None)
+        .unwrap_err()
+        .to_string()
+        .contains("no upgrade needed"));
+    assert_eq!(fs::read(&runtime_path)?, original);
+    assert_eq!(
+        f.runtime.store().lock().unwrap().list::<Value>(KIND)?,
+        receipts
+    );
+    for (name, bytes) in trust::bundled()? {
+        assert_eq!(fs::read(root.join(name))?, bytes);
+    }
+    let dependency = root.join(format!("{}/asset_contract.json", package::PACKAGE_ROOT));
+    let saved = fs::read(&dependency)?;
+    fs::write(&dependency, "customized")?;
+    let corrupt = f.inspect(None)?;
+    assert_eq!(corrupt["alreadyCurrent"], false);
+    assert_eq!(corrupt["eligible"], false);
+    assert!(corrupt["blockers"]
+        .to_string()
+        .contains("dependency was modified"));
+    assert!(corrupt["upgradeNotice"].is_null());
+    assert_eq!(fs::read_to_string(&dependency)?, "customized");
+    fs::write(&dependency, saved)?;
+    for (pointer, value) in [
+        ("/schemaVersion", json!(2)),
+        ("/packages/npr-characters/status", json!("upgrading")),
+        ("/packages/npr-characters/pluginVersion", json!("custom")),
+    ] {
+        let mut config: Value = serde_json::from_slice(&original)?;
+        *config.pointer_mut(pointer).unwrap() = value;
+        fs::write(&runtime_path, serde_json::to_vec(&config)?)?;
+        let invalid = f.inspect(None)?;
+        assert_eq!(invalid["alreadyCurrent"], false);
+        assert_eq!(invalid["eligible"], false);
+        assert!(!invalid["blockers"].as_array().unwrap().is_empty());
+    }
+    fs::write(runtime_path, original)?;
+    fs::create_dir(root.join("addons/npr_characters"))?;
+    let legacy = f.inspect(None)?;
+    assert_eq!(legacy["alreadyCurrent"], false);
+    assert_eq!(legacy["eligible"], false);
+    assert!(legacy["blockers"].to_string().contains("must not coexist"));
+    Ok(())
+}
+
+#[test]
 fn customized_dependencies_and_stale_runtime_cas_never_write() -> Result<()> {
     let f = Fixture::new(trust::OLD_COMMIT)?;
     let inspected = f.inspect(None)?;
@@ -181,6 +248,11 @@ fn task_upgrade_requires_quiescence_and_keeps_project_and_frozen_plan_unchanged(
             .is_err()
     );
     let inspected = f.inspect(Some("task-a"))?;
+    assert_eq!(inspected["alreadyCurrent"], true);
+    assert_eq!(inspected["eligible"], false);
+    assert_eq!(inspected["blockers"], json!([]));
+    assert_eq!(inspected["reviewRequired"], true);
+    assert_eq!(inspected["reviewSatisfied"], false);
     let review = json!({"id":"project-a","taskId":"task-a","operationId":result["operationId"],
         "expectedRuntimeSha256":result["runtimeSha256"],"expectedFrozenWorkflow":original["productionWorkflow"],
         "reviewedWorkflow":inspected["currentWorkflow"],"reviewReason":"Reviewed the verified dependency fix",
@@ -189,7 +261,12 @@ fn task_upgrade_requires_quiescence_and_keeps_project_and_frozen_plan_unchanged(
     forged["operationId"] = json!(uuid::Uuid::new_v4().to_string());
     assert!(call(&f.runtime, "project.npr.reviewUpgrade", forged).is_err());
     call(&f.runtime, "project.npr.reviewUpgrade", review)?;
-    assert_eq!(f.inspect(Some("task-a"))?["reviewRequired"], false);
+    let reviewed = f.inspect(Some("task-a"))?;
+    assert_eq!(reviewed["alreadyCurrent"], true);
+    assert_eq!(reviewed["eligible"], false);
+    assert_eq!(reviewed["blockers"], json!([]));
+    assert_eq!(reviewed["reviewRequired"], false);
+    assert_eq!(reviewed["reviewSatisfied"], true);
     crate::task_workflows::verify_for_execution(&root, &original, &handle.lock().unwrap())?;
     assert_eq!(
         handle

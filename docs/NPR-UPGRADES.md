@@ -29,6 +29,10 @@ upgrade, rollback and the separate dependency-review action.
 1. `project.npr.inspectUpgrade`: `{id, taskId?}`. Returns the exact runtime SHA-256,
    source/target pins, changed paths, target, eligibility/blockers, pending and
    latest operations, current workflow, frozen workflow and review state.
+   A verified current package returns `alreadyCurrent: true`, `eligible: false`,
+   no changed files and an `upgradeNotice` explaining that no upgrade is needed.
+   Current pins still require ready runtime metadata and all compiled dependency
+   hashes; corruption remains a blocker. Dependency review state is independent.
 2. `project.npr.upgrade`: `{id, taskId?, expectedOldCommit, expectedRuntimeSha256}`.
    Use the inspected identities unchanged. The response includes `operationId`,
    `status`, `runtime`, `runtimeSha256`, `changedFiles`, and `reviewRequired`.
