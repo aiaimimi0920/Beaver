@@ -91,7 +91,7 @@ impl Fixture {
 
 #[test]
 fn supported_upgrades_preserve_engine_metadata_and_have_exact_rollback() -> Result<()> {
-    for commit in [trust::OLD_COMMIT, trust::EARLIER_COMMIT] {
+    for commit in [trust::OLD_COMMIT, trust::EARLIER_COMMIT, trust::HOLDOUT_COMMIT] {
         let f = Fixture::new(commit)?;
         let original = fs::read(f.runtime.project_root().join(super::super::RUNTIME_FILE))?;
         let inspected = f.inspect(None)?;

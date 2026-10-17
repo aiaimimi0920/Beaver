@@ -1,11 +1,12 @@
 # Explicit NPR dependency upgrades
 
-The host supports two compiled, trusted historical NPR pins:
+The host supports three compiled, trusted historical NPR pins:
 
 - `48839ce137ce2749210a613c565b602c5a6bbc4a`, from Beaver `380f3e4bf3afd486a772d2efba46a59e5170c743`
 - `05f3dceee965c9a5ec78ee8d159e962c133cfc57`, from Beaver `bff0ca6`
+- `eb5a05113492e1c1e291b3e8e33508b4cb5c0eaa`, the full-fragment holdout package preceding the base-level filtering fix
 
-Both upgrade to the current compiled package. Historical trust manifests are
+All three upgrade to the current compiled package. Historical trust manifests are
 retained byte-for-byte under `resources/workflows/`. Project provenance cannot
 authorize different files. The host checks every old dependency and the installed
 provenance, refuses customization/new-path conflicts, and verifies the complete

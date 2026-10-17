@@ -15,6 +15,10 @@ const sha256 = (bytes: Uint8Array) =>
 
 for (const [pin, manifestHash] of [
   [
+    "eb5a0511",
+    "5bc70f709f1e8e9d155bd889ace809abdd39baf0e0edb68a95918aa60d4dd5fe",
+  ],
+  [
     "05f3dcee",
     "e545ecc7e6737b144bd92cb0fe7020d1b71e2ecfa8cd8711112fe19f72616576",
   ],

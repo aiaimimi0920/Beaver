@@ -11,6 +11,9 @@ pub(super) const OLD_COMMIT: &str = "05f3dceee965c9a5ec78ee8d159e962c133cfc57";
 pub(super) const EARLIER_COMMIT: &str = "48839ce137ce2749210a613c565b602c5a6bbc4a";
 const EARLIER_MANIFEST: &[u8] =
     include_bytes!("../../../resources/workflows/npr-upgrade-from-48839ce1.json");
+pub(super) const HOLDOUT_COMMIT: &str = "eb5a05113492e1c1e291b3e8e33508b4cb5c0eaa";
+const HOLDOUT_MANIFEST: &[u8] =
+    include_bytes!("../../../resources/workflows/npr-upgrade-from-eb5a0511.json");
 const OLD_MANIFEST: &[u8] =
     include_bytes!("../../../resources/workflows/npr-upgrade-from-05f3dcee.json");
 
@@ -31,6 +34,7 @@ pub(super) fn identity(root: &Path) -> Result<(Value, String)> {
 pub(super) fn old_manifest(commit: &str) -> Result<&'static [u8]> {
     match commit {
         OLD_COMMIT => Ok(OLD_MANIFEST),
+        HOLDOUT_COMMIT => Ok(HOLDOUT_MANIFEST),
         EARLIER_COMMIT => Ok(EARLIER_MANIFEST),
         _ => {
             anyhow::bail!("Unsupported NPR upgrade source; a compiled trusted manifest is required")
