@@ -192,3 +192,38 @@ JSON as `--eyes`, and the explicit surface parameters
 The reviewed support bound remains 0.0042 m. Do not raise it merely to force an
 incompatible parameter combination through. Generated candidates still require
 fresh native geometry, texture validation and multi-angle visual review.
+
+### Rounded lower-eye comparison candidate
+
+`emerald-rounded-eyes.json` is an additional opt-in comparison preset, not a
+replacement for the layered example or a final character acceptance. It uses
+`lower_arch=0.78`, iris width/height `1.04/1.08`, and iris vertical offset `0.002`;
+all other eye controls match `emerald-layered-eyes.json`. Use the same surface
+parameters and 0.0042 m reviewed support bound above, with `--blink`.
+
+Native case717 passed the existing bound at 0.004099519056779347 m. A trial with
+`lower_arch=0.85` exceeded the fixed budget and was rejected. The retained
+candidate was reviewed in 69 render/white/blink poses, 42 supplementary
+wireframe/opposite-side/mouth poses, and 250 directional-light captures. All
+500 captured pane material states matched the requested SDF settings. The
+face-review UI probe passed 30 checks. The fuller lower return and larger iris
+were visually preferred in the reviewed front and both 45-degree views.
+White-model cheek/temple shading bands remain unresolved.
+
+Independent case718 regenerated the same joint geometry, morphs, UVs, normals,
+material metadata and embedded images, but **failed exact full-stream repeat**:
+one exported tangent component differed by approximately 0.0001. The exact
+comparator remains unchanged. A native diagnostic of the saved meshes found
+identical expanded oriented corner inputs, with raw tangent computation differing
+by at most 1.7881393432617188e-7 before Blender's four-decimal exporter rounding.
+Three free/recalculate cycles on the same saved mesh also changed raw tangents
+while leaving corner normals unchanged. The underlying native computation cause
+is not yet established. This preset
+must not be advertised as bit-exact repeatable or fully accepted.
+
+The local same-job standalone Face SHA-256 values were
+`18926f0843003697afeb5d474698df3a03bc7be5dc406b3ab73e6dabc3bef28f`
+(case717) and
+`284767265455745df8eb651c37ccbfe85026a9d8e071504bfc80f844dff75677`
+(case718). The native showcase still uses an assembled definition with hidden
+Body/Hair roles; these checks do not establish a standalone Face-only NPR runtime.
