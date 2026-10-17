@@ -116,11 +116,17 @@
       "generation_job": "c2a71af5-a001-4a15-94e2-1584288d98f1",
       "sdf_job": "c8d5d7a8-2173-48d1-b998-2cdef5ecd422",
       "generation_and_sdf": "succeeded",
-      "verified_captures": 0,
-      "acceptance": "pending package migration and full native review",
+      "verified_captures": 69,
+      "acceptance": "targeted outline regression verified; final user aesthetics pending",
       "geometry_equivalence": "Triangle-corner attributes and all morph deltas equal 733, excluding known nondeterministic tangents; material/images excluded",
       "configuration": "emerald-medial-holdout-eyes.json",
-      "dependency_fix": "https://github.com/aiaimimi0920/NPRCharacterFrame/pull/10"
+      "dependency_fix": "https://github.com/aiaimimi0920/NPRCharacterFrame/pull/10",
+      "scale_angle_captures": 18,
+      "manifest": "res://artifacts/blink_probe/blink-1792237496-79972/manifest.json",
+      "scale_manifest": "res://artifacts/outline_scale_736/manifest.json",
+      "model_sha256": "5051e9650c252cd1906de42352ae5245f6a7c8812253979d548284f67064ba23",
+      "root_review": "Medial vertical closed-eye line absent at bilateral 45 degrees and additional 44/46 degree views at camera-size factors .7/1/1.5. Nose and face outlines retained in inspected views. White-mode bands remain.",
+      "dependency_status": "Approved host upgrade completed for project root and task workspace; independent task dependency review recorded; original plan retained."
     }
   },
   "plane_experiment": {
@@ -135,19 +141,20 @@
   },
   "ocular_skin_outline_holdout": {
     "default": 0,
-    "native_status": "DIAGNOSTIC_ONLY; full candidate review blocked by pinned dependency migration",
+    "native_status": "VERIFIED_TARGETED_736; 69 pose plus 18 scale/angle captures",
     "scope": "Medial radius 1.40, temporal radius 1.08. Same geometry as 733. Requires fragment base-level coverage sampling; ordinary mip sampling leaves a line.",
-    "diagnostic": "Same native closed-eye -45-degree view and control map: explicit fragment LOD0 removed the residual vertical line while nose/face outlines remained. Full pose and distance review pending."
+    "diagnostic": "Implicit mip sampling diluted the full-B mask. Explicit fragment base-level sampling plus medial coverage removed the inspected closed-eye line without changing geometry."
   },
   "limitations": [
     "No final consumer aesthetic acceptance",
     "No general collision or clearance certificate",
-    "Far-eye medial outline remains in reviewed candidates",
-    "No third-party images or models redistributed"
+    "No third-party images or models redistributed",
+    "White-mode shading bands remain",
+    "Sampled views and scales do not establish universal temporal stability"
   ],
   "spacing_config": "emerald-compact-spacing-eyes.json",
   "preferred_internal_candidate": {
-    "native_case": 733,
-    "scope": "User said the result looked good on 2026-10-17 and requested further optimization; retained baseline, not final acceptance"
+    "native_case": 736,
+    "scope": "733 user-favored shape/layout retained; 736 targeted outline repair verified. Final consumer aesthetic acceptance remains pending."
   }
 }

@@ -379,11 +379,17 @@ selected. A native material diagnostic identified implicit mip averaging of the
 fragment coverage mask; explicit LOD0 removed the line with the same medial
 mask, while retaining the inspected nose and face outlines.
 
-`emerald-medial-holdout-eyes.json` retains the 736 experiment. The medial mask
+`emerald-medial-holdout-eyes.json` retains the 736 candidate. The medial mask
 radius is 1.40 while temporal reach stays 1.08; the disabled default remains
-unchanged. Generation and SDF succeeded, but complete native review is pending
-[the NPR coverage fix](https://github.com/aiaimimi0920/NPRCharacterFrame/pull/10)
-and an approved dependency migration. The package integrity guard rejected a
-direct modified dependency, and the pinned file was restored. Do not treat the
-new config as delivered or visually accepted. CPU mask contracts do not certify
-filtered appearance, all poses, or distant temporal stability.
+unchanged. Generation and SDF succeeded. After the approved host-owned migration
+to NPR `c1efb92784a84b712192d0f19650347e5ce55db9`, 69 pose captures and 18 extra
+closed-eye scale/angle captures were hash/source/morph checked. The main medial
+line is absent in the inspected bilateral 44/45/46-degree views at camera-size
+factors .7/1/1.5; nose and face outlines remain. The ordinary 736 preview is
+restored for user review. No runtime pins or package checks were bypassed.
+
+Geometry attributes and morph deltas match 733, excluding known nondeterministic
+tangents. White-mode shading bands and final user aesthetic acceptance remain
+open. Sampled static captures do not certify all models, distances or continuous
+temporal motion. The focused NPR fix is tracked in
+[PR 10](https://github.com/aiaimimi0920/NPRCharacterFrame/pull/10).
