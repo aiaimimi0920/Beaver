@@ -945,7 +945,645 @@
           }
         ]
       },
-      "visual_review": "Second independent eye-control combination completed native geometry and fresh SDF. Both eyelids pass continuous orientation gate (minimum .02831435). All69 actual rendered/white/wink-mouth captures reviewed; source identity and weights verified. This is a stable gentler/rounder variation, not an improvement over the more expressive702/709 primary style. Keep709 as primary; retain710 as a bounded second parameter case, not all-parameter proof. Existing white-model cheek shading bands remain."
+      "visual_review": "Second independent eye-control combination completed native geometry and fresh SDF. Both eyelids pass continuous orientation gate (minimum .02831435). All69 actual rendered/white/wink-mouth captures reviewed; source identity and weights verified. This is a stable gentler/rounder variation, not an improvement over the more expressive702/709 primary style. Keep709 as primary; retain710 as a bounded second parameter case, not all-parameter proof. Existing white-model cheek shading bands remain.\n\n2026-10-17 00:47 UTC supplement:42 additional captures visually reviewed, including eight wire views (front, both45, both90, back, pitch\u00b120), mouth .25/.5/.75/1 in front/both45 render+white, and \u221290 bilateral blink0/.25/.5/.75/1 render+white. Actual display mode, Face wire visibility, morph readback and source/image hashes verified. No new apparent eye/ear silhouette defect or mouth fold in these sampled views. Existing white cheek bands remain; secondary variation only, primary709 unchanged.",
+      "supplemental_views": {
+        "manifest_sha256": "54818318473caa7d4694cfeaeccdc5878d5c8b635fdd52453c7a6d4fefc81889",
+        "source_identity_unchanged": true,
+        "actual_display_mode_and_wire_visibility_verified": true,
+        "captures": [
+          {
+            "actual_display_mode": "edges",
+            "actual_weights": [0.0, 0.0, 0.0],
+            "image": "res://artifacts/face_acceptance/supplement-1792197988-78488/frame_000.png",
+            "requested": {
+              "left": 0.0,
+              "mode": "edges",
+              "mouth": 0.0,
+              "pitch": 0.0,
+              "right": 0.0,
+              "yaw": 0.0
+            },
+            "sha256": "8450c69321106fb63782e30c9a6e7e7c266f84fcf4e59918b48f54bcb324eba0",
+            "wire_visible": true
+          },
+          {
+            "actual_display_mode": "edges",
+            "actual_weights": [0.0, 0.0, 0.0],
+            "image": "res://artifacts/face_acceptance/supplement-1792197988-78488/frame_001.png",
+            "requested": {
+              "left": 0.0,
+              "mode": "edges",
+              "mouth": 0.0,
+              "pitch": 0.0,
+              "right": 0.0,
+              "yaw": -45.0
+            },
+            "sha256": "6582719ed44f84771470812e769f588ecac92272c2ad7dedbb8db3b8ea8b4989",
+            "wire_visible": true
+          },
+          {
+            "actual_display_mode": "edges",
+            "actual_weights": [0.0, 0.0, 0.0],
+            "image": "res://artifacts/face_acceptance/supplement-1792197988-78488/frame_002.png",
+            "requested": {
+              "left": 0.0,
+              "mode": "edges",
+              "mouth": 0.0,
+              "pitch": 0.0,
+              "right": 0.0,
+              "yaw": 45.0
+            },
+            "sha256": "08211151e5ce3e21f9e812dd4c49d76d2b59a82607626165c6d1689714a7580e",
+            "wire_visible": true
+          },
+          {
+            "actual_display_mode": "edges",
+            "actual_weights": [0.0, 0.0, 0.0],
+            "image": "res://artifacts/face_acceptance/supplement-1792197988-78488/frame_003.png",
+            "requested": {
+              "left": 0.0,
+              "mode": "edges",
+              "mouth": 0.0,
+              "pitch": 0.0,
+              "right": 0.0,
+              "yaw": -90.0
+            },
+            "sha256": "a8051512ae23ca8b128f980d570f792f4ed7a53bec50b9d187d2defc0d71b3b5",
+            "wire_visible": true
+          },
+          {
+            "actual_display_mode": "edges",
+            "actual_weights": [0.0, 0.0, 0.0],
+            "image": "res://artifacts/face_acceptance/supplement-1792197988-78488/frame_004.png",
+            "requested": {
+              "left": 0.0,
+              "mode": "edges",
+              "mouth": 0.0,
+              "pitch": 0.0,
+              "right": 0.0,
+              "yaw": 90.0
+            },
+            "sha256": "ed72bd15ccb5841b6dd789ee90789670cef4c675819e0fbd0cfe7cc8518f6252",
+            "wire_visible": true
+          },
+          {
+            "actual_display_mode": "edges",
+            "actual_weights": [0.0, 0.0, 0.0],
+            "image": "res://artifacts/face_acceptance/supplement-1792197988-78488/frame_005.png",
+            "requested": {
+              "left": 0.0,
+              "mode": "edges",
+              "mouth": 0.0,
+              "pitch": 0.0,
+              "right": 0.0,
+              "yaw": 180.0
+            },
+            "sha256": "b9acdeedc57d539645ea356f1cf99c37a1817df055622b9cb9d628475071fae7",
+            "wire_visible": true
+          },
+          {
+            "actual_display_mode": "edges",
+            "actual_weights": [0.0, 0.0, 0.0],
+            "image": "res://artifacts/face_acceptance/supplement-1792197988-78488/frame_006.png",
+            "requested": {
+              "left": 0.0,
+              "mode": "edges",
+              "mouth": 0.0,
+              "pitch": -20.0,
+              "right": 0.0,
+              "yaw": 0.0
+            },
+            "sha256": "38d212ff5baff42b87658347ec05bc2a5f1809fdbdac02d79bcf06160d905b89",
+            "wire_visible": true
+          },
+          {
+            "actual_display_mode": "edges",
+            "actual_weights": [0.0, 0.0, 0.0],
+            "image": "res://artifacts/face_acceptance/supplement-1792197988-78488/frame_007.png",
+            "requested": {
+              "left": 0.0,
+              "mode": "edges",
+              "mouth": 0.0,
+              "pitch": 20.0,
+              "right": 0.0,
+              "yaw": 0.0
+            },
+            "sha256": "42943cb552bf8cec901104e550ad540a26635d4db79ed2efec6b68ea5c73d03f",
+            "wire_visible": true
+          },
+          {
+            "actual_display_mode": "render",
+            "actual_weights": [0.0, 0.0, 0.25],
+            "image": "res://artifacts/face_acceptance/supplement-1792197988-78488/frame_008.png",
+            "requested": {
+              "left": 0.0,
+              "mode": "render",
+              "mouth": 0.25,
+              "pitch": 0.0,
+              "right": 0.0,
+              "yaw": 0.0
+            },
+            "sha256": "b844fcad0977cf1340c9981b3828f83df582164e86d1c15c8e5cc96becd61493",
+            "wire_visible": false
+          },
+          {
+            "actual_display_mode": "white",
+            "actual_weights": [0.0, 0.0, 0.25],
+            "image": "res://artifacts/face_acceptance/supplement-1792197988-78488/frame_009.png",
+            "requested": {
+              "left": 0.0,
+              "mode": "white",
+              "mouth": 0.25,
+              "pitch": 0.0,
+              "right": 0.0,
+              "yaw": 0.0
+            },
+            "sha256": "9a5b627898ea161e0b3bc8e059f28d94b93a3b1131813ad130ff4851d0dcf9b0",
+            "wire_visible": false
+          },
+          {
+            "actual_display_mode": "render",
+            "actual_weights": [0.0, 0.0, 0.5],
+            "image": "res://artifacts/face_acceptance/supplement-1792197988-78488/frame_010.png",
+            "requested": {
+              "left": 0.0,
+              "mode": "render",
+              "mouth": 0.5,
+              "pitch": 0.0,
+              "right": 0.0,
+              "yaw": 0.0
+            },
+            "sha256": "32aae9570b53849ea98f2d039f13b3943b5aa23c15ef4945e548e2dd1dd4664e",
+            "wire_visible": false
+          },
+          {
+            "actual_display_mode": "white",
+            "actual_weights": [0.0, 0.0, 0.5],
+            "image": "res://artifacts/face_acceptance/supplement-1792197988-78488/frame_011.png",
+            "requested": {
+              "left": 0.0,
+              "mode": "white",
+              "mouth": 0.5,
+              "pitch": 0.0,
+              "right": 0.0,
+              "yaw": 0.0
+            },
+            "sha256": "3f4d0bf54282c98e7764fcfa3f38c7de5b4745100bafdf7724f4e1e83fabe65f",
+            "wire_visible": false
+          },
+          {
+            "actual_display_mode": "render",
+            "actual_weights": [0.0, 0.0, 0.75],
+            "image": "res://artifacts/face_acceptance/supplement-1792197988-78488/frame_012.png",
+            "requested": {
+              "left": 0.0,
+              "mode": "render",
+              "mouth": 0.75,
+              "pitch": 0.0,
+              "right": 0.0,
+              "yaw": 0.0
+            },
+            "sha256": "eb06bd89c0f141262bff8a7d5de2d510eb24754f067e6d3e51ab325d2ebf1651",
+            "wire_visible": false
+          },
+          {
+            "actual_display_mode": "white",
+            "actual_weights": [0.0, 0.0, 0.75],
+            "image": "res://artifacts/face_acceptance/supplement-1792197988-78488/frame_013.png",
+            "requested": {
+              "left": 0.0,
+              "mode": "white",
+              "mouth": 0.75,
+              "pitch": 0.0,
+              "right": 0.0,
+              "yaw": 0.0
+            },
+            "sha256": "39aabc770cbe37e47eac7454144c4c9144173f7e95b8ac7c7679095461729ee0",
+            "wire_visible": false
+          },
+          {
+            "actual_display_mode": "render",
+            "actual_weights": [0.0, 0.0, 1.0],
+            "image": "res://artifacts/face_acceptance/supplement-1792197988-78488/frame_014.png",
+            "requested": {
+              "left": 0.0,
+              "mode": "render",
+              "mouth": 1.0,
+              "pitch": 0.0,
+              "right": 0.0,
+              "yaw": 0.0
+            },
+            "sha256": "48df47b9e3ea306f5b7ff807ddfbf7f1c1273123bbd937de286636e947f4d903",
+            "wire_visible": false
+          },
+          {
+            "actual_display_mode": "white",
+            "actual_weights": [0.0, 0.0, 1.0],
+            "image": "res://artifacts/face_acceptance/supplement-1792197988-78488/frame_015.png",
+            "requested": {
+              "left": 0.0,
+              "mode": "white",
+              "mouth": 1.0,
+              "pitch": 0.0,
+              "right": 0.0,
+              "yaw": 0.0
+            },
+            "sha256": "f05f21b779dd561ce0f4eaeb644d3c822b42ca7c483d5b4ebbb9a095ded67de8",
+            "wire_visible": false
+          },
+          {
+            "actual_display_mode": "render",
+            "actual_weights": [0.0, 0.0, 0.25],
+            "image": "res://artifacts/face_acceptance/supplement-1792197988-78488/frame_016.png",
+            "requested": {
+              "left": 0.0,
+              "mode": "render",
+              "mouth": 0.25,
+              "pitch": 0.0,
+              "right": 0.0,
+              "yaw": -45.0
+            },
+            "sha256": "2911880527633b94115920b529cad0a3f5760d12e7886f6a5cdfcd08fb91ac53",
+            "wire_visible": false
+          },
+          {
+            "actual_display_mode": "white",
+            "actual_weights": [0.0, 0.0, 0.25],
+            "image": "res://artifacts/face_acceptance/supplement-1792197988-78488/frame_017.png",
+            "requested": {
+              "left": 0.0,
+              "mode": "white",
+              "mouth": 0.25,
+              "pitch": 0.0,
+              "right": 0.0,
+              "yaw": -45.0
+            },
+            "sha256": "0b797dd629af9dcfa1d41f2651d81a871f5dc75d048182147e2e830df85859c8",
+            "wire_visible": false
+          },
+          {
+            "actual_display_mode": "render",
+            "actual_weights": [0.0, 0.0, 0.5],
+            "image": "res://artifacts/face_acceptance/supplement-1792197988-78488/frame_018.png",
+            "requested": {
+              "left": 0.0,
+              "mode": "render",
+              "mouth": 0.5,
+              "pitch": 0.0,
+              "right": 0.0,
+              "yaw": -45.0
+            },
+            "sha256": "551630d016bc070c027472637d91e87f4661a1dc1f0b60ec8e3ee2060814aaf0",
+            "wire_visible": false
+          },
+          {
+            "actual_display_mode": "white",
+            "actual_weights": [0.0, 0.0, 0.5],
+            "image": "res://artifacts/face_acceptance/supplement-1792197988-78488/frame_019.png",
+            "requested": {
+              "left": 0.0,
+              "mode": "white",
+              "mouth": 0.5,
+              "pitch": 0.0,
+              "right": 0.0,
+              "yaw": -45.0
+            },
+            "sha256": "4691b6862e1b030fb1ea177bf9751d69e42b39322bf84331d0ab63385dc7f29a",
+            "wire_visible": false
+          },
+          {
+            "actual_display_mode": "render",
+            "actual_weights": [0.0, 0.0, 0.75],
+            "image": "res://artifacts/face_acceptance/supplement-1792197988-78488/frame_020.png",
+            "requested": {
+              "left": 0.0,
+              "mode": "render",
+              "mouth": 0.75,
+              "pitch": 0.0,
+              "right": 0.0,
+              "yaw": -45.0
+            },
+            "sha256": "7703d3e948795be993fc2f3d24a220e47da81074038c21f5c3f8ac1c24a395db",
+            "wire_visible": false
+          },
+          {
+            "actual_display_mode": "white",
+            "actual_weights": [0.0, 0.0, 0.75],
+            "image": "res://artifacts/face_acceptance/supplement-1792197988-78488/frame_021.png",
+            "requested": {
+              "left": 0.0,
+              "mode": "white",
+              "mouth": 0.75,
+              "pitch": 0.0,
+              "right": 0.0,
+              "yaw": -45.0
+            },
+            "sha256": "933779049d1b963014d0fb120145c78ce0bc4b73bc025555cd2fec2ec8ee244c",
+            "wire_visible": false
+          },
+          {
+            "actual_display_mode": "render",
+            "actual_weights": [0.0, 0.0, 1.0],
+            "image": "res://artifacts/face_acceptance/supplement-1792197988-78488/frame_022.png",
+            "requested": {
+              "left": 0.0,
+              "mode": "render",
+              "mouth": 1.0,
+              "pitch": 0.0,
+              "right": 0.0,
+              "yaw": -45.0
+            },
+            "sha256": "4afeb06dec3313d7c9ae5469518e529d2b78c5824dc301d77cb8bc9f0fb625af",
+            "wire_visible": false
+          },
+          {
+            "actual_display_mode": "white",
+            "actual_weights": [0.0, 0.0, 1.0],
+            "image": "res://artifacts/face_acceptance/supplement-1792197988-78488/frame_023.png",
+            "requested": {
+              "left": 0.0,
+              "mode": "white",
+              "mouth": 1.0,
+              "pitch": 0.0,
+              "right": 0.0,
+              "yaw": -45.0
+            },
+            "sha256": "fb06d2cfce70b14d5014903dc54122b30f98187d99603b59517cf3fdb48eed2d",
+            "wire_visible": false
+          },
+          {
+            "actual_display_mode": "render",
+            "actual_weights": [0.0, 0.0, 0.25],
+            "image": "res://artifacts/face_acceptance/supplement-1792197988-78488/frame_024.png",
+            "requested": {
+              "left": 0.0,
+              "mode": "render",
+              "mouth": 0.25,
+              "pitch": 0.0,
+              "right": 0.0,
+              "yaw": 45.0
+            },
+            "sha256": "eb3be110f7d22540f9e616ea709a8fc0ab82e7eb8a664958f79a23e7a430a21e",
+            "wire_visible": false
+          },
+          {
+            "actual_display_mode": "white",
+            "actual_weights": [0.0, 0.0, 0.25],
+            "image": "res://artifacts/face_acceptance/supplement-1792197988-78488/frame_025.png",
+            "requested": {
+              "left": 0.0,
+              "mode": "white",
+              "mouth": 0.25,
+              "pitch": 0.0,
+              "right": 0.0,
+              "yaw": 45.0
+            },
+            "sha256": "fd571c6a9201f828142d19d3c6e5eaa8c94a16ee855843aa4ac668d642e27a09",
+            "wire_visible": false
+          },
+          {
+            "actual_display_mode": "render",
+            "actual_weights": [0.0, 0.0, 0.5],
+            "image": "res://artifacts/face_acceptance/supplement-1792197988-78488/frame_026.png",
+            "requested": {
+              "left": 0.0,
+              "mode": "render",
+              "mouth": 0.5,
+              "pitch": 0.0,
+              "right": 0.0,
+              "yaw": 45.0
+            },
+            "sha256": "f0257808e8cf3c281d272b0c835132c058f4f6ff2653269095a0007e6f1a60ba",
+            "wire_visible": false
+          },
+          {
+            "actual_display_mode": "white",
+            "actual_weights": [0.0, 0.0, 0.5],
+            "image": "res://artifacts/face_acceptance/supplement-1792197988-78488/frame_027.png",
+            "requested": {
+              "left": 0.0,
+              "mode": "white",
+              "mouth": 0.5,
+              "pitch": 0.0,
+              "right": 0.0,
+              "yaw": 45.0
+            },
+            "sha256": "24bd1e50cadfc3cb32bf416b3d4902306aa5c1a12579ebaa9397078de5e9df10",
+            "wire_visible": false
+          },
+          {
+            "actual_display_mode": "render",
+            "actual_weights": [0.0, 0.0, 0.75],
+            "image": "res://artifacts/face_acceptance/supplement-1792197988-78488/frame_028.png",
+            "requested": {
+              "left": 0.0,
+              "mode": "render",
+              "mouth": 0.75,
+              "pitch": 0.0,
+              "right": 0.0,
+              "yaw": 45.0
+            },
+            "sha256": "8cf2bb04a5047e58317b115c7135d72f2fac8e803358f4055d8fa916a236f86e",
+            "wire_visible": false
+          },
+          {
+            "actual_display_mode": "white",
+            "actual_weights": [0.0, 0.0, 0.75],
+            "image": "res://artifacts/face_acceptance/supplement-1792197988-78488/frame_029.png",
+            "requested": {
+              "left": 0.0,
+              "mode": "white",
+              "mouth": 0.75,
+              "pitch": 0.0,
+              "right": 0.0,
+              "yaw": 45.0
+            },
+            "sha256": "9f76c6903f22f8d6a93aab9796a1cc7b99af519f1f174381e0c91daebf7b4376",
+            "wire_visible": false
+          },
+          {
+            "actual_display_mode": "render",
+            "actual_weights": [0.0, 0.0, 1.0],
+            "image": "res://artifacts/face_acceptance/supplement-1792197988-78488/frame_030.png",
+            "requested": {
+              "left": 0.0,
+              "mode": "render",
+              "mouth": 1.0,
+              "pitch": 0.0,
+              "right": 0.0,
+              "yaw": 45.0
+            },
+            "sha256": "f786d33020184e34b019b7927047464f7702310b18da9b33da8c97e1aaf7ba1b",
+            "wire_visible": false
+          },
+          {
+            "actual_display_mode": "white",
+            "actual_weights": [0.0, 0.0, 1.0],
+            "image": "res://artifacts/face_acceptance/supplement-1792197988-78488/frame_031.png",
+            "requested": {
+              "left": 0.0,
+              "mode": "white",
+              "mouth": 1.0,
+              "pitch": 0.0,
+              "right": 0.0,
+              "yaw": 45.0
+            },
+            "sha256": "1ba070e7df502f5d84336a1137f5d9a99430a93dd70512fb5299d160682d0a15",
+            "wire_visible": false
+          },
+          {
+            "actual_display_mode": "render",
+            "actual_weights": [0.0, 0.0, 0.0],
+            "image": "res://artifacts/face_acceptance/supplement-1792197988-78488/frame_032.png",
+            "requested": {
+              "left": 0.0,
+              "mode": "render",
+              "mouth": 0.0,
+              "pitch": 0.0,
+              "right": 0.0,
+              "yaw": -90.0
+            },
+            "sha256": "0f4f2c371d2300664d769907f9f0df58b26e6480ef5568db3178df119bcdfcc7",
+            "wire_visible": false
+          },
+          {
+            "actual_display_mode": "white",
+            "actual_weights": [0.0, 0.0, 0.0],
+            "image": "res://artifacts/face_acceptance/supplement-1792197988-78488/frame_033.png",
+            "requested": {
+              "left": 0.0,
+              "mode": "white",
+              "mouth": 0.0,
+              "pitch": 0.0,
+              "right": 0.0,
+              "yaw": -90.0
+            },
+            "sha256": "a83e863b530f6f279badf903abb52dff02a54a4793b5a493c74d8b3733cfe795",
+            "wire_visible": false
+          },
+          {
+            "actual_display_mode": "render",
+            "actual_weights": [0.25, 0.25, 0.0],
+            "image": "res://artifacts/face_acceptance/supplement-1792197988-78488/frame_034.png",
+            "requested": {
+              "left": 0.25,
+              "mode": "render",
+              "mouth": 0.0,
+              "pitch": 0.0,
+              "right": 0.25,
+              "yaw": -90.0
+            },
+            "sha256": "334d83d151f03d5d9cf8102a8792f5b5b42cf1933c8e1b62df7c113cfa676029",
+            "wire_visible": false
+          },
+          {
+            "actual_display_mode": "white",
+            "actual_weights": [0.25, 0.25, 0.0],
+            "image": "res://artifacts/face_acceptance/supplement-1792197988-78488/frame_035.png",
+            "requested": {
+              "left": 0.25,
+              "mode": "white",
+              "mouth": 0.0,
+              "pitch": 0.0,
+              "right": 0.25,
+              "yaw": -90.0
+            },
+            "sha256": "47be628d36ce197bf3c8c745ee2df993c4f51d186687734683ee00b153494d4d",
+            "wire_visible": false
+          },
+          {
+            "actual_display_mode": "render",
+            "actual_weights": [0.5, 0.5, 0.0],
+            "image": "res://artifacts/face_acceptance/supplement-1792197988-78488/frame_036.png",
+            "requested": {
+              "left": 0.5,
+              "mode": "render",
+              "mouth": 0.0,
+              "pitch": 0.0,
+              "right": 0.5,
+              "yaw": -90.0
+            },
+            "sha256": "9fc438eddbe465897a0863497c91a64fdee7472d613bf119dc25218fe98c38b9",
+            "wire_visible": false
+          },
+          {
+            "actual_display_mode": "white",
+            "actual_weights": [0.5, 0.5, 0.0],
+            "image": "res://artifacts/face_acceptance/supplement-1792197988-78488/frame_037.png",
+            "requested": {
+              "left": 0.5,
+              "mode": "white",
+              "mouth": 0.0,
+              "pitch": 0.0,
+              "right": 0.5,
+              "yaw": -90.0
+            },
+            "sha256": "92162edecc5a99a1f69e4e5134ba0272c0606fee2684d60aa8945c5e80afb4cd",
+            "wire_visible": false
+          },
+          {
+            "actual_display_mode": "render",
+            "actual_weights": [0.75, 0.75, 0.0],
+            "image": "res://artifacts/face_acceptance/supplement-1792197988-78488/frame_038.png",
+            "requested": {
+              "left": 0.75,
+              "mode": "render",
+              "mouth": 0.0,
+              "pitch": 0.0,
+              "right": 0.75,
+              "yaw": -90.0
+            },
+            "sha256": "f0b107b11d96ca263857a23b5fa67801782b4b12dff0e34922213a61c1f8b044",
+            "wire_visible": false
+          },
+          {
+            "actual_display_mode": "white",
+            "actual_weights": [0.75, 0.75, 0.0],
+            "image": "res://artifacts/face_acceptance/supplement-1792197988-78488/frame_039.png",
+            "requested": {
+              "left": 0.75,
+              "mode": "white",
+              "mouth": 0.0,
+              "pitch": 0.0,
+              "right": 0.75,
+              "yaw": -90.0
+            },
+            "sha256": "6f7a1355d3d24eda0f825014a601bfd30a65d191f28e1b8775828d9af0dda88c",
+            "wire_visible": false
+          },
+          {
+            "actual_display_mode": "render",
+            "actual_weights": [1.0, 1.0, 0.0],
+            "image": "res://artifacts/face_acceptance/supplement-1792197988-78488/frame_040.png",
+            "requested": {
+              "left": 1.0,
+              "mode": "render",
+              "mouth": 0.0,
+              "pitch": 0.0,
+              "right": 1.0,
+              "yaw": -90.0
+            },
+            "sha256": "04ed10a70dba8d5a54cc180672a17da41915c28b5df75fd6072b61c8b5cf68b9",
+            "wire_visible": false
+          },
+          {
+            "actual_display_mode": "white",
+            "actual_weights": [1.0, 1.0, 0.0],
+            "image": "res://artifacts/face_acceptance/supplement-1792197988-78488/frame_041.png",
+            "requested": {
+              "left": 1.0,
+              "mode": "white",
+              "mouth": 0.0,
+              "pitch": 0.0,
+              "right": 1.0,
+              "yaw": -90.0
+            },
+            "sha256": "235e18a761c1aeeaf21f1345aa399cb9eb7c7cdc4b29e9e64f535b207c745d6d",
+            "wire_visible": false
+          }
+        ]
+      },
+      "acceptance_status": "Bounded comparison candidate only; not selected for delivery. Full directional-light review pending."
     },
     {
       "candidate": "general_face_eyes_712_narrow",
@@ -1888,7 +2526,645 @@
           }
         ]
       },
-      "visual_review": "Narrower eye variation: native geometry and fresh SDF succeeded; continuous pose gate positive. All69actualrender/white/wink-mouthimages reviewed andweights/sourcehashverified. Narrower opening gives a restrained adult expression; no obvious full-closure iris exposure in sampled views. Retain as a bounded secondary variation, not a universal improvement or replacement for709. White cheek bands remain."
+      "visual_review": "Narrower eye variation: native geometry and fresh SDF succeeded; continuous pose gate positive. All69actualrender/white/wink-mouthimages reviewed andweights/sourcehashverified. Narrower opening gives a restrained adult expression; no obvious full-closure iris exposure in sampled views. Retain as a bounded secondary variation, not a universal improvement or replacement for709. White cheek bands remain.\n\n2026-10-17 00:49 UTC supplement:42 additional captures visually reviewed, covering wire front/both45/both90/back/pitch\u00b120, full mouth .25/.5/.75/1 front/both45 render+white, and \u221290 bilateral blink0/.25/.5/.75/1 render+white. Actual mode, Face wire visibility, morph readback and source/image hashes verified. No new visible eye/ear silhouette break or mouth fold in these samples. This is a bounded comparison candidate; primary709 remains selected. Full directional-light acceptance of this variation is pending.",
+      "supplemental_views": {
+        "manifest_sha256": "2a68c819ee433f5f10d277ece9ae13d00402888b494bc837827c0538dc9094a5",
+        "source_identity_unchanged": true,
+        "actual_display_mode_and_wire_visibility_verified": true,
+        "captures": [
+          {
+            "actual_display_mode": "edges",
+            "actual_weights": [0.0, 0.0, 0.0],
+            "image": "res://artifacts/face_acceptance/supplement-1792198101-55635/frame_000.png",
+            "requested": {
+              "left": 0.0,
+              "mode": "edges",
+              "mouth": 0.0,
+              "pitch": 0.0,
+              "right": 0.0,
+              "yaw": 0.0
+            },
+            "sha256": "1382d26e330fd1492f0ad95d7635cbdf2e0cc3e8142cdacb8fb6db6c6a892e8a",
+            "wire_visible": true
+          },
+          {
+            "actual_display_mode": "edges",
+            "actual_weights": [0.0, 0.0, 0.0],
+            "image": "res://artifacts/face_acceptance/supplement-1792198101-55635/frame_001.png",
+            "requested": {
+              "left": 0.0,
+              "mode": "edges",
+              "mouth": 0.0,
+              "pitch": 0.0,
+              "right": 0.0,
+              "yaw": -45.0
+            },
+            "sha256": "70ddfe0b0942a4c69789e7565b99e3adda9ececb882feb31be458147e8807ddd",
+            "wire_visible": true
+          },
+          {
+            "actual_display_mode": "edges",
+            "actual_weights": [0.0, 0.0, 0.0],
+            "image": "res://artifacts/face_acceptance/supplement-1792198101-55635/frame_002.png",
+            "requested": {
+              "left": 0.0,
+              "mode": "edges",
+              "mouth": 0.0,
+              "pitch": 0.0,
+              "right": 0.0,
+              "yaw": 45.0
+            },
+            "sha256": "4850619566293117d52311261f7d49ec3087ba997d6b9f06ae18bb28d4527409",
+            "wire_visible": true
+          },
+          {
+            "actual_display_mode": "edges",
+            "actual_weights": [0.0, 0.0, 0.0],
+            "image": "res://artifacts/face_acceptance/supplement-1792198101-55635/frame_003.png",
+            "requested": {
+              "left": 0.0,
+              "mode": "edges",
+              "mouth": 0.0,
+              "pitch": 0.0,
+              "right": 0.0,
+              "yaw": -90.0
+            },
+            "sha256": "9b4f9ff1e962d7e20cebfc42e4f64ed366b6fb5338d6e6a69629aad79ff8599b",
+            "wire_visible": true
+          },
+          {
+            "actual_display_mode": "edges",
+            "actual_weights": [0.0, 0.0, 0.0],
+            "image": "res://artifacts/face_acceptance/supplement-1792198101-55635/frame_004.png",
+            "requested": {
+              "left": 0.0,
+              "mode": "edges",
+              "mouth": 0.0,
+              "pitch": 0.0,
+              "right": 0.0,
+              "yaw": 90.0
+            },
+            "sha256": "96a69da8f899c8cca5791e0e8b5a6201b647272d38b8acc2c3e085dc28431315",
+            "wire_visible": true
+          },
+          {
+            "actual_display_mode": "edges",
+            "actual_weights": [0.0, 0.0, 0.0],
+            "image": "res://artifacts/face_acceptance/supplement-1792198101-55635/frame_005.png",
+            "requested": {
+              "left": 0.0,
+              "mode": "edges",
+              "mouth": 0.0,
+              "pitch": 0.0,
+              "right": 0.0,
+              "yaw": 180.0
+            },
+            "sha256": "f3f9a9ce89e72c95cb6b8c000c5c67be704ae880130c188889e7c6d453be7648",
+            "wire_visible": true
+          },
+          {
+            "actual_display_mode": "edges",
+            "actual_weights": [0.0, 0.0, 0.0],
+            "image": "res://artifacts/face_acceptance/supplement-1792198101-55635/frame_006.png",
+            "requested": {
+              "left": 0.0,
+              "mode": "edges",
+              "mouth": 0.0,
+              "pitch": -20.0,
+              "right": 0.0,
+              "yaw": 0.0
+            },
+            "sha256": "c254123b33d06e5b4f0824f5db84ca3ac44c21d8c1d84b6d4bf08b0160a434f4",
+            "wire_visible": true
+          },
+          {
+            "actual_display_mode": "edges",
+            "actual_weights": [0.0, 0.0, 0.0],
+            "image": "res://artifacts/face_acceptance/supplement-1792198101-55635/frame_007.png",
+            "requested": {
+              "left": 0.0,
+              "mode": "edges",
+              "mouth": 0.0,
+              "pitch": 20.0,
+              "right": 0.0,
+              "yaw": 0.0
+            },
+            "sha256": "39883b7c4e9a2fa12d8f956916e5c3ee6a640c098702b67e4a954163249a638a",
+            "wire_visible": true
+          },
+          {
+            "actual_display_mode": "render",
+            "actual_weights": [0.0, 0.0, 0.25],
+            "image": "res://artifacts/face_acceptance/supplement-1792198101-55635/frame_008.png",
+            "requested": {
+              "left": 0.0,
+              "mode": "render",
+              "mouth": 0.25,
+              "pitch": 0.0,
+              "right": 0.0,
+              "yaw": 0.0
+            },
+            "sha256": "5b0338d1859321d834874700b8ba072cf641a6cc75c2d3799bb4a418d06e90fb",
+            "wire_visible": false
+          },
+          {
+            "actual_display_mode": "white",
+            "actual_weights": [0.0, 0.0, 0.25],
+            "image": "res://artifacts/face_acceptance/supplement-1792198101-55635/frame_009.png",
+            "requested": {
+              "left": 0.0,
+              "mode": "white",
+              "mouth": 0.25,
+              "pitch": 0.0,
+              "right": 0.0,
+              "yaw": 0.0
+            },
+            "sha256": "0876a49ddb5170423a1d1b334e2dab8737045cca9c96f7ea3527b1e02df05878",
+            "wire_visible": false
+          },
+          {
+            "actual_display_mode": "render",
+            "actual_weights": [0.0, 0.0, 0.5],
+            "image": "res://artifacts/face_acceptance/supplement-1792198101-55635/frame_010.png",
+            "requested": {
+              "left": 0.0,
+              "mode": "render",
+              "mouth": 0.5,
+              "pitch": 0.0,
+              "right": 0.0,
+              "yaw": 0.0
+            },
+            "sha256": "07b3ba19ab408f0bb0f5787c9b872fc9147823f1d4f7a7df9701a96bf106c22a",
+            "wire_visible": false
+          },
+          {
+            "actual_display_mode": "white",
+            "actual_weights": [0.0, 0.0, 0.5],
+            "image": "res://artifacts/face_acceptance/supplement-1792198101-55635/frame_011.png",
+            "requested": {
+              "left": 0.0,
+              "mode": "white",
+              "mouth": 0.5,
+              "pitch": 0.0,
+              "right": 0.0,
+              "yaw": 0.0
+            },
+            "sha256": "db575f903e4507d55f9ce3375d3f6b15abcfb401c4fdda0cb6221ee47fdece07",
+            "wire_visible": false
+          },
+          {
+            "actual_display_mode": "render",
+            "actual_weights": [0.0, 0.0, 0.75],
+            "image": "res://artifacts/face_acceptance/supplement-1792198101-55635/frame_012.png",
+            "requested": {
+              "left": 0.0,
+              "mode": "render",
+              "mouth": 0.75,
+              "pitch": 0.0,
+              "right": 0.0,
+              "yaw": 0.0
+            },
+            "sha256": "b7dc89e4a125045dab55f62b50a593c1b18e7fc09f4b36cd022563373301059c",
+            "wire_visible": false
+          },
+          {
+            "actual_display_mode": "white",
+            "actual_weights": [0.0, 0.0, 0.75],
+            "image": "res://artifacts/face_acceptance/supplement-1792198101-55635/frame_013.png",
+            "requested": {
+              "left": 0.0,
+              "mode": "white",
+              "mouth": 0.75,
+              "pitch": 0.0,
+              "right": 0.0,
+              "yaw": 0.0
+            },
+            "sha256": "9aeb323b977b767d50d4efca0343e40ef0c49b5775cd31fe57aaff9a4de05561",
+            "wire_visible": false
+          },
+          {
+            "actual_display_mode": "render",
+            "actual_weights": [0.0, 0.0, 1.0],
+            "image": "res://artifacts/face_acceptance/supplement-1792198101-55635/frame_014.png",
+            "requested": {
+              "left": 0.0,
+              "mode": "render",
+              "mouth": 1.0,
+              "pitch": 0.0,
+              "right": 0.0,
+              "yaw": 0.0
+            },
+            "sha256": "fe08a28ddac9e5e62664f5f40aa4561c14bf0c0d5214b06fd926bda015214373",
+            "wire_visible": false
+          },
+          {
+            "actual_display_mode": "white",
+            "actual_weights": [0.0, 0.0, 1.0],
+            "image": "res://artifacts/face_acceptance/supplement-1792198101-55635/frame_015.png",
+            "requested": {
+              "left": 0.0,
+              "mode": "white",
+              "mouth": 1.0,
+              "pitch": 0.0,
+              "right": 0.0,
+              "yaw": 0.0
+            },
+            "sha256": "43ef1291b85a796085dc897167176da0c938e30d3415faa1ff668162ac55146a",
+            "wire_visible": false
+          },
+          {
+            "actual_display_mode": "render",
+            "actual_weights": [0.0, 0.0, 0.25],
+            "image": "res://artifacts/face_acceptance/supplement-1792198101-55635/frame_016.png",
+            "requested": {
+              "left": 0.0,
+              "mode": "render",
+              "mouth": 0.25,
+              "pitch": 0.0,
+              "right": 0.0,
+              "yaw": -45.0
+            },
+            "sha256": "c6f1ecd46d307591dbdb129245ebcab5ceeb42567191a5f1f98a36b15c062ba9",
+            "wire_visible": false
+          },
+          {
+            "actual_display_mode": "white",
+            "actual_weights": [0.0, 0.0, 0.25],
+            "image": "res://artifacts/face_acceptance/supplement-1792198101-55635/frame_017.png",
+            "requested": {
+              "left": 0.0,
+              "mode": "white",
+              "mouth": 0.25,
+              "pitch": 0.0,
+              "right": 0.0,
+              "yaw": -45.0
+            },
+            "sha256": "451bba9b6ae43669d5398efd1a4eca1406bca096beb282a2dc4e640af5d62d4b",
+            "wire_visible": false
+          },
+          {
+            "actual_display_mode": "render",
+            "actual_weights": [0.0, 0.0, 0.5],
+            "image": "res://artifacts/face_acceptance/supplement-1792198101-55635/frame_018.png",
+            "requested": {
+              "left": 0.0,
+              "mode": "render",
+              "mouth": 0.5,
+              "pitch": 0.0,
+              "right": 0.0,
+              "yaw": -45.0
+            },
+            "sha256": "a13f7a34fe70094e3c8ac5e1a0e9efdfdb28f0cd4d31824ef059daabebd119c5",
+            "wire_visible": false
+          },
+          {
+            "actual_display_mode": "white",
+            "actual_weights": [0.0, 0.0, 0.5],
+            "image": "res://artifacts/face_acceptance/supplement-1792198101-55635/frame_019.png",
+            "requested": {
+              "left": 0.0,
+              "mode": "white",
+              "mouth": 0.5,
+              "pitch": 0.0,
+              "right": 0.0,
+              "yaw": -45.0
+            },
+            "sha256": "516515349d8eef6ee146bcb493967bfddf61efcdeaadd033102817a05ed5afaa",
+            "wire_visible": false
+          },
+          {
+            "actual_display_mode": "render",
+            "actual_weights": [0.0, 0.0, 0.75],
+            "image": "res://artifacts/face_acceptance/supplement-1792198101-55635/frame_020.png",
+            "requested": {
+              "left": 0.0,
+              "mode": "render",
+              "mouth": 0.75,
+              "pitch": 0.0,
+              "right": 0.0,
+              "yaw": -45.0
+            },
+            "sha256": "ee0829a2203015567b36821a453dc1d2209f23011fba11d3ab979b596bbbbd94",
+            "wire_visible": false
+          },
+          {
+            "actual_display_mode": "white",
+            "actual_weights": [0.0, 0.0, 0.75],
+            "image": "res://artifacts/face_acceptance/supplement-1792198101-55635/frame_021.png",
+            "requested": {
+              "left": 0.0,
+              "mode": "white",
+              "mouth": 0.75,
+              "pitch": 0.0,
+              "right": 0.0,
+              "yaw": -45.0
+            },
+            "sha256": "4fd5e8f4bc514d8ad95926b3711056a6cc0e1d0edab1869a59d42e2ac82ef39d",
+            "wire_visible": false
+          },
+          {
+            "actual_display_mode": "render",
+            "actual_weights": [0.0, 0.0, 1.0],
+            "image": "res://artifacts/face_acceptance/supplement-1792198101-55635/frame_022.png",
+            "requested": {
+              "left": 0.0,
+              "mode": "render",
+              "mouth": 1.0,
+              "pitch": 0.0,
+              "right": 0.0,
+              "yaw": -45.0
+            },
+            "sha256": "f697cc4dfc146a503a5868455b1f0f229cb43d9804a1d0b8d16766793b67999f",
+            "wire_visible": false
+          },
+          {
+            "actual_display_mode": "white",
+            "actual_weights": [0.0, 0.0, 1.0],
+            "image": "res://artifacts/face_acceptance/supplement-1792198101-55635/frame_023.png",
+            "requested": {
+              "left": 0.0,
+              "mode": "white",
+              "mouth": 1.0,
+              "pitch": 0.0,
+              "right": 0.0,
+              "yaw": -45.0
+            },
+            "sha256": "3fc1e484da509e3f42c13bfb68a8cc982bdb1d7fde59f1bf83351df3fbbb5934",
+            "wire_visible": false
+          },
+          {
+            "actual_display_mode": "render",
+            "actual_weights": [0.0, 0.0, 0.25],
+            "image": "res://artifacts/face_acceptance/supplement-1792198101-55635/frame_024.png",
+            "requested": {
+              "left": 0.0,
+              "mode": "render",
+              "mouth": 0.25,
+              "pitch": 0.0,
+              "right": 0.0,
+              "yaw": 45.0
+            },
+            "sha256": "73c09e2e7216901159eaab5651e6c96663f03e655bfa555ca97db8b3803835c4",
+            "wire_visible": false
+          },
+          {
+            "actual_display_mode": "white",
+            "actual_weights": [0.0, 0.0, 0.25],
+            "image": "res://artifacts/face_acceptance/supplement-1792198101-55635/frame_025.png",
+            "requested": {
+              "left": 0.0,
+              "mode": "white",
+              "mouth": 0.25,
+              "pitch": 0.0,
+              "right": 0.0,
+              "yaw": 45.0
+            },
+            "sha256": "c0f87d8f4883faa19aa1c2fc1f3c214c80a4e1d9bd14ddcfd7dd1396a38786ef",
+            "wire_visible": false
+          },
+          {
+            "actual_display_mode": "render",
+            "actual_weights": [0.0, 0.0, 0.5],
+            "image": "res://artifacts/face_acceptance/supplement-1792198101-55635/frame_026.png",
+            "requested": {
+              "left": 0.0,
+              "mode": "render",
+              "mouth": 0.5,
+              "pitch": 0.0,
+              "right": 0.0,
+              "yaw": 45.0
+            },
+            "sha256": "07b5a2a502d40ddd0293469e65b9f1ea7db6f4600f4ae273b0ed654db332226b",
+            "wire_visible": false
+          },
+          {
+            "actual_display_mode": "white",
+            "actual_weights": [0.0, 0.0, 0.5],
+            "image": "res://artifacts/face_acceptance/supplement-1792198101-55635/frame_027.png",
+            "requested": {
+              "left": 0.0,
+              "mode": "white",
+              "mouth": 0.5,
+              "pitch": 0.0,
+              "right": 0.0,
+              "yaw": 45.0
+            },
+            "sha256": "5ef63b9fd61153a4ba8444f6b29af0d5c7b3b2dc9035818699041ba2100bcc08",
+            "wire_visible": false
+          },
+          {
+            "actual_display_mode": "render",
+            "actual_weights": [0.0, 0.0, 0.75],
+            "image": "res://artifacts/face_acceptance/supplement-1792198101-55635/frame_028.png",
+            "requested": {
+              "left": 0.0,
+              "mode": "render",
+              "mouth": 0.75,
+              "pitch": 0.0,
+              "right": 0.0,
+              "yaw": 45.0
+            },
+            "sha256": "df64039a44261b804dfb9ed5d5eb2a056d4c1660815a9d815683c6a247c1915d",
+            "wire_visible": false
+          },
+          {
+            "actual_display_mode": "white",
+            "actual_weights": [0.0, 0.0, 0.75],
+            "image": "res://artifacts/face_acceptance/supplement-1792198101-55635/frame_029.png",
+            "requested": {
+              "left": 0.0,
+              "mode": "white",
+              "mouth": 0.75,
+              "pitch": 0.0,
+              "right": 0.0,
+              "yaw": 45.0
+            },
+            "sha256": "f32c331d8eedb697802474ac721a194eb61000e73cd35290cb739e14e8c316ed",
+            "wire_visible": false
+          },
+          {
+            "actual_display_mode": "render",
+            "actual_weights": [0.0, 0.0, 1.0],
+            "image": "res://artifacts/face_acceptance/supplement-1792198101-55635/frame_030.png",
+            "requested": {
+              "left": 0.0,
+              "mode": "render",
+              "mouth": 1.0,
+              "pitch": 0.0,
+              "right": 0.0,
+              "yaw": 45.0
+            },
+            "sha256": "5fef8e6ec77b47dcbd4f9dac2276d216efcdef8709fe9ac841294933137499ac",
+            "wire_visible": false
+          },
+          {
+            "actual_display_mode": "white",
+            "actual_weights": [0.0, 0.0, 1.0],
+            "image": "res://artifacts/face_acceptance/supplement-1792198101-55635/frame_031.png",
+            "requested": {
+              "left": 0.0,
+              "mode": "white",
+              "mouth": 1.0,
+              "pitch": 0.0,
+              "right": 0.0,
+              "yaw": 45.0
+            },
+            "sha256": "2c917ebd284c1c4c39f0f5b56cd3cee8d6ea22ae1154548c36346873eed85dc4",
+            "wire_visible": false
+          },
+          {
+            "actual_display_mode": "render",
+            "actual_weights": [0.0, 0.0, 0.0],
+            "image": "res://artifacts/face_acceptance/supplement-1792198101-55635/frame_032.png",
+            "requested": {
+              "left": 0.0,
+              "mode": "render",
+              "mouth": 0.0,
+              "pitch": 0.0,
+              "right": 0.0,
+              "yaw": -90.0
+            },
+            "sha256": "61375d8b3bec8ee35c0a97476bd8be0a582f9cbc25f66230d2247c24bcd0eb85",
+            "wire_visible": false
+          },
+          {
+            "actual_display_mode": "white",
+            "actual_weights": [0.0, 0.0, 0.0],
+            "image": "res://artifacts/face_acceptance/supplement-1792198101-55635/frame_033.png",
+            "requested": {
+              "left": 0.0,
+              "mode": "white",
+              "mouth": 0.0,
+              "pitch": 0.0,
+              "right": 0.0,
+              "yaw": -90.0
+            },
+            "sha256": "b9104837b827b72938029a55aa4c25e630facfb9a1176155a1f2e707ec1ca860",
+            "wire_visible": false
+          },
+          {
+            "actual_display_mode": "render",
+            "actual_weights": [0.25, 0.25, 0.0],
+            "image": "res://artifacts/face_acceptance/supplement-1792198101-55635/frame_034.png",
+            "requested": {
+              "left": 0.25,
+              "mode": "render",
+              "mouth": 0.0,
+              "pitch": 0.0,
+              "right": 0.25,
+              "yaw": -90.0
+            },
+            "sha256": "972caf1e9fea907252fe7ede94d3d1ba166591a1c280a7fa15f0bb4e14e58803",
+            "wire_visible": false
+          },
+          {
+            "actual_display_mode": "white",
+            "actual_weights": [0.25, 0.25, 0.0],
+            "image": "res://artifacts/face_acceptance/supplement-1792198101-55635/frame_035.png",
+            "requested": {
+              "left": 0.25,
+              "mode": "white",
+              "mouth": 0.0,
+              "pitch": 0.0,
+              "right": 0.25,
+              "yaw": -90.0
+            },
+            "sha256": "2c64266d3c82a0b168b06f4112ea90135eccbe6304c61dcf3148f50c23bc584a",
+            "wire_visible": false
+          },
+          {
+            "actual_display_mode": "render",
+            "actual_weights": [0.5, 0.5, 0.0],
+            "image": "res://artifacts/face_acceptance/supplement-1792198101-55635/frame_036.png",
+            "requested": {
+              "left": 0.5,
+              "mode": "render",
+              "mouth": 0.0,
+              "pitch": 0.0,
+              "right": 0.5,
+              "yaw": -90.0
+            },
+            "sha256": "2e2bbcfa025b454fa0d5eb0b2edea2480c50a15b68d907abc30c3daad48593f5",
+            "wire_visible": false
+          },
+          {
+            "actual_display_mode": "white",
+            "actual_weights": [0.5, 0.5, 0.0],
+            "image": "res://artifacts/face_acceptance/supplement-1792198101-55635/frame_037.png",
+            "requested": {
+              "left": 0.5,
+              "mode": "white",
+              "mouth": 0.0,
+              "pitch": 0.0,
+              "right": 0.5,
+              "yaw": -90.0
+            },
+            "sha256": "c3fce5e143f617a59daf716cd1fafbce02f6f8de8ca3a26104f4746322631eb6",
+            "wire_visible": false
+          },
+          {
+            "actual_display_mode": "render",
+            "actual_weights": [0.75, 0.75, 0.0],
+            "image": "res://artifacts/face_acceptance/supplement-1792198101-55635/frame_038.png",
+            "requested": {
+              "left": 0.75,
+              "mode": "render",
+              "mouth": 0.0,
+              "pitch": 0.0,
+              "right": 0.75,
+              "yaw": -90.0
+            },
+            "sha256": "c949396bc1594759e03e1147a426be20921ac551b75c25e96423f5d3c39d0ca7",
+            "wire_visible": false
+          },
+          {
+            "actual_display_mode": "white",
+            "actual_weights": [0.75, 0.75, 0.0],
+            "image": "res://artifacts/face_acceptance/supplement-1792198101-55635/frame_039.png",
+            "requested": {
+              "left": 0.75,
+              "mode": "white",
+              "mouth": 0.0,
+              "pitch": 0.0,
+              "right": 0.75,
+              "yaw": -90.0
+            },
+            "sha256": "46e4b4a48c9205c794760cb0e7e86b3ee957a462026b876be49d4a765007f352",
+            "wire_visible": false
+          },
+          {
+            "actual_display_mode": "render",
+            "actual_weights": [1.0, 1.0, 0.0],
+            "image": "res://artifacts/face_acceptance/supplement-1792198101-55635/frame_040.png",
+            "requested": {
+              "left": 1.0,
+              "mode": "render",
+              "mouth": 0.0,
+              "pitch": 0.0,
+              "right": 1.0,
+              "yaw": -90.0
+            },
+            "sha256": "862750a62465485bf3b8ccb11f225e7da0291d561152c702850f48e26d4cc2f2",
+            "wire_visible": false
+          },
+          {
+            "actual_display_mode": "white",
+            "actual_weights": [1.0, 1.0, 0.0],
+            "image": "res://artifacts/face_acceptance/supplement-1792198101-55635/frame_041.png",
+            "requested": {
+              "left": 1.0,
+              "mode": "white",
+              "mouth": 0.0,
+              "pitch": 0.0,
+              "right": 1.0,
+              "yaw": -90.0
+            },
+            "sha256": "971a4328b403c123a7dbf6aa355b54a1e69ba66ad6d2b88d5d63659667053dcf",
+            "wire_visible": false
+          }
+        ]
+      },
+      "acceptance_status": "Bounded comparison candidate only; not selected for delivery. Full directional-light review pending."
     }
   ]
 }

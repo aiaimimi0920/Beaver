@@ -117,15 +117,18 @@ case708 exactly up to vertex/triangle ordering and was visually reviewed across
 These are internally reviewed cases; final user approval and all-parameter
 stability are not implied.
 
-Additional internal reviews retained case710 as a gentler/rounder variation and
+Additional internal reviews compared case710 as a gentler/rounder variation and
 case712 as a narrower-eye variation. Each completed native geometry and a fresh
 SDF bake, passed the continuous orientation gate, and had 69 rendered/white and
 wink-with-mouth captures reviewed with weight readback and source identity
-checks. These are bounded secondary parameter cases, not improvements over or
-replacements for primary case709, and do not establish all-parameter stability.
+checks. These remain comparison candidates pending full directional-light acceptance;
+they are not selected for delivery or replacements for primary case709. They do
+not establish all-parameter stability.
 The existing white-model cheek shading bands remain in both variations.
-The per-case controls, native job IDs, all 69 capture hashes/poses and review
-records are retained in [variation evidence](semantic_eyes/variation-evidence.json).
+A further 42 native views per case cover wire topology, the opposite true side
+and mouth weights 0.25/0.5/0.75/1 (neutral is already in the initial set).
+The per-case controls, native job IDs, all 111 capture hashes/poses and bounded
+review records are retained in [variation evidence](semantic_eyes/variation-evidence.json).
 These blink-pose captures are separate from the UI cancellation probe; the latter
 does not provide visual acceptance.
 
