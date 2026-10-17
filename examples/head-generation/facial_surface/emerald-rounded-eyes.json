@@ -1,0 +1,23 @@
+{
+  "eye_spacing": 1,
+  "eye_width": 1.04,
+  "upper_arch": 1.22,
+  "lower_arch": 0.78,
+  "corner_slope_offset": 0.006,
+  "eye_height_offset": 0.0,
+  "iris_width": 1.04,
+  "iris_height": 1.08,
+  "brow_height_offset": -0.012,
+  "brow_rise_offset": -0.006,
+  "brow_thickness": 0.85,
+  "brow_arch": 1.0,
+  "lash_band_thickness": 1.05,
+  "supplemental_lashes": 0.0,
+  "lid_fold": 0.0,
+  "upper_roundness": 1.4,
+  "upper_horizontal_roundness": 0.72,
+  "lash_contour_follow": 1,
+  "iris_vertical_offset": 0.002,
+  "simple_iris": 1,
+  "short_upper_tuft": 1
+}
