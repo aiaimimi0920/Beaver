@@ -175,6 +175,25 @@ def rim_without_origin(t, c):
     )
 
 
+def upper_coordinate_interval(t, c):
+    # The fixed-scalar warp is globally monotone for |a| <= .25.
+    # Evaluate each endpoint with outward-rounded arithmetic, not raw floats.
+    a = c.get("eye_upper_asymmetry", 0.0)
+    if not a:
+        return t
+    if not math.isfinite(a) or abs(a) > 0.25:
+        raise ValueError("Uncertified upper warp range")
+
+    def endpoint(v):
+        if abs(v) >= 1:
+            return I(v)
+        point = I(v)
+        return point + a * (1 - point * point).clamp(0, 1) ** 3
+
+    lo, hi = endpoint(t.lo), endpoint(t.hi)
+    return I(lo.lo, hi.hi)
+
+
 def aperture_gap_bound(c, subdivisions=2048):
     bounds = []
     for upper in (False, True):
@@ -185,7 +204,8 @@ def aperture_gap_bound(c, subdivisions=2048):
                 c["eye_horizontal_power"] if upper else c["eye_lower_horizontal_power"]
             )
             power = c["eye_upper_power"] if upper else c["eye_lower_power"]
-            shape = (1 - t.absolute() ** horizontal).clamp(0, 1) ** power
+            q = upper_coordinate_interval(t, c) if upper else t
+            shape = (1 - q.absolute() ** horizontal).clamp(0, 1) ** power
             h = c["eye_corner_y"] + c["eye_corner_slope"] * t + arch * shape
             x = c["height_m"] * (c["eye_center_x"] + c["eye_half_width"] * t)
             gap = raw_without_origin(x, h, c) - rim_without_origin(t, c)
@@ -219,8 +239,9 @@ def orbital_weight(x, h, c):
         # Both summands are analytically nonnegative; outward rounding at zero
         # may produce a negative subnormal lower endpoint. Intersect that
         # known domain before applying the square root.
+        q = upper_coordinate_interval(t, c) if upper else t
         squared = (
-            t.absolute() ** horizontal + (vertical / arch).absolute() ** (1 / power)
+            q.absolute() ** horizontal + (vertical / arch).absolute() ** (1 / power)
         ).clamp(0, math.inf)
         r = squared**0.5
         weights.append((-(((r - 1) / c["orbital_band_width"]) ** 2)).exp())

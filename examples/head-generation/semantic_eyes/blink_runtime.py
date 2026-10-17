@@ -1,5 +1,7 @@
 """Experimental local eyelid closure; neutral mesh and non-eye geometry stay fixed."""
 
+from contour_warp import upper_shape
+
 
 def closure_delta(x, y, kind, c):
     h = c["height_m"]
@@ -13,6 +15,8 @@ def closure_delta(x, y, kind, c):
         * c["eye_upper_arch"]
         * max(0, 1 - abs(t) ** c["eye_horizontal_power"]) ** c["eye_upper_power"]
     )
+    if c.get("eye_upper_asymmetry", 0):
+        upper = center + h * c["eye_upper_arch"] * upper_shape(t, c)
     lower = (
         center
         - h
@@ -176,7 +180,12 @@ def verify_pose_orientation(obj):
         ]
         assert all(isfinite(v) for v in coefficients), "Nonfinite pose coefficients"
         value, blink_weight, mouth_weight = quadratic_minimum(*coefficients)
-        assert value > 1e-5, "Eyelid or mouth pose folds a triangle"
+        assert value > 1e-5, (
+            "Eyelid or mouth pose folds a triangle: "
+            f"triangle={polygon.index}, vertices={ids}, "
+            f"orientation_ratio={value:.9g}, blink={blink_weight:.9g}, "
+            f"mouth={mouth_weight:.9g}"
+        )
         lowest = min(lowest, (value, blink_weight, mouth_weight, polygon.index))
     return {
         "triangles": len(data.polygons),

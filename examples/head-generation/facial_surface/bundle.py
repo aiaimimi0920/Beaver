@@ -57,8 +57,13 @@ def build_request(
         )
         style = builder.adapt_style(baseline_style, builder.validate(eyes))
         face = (recipe / "face.py").read_text()
+        from source_upper_warp import adapt_face_source
+
+        analysis_face = adapt_face_source(
+            face, bool(style["calibration"].get("eye_upper_asymmetry", 0))
+        )
         data, report = prepare(
-            face,
+            analysis_face,
             style["calibration"],
             parameters,
             baseline_iris_plane_slope=baseline_style["calibration"]["iris_plane_slope"],

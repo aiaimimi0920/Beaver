@@ -94,6 +94,19 @@ class BlinkOrientationTests(unittest.TestCase):
         self.assertAlmostEqual(report["minimum_orientation_ratio"], 0.5)
         self.assertEqual(report["worst_triangle"], 1)
 
+    def test_failure_identifies_triangle_and_exact_pose(self):
+        with self.assertRaises(AssertionError) as caught:
+            verify_pose_orientation(mesh(left=[(0, 0, 0), (-2, 0, 0), (0, 0, 0)]))
+        message = str(caught.exception)
+        for detail in (
+            "triangle=0",
+            "vertices=[0, 1, 2]",
+            "orientation_ratio=-1",
+            "blink=1",
+            "mouth=0",
+        ):
+            self.assertIn(detail, message)
+
     def test_reversed_triangle(self):
         with self.assertRaisesRegex(AssertionError, "folds a triangle"):
             verify_pose_orientation(mesh(left=[(0, 0, 0), (-2, 0, 0), (0, 0, 0)]))
