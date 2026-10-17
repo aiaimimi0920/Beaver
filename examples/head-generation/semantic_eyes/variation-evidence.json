@@ -1,0 +1,3170 @@
+{
+  "schema": "bounded-eye-variation-native-evidence-v1",
+  "observed_utc": "2026-10-17T00:12:00Z",
+  "primary": "general_face_eyes_709_blink_repeat",
+  "scope": "Actual native blink-pose capture records, distinct from the UI cancellation probe. Screenshots remain in the private project; hashes and pose metadata are retained here. Internal visual review, not final user approval or all-parameter stability.",
+  "cases": [
+    {
+      "candidate": "general_face_eyes_710_round",
+      "generation_job": "1cd0a1fe-dc44-4f42-a138-247404825027",
+      "sdf_job": "9473989d-0406-4c70-85a5-683f48a5885b",
+      "controls": {
+        "eye_spacing": 1,
+        "eye_width": 1.0,
+        "upper_arch": 1.12,
+        "lower_arch": 0.72,
+        "corner_slope_offset": 0.003,
+        "eye_height_offset": 0.0,
+        "iris_width": 1.02,
+        "iris_height": 1.02,
+        "brow_height_offset": -0.012,
+        "brow_rise_offset": -0.006,
+        "brow_thickness": 0.85,
+        "brow_arch": 1.0,
+        "lash_band_thickness": 1.05,
+        "supplemental_lashes": 0.0,
+        "lid_fold": 0.0,
+        "upper_roundness": 1.4,
+        "upper_horizontal_roundness": 0.72,
+        "lash_contour_follow": 1,
+        "iris_vertical_offset": 0.002,
+        "simple_iris": 1,
+        "short_upper_tuft": 1
+      },
+      "continuous_orientation": {
+        "triangles": 10980,
+        "minimum_orientation_ratio": 0.028314349636772596,
+        "worst_blink_weight": 1.0,
+        "worst_mouth_weight": 0.0,
+        "worst_triangle": 1008,
+        "scope": "Floating-point analytic quadratic minimum over blink and MouthOpen [0,1]; no triangle couples both eyes. Not an intersection proof."
+      },
+      "native_poses": {
+        "manifest_sha256": "7abbcb02319e053b82a25500cf3e6ee4525b35d22026876f4dc70a3a19c80154",
+        "source": "res://assets/aster/general_face_eyes_710_round/aster_head.glb",
+        "source_sha256": "80f78289def8fb6218cb99285e8f6be40a8e8635332b97019ae1f69ec8e8311a",
+        "source_identity_unchanged": true,
+        "requested_weights_match_readback": true,
+        "captures": [
+          {
+            "actual_weights": [0.0, 0.0, 0.0],
+            "image": "res://artifacts/blink_probe/blink-1792193861-97908/frame_000.png",
+            "requested": {
+              "left": 0.0,
+              "mode": "render",
+              "mouth": 0.0,
+              "pitch": 0.0,
+              "right": 0.0,
+              "yaw": 0.0
+            },
+            "sha256": "e052dd114a2214eda83d242965ec9abf14a2e28c47c23dcce2673476d219fa36"
+          },
+          {
+            "actual_weights": [0.0, 0.0, 0.0],
+            "image": "res://artifacts/blink_probe/blink-1792193861-97908/frame_001.png",
+            "requested": {
+              "left": 0.0,
+              "mode": "white",
+              "mouth": 0.0,
+              "pitch": 0.0,
+              "right": 0.0,
+              "yaw": 0.0
+            },
+            "sha256": "c4d9ac0fd04f32f13568daea13a3aed2862d0746ef51079850e39200483c47bc"
+          },
+          {
+            "actual_weights": [0.25, 0.25, 0.0],
+            "image": "res://artifacts/blink_probe/blink-1792193861-97908/frame_002.png",
+            "requested": {
+              "left": 0.25,
+              "mode": "render",
+              "mouth": 0.0,
+              "pitch": 0.0,
+              "right": 0.25,
+              "yaw": 0.0
+            },
+            "sha256": "b5e94fb8686d0b2eb7f10d42ad56118e1768b3c7ef142b83364c3562907fae9a"
+          },
+          {
+            "actual_weights": [0.25, 0.25, 0.0],
+            "image": "res://artifacts/blink_probe/blink-1792193861-97908/frame_003.png",
+            "requested": {
+              "left": 0.25,
+              "mode": "white",
+              "mouth": 0.0,
+              "pitch": 0.0,
+              "right": 0.25,
+              "yaw": 0.0
+            },
+            "sha256": "7dbb2b62da1157aedda1b338ed287c49f07ad78620519678401a502c4b63190a"
+          },
+          {
+            "actual_weights": [0.5, 0.5, 0.0],
+            "image": "res://artifacts/blink_probe/blink-1792193861-97908/frame_004.png",
+            "requested": {
+              "left": 0.5,
+              "mode": "render",
+              "mouth": 0.0,
+              "pitch": 0.0,
+              "right": 0.5,
+              "yaw": 0.0
+            },
+            "sha256": "a4b688c0ea99edc73ac0f61c2b3f3c1429b0799f5c568f9d94a4e4d11be5924b"
+          },
+          {
+            "actual_weights": [0.5, 0.5, 0.0],
+            "image": "res://artifacts/blink_probe/blink-1792193861-97908/frame_005.png",
+            "requested": {
+              "left": 0.5,
+              "mode": "white",
+              "mouth": 0.0,
+              "pitch": 0.0,
+              "right": 0.5,
+              "yaw": 0.0
+            },
+            "sha256": "84575c9b712ee6c1323aaa4dee9eafb85266b9596f9291e654de7ce8fb795d18"
+          },
+          {
+            "actual_weights": [0.75, 0.75, 0.0],
+            "image": "res://artifacts/blink_probe/blink-1792193861-97908/frame_006.png",
+            "requested": {
+              "left": 0.75,
+              "mode": "render",
+              "mouth": 0.0,
+              "pitch": 0.0,
+              "right": 0.75,
+              "yaw": 0.0
+            },
+            "sha256": "f9ebd3e1894d94f340eb1ac0515705742af74394171d65456627164689faf3a7"
+          },
+          {
+            "actual_weights": [0.75, 0.75, 0.0],
+            "image": "res://artifacts/blink_probe/blink-1792193861-97908/frame_007.png",
+            "requested": {
+              "left": 0.75,
+              "mode": "white",
+              "mouth": 0.0,
+              "pitch": 0.0,
+              "right": 0.75,
+              "yaw": 0.0
+            },
+            "sha256": "5f0889334ed674faa249567544a50c76fbaea98463b534b583513a8407f540b7"
+          },
+          {
+            "actual_weights": [1.0, 1.0, 0.0],
+            "image": "res://artifacts/blink_probe/blink-1792193861-97908/frame_008.png",
+            "requested": {
+              "left": 1.0,
+              "mode": "render",
+              "mouth": 0.0,
+              "pitch": 0.0,
+              "right": 1.0,
+              "yaw": 0.0
+            },
+            "sha256": "9253c4f5778e97d3a9db296cad4ee55162c7a9d17eb487be5909e81cc955daa0"
+          },
+          {
+            "actual_weights": [1.0, 1.0, 0.0],
+            "image": "res://artifacts/blink_probe/blink-1792193861-97908/frame_009.png",
+            "requested": {
+              "left": 1.0,
+              "mode": "white",
+              "mouth": 0.0,
+              "pitch": 0.0,
+              "right": 1.0,
+              "yaw": 0.0
+            },
+            "sha256": "5a1143dbfec182ecddf46f7f4d9433c15c43d71a65b82baf9951555615453b80"
+          },
+          {
+            "actual_weights": [0.0, 0.0, 0.0],
+            "image": "res://artifacts/blink_probe/blink-1792193861-97908/frame_010.png",
+            "requested": {
+              "left": 0.0,
+              "mode": "render",
+              "mouth": 0.0,
+              "pitch": 0.0,
+              "right": 0.0,
+              "yaw": -45.0
+            },
+            "sha256": "4214244833b44e193b561e15399b5fc4753ba3ce3f55f95171c027002e2839a2"
+          },
+          {
+            "actual_weights": [0.0, 0.0, 0.0],
+            "image": "res://artifacts/blink_probe/blink-1792193861-97908/frame_011.png",
+            "requested": {
+              "left": 0.0,
+              "mode": "white",
+              "mouth": 0.0,
+              "pitch": 0.0,
+              "right": 0.0,
+              "yaw": -45.0
+            },
+            "sha256": "78911788a05ddb3b23910a72bf4a779c5a79a12a51c3d4684c2314a693d9f0b7"
+          },
+          {
+            "actual_weights": [0.25, 0.25, 0.0],
+            "image": "res://artifacts/blink_probe/blink-1792193861-97908/frame_012.png",
+            "requested": {
+              "left": 0.25,
+              "mode": "render",
+              "mouth": 0.0,
+              "pitch": 0.0,
+              "right": 0.25,
+              "yaw": -45.0
+            },
+            "sha256": "78042d8ab84c52c6fdc141b83c7a03415e1cbf811da85b06f7d70fa453cd5395"
+          },
+          {
+            "actual_weights": [0.25, 0.25, 0.0],
+            "image": "res://artifacts/blink_probe/blink-1792193861-97908/frame_013.png",
+            "requested": {
+              "left": 0.25,
+              "mode": "white",
+              "mouth": 0.0,
+              "pitch": 0.0,
+              "right": 0.25,
+              "yaw": -45.0
+            },
+            "sha256": "3f68ad86bb63fe87ced4774358a2d255d396c366e204b5970e162ba782f360aa"
+          },
+          {
+            "actual_weights": [0.5, 0.5, 0.0],
+            "image": "res://artifacts/blink_probe/blink-1792193861-97908/frame_014.png",
+            "requested": {
+              "left": 0.5,
+              "mode": "render",
+              "mouth": 0.0,
+              "pitch": 0.0,
+              "right": 0.5,
+              "yaw": -45.0
+            },
+            "sha256": "70ec3eb70858150c99fa0e2a99dc9506b4a63ea808d968c3b7386c726b39d561"
+          },
+          {
+            "actual_weights": [0.5, 0.5, 0.0],
+            "image": "res://artifacts/blink_probe/blink-1792193861-97908/frame_015.png",
+            "requested": {
+              "left": 0.5,
+              "mode": "white",
+              "mouth": 0.0,
+              "pitch": 0.0,
+              "right": 0.5,
+              "yaw": -45.0
+            },
+            "sha256": "245f901641d66658b80facaec25b07f2997f731550b213020836c2b789fa96cf"
+          },
+          {
+            "actual_weights": [0.75, 0.75, 0.0],
+            "image": "res://artifacts/blink_probe/blink-1792193861-97908/frame_016.png",
+            "requested": {
+              "left": 0.75,
+              "mode": "render",
+              "mouth": 0.0,
+              "pitch": 0.0,
+              "right": 0.75,
+              "yaw": -45.0
+            },
+            "sha256": "d96f6d988520fd1baa9098292b41db5305aeea3e82356bfb5a47d43cf8b803e6"
+          },
+          {
+            "actual_weights": [0.75, 0.75, 0.0],
+            "image": "res://artifacts/blink_probe/blink-1792193861-97908/frame_017.png",
+            "requested": {
+              "left": 0.75,
+              "mode": "white",
+              "mouth": 0.0,
+              "pitch": 0.0,
+              "right": 0.75,
+              "yaw": -45.0
+            },
+            "sha256": "647c9c94c86831ad0ea50f0b97bdc9c3a2747e3b7e880e1ccfd3e2f20be28211"
+          },
+          {
+            "actual_weights": [1.0, 1.0, 0.0],
+            "image": "res://artifacts/blink_probe/blink-1792193861-97908/frame_018.png",
+            "requested": {
+              "left": 1.0,
+              "mode": "render",
+              "mouth": 0.0,
+              "pitch": 0.0,
+              "right": 1.0,
+              "yaw": -45.0
+            },
+            "sha256": "4cf5ad13a68d9b82ca5e383fd6e059a4b10e715efc35939f8cd66a520b32d7e0"
+          },
+          {
+            "actual_weights": [1.0, 1.0, 0.0],
+            "image": "res://artifacts/blink_probe/blink-1792193861-97908/frame_019.png",
+            "requested": {
+              "left": 1.0,
+              "mode": "white",
+              "mouth": 0.0,
+              "pitch": 0.0,
+              "right": 1.0,
+              "yaw": -45.0
+            },
+            "sha256": "400218f1d4d2a5e999fc86d13232b836eefae103a2895ed36724d8125f595a48"
+          },
+          {
+            "actual_weights": [0.0, 0.0, 0.0],
+            "image": "res://artifacts/blink_probe/blink-1792193861-97908/frame_020.png",
+            "requested": {
+              "left": 0.0,
+              "mode": "render",
+              "mouth": 0.0,
+              "pitch": 0.0,
+              "right": 0.0,
+              "yaw": 45.0
+            },
+            "sha256": "697a55a01907c18861524293221a44256d61817cef8220938dcc3028a6b96544"
+          },
+          {
+            "actual_weights": [0.0, 0.0, 0.0],
+            "image": "res://artifacts/blink_probe/blink-1792193861-97908/frame_021.png",
+            "requested": {
+              "left": 0.0,
+              "mode": "white",
+              "mouth": 0.0,
+              "pitch": 0.0,
+              "right": 0.0,
+              "yaw": 45.0
+            },
+            "sha256": "f2378feb39a0eb3e4b170ed4c1a9d7f571bd51894285939637942d5202661d59"
+          },
+          {
+            "actual_weights": [0.25, 0.25, 0.0],
+            "image": "res://artifacts/blink_probe/blink-1792193861-97908/frame_022.png",
+            "requested": {
+              "left": 0.25,
+              "mode": "render",
+              "mouth": 0.0,
+              "pitch": 0.0,
+              "right": 0.25,
+              "yaw": 45.0
+            },
+            "sha256": "ff750d8ce076cb9299798934939005cc18c3c4fd60c888fec18a66c3ffe9ddff"
+          },
+          {
+            "actual_weights": [0.25, 0.25, 0.0],
+            "image": "res://artifacts/blink_probe/blink-1792193861-97908/frame_023.png",
+            "requested": {
+              "left": 0.25,
+              "mode": "white",
+              "mouth": 0.0,
+              "pitch": 0.0,
+              "right": 0.25,
+              "yaw": 45.0
+            },
+            "sha256": "25cc1b32b4c09f6b26fee2190d21fd6308a408d15c2c0255a21ed4033abb6c68"
+          },
+          {
+            "actual_weights": [0.5, 0.5, 0.0],
+            "image": "res://artifacts/blink_probe/blink-1792193861-97908/frame_024.png",
+            "requested": {
+              "left": 0.5,
+              "mode": "render",
+              "mouth": 0.0,
+              "pitch": 0.0,
+              "right": 0.5,
+              "yaw": 45.0
+            },
+            "sha256": "3bf1f60e475eb5ce277eda8a435912e3597ccd00e81972d3e995f7750db491f9"
+          },
+          {
+            "actual_weights": [0.5, 0.5, 0.0],
+            "image": "res://artifacts/blink_probe/blink-1792193861-97908/frame_025.png",
+            "requested": {
+              "left": 0.5,
+              "mode": "white",
+              "mouth": 0.0,
+              "pitch": 0.0,
+              "right": 0.5,
+              "yaw": 45.0
+            },
+            "sha256": "d3279916e842dbf9a261dd0cd028a6e2e9b9f5ec648523b07525c1ff3d2d9fa3"
+          },
+          {
+            "actual_weights": [0.75, 0.75, 0.0],
+            "image": "res://artifacts/blink_probe/blink-1792193861-97908/frame_026.png",
+            "requested": {
+              "left": 0.75,
+              "mode": "render",
+              "mouth": 0.0,
+              "pitch": 0.0,
+              "right": 0.75,
+              "yaw": 45.0
+            },
+            "sha256": "db2223592b0e3e915809f42ff289a1679318504df8fe3ab6d122318f716c1810"
+          },
+          {
+            "actual_weights": [0.75, 0.75, 0.0],
+            "image": "res://artifacts/blink_probe/blink-1792193861-97908/frame_027.png",
+            "requested": {
+              "left": 0.75,
+              "mode": "white",
+              "mouth": 0.0,
+              "pitch": 0.0,
+              "right": 0.75,
+              "yaw": 45.0
+            },
+            "sha256": "b0950d28a820bb6e552e7475be4dfe585a19cb764c29c5f5c5a43ba6b60773b2"
+          },
+          {
+            "actual_weights": [1.0, 1.0, 0.0],
+            "image": "res://artifacts/blink_probe/blink-1792193861-97908/frame_028.png",
+            "requested": {
+              "left": 1.0,
+              "mode": "render",
+              "mouth": 0.0,
+              "pitch": 0.0,
+              "right": 1.0,
+              "yaw": 45.0
+            },
+            "sha256": "e2cf3b57b97cd88bdd5cdb4a925ffbdfd13a9477a689417ae3007c4867706e6d"
+          },
+          {
+            "actual_weights": [1.0, 1.0, 0.0],
+            "image": "res://artifacts/blink_probe/blink-1792193861-97908/frame_029.png",
+            "requested": {
+              "left": 1.0,
+              "mode": "white",
+              "mouth": 0.0,
+              "pitch": 0.0,
+              "right": 1.0,
+              "yaw": 45.0
+            },
+            "sha256": "b750a442056c382a7bb07e3d56670260d84e76519f2fed7ad8c04087e47e3541"
+          },
+          {
+            "actual_weights": [0.0, 0.0, 0.0],
+            "image": "res://artifacts/blink_probe/blink-1792193861-97908/frame_030.png",
+            "requested": {
+              "left": 0.0,
+              "mode": "render",
+              "mouth": 0.0,
+              "pitch": 0.0,
+              "right": 0.0,
+              "yaw": 90.0
+            },
+            "sha256": "7c2db7a58b8b11a0b4a90e9480151c404f8a64899200828f09a714303f29610e"
+          },
+          {
+            "actual_weights": [0.0, 0.0, 0.0],
+            "image": "res://artifacts/blink_probe/blink-1792193861-97908/frame_031.png",
+            "requested": {
+              "left": 0.0,
+              "mode": "white",
+              "mouth": 0.0,
+              "pitch": 0.0,
+              "right": 0.0,
+              "yaw": 90.0
+            },
+            "sha256": "9e4c03326a453d97e71c2e26284a369fcb8d671588ef34f69411f17bb450d2ef"
+          },
+          {
+            "actual_weights": [0.25, 0.25, 0.0],
+            "image": "res://artifacts/blink_probe/blink-1792193861-97908/frame_032.png",
+            "requested": {
+              "left": 0.25,
+              "mode": "render",
+              "mouth": 0.0,
+              "pitch": 0.0,
+              "right": 0.25,
+              "yaw": 90.0
+            },
+            "sha256": "77fdf09f1d3a6c1f3f5f439c127dae92faad1c6893368c3c33c2459f9f76b53c"
+          },
+          {
+            "actual_weights": [0.25, 0.25, 0.0],
+            "image": "res://artifacts/blink_probe/blink-1792193861-97908/frame_033.png",
+            "requested": {
+              "left": 0.25,
+              "mode": "white",
+              "mouth": 0.0,
+              "pitch": 0.0,
+              "right": 0.25,
+              "yaw": 90.0
+            },
+            "sha256": "9735de5fe67559520fd577a80aaa70d905fd61e1f8b355d948ab6e85b8b3f146"
+          },
+          {
+            "actual_weights": [0.5, 0.5, 0.0],
+            "image": "res://artifacts/blink_probe/blink-1792193861-97908/frame_034.png",
+            "requested": {
+              "left": 0.5,
+              "mode": "render",
+              "mouth": 0.0,
+              "pitch": 0.0,
+              "right": 0.5,
+              "yaw": 90.0
+            },
+            "sha256": "21b163b890c531259245770c96070d8981e09c68e9e714e49b6417f523a475cf"
+          },
+          {
+            "actual_weights": [0.5, 0.5, 0.0],
+            "image": "res://artifacts/blink_probe/blink-1792193861-97908/frame_035.png",
+            "requested": {
+              "left": 0.5,
+              "mode": "white",
+              "mouth": 0.0,
+              "pitch": 0.0,
+              "right": 0.5,
+              "yaw": 90.0
+            },
+            "sha256": "ec83dd2c7114ff119ce33c53ed0d5c751e295ac6f15a0fc7bd8963e15da0950b"
+          },
+          {
+            "actual_weights": [0.75, 0.75, 0.0],
+            "image": "res://artifacts/blink_probe/blink-1792193861-97908/frame_036.png",
+            "requested": {
+              "left": 0.75,
+              "mode": "render",
+              "mouth": 0.0,
+              "pitch": 0.0,
+              "right": 0.75,
+              "yaw": 90.0
+            },
+            "sha256": "341eaba1518de25c9a9d1fa926c978743491774ae6662431cd276f1ab4230e57"
+          },
+          {
+            "actual_weights": [0.75, 0.75, 0.0],
+            "image": "res://artifacts/blink_probe/blink-1792193861-97908/frame_037.png",
+            "requested": {
+              "left": 0.75,
+              "mode": "white",
+              "mouth": 0.0,
+              "pitch": 0.0,
+              "right": 0.75,
+              "yaw": 90.0
+            },
+            "sha256": "4d50d032a506990c4042e9a1ddd836a1c57bb27946355b7b077457d0ee403cb8"
+          },
+          {
+            "actual_weights": [1.0, 1.0, 0.0],
+            "image": "res://artifacts/blink_probe/blink-1792193861-97908/frame_038.png",
+            "requested": {
+              "left": 1.0,
+              "mode": "render",
+              "mouth": 0.0,
+              "pitch": 0.0,
+              "right": 1.0,
+              "yaw": 90.0
+            },
+            "sha256": "336abdbbd12153a79a3a1cb3a464718d47c3d289ead332fbf65bc40813ba463f"
+          },
+          {
+            "actual_weights": [1.0, 1.0, 0.0],
+            "image": "res://artifacts/blink_probe/blink-1792193861-97908/frame_039.png",
+            "requested": {
+              "left": 1.0,
+              "mode": "white",
+              "mouth": 0.0,
+              "pitch": 0.0,
+              "right": 1.0,
+              "yaw": 90.0
+            },
+            "sha256": "87635d79da7c50bdb1bdaca14650454ee6daac5b8e5bbd753ef0210bab694c06"
+          },
+          {
+            "actual_weights": [0.0, 0.0, 0.0],
+            "image": "res://artifacts/blink_probe/blink-1792193861-97908/frame_040.png",
+            "requested": {
+              "left": 0.0,
+              "mode": "render",
+              "mouth": 0.0,
+              "pitch": -20.0,
+              "right": 0.0,
+              "yaw": 0.0
+            },
+            "sha256": "3c63104bb104e85211a2543551dc27b80a136b1f1337585cd687af6907e6f778"
+          },
+          {
+            "actual_weights": [0.0, 0.0, 0.0],
+            "image": "res://artifacts/blink_probe/blink-1792193861-97908/frame_041.png",
+            "requested": {
+              "left": 0.0,
+              "mode": "white",
+              "mouth": 0.0,
+              "pitch": -20.0,
+              "right": 0.0,
+              "yaw": 0.0
+            },
+            "sha256": "35a9fb054ea3a31d836f3d879de3b9b57a9e5f25eadff1a6a629b624ff93365c"
+          },
+          {
+            "actual_weights": [0.25, 0.25, 0.0],
+            "image": "res://artifacts/blink_probe/blink-1792193861-97908/frame_042.png",
+            "requested": {
+              "left": 0.25,
+              "mode": "render",
+              "mouth": 0.0,
+              "pitch": -20.0,
+              "right": 0.25,
+              "yaw": 0.0
+            },
+            "sha256": "abb9f2857d953188f5d1e463889003f9af621e519a0d7f030001d1f1d0b2433b"
+          },
+          {
+            "actual_weights": [0.25, 0.25, 0.0],
+            "image": "res://artifacts/blink_probe/blink-1792193861-97908/frame_043.png",
+            "requested": {
+              "left": 0.25,
+              "mode": "white",
+              "mouth": 0.0,
+              "pitch": -20.0,
+              "right": 0.25,
+              "yaw": 0.0
+            },
+            "sha256": "84bd76c069d4244ffd98096f3dec84be0f2b6ae997872bf7753f3e19ca734472"
+          },
+          {
+            "actual_weights": [0.5, 0.5, 0.0],
+            "image": "res://artifacts/blink_probe/blink-1792193861-97908/frame_044.png",
+            "requested": {
+              "left": 0.5,
+              "mode": "render",
+              "mouth": 0.0,
+              "pitch": -20.0,
+              "right": 0.5,
+              "yaw": 0.0
+            },
+            "sha256": "85ffef8a0e9f2cd38d7e3e745328f61dfe774bbe739f9f2f517cf06bcc147205"
+          },
+          {
+            "actual_weights": [0.5, 0.5, 0.0],
+            "image": "res://artifacts/blink_probe/blink-1792193861-97908/frame_045.png",
+            "requested": {
+              "left": 0.5,
+              "mode": "white",
+              "mouth": 0.0,
+              "pitch": -20.0,
+              "right": 0.5,
+              "yaw": 0.0
+            },
+            "sha256": "74cec9b6bc8ba18313258fc57ae748035da78f447e30aa0093dbfe8b53a74ece"
+          },
+          {
+            "actual_weights": [0.75, 0.75, 0.0],
+            "image": "res://artifacts/blink_probe/blink-1792193861-97908/frame_046.png",
+            "requested": {
+              "left": 0.75,
+              "mode": "render",
+              "mouth": 0.0,
+              "pitch": -20.0,
+              "right": 0.75,
+              "yaw": 0.0
+            },
+            "sha256": "f6dbb9050159f2fbf4952fce3f30f5308e55ed6be433644c72b3916175cd2d0e"
+          },
+          {
+            "actual_weights": [0.75, 0.75, 0.0],
+            "image": "res://artifacts/blink_probe/blink-1792193861-97908/frame_047.png",
+            "requested": {
+              "left": 0.75,
+              "mode": "white",
+              "mouth": 0.0,
+              "pitch": -20.0,
+              "right": 0.75,
+              "yaw": 0.0
+            },
+            "sha256": "9bbe63a2e994426d8b33e37835a1b4c8cf94b173462bde26dbcc2ffc5a8d7b79"
+          },
+          {
+            "actual_weights": [1.0, 1.0, 0.0],
+            "image": "res://artifacts/blink_probe/blink-1792193861-97908/frame_048.png",
+            "requested": {
+              "left": 1.0,
+              "mode": "render",
+              "mouth": 0.0,
+              "pitch": -20.0,
+              "right": 1.0,
+              "yaw": 0.0
+            },
+            "sha256": "fb83e96dc98129a7a4174597daef82287175e2cbfcc7c2cd316b34a038fd8d59"
+          },
+          {
+            "actual_weights": [1.0, 1.0, 0.0],
+            "image": "res://artifacts/blink_probe/blink-1792193861-97908/frame_049.png",
+            "requested": {
+              "left": 1.0,
+              "mode": "white",
+              "mouth": 0.0,
+              "pitch": -20.0,
+              "right": 1.0,
+              "yaw": 0.0
+            },
+            "sha256": "bdd7f762be86f11c02b008f982cc467d1b2aa72dfb9fafe09d4e723e74205a39"
+          },
+          {
+            "actual_weights": [0.0, 0.0, 0.0],
+            "image": "res://artifacts/blink_probe/blink-1792193861-97908/frame_050.png",
+            "requested": {
+              "left": 0.0,
+              "mode": "render",
+              "mouth": 0.0,
+              "pitch": 20.0,
+              "right": 0.0,
+              "yaw": 0.0
+            },
+            "sha256": "cccb6906140c9d0e858e0f0557a564c33b6e79d515e56c1ff2c30fc3ccfd2c16"
+          },
+          {
+            "actual_weights": [0.0, 0.0, 0.0],
+            "image": "res://artifacts/blink_probe/blink-1792193861-97908/frame_051.png",
+            "requested": {
+              "left": 0.0,
+              "mode": "white",
+              "mouth": 0.0,
+              "pitch": 20.0,
+              "right": 0.0,
+              "yaw": 0.0
+            },
+            "sha256": "bb93432832ce0ded25a90ebc30e90d1ced589c2c1f31d1f4ded3312a1691fe2d"
+          },
+          {
+            "actual_weights": [0.25, 0.25, 0.0],
+            "image": "res://artifacts/blink_probe/blink-1792193861-97908/frame_052.png",
+            "requested": {
+              "left": 0.25,
+              "mode": "render",
+              "mouth": 0.0,
+              "pitch": 20.0,
+              "right": 0.25,
+              "yaw": 0.0
+            },
+            "sha256": "7760939007f8550d2adc3d869bc3a58ba10dff52ebff77ad5c6dd93dd9226e91"
+          },
+          {
+            "actual_weights": [0.25, 0.25, 0.0],
+            "image": "res://artifacts/blink_probe/blink-1792193861-97908/frame_053.png",
+            "requested": {
+              "left": 0.25,
+              "mode": "white",
+              "mouth": 0.0,
+              "pitch": 20.0,
+              "right": 0.25,
+              "yaw": 0.0
+            },
+            "sha256": "677c678d1495ceeaea51d9d00c6dfce8a584bc6587c6d00a78125e99e766551c"
+          },
+          {
+            "actual_weights": [0.5, 0.5, 0.0],
+            "image": "res://artifacts/blink_probe/blink-1792193861-97908/frame_054.png",
+            "requested": {
+              "left": 0.5,
+              "mode": "render",
+              "mouth": 0.0,
+              "pitch": 20.0,
+              "right": 0.5,
+              "yaw": 0.0
+            },
+            "sha256": "93654252003da7f8b0c7c3de13b2eb46fd4128918aae53b3d9ec6575c18bf68d"
+          },
+          {
+            "actual_weights": [0.5, 0.5, 0.0],
+            "image": "res://artifacts/blink_probe/blink-1792193861-97908/frame_055.png",
+            "requested": {
+              "left": 0.5,
+              "mode": "white",
+              "mouth": 0.0,
+              "pitch": 20.0,
+              "right": 0.5,
+              "yaw": 0.0
+            },
+            "sha256": "fe6209ced1f7b37c0b117cc58bd1c1ef9aae43cf3dbee81b5f77999c5f7be38d"
+          },
+          {
+            "actual_weights": [0.75, 0.75, 0.0],
+            "image": "res://artifacts/blink_probe/blink-1792193861-97908/frame_056.png",
+            "requested": {
+              "left": 0.75,
+              "mode": "render",
+              "mouth": 0.0,
+              "pitch": 20.0,
+              "right": 0.75,
+              "yaw": 0.0
+            },
+            "sha256": "a6733de85837c46bebfe11ac9d8e8375f9445952e0c628530b151c16db2d074f"
+          },
+          {
+            "actual_weights": [0.75, 0.75, 0.0],
+            "image": "res://artifacts/blink_probe/blink-1792193861-97908/frame_057.png",
+            "requested": {
+              "left": 0.75,
+              "mode": "white",
+              "mouth": 0.0,
+              "pitch": 20.0,
+              "right": 0.75,
+              "yaw": 0.0
+            },
+            "sha256": "195a43c5100dcc5a923f0125b908a9ad7fadf5e6781bb48b60ad9513661fc619"
+          },
+          {
+            "actual_weights": [1.0, 1.0, 0.0],
+            "image": "res://artifacts/blink_probe/blink-1792193861-97908/frame_058.png",
+            "requested": {
+              "left": 1.0,
+              "mode": "render",
+              "mouth": 0.0,
+              "pitch": 20.0,
+              "right": 1.0,
+              "yaw": 0.0
+            },
+            "sha256": "6e108c06fe46daa224c91d19fa318240c14d95165fa49c4b595783efc81402e4"
+          },
+          {
+            "actual_weights": [1.0, 1.0, 0.0],
+            "image": "res://artifacts/blink_probe/blink-1792193861-97908/frame_059.png",
+            "requested": {
+              "left": 1.0,
+              "mode": "white",
+              "mouth": 0.0,
+              "pitch": 20.0,
+              "right": 1.0,
+              "yaw": 0.0
+            },
+            "sha256": "3a8025174f3cfb599b7fad41d2eaae31080fedf0dfa987298b13608f65b670a6"
+          },
+          {
+            "actual_weights": [1.0, 0.0, 0.600000023841858],
+            "image": "res://artifacts/blink_probe/blink-1792193861-97908/frame_060.png",
+            "requested": {
+              "left": 1.0,
+              "mode": "render",
+              "mouth": 0.6,
+              "pitch": 0.0,
+              "right": 0.0,
+              "yaw": 0.0
+            },
+            "sha256": "6e2f1ab06109440d0560416b64aee7f07bf990a0931671fea6b98e95dbe9c452"
+          },
+          {
+            "actual_weights": [1.0, 0.0, 0.600000023841858],
+            "image": "res://artifacts/blink_probe/blink-1792193861-97908/frame_061.png",
+            "requested": {
+              "left": 1.0,
+              "mode": "render",
+              "mouth": 0.6,
+              "pitch": 0.0,
+              "right": 0.0,
+              "yaw": -45.0
+            },
+            "sha256": "ff04bdbf7964ada537b06371311ed1689663ab987a9db508f2ff523b5f85337c"
+          },
+          {
+            "actual_weights": [1.0, 0.0, 0.600000023841858],
+            "image": "res://artifacts/blink_probe/blink-1792193861-97908/frame_062.png",
+            "requested": {
+              "left": 1.0,
+              "mode": "render",
+              "mouth": 0.6,
+              "pitch": 0.0,
+              "right": 0.0,
+              "yaw": 45.0
+            },
+            "sha256": "778483b403df7cfb882d3b4b25e2d1907fdc3856ddc6ce80f736a0598b4a4c6f"
+          },
+          {
+            "actual_weights": [0.0, 1.0, 0.600000023841858],
+            "image": "res://artifacts/blink_probe/blink-1792193861-97908/frame_063.png",
+            "requested": {
+              "left": 0.0,
+              "mode": "render",
+              "mouth": 0.6,
+              "pitch": 0.0,
+              "right": 1.0,
+              "yaw": 0.0
+            },
+            "sha256": "a563908069a4b6e4577a9ddfabd26a9400cb089aca30736e6f48272189359794"
+          },
+          {
+            "actual_weights": [0.0, 1.0, 0.600000023841858],
+            "image": "res://artifacts/blink_probe/blink-1792193861-97908/frame_064.png",
+            "requested": {
+              "left": 0.0,
+              "mode": "render",
+              "mouth": 0.6,
+              "pitch": 0.0,
+              "right": 1.0,
+              "yaw": -45.0
+            },
+            "sha256": "97ba84c5b7f822b0d9f4f44d0c5588522515a6ba5f6be92d4ccba09590e34a59"
+          },
+          {
+            "actual_weights": [0.0, 1.0, 0.600000023841858],
+            "image": "res://artifacts/blink_probe/blink-1792193861-97908/frame_065.png",
+            "requested": {
+              "left": 0.0,
+              "mode": "render",
+              "mouth": 0.6,
+              "pitch": 0.0,
+              "right": 1.0,
+              "yaw": 45.0
+            },
+            "sha256": "f0341ddcb7bb44c9b6ca97bb3eb9aec27b35a4ef7f82e2578aa9b2305c29da18"
+          },
+          {
+            "actual_weights": [1.0, 1.0, 0.600000023841858],
+            "image": "res://artifacts/blink_probe/blink-1792193861-97908/frame_066.png",
+            "requested": {
+              "left": 1.0,
+              "mode": "render",
+              "mouth": 0.6,
+              "pitch": 0.0,
+              "right": 1.0,
+              "yaw": 0.0
+            },
+            "sha256": "093cd30c59e3330969c83bb40c3c23670db6586ef21a65d8debaf5383548f9a4"
+          },
+          {
+            "actual_weights": [1.0, 1.0, 0.600000023841858],
+            "image": "res://artifacts/blink_probe/blink-1792193861-97908/frame_067.png",
+            "requested": {
+              "left": 1.0,
+              "mode": "render",
+              "mouth": 0.6,
+              "pitch": 0.0,
+              "right": 1.0,
+              "yaw": -45.0
+            },
+            "sha256": "7f290f0a1417df3866ed33b8f4e20d6d95df2d58514d3f6cd07f7ff6bc469fb6"
+          },
+          {
+            "actual_weights": [1.0, 1.0, 0.600000023841858],
+            "image": "res://artifacts/blink_probe/blink-1792193861-97908/frame_068.png",
+            "requested": {
+              "left": 1.0,
+              "mode": "render",
+              "mouth": 0.6,
+              "pitch": 0.0,
+              "right": 1.0,
+              "yaw": 45.0
+            },
+            "sha256": "374787c06752e93894d7284434544280ca00033a843e83438f6f7297bad28010"
+          }
+        ]
+      },
+      "visual_review": "Second independent eye-control combination completed native geometry and fresh SDF. Both eyelids pass continuous orientation gate (minimum .02831435). All69 actual rendered/white/wink-mouth captures reviewed; source identity and weights verified. This is a stable gentler/rounder variation, not an improvement over the more expressive702/709 primary style. Keep709 as primary; retain710 as a bounded second parameter case, not all-parameter proof. Existing white-model cheek shading bands remain.\n\n2026-10-17 00:47 UTC supplement:42 additional captures visually reviewed, including eight wire views (front, both45, both90, back, pitch\u00b120), mouth .25/.5/.75/1 in front/both45 render+white, and \u221290 bilateral blink0/.25/.5/.75/1 render+white. Actual display mode, Face wire visibility, morph readback and source/image hashes verified. No new apparent eye/ear silhouette defect or mouth fold in these sampled views. Existing white cheek bands remain; secondary variation only, primary709 unchanged.",
+      "supplemental_views": {
+        "manifest_sha256": "54818318473caa7d4694cfeaeccdc5878d5c8b635fdd52453c7a6d4fefc81889",
+        "source_identity_unchanged": true,
+        "actual_display_mode_and_wire_visibility_verified": true,
+        "captures": [
+          {
+            "actual_display_mode": "edges",
+            "actual_weights": [0.0, 0.0, 0.0],
+            "image": "res://artifacts/face_acceptance/supplement-1792197988-78488/frame_000.png",
+            "requested": {
+              "left": 0.0,
+              "mode": "edges",
+              "mouth": 0.0,
+              "pitch": 0.0,
+              "right": 0.0,
+              "yaw": 0.0
+            },
+            "sha256": "8450c69321106fb63782e30c9a6e7e7c266f84fcf4e59918b48f54bcb324eba0",
+            "wire_visible": true
+          },
+          {
+            "actual_display_mode": "edges",
+            "actual_weights": [0.0, 0.0, 0.0],
+            "image": "res://artifacts/face_acceptance/supplement-1792197988-78488/frame_001.png",
+            "requested": {
+              "left": 0.0,
+              "mode": "edges",
+              "mouth": 0.0,
+              "pitch": 0.0,
+              "right": 0.0,
+              "yaw": -45.0
+            },
+            "sha256": "6582719ed44f84771470812e769f588ecac92272c2ad7dedbb8db3b8ea8b4989",
+            "wire_visible": true
+          },
+          {
+            "actual_display_mode": "edges",
+            "actual_weights": [0.0, 0.0, 0.0],
+            "image": "res://artifacts/face_acceptance/supplement-1792197988-78488/frame_002.png",
+            "requested": {
+              "left": 0.0,
+              "mode": "edges",
+              "mouth": 0.0,
+              "pitch": 0.0,
+              "right": 0.0,
+              "yaw": 45.0
+            },
+            "sha256": "08211151e5ce3e21f9e812dd4c49d76d2b59a82607626165c6d1689714a7580e",
+            "wire_visible": true
+          },
+          {
+            "actual_display_mode": "edges",
+            "actual_weights": [0.0, 0.0, 0.0],
+            "image": "res://artifacts/face_acceptance/supplement-1792197988-78488/frame_003.png",
+            "requested": {
+              "left": 0.0,
+              "mode": "edges",
+              "mouth": 0.0,
+              "pitch": 0.0,
+              "right": 0.0,
+              "yaw": -90.0
+            },
+            "sha256": "a8051512ae23ca8b128f980d570f792f4ed7a53bec50b9d187d2defc0d71b3b5",
+            "wire_visible": true
+          },
+          {
+            "actual_display_mode": "edges",
+            "actual_weights": [0.0, 0.0, 0.0],
+            "image": "res://artifacts/face_acceptance/supplement-1792197988-78488/frame_004.png",
+            "requested": {
+              "left": 0.0,
+              "mode": "edges",
+              "mouth": 0.0,
+              "pitch": 0.0,
+              "right": 0.0,
+              "yaw": 90.0
+            },
+            "sha256": "ed72bd15ccb5841b6dd789ee90789670cef4c675819e0fbd0cfe7cc8518f6252",
+            "wire_visible": true
+          },
+          {
+            "actual_display_mode": "edges",
+            "actual_weights": [0.0, 0.0, 0.0],
+            "image": "res://artifacts/face_acceptance/supplement-1792197988-78488/frame_005.png",
+            "requested": {
+              "left": 0.0,
+              "mode": "edges",
+              "mouth": 0.0,
+              "pitch": 0.0,
+              "right": 0.0,
+              "yaw": 180.0
+            },
+            "sha256": "b9acdeedc57d539645ea356f1cf99c37a1817df055622b9cb9d628475071fae7",
+            "wire_visible": true
+          },
+          {
+            "actual_display_mode": "edges",
+            "actual_weights": [0.0, 0.0, 0.0],
+            "image": "res://artifacts/face_acceptance/supplement-1792197988-78488/frame_006.png",
+            "requested": {
+              "left": 0.0,
+              "mode": "edges",
+              "mouth": 0.0,
+              "pitch": -20.0,
+              "right": 0.0,
+              "yaw": 0.0
+            },
+            "sha256": "38d212ff5baff42b87658347ec05bc2a5f1809fdbdac02d79bcf06160d905b89",
+            "wire_visible": true
+          },
+          {
+            "actual_display_mode": "edges",
+            "actual_weights": [0.0, 0.0, 0.0],
+            "image": "res://artifacts/face_acceptance/supplement-1792197988-78488/frame_007.png",
+            "requested": {
+              "left": 0.0,
+              "mode": "edges",
+              "mouth": 0.0,
+              "pitch": 20.0,
+              "right": 0.0,
+              "yaw": 0.0
+            },
+            "sha256": "42943cb552bf8cec901104e550ad540a26635d4db79ed2efec6b68ea5c73d03f",
+            "wire_visible": true
+          },
+          {
+            "actual_display_mode": "render",
+            "actual_weights": [0.0, 0.0, 0.25],
+            "image": "res://artifacts/face_acceptance/supplement-1792197988-78488/frame_008.png",
+            "requested": {
+              "left": 0.0,
+              "mode": "render",
+              "mouth": 0.25,
+              "pitch": 0.0,
+              "right": 0.0,
+              "yaw": 0.0
+            },
+            "sha256": "b844fcad0977cf1340c9981b3828f83df582164e86d1c15c8e5cc96becd61493",
+            "wire_visible": false
+          },
+          {
+            "actual_display_mode": "white",
+            "actual_weights": [0.0, 0.0, 0.25],
+            "image": "res://artifacts/face_acceptance/supplement-1792197988-78488/frame_009.png",
+            "requested": {
+              "left": 0.0,
+              "mode": "white",
+              "mouth": 0.25,
+              "pitch": 0.0,
+              "right": 0.0,
+              "yaw": 0.0
+            },
+            "sha256": "9a5b627898ea161e0b3bc8e059f28d94b93a3b1131813ad130ff4851d0dcf9b0",
+            "wire_visible": false
+          },
+          {
+            "actual_display_mode": "render",
+            "actual_weights": [0.0, 0.0, 0.5],
+            "image": "res://artifacts/face_acceptance/supplement-1792197988-78488/frame_010.png",
+            "requested": {
+              "left": 0.0,
+              "mode": "render",
+              "mouth": 0.5,
+              "pitch": 0.0,
+              "right": 0.0,
+              "yaw": 0.0
+            },
+            "sha256": "32aae9570b53849ea98f2d039f13b3943b5aa23c15ef4945e548e2dd1dd4664e",
+            "wire_visible": false
+          },
+          {
+            "actual_display_mode": "white",
+            "actual_weights": [0.0, 0.0, 0.5],
+            "image": "res://artifacts/face_acceptance/supplement-1792197988-78488/frame_011.png",
+            "requested": {
+              "left": 0.0,
+              "mode": "white",
+              "mouth": 0.5,
+              "pitch": 0.0,
+              "right": 0.0,
+              "yaw": 0.0
+            },
+            "sha256": "3f4d0bf54282c98e7764fcfa3f38c7de5b4745100bafdf7724f4e1e83fabe65f",
+            "wire_visible": false
+          },
+          {
+            "actual_display_mode": "render",
+            "actual_weights": [0.0, 0.0, 0.75],
+            "image": "res://artifacts/face_acceptance/supplement-1792197988-78488/frame_012.png",
+            "requested": {
+              "left": 0.0,
+              "mode": "render",
+              "mouth": 0.75,
+              "pitch": 0.0,
+              "right": 0.0,
+              "yaw": 0.0
+            },
+            "sha256": "eb06bd89c0f141262bff8a7d5de2d510eb24754f067e6d3e51ab325d2ebf1651",
+            "wire_visible": false
+          },
+          {
+            "actual_display_mode": "white",
+            "actual_weights": [0.0, 0.0, 0.75],
+            "image": "res://artifacts/face_acceptance/supplement-1792197988-78488/frame_013.png",
+            "requested": {
+              "left": 0.0,
+              "mode": "white",
+              "mouth": 0.75,
+              "pitch": 0.0,
+              "right": 0.0,
+              "yaw": 0.0
+            },
+            "sha256": "39aabc770cbe37e47eac7454144c4c9144173f7e95b8ac7c7679095461729ee0",
+            "wire_visible": false
+          },
+          {
+            "actual_display_mode": "render",
+            "actual_weights": [0.0, 0.0, 1.0],
+            "image": "res://artifacts/face_acceptance/supplement-1792197988-78488/frame_014.png",
+            "requested": {
+              "left": 0.0,
+              "mode": "render",
+              "mouth": 1.0,
+              "pitch": 0.0,
+              "right": 0.0,
+              "yaw": 0.0
+            },
+            "sha256": "48df47b9e3ea306f5b7ff807ddfbf7f1c1273123bbd937de286636e947f4d903",
+            "wire_visible": false
+          },
+          {
+            "actual_display_mode": "white",
+            "actual_weights": [0.0, 0.0, 1.0],
+            "image": "res://artifacts/face_acceptance/supplement-1792197988-78488/frame_015.png",
+            "requested": {
+              "left": 0.0,
+              "mode": "white",
+              "mouth": 1.0,
+              "pitch": 0.0,
+              "right": 0.0,
+              "yaw": 0.0
+            },
+            "sha256": "f05f21b779dd561ce0f4eaeb644d3c822b42ca7c483d5b4ebbb9a095ded67de8",
+            "wire_visible": false
+          },
+          {
+            "actual_display_mode": "render",
+            "actual_weights": [0.0, 0.0, 0.25],
+            "image": "res://artifacts/face_acceptance/supplement-1792197988-78488/frame_016.png",
+            "requested": {
+              "left": 0.0,
+              "mode": "render",
+              "mouth": 0.25,
+              "pitch": 0.0,
+              "right": 0.0,
+              "yaw": -45.0
+            },
+            "sha256": "2911880527633b94115920b529cad0a3f5760d12e7886f6a5cdfcd08fb91ac53",
+            "wire_visible": false
+          },
+          {
+            "actual_display_mode": "white",
+            "actual_weights": [0.0, 0.0, 0.25],
+            "image": "res://artifacts/face_acceptance/supplement-1792197988-78488/frame_017.png",
+            "requested": {
+              "left": 0.0,
+              "mode": "white",
+              "mouth": 0.25,
+              "pitch": 0.0,
+              "right": 0.0,
+              "yaw": -45.0
+            },
+            "sha256": "0b797dd629af9dcfa1d41f2651d81a871f5dc75d048182147e2e830df85859c8",
+            "wire_visible": false
+          },
+          {
+            "actual_display_mode": "render",
+            "actual_weights": [0.0, 0.0, 0.5],
+            "image": "res://artifacts/face_acceptance/supplement-1792197988-78488/frame_018.png",
+            "requested": {
+              "left": 0.0,
+              "mode": "render",
+              "mouth": 0.5,
+              "pitch": 0.0,
+              "right": 0.0,
+              "yaw": -45.0
+            },
+            "sha256": "551630d016bc070c027472637d91e87f4661a1dc1f0b60ec8e3ee2060814aaf0",
+            "wire_visible": false
+          },
+          {
+            "actual_display_mode": "white",
+            "actual_weights": [0.0, 0.0, 0.5],
+            "image": "res://artifacts/face_acceptance/supplement-1792197988-78488/frame_019.png",
+            "requested": {
+              "left": 0.0,
+              "mode": "white",
+              "mouth": 0.5,
+              "pitch": 0.0,
+              "right": 0.0,
+              "yaw": -45.0
+            },
+            "sha256": "4691b6862e1b030fb1ea177bf9751d69e42b39322bf84331d0ab63385dc7f29a",
+            "wire_visible": false
+          },
+          {
+            "actual_display_mode": "render",
+            "actual_weights": [0.0, 0.0, 0.75],
+            "image": "res://artifacts/face_acceptance/supplement-1792197988-78488/frame_020.png",
+            "requested": {
+              "left": 0.0,
+              "mode": "render",
+              "mouth": 0.75,
+              "pitch": 0.0,
+              "right": 0.0,
+              "yaw": -45.0
+            },
+            "sha256": "7703d3e948795be993fc2f3d24a220e47da81074038c21f5c3f8ac1c24a395db",
+            "wire_visible": false
+          },
+          {
+            "actual_display_mode": "white",
+            "actual_weights": [0.0, 0.0, 0.75],
+            "image": "res://artifacts/face_acceptance/supplement-1792197988-78488/frame_021.png",
+            "requested": {
+              "left": 0.0,
+              "mode": "white",
+              "mouth": 0.75,
+              "pitch": 0.0,
+              "right": 0.0,
+              "yaw": -45.0
+            },
+            "sha256": "933779049d1b963014d0fb120145c78ce0bc4b73bc025555cd2fec2ec8ee244c",
+            "wire_visible": false
+          },
+          {
+            "actual_display_mode": "render",
+            "actual_weights": [0.0, 0.0, 1.0],
+            "image": "res://artifacts/face_acceptance/supplement-1792197988-78488/frame_022.png",
+            "requested": {
+              "left": 0.0,
+              "mode": "render",
+              "mouth": 1.0,
+              "pitch": 0.0,
+              "right": 0.0,
+              "yaw": -45.0
+            },
+            "sha256": "4afeb06dec3313d7c9ae5469518e529d2b78c5824dc301d77cb8bc9f0fb625af",
+            "wire_visible": false
+          },
+          {
+            "actual_display_mode": "white",
+            "actual_weights": [0.0, 0.0, 1.0],
+            "image": "res://artifacts/face_acceptance/supplement-1792197988-78488/frame_023.png",
+            "requested": {
+              "left": 0.0,
+              "mode": "white",
+              "mouth": 1.0,
+              "pitch": 0.0,
+              "right": 0.0,
+              "yaw": -45.0
+            },
+            "sha256": "fb06d2cfce70b14d5014903dc54122b30f98187d99603b59517cf3fdb48eed2d",
+            "wire_visible": false
+          },
+          {
+            "actual_display_mode": "render",
+            "actual_weights": [0.0, 0.0, 0.25],
+            "image": "res://artifacts/face_acceptance/supplement-1792197988-78488/frame_024.png",
+            "requested": {
+              "left": 0.0,
+              "mode": "render",
+              "mouth": 0.25,
+              "pitch": 0.0,
+              "right": 0.0,
+              "yaw": 45.0
+            },
+            "sha256": "eb3be110f7d22540f9e616ea709a8fc0ab82e7eb8a664958f79a23e7a430a21e",
+            "wire_visible": false
+          },
+          {
+            "actual_display_mode": "white",
+            "actual_weights": [0.0, 0.0, 0.25],
+            "image": "res://artifacts/face_acceptance/supplement-1792197988-78488/frame_025.png",
+            "requested": {
+              "left": 0.0,
+              "mode": "white",
+              "mouth": 0.25,
+              "pitch": 0.0,
+              "right": 0.0,
+              "yaw": 45.0
+            },
+            "sha256": "fd571c6a9201f828142d19d3c6e5eaa8c94a16ee855843aa4ac668d642e27a09",
+            "wire_visible": false
+          },
+          {
+            "actual_display_mode": "render",
+            "actual_weights": [0.0, 0.0, 0.5],
+            "image": "res://artifacts/face_acceptance/supplement-1792197988-78488/frame_026.png",
+            "requested": {
+              "left": 0.0,
+              "mode": "render",
+              "mouth": 0.5,
+              "pitch": 0.0,
+              "right": 0.0,
+              "yaw": 45.0
+            },
+            "sha256": "f0257808e8cf3c281d272b0c835132c058f4f6ff2653269095a0007e6f1a60ba",
+            "wire_visible": false
+          },
+          {
+            "actual_display_mode": "white",
+            "actual_weights": [0.0, 0.0, 0.5],
+            "image": "res://artifacts/face_acceptance/supplement-1792197988-78488/frame_027.png",
+            "requested": {
+              "left": 0.0,
+              "mode": "white",
+              "mouth": 0.5,
+              "pitch": 0.0,
+              "right": 0.0,
+              "yaw": 45.0
+            },
+            "sha256": "24bd1e50cadfc3cb32bf416b3d4902306aa5c1a12579ebaa9397078de5e9df10",
+            "wire_visible": false
+          },
+          {
+            "actual_display_mode": "render",
+            "actual_weights": [0.0, 0.0, 0.75],
+            "image": "res://artifacts/face_acceptance/supplement-1792197988-78488/frame_028.png",
+            "requested": {
+              "left": 0.0,
+              "mode": "render",
+              "mouth": 0.75,
+              "pitch": 0.0,
+              "right": 0.0,
+              "yaw": 45.0
+            },
+            "sha256": "8cf2bb04a5047e58317b115c7135d72f2fac8e803358f4055d8fa916a236f86e",
+            "wire_visible": false
+          },
+          {
+            "actual_display_mode": "white",
+            "actual_weights": [0.0, 0.0, 0.75],
+            "image": "res://artifacts/face_acceptance/supplement-1792197988-78488/frame_029.png",
+            "requested": {
+              "left": 0.0,
+              "mode": "white",
+              "mouth": 0.75,
+              "pitch": 0.0,
+              "right": 0.0,
+              "yaw": 45.0
+            },
+            "sha256": "9f76c6903f22f8d6a93aab9796a1cc7b99af519f1f174381e0c91daebf7b4376",
+            "wire_visible": false
+          },
+          {
+            "actual_display_mode": "render",
+            "actual_weights": [0.0, 0.0, 1.0],
+            "image": "res://artifacts/face_acceptance/supplement-1792197988-78488/frame_030.png",
+            "requested": {
+              "left": 0.0,
+              "mode": "render",
+              "mouth": 1.0,
+              "pitch": 0.0,
+              "right": 0.0,
+              "yaw": 45.0
+            },
+            "sha256": "f786d33020184e34b019b7927047464f7702310b18da9b33da8c97e1aaf7ba1b",
+            "wire_visible": false
+          },
+          {
+            "actual_display_mode": "white",
+            "actual_weights": [0.0, 0.0, 1.0],
+            "image": "res://artifacts/face_acceptance/supplement-1792197988-78488/frame_031.png",
+            "requested": {
+              "left": 0.0,
+              "mode": "white",
+              "mouth": 1.0,
+              "pitch": 0.0,
+              "right": 0.0,
+              "yaw": 45.0
+            },
+            "sha256": "1ba070e7df502f5d84336a1137f5d9a99430a93dd70512fb5299d160682d0a15",
+            "wire_visible": false
+          },
+          {
+            "actual_display_mode": "render",
+            "actual_weights": [0.0, 0.0, 0.0],
+            "image": "res://artifacts/face_acceptance/supplement-1792197988-78488/frame_032.png",
+            "requested": {
+              "left": 0.0,
+              "mode": "render",
+              "mouth": 0.0,
+              "pitch": 0.0,
+              "right": 0.0,
+              "yaw": -90.0
+            },
+            "sha256": "0f4f2c371d2300664d769907f9f0df58b26e6480ef5568db3178df119bcdfcc7",
+            "wire_visible": false
+          },
+          {
+            "actual_display_mode": "white",
+            "actual_weights": [0.0, 0.0, 0.0],
+            "image": "res://artifacts/face_acceptance/supplement-1792197988-78488/frame_033.png",
+            "requested": {
+              "left": 0.0,
+              "mode": "white",
+              "mouth": 0.0,
+              "pitch": 0.0,
+              "right": 0.0,
+              "yaw": -90.0
+            },
+            "sha256": "a83e863b530f6f279badf903abb52dff02a54a4793b5a493c74d8b3733cfe795",
+            "wire_visible": false
+          },
+          {
+            "actual_display_mode": "render",
+            "actual_weights": [0.25, 0.25, 0.0],
+            "image": "res://artifacts/face_acceptance/supplement-1792197988-78488/frame_034.png",
+            "requested": {
+              "left": 0.25,
+              "mode": "render",
+              "mouth": 0.0,
+              "pitch": 0.0,
+              "right": 0.25,
+              "yaw": -90.0
+            },
+            "sha256": "334d83d151f03d5d9cf8102a8792f5b5b42cf1933c8e1b62df7c113cfa676029",
+            "wire_visible": false
+          },
+          {
+            "actual_display_mode": "white",
+            "actual_weights": [0.25, 0.25, 0.0],
+            "image": "res://artifacts/face_acceptance/supplement-1792197988-78488/frame_035.png",
+            "requested": {
+              "left": 0.25,
+              "mode": "white",
+              "mouth": 0.0,
+              "pitch": 0.0,
+              "right": 0.25,
+              "yaw": -90.0
+            },
+            "sha256": "47be628d36ce197bf3c8c745ee2df993c4f51d186687734683ee00b153494d4d",
+            "wire_visible": false
+          },
+          {
+            "actual_display_mode": "render",
+            "actual_weights": [0.5, 0.5, 0.0],
+            "image": "res://artifacts/face_acceptance/supplement-1792197988-78488/frame_036.png",
+            "requested": {
+              "left": 0.5,
+              "mode": "render",
+              "mouth": 0.0,
+              "pitch": 0.0,
+              "right": 0.5,
+              "yaw": -90.0
+            },
+            "sha256": "9fc438eddbe465897a0863497c91a64fdee7472d613bf119dc25218fe98c38b9",
+            "wire_visible": false
+          },
+          {
+            "actual_display_mode": "white",
+            "actual_weights": [0.5, 0.5, 0.0],
+            "image": "res://artifacts/face_acceptance/supplement-1792197988-78488/frame_037.png",
+            "requested": {
+              "left": 0.5,
+              "mode": "white",
+              "mouth": 0.0,
+              "pitch": 0.0,
+              "right": 0.5,
+              "yaw": -90.0
+            },
+            "sha256": "92162edecc5a99a1f69e4e5134ba0272c0606fee2684d60aa8945c5e80afb4cd",
+            "wire_visible": false
+          },
+          {
+            "actual_display_mode": "render",
+            "actual_weights": [0.75, 0.75, 0.0],
+            "image": "res://artifacts/face_acceptance/supplement-1792197988-78488/frame_038.png",
+            "requested": {
+              "left": 0.75,
+              "mode": "render",
+              "mouth": 0.0,
+              "pitch": 0.0,
+              "right": 0.75,
+              "yaw": -90.0
+            },
+            "sha256": "f0b107b11d96ca263857a23b5fa67801782b4b12dff0e34922213a61c1f8b044",
+            "wire_visible": false
+          },
+          {
+            "actual_display_mode": "white",
+            "actual_weights": [0.75, 0.75, 0.0],
+            "image": "res://artifacts/face_acceptance/supplement-1792197988-78488/frame_039.png",
+            "requested": {
+              "left": 0.75,
+              "mode": "white",
+              "mouth": 0.0,
+              "pitch": 0.0,
+              "right": 0.75,
+              "yaw": -90.0
+            },
+            "sha256": "6f7a1355d3d24eda0f825014a601bfd30a65d191f28e1b8775828d9af0dda88c",
+            "wire_visible": false
+          },
+          {
+            "actual_display_mode": "render",
+            "actual_weights": [1.0, 1.0, 0.0],
+            "image": "res://artifacts/face_acceptance/supplement-1792197988-78488/frame_040.png",
+            "requested": {
+              "left": 1.0,
+              "mode": "render",
+              "mouth": 0.0,
+              "pitch": 0.0,
+              "right": 1.0,
+              "yaw": -90.0
+            },
+            "sha256": "04ed10a70dba8d5a54cc180672a17da41915c28b5df75fd6072b61c8b5cf68b9",
+            "wire_visible": false
+          },
+          {
+            "actual_display_mode": "white",
+            "actual_weights": [1.0, 1.0, 0.0],
+            "image": "res://artifacts/face_acceptance/supplement-1792197988-78488/frame_041.png",
+            "requested": {
+              "left": 1.0,
+              "mode": "white",
+              "mouth": 0.0,
+              "pitch": 0.0,
+              "right": 1.0,
+              "yaw": -90.0
+            },
+            "sha256": "235e18a761c1aeeaf21f1345aa399cb9eb7c7cdc4b29e9e64f535b207c745d6d",
+            "wire_visible": false
+          }
+        ]
+      },
+      "acceptance_status": "Bounded comparison candidate only; not selected for delivery. Full directional-light review pending."
+    },
+    {
+      "candidate": "general_face_eyes_712_narrow",
+      "generation_job": "fb51776e-109c-49ff-b46e-067d96a27cfe",
+      "sdf_job": "74f5f0b0-01b7-440b-b6a2-2f0a6c8bfed4",
+      "controls": {
+        "eye_spacing": 1,
+        "eye_width": 0.96,
+        "upper_arch": 1.05,
+        "lower_arch": 0.65,
+        "corner_slope_offset": 0.005,
+        "eye_height_offset": 0.0,
+        "iris_width": 0.96,
+        "iris_height": 0.96,
+        "brow_height_offset": -0.012,
+        "brow_rise_offset": -0.006,
+        "brow_thickness": 0.85,
+        "brow_arch": 1.0,
+        "lash_band_thickness": 1.05,
+        "supplemental_lashes": 0.0,
+        "lid_fold": 0.0,
+        "upper_roundness": 1.4,
+        "upper_horizontal_roundness": 0.72,
+        "lash_contour_follow": 1,
+        "iris_vertical_offset": 0.001,
+        "simple_iris": 1,
+        "short_upper_tuft": 1
+      },
+      "continuous_orientation": {
+        "triangles": 10980,
+        "minimum_orientation_ratio": 0.02190665314288598,
+        "worst_blink_weight": 1.0,
+        "worst_mouth_weight": 0.0,
+        "worst_triangle": 8460,
+        "scope": "Floating-point analytic quadratic minimum over blink and MouthOpen [0,1]; no triangle couples both eyes. Not an intersection proof."
+      },
+      "native_poses": {
+        "manifest_sha256": "fd45e260521df0a2967c0911857b4781ef0176039207ae8b5b0c83e10e4bac1c",
+        "source": "res://assets/aster/general_face_eyes_712_narrow/aster_head.glb",
+        "source_sha256": "ad5a0e5815ab0066e980f5d34d40762879d50ad7920a30a600c581a120f0d7b3",
+        "source_identity_unchanged": true,
+        "requested_weights_match_readback": true,
+        "captures": [
+          {
+            "actual_weights": [0.0, 0.0, 0.0],
+            "image": "res://artifacts/blink_probe/blink-1792195849-35527/frame_000.png",
+            "requested": {
+              "left": 0.0,
+              "mode": "render",
+              "mouth": 0.0,
+              "pitch": 0.0,
+              "right": 0.0,
+              "yaw": 0.0
+            },
+            "sha256": "9355da5e291cb1ad89387ac28a4be8b102772c6f06cc20b3926a18e0c7d6d7d5"
+          },
+          {
+            "actual_weights": [0.0, 0.0, 0.0],
+            "image": "res://artifacts/blink_probe/blink-1792195849-35527/frame_001.png",
+            "requested": {
+              "left": 0.0,
+              "mode": "white",
+              "mouth": 0.0,
+              "pitch": 0.0,
+              "right": 0.0,
+              "yaw": 0.0
+            },
+            "sha256": "a5dcca3f9bae40eef283b19567b83af7d52534597e283169409a0b85ac471f3b"
+          },
+          {
+            "actual_weights": [0.25, 0.25, 0.0],
+            "image": "res://artifacts/blink_probe/blink-1792195849-35527/frame_002.png",
+            "requested": {
+              "left": 0.25,
+              "mode": "render",
+              "mouth": 0.0,
+              "pitch": 0.0,
+              "right": 0.25,
+              "yaw": 0.0
+            },
+            "sha256": "eeeb9c204a74cf464e1faa625aaffb388b405939d41956baa94d54317d8c876a"
+          },
+          {
+            "actual_weights": [0.25, 0.25, 0.0],
+            "image": "res://artifacts/blink_probe/blink-1792195849-35527/frame_003.png",
+            "requested": {
+              "left": 0.25,
+              "mode": "white",
+              "mouth": 0.0,
+              "pitch": 0.0,
+              "right": 0.25,
+              "yaw": 0.0
+            },
+            "sha256": "48eaa72016b695351421c9edc38caa3231d5b848bd972f305e74713ee701d23f"
+          },
+          {
+            "actual_weights": [0.5, 0.5, 0.0],
+            "image": "res://artifacts/blink_probe/blink-1792195849-35527/frame_004.png",
+            "requested": {
+              "left": 0.5,
+              "mode": "render",
+              "mouth": 0.0,
+              "pitch": 0.0,
+              "right": 0.5,
+              "yaw": 0.0
+            },
+            "sha256": "5796ccdbc021c0d5d90548a85679f4dac0ef097953e7740b51f7ba26d815f024"
+          },
+          {
+            "actual_weights": [0.5, 0.5, 0.0],
+            "image": "res://artifacts/blink_probe/blink-1792195849-35527/frame_005.png",
+            "requested": {
+              "left": 0.5,
+              "mode": "white",
+              "mouth": 0.0,
+              "pitch": 0.0,
+              "right": 0.5,
+              "yaw": 0.0
+            },
+            "sha256": "f32e031cd2ca48e5e69d8b22cc88c55dc7efe18477e87e778f0dbebc0b45f2e2"
+          },
+          {
+            "actual_weights": [0.75, 0.75, 0.0],
+            "image": "res://artifacts/blink_probe/blink-1792195849-35527/frame_006.png",
+            "requested": {
+              "left": 0.75,
+              "mode": "render",
+              "mouth": 0.0,
+              "pitch": 0.0,
+              "right": 0.75,
+              "yaw": 0.0
+            },
+            "sha256": "6bcc141cce49d47804553fb7dafa7ddae5cbd83cc5a3e77fe5e1e6f3991fb282"
+          },
+          {
+            "actual_weights": [0.75, 0.75, 0.0],
+            "image": "res://artifacts/blink_probe/blink-1792195849-35527/frame_007.png",
+            "requested": {
+              "left": 0.75,
+              "mode": "white",
+              "mouth": 0.0,
+              "pitch": 0.0,
+              "right": 0.75,
+              "yaw": 0.0
+            },
+            "sha256": "3dc0606eafebb2a538237c85ca2047b9cfad2ab17546f9a11bf1bec5bf2314fe"
+          },
+          {
+            "actual_weights": [1.0, 1.0, 0.0],
+            "image": "res://artifacts/blink_probe/blink-1792195849-35527/frame_008.png",
+            "requested": {
+              "left": 1.0,
+              "mode": "render",
+              "mouth": 0.0,
+              "pitch": 0.0,
+              "right": 1.0,
+              "yaw": 0.0
+            },
+            "sha256": "59541b9c425a9a2f173ff73ce68434771292856629149f0e97c05479dd1f0d91"
+          },
+          {
+            "actual_weights": [1.0, 1.0, 0.0],
+            "image": "res://artifacts/blink_probe/blink-1792195849-35527/frame_009.png",
+            "requested": {
+              "left": 1.0,
+              "mode": "white",
+              "mouth": 0.0,
+              "pitch": 0.0,
+              "right": 1.0,
+              "yaw": 0.0
+            },
+            "sha256": "780cf7959b6f3e4a927479a3a6494db9159303f3f9357409237b60654cf59078"
+          },
+          {
+            "actual_weights": [0.0, 0.0, 0.0],
+            "image": "res://artifacts/blink_probe/blink-1792195849-35527/frame_010.png",
+            "requested": {
+              "left": 0.0,
+              "mode": "render",
+              "mouth": 0.0,
+              "pitch": 0.0,
+              "right": 0.0,
+              "yaw": -45.0
+            },
+            "sha256": "a8b41409452e3d74da02a21c99d6d00007b83c35040d65fc5e1eae61ef432dfd"
+          },
+          {
+            "actual_weights": [0.0, 0.0, 0.0],
+            "image": "res://artifacts/blink_probe/blink-1792195849-35527/frame_011.png",
+            "requested": {
+              "left": 0.0,
+              "mode": "white",
+              "mouth": 0.0,
+              "pitch": 0.0,
+              "right": 0.0,
+              "yaw": -45.0
+            },
+            "sha256": "1748e42a6d4584d826e1b7a8bc12fa459b1e938654e50b58c0e3d8418f003bca"
+          },
+          {
+            "actual_weights": [0.25, 0.25, 0.0],
+            "image": "res://artifacts/blink_probe/blink-1792195849-35527/frame_012.png",
+            "requested": {
+              "left": 0.25,
+              "mode": "render",
+              "mouth": 0.0,
+              "pitch": 0.0,
+              "right": 0.25,
+              "yaw": -45.0
+            },
+            "sha256": "20f9577997411eb22d9ca8a362f01a9f5ea39d382f1b5312f726d9e49f093aa6"
+          },
+          {
+            "actual_weights": [0.25, 0.25, 0.0],
+            "image": "res://artifacts/blink_probe/blink-1792195849-35527/frame_013.png",
+            "requested": {
+              "left": 0.25,
+              "mode": "white",
+              "mouth": 0.0,
+              "pitch": 0.0,
+              "right": 0.25,
+              "yaw": -45.0
+            },
+            "sha256": "ea56159e4d8d7a788fd70aa088f627179ff9e5d5edb4b75591f9c8f73f93eb3a"
+          },
+          {
+            "actual_weights": [0.5, 0.5, 0.0],
+            "image": "res://artifacts/blink_probe/blink-1792195849-35527/frame_014.png",
+            "requested": {
+              "left": 0.5,
+              "mode": "render",
+              "mouth": 0.0,
+              "pitch": 0.0,
+              "right": 0.5,
+              "yaw": -45.0
+            },
+            "sha256": "3e9f97032d5afcaa88edcceb011a9c37de16a9019de6b1f4d9e875392815d568"
+          },
+          {
+            "actual_weights": [0.5, 0.5, 0.0],
+            "image": "res://artifacts/blink_probe/blink-1792195849-35527/frame_015.png",
+            "requested": {
+              "left": 0.5,
+              "mode": "white",
+              "mouth": 0.0,
+              "pitch": 0.0,
+              "right": 0.5,
+              "yaw": -45.0
+            },
+            "sha256": "2afa5930438e4e6af1e3b89d843fbf08b4f73162d65d034152e66a9f9b863dab"
+          },
+          {
+            "actual_weights": [0.75, 0.75, 0.0],
+            "image": "res://artifacts/blink_probe/blink-1792195849-35527/frame_016.png",
+            "requested": {
+              "left": 0.75,
+              "mode": "render",
+              "mouth": 0.0,
+              "pitch": 0.0,
+              "right": 0.75,
+              "yaw": -45.0
+            },
+            "sha256": "9e1e4c04d76fefb7ae3c55c2aed7caf682dc0e998e1a61b07ad6d8a2bf0d51dd"
+          },
+          {
+            "actual_weights": [0.75, 0.75, 0.0],
+            "image": "res://artifacts/blink_probe/blink-1792195849-35527/frame_017.png",
+            "requested": {
+              "left": 0.75,
+              "mode": "white",
+              "mouth": 0.0,
+              "pitch": 0.0,
+              "right": 0.75,
+              "yaw": -45.0
+            },
+            "sha256": "7475d925e2a5236816bb1d1922730593b2b533b95b9595ba394572fd88720621"
+          },
+          {
+            "actual_weights": [1.0, 1.0, 0.0],
+            "image": "res://artifacts/blink_probe/blink-1792195849-35527/frame_018.png",
+            "requested": {
+              "left": 1.0,
+              "mode": "render",
+              "mouth": 0.0,
+              "pitch": 0.0,
+              "right": 1.0,
+              "yaw": -45.0
+            },
+            "sha256": "c1c195c5ae993069bd6d76c402c385c45346e651891262c37c11b631061f0fec"
+          },
+          {
+            "actual_weights": [1.0, 1.0, 0.0],
+            "image": "res://artifacts/blink_probe/blink-1792195849-35527/frame_019.png",
+            "requested": {
+              "left": 1.0,
+              "mode": "white",
+              "mouth": 0.0,
+              "pitch": 0.0,
+              "right": 1.0,
+              "yaw": -45.0
+            },
+            "sha256": "de81b6a9f15e4c14c3c82a6393e1bbf6bd78b1861737ca00bc1d5f01ad2a3b82"
+          },
+          {
+            "actual_weights": [0.0, 0.0, 0.0],
+            "image": "res://artifacts/blink_probe/blink-1792195849-35527/frame_020.png",
+            "requested": {
+              "left": 0.0,
+              "mode": "render",
+              "mouth": 0.0,
+              "pitch": 0.0,
+              "right": 0.0,
+              "yaw": 45.0
+            },
+            "sha256": "ca51ca837a157dfc15777c238030fe33a39bb78313a3ac291ac2c9a112df3dc9"
+          },
+          {
+            "actual_weights": [0.0, 0.0, 0.0],
+            "image": "res://artifacts/blink_probe/blink-1792195849-35527/frame_021.png",
+            "requested": {
+              "left": 0.0,
+              "mode": "white",
+              "mouth": 0.0,
+              "pitch": 0.0,
+              "right": 0.0,
+              "yaw": 45.0
+            },
+            "sha256": "fde25d68dc8c3bc34f771afd63aeab59cca3f315d80546017602180bd1e7f735"
+          },
+          {
+            "actual_weights": [0.25, 0.25, 0.0],
+            "image": "res://artifacts/blink_probe/blink-1792195849-35527/frame_022.png",
+            "requested": {
+              "left": 0.25,
+              "mode": "render",
+              "mouth": 0.0,
+              "pitch": 0.0,
+              "right": 0.25,
+              "yaw": 45.0
+            },
+            "sha256": "f5f41ffa507bf01b2d6e492b9ad36dd997da6efa1bf93d9b5fb23547a41e7179"
+          },
+          {
+            "actual_weights": [0.25, 0.25, 0.0],
+            "image": "res://artifacts/blink_probe/blink-1792195849-35527/frame_023.png",
+            "requested": {
+              "left": 0.25,
+              "mode": "white",
+              "mouth": 0.0,
+              "pitch": 0.0,
+              "right": 0.25,
+              "yaw": 45.0
+            },
+            "sha256": "98e3d3f8810198949c8409064bccdd9851554953a061f7ea035c9391240ecfec"
+          },
+          {
+            "actual_weights": [0.5, 0.5, 0.0],
+            "image": "res://artifacts/blink_probe/blink-1792195849-35527/frame_024.png",
+            "requested": {
+              "left": 0.5,
+              "mode": "render",
+              "mouth": 0.0,
+              "pitch": 0.0,
+              "right": 0.5,
+              "yaw": 45.0
+            },
+            "sha256": "d9fccd628b16dca5e5e334583996552cf8c35bb58d05f877df302278ac7224fb"
+          },
+          {
+            "actual_weights": [0.5, 0.5, 0.0],
+            "image": "res://artifacts/blink_probe/blink-1792195849-35527/frame_025.png",
+            "requested": {
+              "left": 0.5,
+              "mode": "white",
+              "mouth": 0.0,
+              "pitch": 0.0,
+              "right": 0.5,
+              "yaw": 45.0
+            },
+            "sha256": "1d6721a7d4831820e8c2ca9eae8c3e1912dfce3c9ee595b6f7e4165ab05dc1f7"
+          },
+          {
+            "actual_weights": [0.75, 0.75, 0.0],
+            "image": "res://artifacts/blink_probe/blink-1792195849-35527/frame_026.png",
+            "requested": {
+              "left": 0.75,
+              "mode": "render",
+              "mouth": 0.0,
+              "pitch": 0.0,
+              "right": 0.75,
+              "yaw": 45.0
+            },
+            "sha256": "be264dfc30e9d01911eab4103390feee82fa51397054f43150b0bdc2bb097352"
+          },
+          {
+            "actual_weights": [0.75, 0.75, 0.0],
+            "image": "res://artifacts/blink_probe/blink-1792195849-35527/frame_027.png",
+            "requested": {
+              "left": 0.75,
+              "mode": "white",
+              "mouth": 0.0,
+              "pitch": 0.0,
+              "right": 0.75,
+              "yaw": 45.0
+            },
+            "sha256": "63c20b8c6643792ab7dbda946ba2688297d1677940423d3539f4f35fd8bc2d78"
+          },
+          {
+            "actual_weights": [1.0, 1.0, 0.0],
+            "image": "res://artifacts/blink_probe/blink-1792195849-35527/frame_028.png",
+            "requested": {
+              "left": 1.0,
+              "mode": "render",
+              "mouth": 0.0,
+              "pitch": 0.0,
+              "right": 1.0,
+              "yaw": 45.0
+            },
+            "sha256": "926f91543858e4c4bf64c7efa24d6bfedb72e4326f700bd29d0ce2fee924684f"
+          },
+          {
+            "actual_weights": [1.0, 1.0, 0.0],
+            "image": "res://artifacts/blink_probe/blink-1792195849-35527/frame_029.png",
+            "requested": {
+              "left": 1.0,
+              "mode": "white",
+              "mouth": 0.0,
+              "pitch": 0.0,
+              "right": 1.0,
+              "yaw": 45.0
+            },
+            "sha256": "108283fb5619cafdce545ed6f713c512984ebedbd0210835b83b8000f324056e"
+          },
+          {
+            "actual_weights": [0.0, 0.0, 0.0],
+            "image": "res://artifacts/blink_probe/blink-1792195849-35527/frame_030.png",
+            "requested": {
+              "left": 0.0,
+              "mode": "render",
+              "mouth": 0.0,
+              "pitch": 0.0,
+              "right": 0.0,
+              "yaw": 90.0
+            },
+            "sha256": "cb04c858fa14eae4e8f265a7a4cf4039f453c53ba64c8f3cb0997d3b55f5fed8"
+          },
+          {
+            "actual_weights": [0.0, 0.0, 0.0],
+            "image": "res://artifacts/blink_probe/blink-1792195849-35527/frame_031.png",
+            "requested": {
+              "left": 0.0,
+              "mode": "white",
+              "mouth": 0.0,
+              "pitch": 0.0,
+              "right": 0.0,
+              "yaw": 90.0
+            },
+            "sha256": "b9c3378af2fd3f325ecf5ff7f57aa3b1e828ede8e7528f645ee184f5bc1129c5"
+          },
+          {
+            "actual_weights": [0.25, 0.25, 0.0],
+            "image": "res://artifacts/blink_probe/blink-1792195849-35527/frame_032.png",
+            "requested": {
+              "left": 0.25,
+              "mode": "render",
+              "mouth": 0.0,
+              "pitch": 0.0,
+              "right": 0.25,
+              "yaw": 90.0
+            },
+            "sha256": "af80bb74bce2dbc8bd187b662f788d2ec28a0ae57f5d3dbff643d0d0c9db8380"
+          },
+          {
+            "actual_weights": [0.25, 0.25, 0.0],
+            "image": "res://artifacts/blink_probe/blink-1792195849-35527/frame_033.png",
+            "requested": {
+              "left": 0.25,
+              "mode": "white",
+              "mouth": 0.0,
+              "pitch": 0.0,
+              "right": 0.25,
+              "yaw": 90.0
+            },
+            "sha256": "be325bfd90f97a4c8aa3a358bd06cac5b1aa570f85b201648a305b19ff936e03"
+          },
+          {
+            "actual_weights": [0.5, 0.5, 0.0],
+            "image": "res://artifacts/blink_probe/blink-1792195849-35527/frame_034.png",
+            "requested": {
+              "left": 0.5,
+              "mode": "render",
+              "mouth": 0.0,
+              "pitch": 0.0,
+              "right": 0.5,
+              "yaw": 90.0
+            },
+            "sha256": "00f0bbb09c7318ed0909a7b11a4d96c87b3595509ef6a411a5cb7fdf9dbb74a4"
+          },
+          {
+            "actual_weights": [0.5, 0.5, 0.0],
+            "image": "res://artifacts/blink_probe/blink-1792195849-35527/frame_035.png",
+            "requested": {
+              "left": 0.5,
+              "mode": "white",
+              "mouth": 0.0,
+              "pitch": 0.0,
+              "right": 0.5,
+              "yaw": 90.0
+            },
+            "sha256": "c9752c719e27235cc8992e4e7b072f5198542823c5aba4182fbc2a43ea83ce5f"
+          },
+          {
+            "actual_weights": [0.75, 0.75, 0.0],
+            "image": "res://artifacts/blink_probe/blink-1792195849-35527/frame_036.png",
+            "requested": {
+              "left": 0.75,
+              "mode": "render",
+              "mouth": 0.0,
+              "pitch": 0.0,
+              "right": 0.75,
+              "yaw": 90.0
+            },
+            "sha256": "8b61430aa5a0752229217c2d8bc6c935e3b2a50c779aaa33a4fd95b2cc747e7c"
+          },
+          {
+            "actual_weights": [0.75, 0.75, 0.0],
+            "image": "res://artifacts/blink_probe/blink-1792195849-35527/frame_037.png",
+            "requested": {
+              "left": 0.75,
+              "mode": "white",
+              "mouth": 0.0,
+              "pitch": 0.0,
+              "right": 0.75,
+              "yaw": 90.0
+            },
+            "sha256": "875e3b9dfb70fc10638df65426f829d9b477a328b0d65bdcce02f8b6f912fec8"
+          },
+          {
+            "actual_weights": [1.0, 1.0, 0.0],
+            "image": "res://artifacts/blink_probe/blink-1792195849-35527/frame_038.png",
+            "requested": {
+              "left": 1.0,
+              "mode": "render",
+              "mouth": 0.0,
+              "pitch": 0.0,
+              "right": 1.0,
+              "yaw": 90.0
+            },
+            "sha256": "32eca977bf9b3fa9698514efe45b5f74f36b63ac3792c8f0a6c0ce725d93c73e"
+          },
+          {
+            "actual_weights": [1.0, 1.0, 0.0],
+            "image": "res://artifacts/blink_probe/blink-1792195849-35527/frame_039.png",
+            "requested": {
+              "left": 1.0,
+              "mode": "white",
+              "mouth": 0.0,
+              "pitch": 0.0,
+              "right": 1.0,
+              "yaw": 90.0
+            },
+            "sha256": "644a1269a1de3d5ce61eef1f8dadfa0ec924ff09ba0806d3e92284689025138f"
+          },
+          {
+            "actual_weights": [0.0, 0.0, 0.0],
+            "image": "res://artifacts/blink_probe/blink-1792195849-35527/frame_040.png",
+            "requested": {
+              "left": 0.0,
+              "mode": "render",
+              "mouth": 0.0,
+              "pitch": -20.0,
+              "right": 0.0,
+              "yaw": 0.0
+            },
+            "sha256": "74bc7e3cff97ee3952618642848271c9424456b4becee4cd6028ded82e6a42ff"
+          },
+          {
+            "actual_weights": [0.0, 0.0, 0.0],
+            "image": "res://artifacts/blink_probe/blink-1792195849-35527/frame_041.png",
+            "requested": {
+              "left": 0.0,
+              "mode": "white",
+              "mouth": 0.0,
+              "pitch": -20.0,
+              "right": 0.0,
+              "yaw": 0.0
+            },
+            "sha256": "88a029e00d8ec9c8f2b50491d0b7851f4ff4e6778cafbb6d5d3536c64f0ec9a8"
+          },
+          {
+            "actual_weights": [0.25, 0.25, 0.0],
+            "image": "res://artifacts/blink_probe/blink-1792195849-35527/frame_042.png",
+            "requested": {
+              "left": 0.25,
+              "mode": "render",
+              "mouth": 0.0,
+              "pitch": -20.0,
+              "right": 0.25,
+              "yaw": 0.0
+            },
+            "sha256": "db1ed07b6710afbf5d42c054f72822ea70589179fd658ae1e9fc55c4d068453d"
+          },
+          {
+            "actual_weights": [0.25, 0.25, 0.0],
+            "image": "res://artifacts/blink_probe/blink-1792195849-35527/frame_043.png",
+            "requested": {
+              "left": 0.25,
+              "mode": "white",
+              "mouth": 0.0,
+              "pitch": -20.0,
+              "right": 0.25,
+              "yaw": 0.0
+            },
+            "sha256": "df4d4d20ddfe161b02c630594582e0f7c118c495adfc2880ea382d04db80021e"
+          },
+          {
+            "actual_weights": [0.5, 0.5, 0.0],
+            "image": "res://artifacts/blink_probe/blink-1792195849-35527/frame_044.png",
+            "requested": {
+              "left": 0.5,
+              "mode": "render",
+              "mouth": 0.0,
+              "pitch": -20.0,
+              "right": 0.5,
+              "yaw": 0.0
+            },
+            "sha256": "8e0eb6b8364fd36d8ba90593085c6c96f5ddea56253360b18a592381cfa253fa"
+          },
+          {
+            "actual_weights": [0.5, 0.5, 0.0],
+            "image": "res://artifacts/blink_probe/blink-1792195849-35527/frame_045.png",
+            "requested": {
+              "left": 0.5,
+              "mode": "white",
+              "mouth": 0.0,
+              "pitch": -20.0,
+              "right": 0.5,
+              "yaw": 0.0
+            },
+            "sha256": "bc0949128fbbeb36a0f9b0b74d92eba03cb2eb868bd277bbf18d4594bd1704bc"
+          },
+          {
+            "actual_weights": [0.75, 0.75, 0.0],
+            "image": "res://artifacts/blink_probe/blink-1792195849-35527/frame_046.png",
+            "requested": {
+              "left": 0.75,
+              "mode": "render",
+              "mouth": 0.0,
+              "pitch": -20.0,
+              "right": 0.75,
+              "yaw": 0.0
+            },
+            "sha256": "b44020f82377ac02cfbc2f3d3570e2ddab3d48e67038140ae6d6d038de1a256f"
+          },
+          {
+            "actual_weights": [0.75, 0.75, 0.0],
+            "image": "res://artifacts/blink_probe/blink-1792195849-35527/frame_047.png",
+            "requested": {
+              "left": 0.75,
+              "mode": "white",
+              "mouth": 0.0,
+              "pitch": -20.0,
+              "right": 0.75,
+              "yaw": 0.0
+            },
+            "sha256": "b8c2161cf627f2669f3906c8d4744732b91fdb7657e12f979dc9cd64c6489dad"
+          },
+          {
+            "actual_weights": [1.0, 1.0, 0.0],
+            "image": "res://artifacts/blink_probe/blink-1792195849-35527/frame_048.png",
+            "requested": {
+              "left": 1.0,
+              "mode": "render",
+              "mouth": 0.0,
+              "pitch": -20.0,
+              "right": 1.0,
+              "yaw": 0.0
+            },
+            "sha256": "88ec6016af45f998cc254afd96ef6b79bf8127b949f800a0dd5683a50f779885"
+          },
+          {
+            "actual_weights": [1.0, 1.0, 0.0],
+            "image": "res://artifacts/blink_probe/blink-1792195849-35527/frame_049.png",
+            "requested": {
+              "left": 1.0,
+              "mode": "white",
+              "mouth": 0.0,
+              "pitch": -20.0,
+              "right": 1.0,
+              "yaw": 0.0
+            },
+            "sha256": "e39cdbda4f8f598a5850b44cb2ddbe82d347a1de9a7f4e6f56bb96dbb40299c2"
+          },
+          {
+            "actual_weights": [0.0, 0.0, 0.0],
+            "image": "res://artifacts/blink_probe/blink-1792195849-35527/frame_050.png",
+            "requested": {
+              "left": 0.0,
+              "mode": "render",
+              "mouth": 0.0,
+              "pitch": 20.0,
+              "right": 0.0,
+              "yaw": 0.0
+            },
+            "sha256": "2dda7939ccf69bb2bff5b7e3baddf1cd33a8152a0c8d16cecdd108d8e3ceb7bc"
+          },
+          {
+            "actual_weights": [0.0, 0.0, 0.0],
+            "image": "res://artifacts/blink_probe/blink-1792195849-35527/frame_051.png",
+            "requested": {
+              "left": 0.0,
+              "mode": "white",
+              "mouth": 0.0,
+              "pitch": 20.0,
+              "right": 0.0,
+              "yaw": 0.0
+            },
+            "sha256": "7425d291fe0858351694ff1f87d7078508bd2157a5860954668914cbf62bfd50"
+          },
+          {
+            "actual_weights": [0.25, 0.25, 0.0],
+            "image": "res://artifacts/blink_probe/blink-1792195849-35527/frame_052.png",
+            "requested": {
+              "left": 0.25,
+              "mode": "render",
+              "mouth": 0.0,
+              "pitch": 20.0,
+              "right": 0.25,
+              "yaw": 0.0
+            },
+            "sha256": "2704fcf38f713a5c5bdd93163b959d8e4190d85880cf6a658aa8bad8735c3c09"
+          },
+          {
+            "actual_weights": [0.25, 0.25, 0.0],
+            "image": "res://artifacts/blink_probe/blink-1792195849-35527/frame_053.png",
+            "requested": {
+              "left": 0.25,
+              "mode": "white",
+              "mouth": 0.0,
+              "pitch": 20.0,
+              "right": 0.25,
+              "yaw": 0.0
+            },
+            "sha256": "56d54181f6c16c71e3a2ec6dcf1da18f154942718cb88bb19ee551411b7a1ccb"
+          },
+          {
+            "actual_weights": [0.5, 0.5, 0.0],
+            "image": "res://artifacts/blink_probe/blink-1792195849-35527/frame_054.png",
+            "requested": {
+              "left": 0.5,
+              "mode": "render",
+              "mouth": 0.0,
+              "pitch": 20.0,
+              "right": 0.5,
+              "yaw": 0.0
+            },
+            "sha256": "93293741706e7a8ffb7e6b1f0a8c48bc9a79eca9b75d43854b0d3bdfc5574061"
+          },
+          {
+            "actual_weights": [0.5, 0.5, 0.0],
+            "image": "res://artifacts/blink_probe/blink-1792195849-35527/frame_055.png",
+            "requested": {
+              "left": 0.5,
+              "mode": "white",
+              "mouth": 0.0,
+              "pitch": 20.0,
+              "right": 0.5,
+              "yaw": 0.0
+            },
+            "sha256": "e28ed161dc91fb278e6272f2ee3bff34e436df550ec744fae0d1f6de3dc6b8cc"
+          },
+          {
+            "actual_weights": [0.75, 0.75, 0.0],
+            "image": "res://artifacts/blink_probe/blink-1792195849-35527/frame_056.png",
+            "requested": {
+              "left": 0.75,
+              "mode": "render",
+              "mouth": 0.0,
+              "pitch": 20.0,
+              "right": 0.75,
+              "yaw": 0.0
+            },
+            "sha256": "c238c5f89cb6d25bb7a3107e8c8687bb302838a0fdb48e00e198be8eb58ce970"
+          },
+          {
+            "actual_weights": [0.75, 0.75, 0.0],
+            "image": "res://artifacts/blink_probe/blink-1792195849-35527/frame_057.png",
+            "requested": {
+              "left": 0.75,
+              "mode": "white",
+              "mouth": 0.0,
+              "pitch": 20.0,
+              "right": 0.75,
+              "yaw": 0.0
+            },
+            "sha256": "29c0fc1ee47b0e3b158abd2d78b78461ee27ef3e183b851b8bc6ce7d414e2860"
+          },
+          {
+            "actual_weights": [1.0, 1.0, 0.0],
+            "image": "res://artifacts/blink_probe/blink-1792195849-35527/frame_058.png",
+            "requested": {
+              "left": 1.0,
+              "mode": "render",
+              "mouth": 0.0,
+              "pitch": 20.0,
+              "right": 1.0,
+              "yaw": 0.0
+            },
+            "sha256": "bbbeea28c92a09e0e0a9a5eb7500b3a3d74eb6070e1895790bbde4c2e1bbc837"
+          },
+          {
+            "actual_weights": [1.0, 1.0, 0.0],
+            "image": "res://artifacts/blink_probe/blink-1792195849-35527/frame_059.png",
+            "requested": {
+              "left": 1.0,
+              "mode": "white",
+              "mouth": 0.0,
+              "pitch": 20.0,
+              "right": 1.0,
+              "yaw": 0.0
+            },
+            "sha256": "2225431bf411b20c375878a15f1774b14d34a2ba98873477ebd46bc31d35505a"
+          },
+          {
+            "actual_weights": [1.0, 0.0, 0.600000023841858],
+            "image": "res://artifacts/blink_probe/blink-1792195849-35527/frame_060.png",
+            "requested": {
+              "left": 1.0,
+              "mode": "render",
+              "mouth": 0.6,
+              "pitch": 0.0,
+              "right": 0.0,
+              "yaw": 0.0
+            },
+            "sha256": "ee5c51956958357679af47fbce0224eab343d29be274458f9c19bc81410d535e"
+          },
+          {
+            "actual_weights": [1.0, 0.0, 0.600000023841858],
+            "image": "res://artifacts/blink_probe/blink-1792195849-35527/frame_061.png",
+            "requested": {
+              "left": 1.0,
+              "mode": "render",
+              "mouth": 0.6,
+              "pitch": 0.0,
+              "right": 0.0,
+              "yaw": -45.0
+            },
+            "sha256": "49202ba2ff7c405599c8f5647ba996bfadb493c994ce64d4e0e8343442fc1439"
+          },
+          {
+            "actual_weights": [1.0, 0.0, 0.600000023841858],
+            "image": "res://artifacts/blink_probe/blink-1792195849-35527/frame_062.png",
+            "requested": {
+              "left": 1.0,
+              "mode": "render",
+              "mouth": 0.6,
+              "pitch": 0.0,
+              "right": 0.0,
+              "yaw": 45.0
+            },
+            "sha256": "591481d7b930f2dcf4978504d8dfcb1560ea33125dd04bbcd7e0686d8a495ab8"
+          },
+          {
+            "actual_weights": [0.0, 1.0, 0.600000023841858],
+            "image": "res://artifacts/blink_probe/blink-1792195849-35527/frame_063.png",
+            "requested": {
+              "left": 0.0,
+              "mode": "render",
+              "mouth": 0.6,
+              "pitch": 0.0,
+              "right": 1.0,
+              "yaw": 0.0
+            },
+            "sha256": "9c76ff34bc2699c5157b234ef8adfd30c37482a584ad32016de898230f685460"
+          },
+          {
+            "actual_weights": [0.0, 1.0, 0.600000023841858],
+            "image": "res://artifacts/blink_probe/blink-1792195849-35527/frame_064.png",
+            "requested": {
+              "left": 0.0,
+              "mode": "render",
+              "mouth": 0.6,
+              "pitch": 0.0,
+              "right": 1.0,
+              "yaw": -45.0
+            },
+            "sha256": "ddfccda73612706889f08e3c270875d7d276f4176f6323696273deb9ee3cbd0d"
+          },
+          {
+            "actual_weights": [0.0, 1.0, 0.600000023841858],
+            "image": "res://artifacts/blink_probe/blink-1792195849-35527/frame_065.png",
+            "requested": {
+              "left": 0.0,
+              "mode": "render",
+              "mouth": 0.6,
+              "pitch": 0.0,
+              "right": 1.0,
+              "yaw": 45.0
+            },
+            "sha256": "9d99e64fa19f3d2227142ce7c41f04ab4adad8b86043f0d56aed9a9f098dd52a"
+          },
+          {
+            "actual_weights": [1.0, 1.0, 0.600000023841858],
+            "image": "res://artifacts/blink_probe/blink-1792195849-35527/frame_066.png",
+            "requested": {
+              "left": 1.0,
+              "mode": "render",
+              "mouth": 0.6,
+              "pitch": 0.0,
+              "right": 1.0,
+              "yaw": 0.0
+            },
+            "sha256": "84a5057c013f28f87c7968459f8e422d51898dc70cfbd07f59d8cca08490d72e"
+          },
+          {
+            "actual_weights": [1.0, 1.0, 0.600000023841858],
+            "image": "res://artifacts/blink_probe/blink-1792195849-35527/frame_067.png",
+            "requested": {
+              "left": 1.0,
+              "mode": "render",
+              "mouth": 0.6,
+              "pitch": 0.0,
+              "right": 1.0,
+              "yaw": -45.0
+            },
+            "sha256": "cf1fcb463f9be498bee9adfe025108105affbd43ce75849ec21117eeb347ba66"
+          },
+          {
+            "actual_weights": [1.0, 1.0, 0.600000023841858],
+            "image": "res://artifacts/blink_probe/blink-1792195849-35527/frame_068.png",
+            "requested": {
+              "left": 1.0,
+              "mode": "render",
+              "mouth": 0.6,
+              "pitch": 0.0,
+              "right": 1.0,
+              "yaw": 45.0
+            },
+            "sha256": "f591da232fc38a2d24b75f8c21ea3fc58f54f40bf4b69e0876d94b09fe8c78b9"
+          }
+        ]
+      },
+      "visual_review": "Narrower eye variation: native geometry and fresh SDF succeeded; continuous pose gate positive. All69actualrender/white/wink-mouthimages reviewed andweights/sourcehashverified. Narrower opening gives a restrained adult expression; no obvious full-closure iris exposure in sampled views. Retain as a bounded secondary variation, not a universal improvement or replacement for709. White cheek bands remain.\n\n2026-10-17 00:49 UTC supplement:42 additional captures visually reviewed, covering wire front/both45/both90/back/pitch\u00b120, full mouth .25/.5/.75/1 front/both45 render+white, and \u221290 bilateral blink0/.25/.5/.75/1 render+white. Actual mode, Face wire visibility, morph readback and source/image hashes verified. No new visible eye/ear silhouette break or mouth fold in these samples. This is a bounded comparison candidate; primary709 remains selected. Full directional-light acceptance of this variation is pending.",
+      "supplemental_views": {
+        "manifest_sha256": "2a68c819ee433f5f10d277ece9ae13d00402888b494bc837827c0538dc9094a5",
+        "source_identity_unchanged": true,
+        "actual_display_mode_and_wire_visibility_verified": true,
+        "captures": [
+          {
+            "actual_display_mode": "edges",
+            "actual_weights": [0.0, 0.0, 0.0],
+            "image": "res://artifacts/face_acceptance/supplement-1792198101-55635/frame_000.png",
+            "requested": {
+              "left": 0.0,
+              "mode": "edges",
+              "mouth": 0.0,
+              "pitch": 0.0,
+              "right": 0.0,
+              "yaw": 0.0
+            },
+            "sha256": "1382d26e330fd1492f0ad95d7635cbdf2e0cc3e8142cdacb8fb6db6c6a892e8a",
+            "wire_visible": true
+          },
+          {
+            "actual_display_mode": "edges",
+            "actual_weights": [0.0, 0.0, 0.0],
+            "image": "res://artifacts/face_acceptance/supplement-1792198101-55635/frame_001.png",
+            "requested": {
+              "left": 0.0,
+              "mode": "edges",
+              "mouth": 0.0,
+              "pitch": 0.0,
+              "right": 0.0,
+              "yaw": -45.0
+            },
+            "sha256": "70ddfe0b0942a4c69789e7565b99e3adda9ececb882feb31be458147e8807ddd",
+            "wire_visible": true
+          },
+          {
+            "actual_display_mode": "edges",
+            "actual_weights": [0.0, 0.0, 0.0],
+            "image": "res://artifacts/face_acceptance/supplement-1792198101-55635/frame_002.png",
+            "requested": {
+              "left": 0.0,
+              "mode": "edges",
+              "mouth": 0.0,
+              "pitch": 0.0,
+              "right": 0.0,
+              "yaw": 45.0
+            },
+            "sha256": "4850619566293117d52311261f7d49ec3087ba997d6b9f06ae18bb28d4527409",
+            "wire_visible": true
+          },
+          {
+            "actual_display_mode": "edges",
+            "actual_weights": [0.0, 0.0, 0.0],
+            "image": "res://artifacts/face_acceptance/supplement-1792198101-55635/frame_003.png",
+            "requested": {
+              "left": 0.0,
+              "mode": "edges",
+              "mouth": 0.0,
+              "pitch": 0.0,
+              "right": 0.0,
+              "yaw": -90.0
+            },
+            "sha256": "9b4f9ff1e962d7e20cebfc42e4f64ed366b6fb5338d6e6a69629aad79ff8599b",
+            "wire_visible": true
+          },
+          {
+            "actual_display_mode": "edges",
+            "actual_weights": [0.0, 0.0, 0.0],
+            "image": "res://artifacts/face_acceptance/supplement-1792198101-55635/frame_004.png",
+            "requested": {
+              "left": 0.0,
+              "mode": "edges",
+              "mouth": 0.0,
+              "pitch": 0.0,
+              "right": 0.0,
+              "yaw": 90.0
+            },
+            "sha256": "96a69da8f899c8cca5791e0e8b5a6201b647272d38b8acc2c3e085dc28431315",
+            "wire_visible": true
+          },
+          {
+            "actual_display_mode": "edges",
+            "actual_weights": [0.0, 0.0, 0.0],
+            "image": "res://artifacts/face_acceptance/supplement-1792198101-55635/frame_005.png",
+            "requested": {
+              "left": 0.0,
+              "mode": "edges",
+              "mouth": 0.0,
+              "pitch": 0.0,
+              "right": 0.0,
+              "yaw": 180.0
+            },
+            "sha256": "f3f9a9ce89e72c95cb6b8c000c5c67be704ae880130c188889e7c6d453be7648",
+            "wire_visible": true
+          },
+          {
+            "actual_display_mode": "edges",
+            "actual_weights": [0.0, 0.0, 0.0],
+            "image": "res://artifacts/face_acceptance/supplement-1792198101-55635/frame_006.png",
+            "requested": {
+              "left": 0.0,
+              "mode": "edges",
+              "mouth": 0.0,
+              "pitch": -20.0,
+              "right": 0.0,
+              "yaw": 0.0
+            },
+            "sha256": "c254123b33d06e5b4f0824f5db84ca3ac44c21d8c1d84b6d4bf08b0160a434f4",
+            "wire_visible": true
+          },
+          {
+            "actual_display_mode": "edges",
+            "actual_weights": [0.0, 0.0, 0.0],
+            "image": "res://artifacts/face_acceptance/supplement-1792198101-55635/frame_007.png",
+            "requested": {
+              "left": 0.0,
+              "mode": "edges",
+              "mouth": 0.0,
+              "pitch": 20.0,
+              "right": 0.0,
+              "yaw": 0.0
+            },
+            "sha256": "39883b7c4e9a2fa12d8f956916e5c3ee6a640c098702b67e4a954163249a638a",
+            "wire_visible": true
+          },
+          {
+            "actual_display_mode": "render",
+            "actual_weights": [0.0, 0.0, 0.25],
+            "image": "res://artifacts/face_acceptance/supplement-1792198101-55635/frame_008.png",
+            "requested": {
+              "left": 0.0,
+              "mode": "render",
+              "mouth": 0.25,
+              "pitch": 0.0,
+              "right": 0.0,
+              "yaw": 0.0
+            },
+            "sha256": "5b0338d1859321d834874700b8ba072cf641a6cc75c2d3799bb4a418d06e90fb",
+            "wire_visible": false
+          },
+          {
+            "actual_display_mode": "white",
+            "actual_weights": [0.0, 0.0, 0.25],
+            "image": "res://artifacts/face_acceptance/supplement-1792198101-55635/frame_009.png",
+            "requested": {
+              "left": 0.0,
+              "mode": "white",
+              "mouth": 0.25,
+              "pitch": 0.0,
+              "right": 0.0,
+              "yaw": 0.0
+            },
+            "sha256": "0876a49ddb5170423a1d1b334e2dab8737045cca9c96f7ea3527b1e02df05878",
+            "wire_visible": false
+          },
+          {
+            "actual_display_mode": "render",
+            "actual_weights": [0.0, 0.0, 0.5],
+            "image": "res://artifacts/face_acceptance/supplement-1792198101-55635/frame_010.png",
+            "requested": {
+              "left": 0.0,
+              "mode": "render",
+              "mouth": 0.5,
+              "pitch": 0.0,
+              "right": 0.0,
+              "yaw": 0.0
+            },
+            "sha256": "07b3ba19ab408f0bb0f5787c9b872fc9147823f1d4f7a7df9701a96bf106c22a",
+            "wire_visible": false
+          },
+          {
+            "actual_display_mode": "white",
+            "actual_weights": [0.0, 0.0, 0.5],
+            "image": "res://artifacts/face_acceptance/supplement-1792198101-55635/frame_011.png",
+            "requested": {
+              "left": 0.0,
+              "mode": "white",
+              "mouth": 0.5,
+              "pitch": 0.0,
+              "right": 0.0,
+              "yaw": 0.0
+            },
+            "sha256": "db575f903e4507d55f9ce3375d3f6b15abcfb401c4fdda0cb6221ee47fdece07",
+            "wire_visible": false
+          },
+          {
+            "actual_display_mode": "render",
+            "actual_weights": [0.0, 0.0, 0.75],
+            "image": "res://artifacts/face_acceptance/supplement-1792198101-55635/frame_012.png",
+            "requested": {
+              "left": 0.0,
+              "mode": "render",
+              "mouth": 0.75,
+              "pitch": 0.0,
+              "right": 0.0,
+              "yaw": 0.0
+            },
+            "sha256": "b7dc89e4a125045dab55f62b50a593c1b18e7fc09f4b36cd022563373301059c",
+            "wire_visible": false
+          },
+          {
+            "actual_display_mode": "white",
+            "actual_weights": [0.0, 0.0, 0.75],
+            "image": "res://artifacts/face_acceptance/supplement-1792198101-55635/frame_013.png",
+            "requested": {
+              "left": 0.0,
+              "mode": "white",
+              "mouth": 0.75,
+              "pitch": 0.0,
+              "right": 0.0,
+              "yaw": 0.0
+            },
+            "sha256": "9aeb323b977b767d50d4efca0343e40ef0c49b5775cd31fe57aaff9a4de05561",
+            "wire_visible": false
+          },
+          {
+            "actual_display_mode": "render",
+            "actual_weights": [0.0, 0.0, 1.0],
+            "image": "res://artifacts/face_acceptance/supplement-1792198101-55635/frame_014.png",
+            "requested": {
+              "left": 0.0,
+              "mode": "render",
+              "mouth": 1.0,
+              "pitch": 0.0,
+              "right": 0.0,
+              "yaw": 0.0
+            },
+            "sha256": "fe08a28ddac9e5e62664f5f40aa4561c14bf0c0d5214b06fd926bda015214373",
+            "wire_visible": false
+          },
+          {
+            "actual_display_mode": "white",
+            "actual_weights": [0.0, 0.0, 1.0],
+            "image": "res://artifacts/face_acceptance/supplement-1792198101-55635/frame_015.png",
+            "requested": {
+              "left": 0.0,
+              "mode": "white",
+              "mouth": 1.0,
+              "pitch": 0.0,
+              "right": 0.0,
+              "yaw": 0.0
+            },
+            "sha256": "43ef1291b85a796085dc897167176da0c938e30d3415faa1ff668162ac55146a",
+            "wire_visible": false
+          },
+          {
+            "actual_display_mode": "render",
+            "actual_weights": [0.0, 0.0, 0.25],
+            "image": "res://artifacts/face_acceptance/supplement-1792198101-55635/frame_016.png",
+            "requested": {
+              "left": 0.0,
+              "mode": "render",
+              "mouth": 0.25,
+              "pitch": 0.0,
+              "right": 0.0,
+              "yaw": -45.0
+            },
+            "sha256": "c6f1ecd46d307591dbdb129245ebcab5ceeb42567191a5f1f98a36b15c062ba9",
+            "wire_visible": false
+          },
+          {
+            "actual_display_mode": "white",
+            "actual_weights": [0.0, 0.0, 0.25],
+            "image": "res://artifacts/face_acceptance/supplement-1792198101-55635/frame_017.png",
+            "requested": {
+              "left": 0.0,
+              "mode": "white",
+              "mouth": 0.25,
+              "pitch": 0.0,
+              "right": 0.0,
+              "yaw": -45.0
+            },
+            "sha256": "451bba9b6ae43669d5398efd1a4eca1406bca096beb282a2dc4e640af5d62d4b",
+            "wire_visible": false
+          },
+          {
+            "actual_display_mode": "render",
+            "actual_weights": [0.0, 0.0, 0.5],
+            "image": "res://artifacts/face_acceptance/supplement-1792198101-55635/frame_018.png",
+            "requested": {
+              "left": 0.0,
+              "mode": "render",
+              "mouth": 0.5,
+              "pitch": 0.0,
+              "right": 0.0,
+              "yaw": -45.0
+            },
+            "sha256": "a13f7a34fe70094e3c8ac5e1a0e9efdfdb28f0cd4d31824ef059daabebd119c5",
+            "wire_visible": false
+          },
+          {
+            "actual_display_mode": "white",
+            "actual_weights": [0.0, 0.0, 0.5],
+            "image": "res://artifacts/face_acceptance/supplement-1792198101-55635/frame_019.png",
+            "requested": {
+              "left": 0.0,
+              "mode": "white",
+              "mouth": 0.5,
+              "pitch": 0.0,
+              "right": 0.0,
+              "yaw": -45.0
+            },
+            "sha256": "516515349d8eef6ee146bcb493967bfddf61efcdeaadd033102817a05ed5afaa",
+            "wire_visible": false
+          },
+          {
+            "actual_display_mode": "render",
+            "actual_weights": [0.0, 0.0, 0.75],
+            "image": "res://artifacts/face_acceptance/supplement-1792198101-55635/frame_020.png",
+            "requested": {
+              "left": 0.0,
+              "mode": "render",
+              "mouth": 0.75,
+              "pitch": 0.0,
+              "right": 0.0,
+              "yaw": -45.0
+            },
+            "sha256": "ee0829a2203015567b36821a453dc1d2209f23011fba11d3ab979b596bbbbd94",
+            "wire_visible": false
+          },
+          {
+            "actual_display_mode": "white",
+            "actual_weights": [0.0, 0.0, 0.75],
+            "image": "res://artifacts/face_acceptance/supplement-1792198101-55635/frame_021.png",
+            "requested": {
+              "left": 0.0,
+              "mode": "white",
+              "mouth": 0.75,
+              "pitch": 0.0,
+              "right": 0.0,
+              "yaw": -45.0
+            },
+            "sha256": "4fd5e8f4bc514d8ad95926b3711056a6cc0e1d0edab1869a59d42e2ac82ef39d",
+            "wire_visible": false
+          },
+          {
+            "actual_display_mode": "render",
+            "actual_weights": [0.0, 0.0, 1.0],
+            "image": "res://artifacts/face_acceptance/supplement-1792198101-55635/frame_022.png",
+            "requested": {
+              "left": 0.0,
+              "mode": "render",
+              "mouth": 1.0,
+              "pitch": 0.0,
+              "right": 0.0,
+              "yaw": -45.0
+            },
+            "sha256": "f697cc4dfc146a503a5868455b1f0f229cb43d9804a1d0b8d16766793b67999f",
+            "wire_visible": false
+          },
+          {
+            "actual_display_mode": "white",
+            "actual_weights": [0.0, 0.0, 1.0],
+            "image": "res://artifacts/face_acceptance/supplement-1792198101-55635/frame_023.png",
+            "requested": {
+              "left": 0.0,
+              "mode": "white",
+              "mouth": 1.0,
+              "pitch": 0.0,
+              "right": 0.0,
+              "yaw": -45.0
+            },
+            "sha256": "3fc1e484da509e3f42c13bfb68a8cc982bdb1d7fde59f1bf83351df3fbbb5934",
+            "wire_visible": false
+          },
+          {
+            "actual_display_mode": "render",
+            "actual_weights": [0.0, 0.0, 0.25],
+            "image": "res://artifacts/face_acceptance/supplement-1792198101-55635/frame_024.png",
+            "requested": {
+              "left": 0.0,
+              "mode": "render",
+              "mouth": 0.25,
+              "pitch": 0.0,
+              "right": 0.0,
+              "yaw": 45.0
+            },
+            "sha256": "73c09e2e7216901159eaab5651e6c96663f03e655bfa555ca97db8b3803835c4",
+            "wire_visible": false
+          },
+          {
+            "actual_display_mode": "white",
+            "actual_weights": [0.0, 0.0, 0.25],
+            "image": "res://artifacts/face_acceptance/supplement-1792198101-55635/frame_025.png",
+            "requested": {
+              "left": 0.0,
+              "mode": "white",
+              "mouth": 0.25,
+              "pitch": 0.0,
+              "right": 0.0,
+              "yaw": 45.0
+            },
+            "sha256": "c0f87d8f4883faa19aa1c2fc1f3c214c80a4e1d9bd14ddcfd7dd1396a38786ef",
+            "wire_visible": false
+          },
+          {
+            "actual_display_mode": "render",
+            "actual_weights": [0.0, 0.0, 0.5],
+            "image": "res://artifacts/face_acceptance/supplement-1792198101-55635/frame_026.png",
+            "requested": {
+              "left": 0.0,
+              "mode": "render",
+              "mouth": 0.5,
+              "pitch": 0.0,
+              "right": 0.0,
+              "yaw": 45.0
+            },
+            "sha256": "07b5a2a502d40ddd0293469e65b9f1ea7db6f4600f4ae273b0ed654db332226b",
+            "wire_visible": false
+          },
+          {
+            "actual_display_mode": "white",
+            "actual_weights": [0.0, 0.0, 0.5],
+            "image": "res://artifacts/face_acceptance/supplement-1792198101-55635/frame_027.png",
+            "requested": {
+              "left": 0.0,
+              "mode": "white",
+              "mouth": 0.5,
+              "pitch": 0.0,
+              "right": 0.0,
+              "yaw": 45.0
+            },
+            "sha256": "5ef63b9fd61153a4ba8444f6b29af0d5c7b3b2dc9035818699041ba2100bcc08",
+            "wire_visible": false
+          },
+          {
+            "actual_display_mode": "render",
+            "actual_weights": [0.0, 0.0, 0.75],
+            "image": "res://artifacts/face_acceptance/supplement-1792198101-55635/frame_028.png",
+            "requested": {
+              "left": 0.0,
+              "mode": "render",
+              "mouth": 0.75,
+              "pitch": 0.0,
+              "right": 0.0,
+              "yaw": 45.0
+            },
+            "sha256": "df64039a44261b804dfb9ed5d5eb2a056d4c1660815a9d815683c6a247c1915d",
+            "wire_visible": false
+          },
+          {
+            "actual_display_mode": "white",
+            "actual_weights": [0.0, 0.0, 0.75],
+            "image": "res://artifacts/face_acceptance/supplement-1792198101-55635/frame_029.png",
+            "requested": {
+              "left": 0.0,
+              "mode": "white",
+              "mouth": 0.75,
+              "pitch": 0.0,
+              "right": 0.0,
+              "yaw": 45.0
+            },
+            "sha256": "f32c331d8eedb697802474ac721a194eb61000e73cd35290cb739e14e8c316ed",
+            "wire_visible": false
+          },
+          {
+            "actual_display_mode": "render",
+            "actual_weights": [0.0, 0.0, 1.0],
+            "image": "res://artifacts/face_acceptance/supplement-1792198101-55635/frame_030.png",
+            "requested": {
+              "left": 0.0,
+              "mode": "render",
+              "mouth": 1.0,
+              "pitch": 0.0,
+              "right": 0.0,
+              "yaw": 45.0
+            },
+            "sha256": "5fef8e6ec77b47dcbd4f9dac2276d216efcdef8709fe9ac841294933137499ac",
+            "wire_visible": false
+          },
+          {
+            "actual_display_mode": "white",
+            "actual_weights": [0.0, 0.0, 1.0],
+            "image": "res://artifacts/face_acceptance/supplement-1792198101-55635/frame_031.png",
+            "requested": {
+              "left": 0.0,
+              "mode": "white",
+              "mouth": 1.0,
+              "pitch": 0.0,
+              "right": 0.0,
+              "yaw": 45.0
+            },
+            "sha256": "2c917ebd284c1c4c39f0f5b56cd3cee8d6ea22ae1154548c36346873eed85dc4",
+            "wire_visible": false
+          },
+          {
+            "actual_display_mode": "render",
+            "actual_weights": [0.0, 0.0, 0.0],
+            "image": "res://artifacts/face_acceptance/supplement-1792198101-55635/frame_032.png",
+            "requested": {
+              "left": 0.0,
+              "mode": "render",
+              "mouth": 0.0,
+              "pitch": 0.0,
+              "right": 0.0,
+              "yaw": -90.0
+            },
+            "sha256": "61375d8b3bec8ee35c0a97476bd8be0a582f9cbc25f66230d2247c24bcd0eb85",
+            "wire_visible": false
+          },
+          {
+            "actual_display_mode": "white",
+            "actual_weights": [0.0, 0.0, 0.0],
+            "image": "res://artifacts/face_acceptance/supplement-1792198101-55635/frame_033.png",
+            "requested": {
+              "left": 0.0,
+              "mode": "white",
+              "mouth": 0.0,
+              "pitch": 0.0,
+              "right": 0.0,
+              "yaw": -90.0
+            },
+            "sha256": "b9104837b827b72938029a55aa4c25e630facfb9a1176155a1f2e707ec1ca860",
+            "wire_visible": false
+          },
+          {
+            "actual_display_mode": "render",
+            "actual_weights": [0.25, 0.25, 0.0],
+            "image": "res://artifacts/face_acceptance/supplement-1792198101-55635/frame_034.png",
+            "requested": {
+              "left": 0.25,
+              "mode": "render",
+              "mouth": 0.0,
+              "pitch": 0.0,
+              "right": 0.25,
+              "yaw": -90.0
+            },
+            "sha256": "972caf1e9fea907252fe7ede94d3d1ba166591a1c280a7fa15f0bb4e14e58803",
+            "wire_visible": false
+          },
+          {
+            "actual_display_mode": "white",
+            "actual_weights": [0.25, 0.25, 0.0],
+            "image": "res://artifacts/face_acceptance/supplement-1792198101-55635/frame_035.png",
+            "requested": {
+              "left": 0.25,
+              "mode": "white",
+              "mouth": 0.0,
+              "pitch": 0.0,
+              "right": 0.25,
+              "yaw": -90.0
+            },
+            "sha256": "2c64266d3c82a0b168b06f4112ea90135eccbe6304c61dcf3148f50c23bc584a",
+            "wire_visible": false
+          },
+          {
+            "actual_display_mode": "render",
+            "actual_weights": [0.5, 0.5, 0.0],
+            "image": "res://artifacts/face_acceptance/supplement-1792198101-55635/frame_036.png",
+            "requested": {
+              "left": 0.5,
+              "mode": "render",
+              "mouth": 0.0,
+              "pitch": 0.0,
+              "right": 0.5,
+              "yaw": -90.0
+            },
+            "sha256": "2e2bbcfa025b454fa0d5eb0b2edea2480c50a15b68d907abc30c3daad48593f5",
+            "wire_visible": false
+          },
+          {
+            "actual_display_mode": "white",
+            "actual_weights": [0.5, 0.5, 0.0],
+            "image": "res://artifacts/face_acceptance/supplement-1792198101-55635/frame_037.png",
+            "requested": {
+              "left": 0.5,
+              "mode": "white",
+              "mouth": 0.0,
+              "pitch": 0.0,
+              "right": 0.5,
+              "yaw": -90.0
+            },
+            "sha256": "c3fce5e143f617a59daf716cd1fafbce02f6f8de8ca3a26104f4746322631eb6",
+            "wire_visible": false
+          },
+          {
+            "actual_display_mode": "render",
+            "actual_weights": [0.75, 0.75, 0.0],
+            "image": "res://artifacts/face_acceptance/supplement-1792198101-55635/frame_038.png",
+            "requested": {
+              "left": 0.75,
+              "mode": "render",
+              "mouth": 0.0,
+              "pitch": 0.0,
+              "right": 0.75,
+              "yaw": -90.0
+            },
+            "sha256": "c949396bc1594759e03e1147a426be20921ac551b75c25e96423f5d3c39d0ca7",
+            "wire_visible": false
+          },
+          {
+            "actual_display_mode": "white",
+            "actual_weights": [0.75, 0.75, 0.0],
+            "image": "res://artifacts/face_acceptance/supplement-1792198101-55635/frame_039.png",
+            "requested": {
+              "left": 0.75,
+              "mode": "white",
+              "mouth": 0.0,
+              "pitch": 0.0,
+              "right": 0.75,
+              "yaw": -90.0
+            },
+            "sha256": "46e4b4a48c9205c794760cb0e7e86b3ee957a462026b876be49d4a765007f352",
+            "wire_visible": false
+          },
+          {
+            "actual_display_mode": "render",
+            "actual_weights": [1.0, 1.0, 0.0],
+            "image": "res://artifacts/face_acceptance/supplement-1792198101-55635/frame_040.png",
+            "requested": {
+              "left": 1.0,
+              "mode": "render",
+              "mouth": 0.0,
+              "pitch": 0.0,
+              "right": 1.0,
+              "yaw": -90.0
+            },
+            "sha256": "862750a62465485bf3b8ccb11f225e7da0291d561152c702850f48e26d4cc2f2",
+            "wire_visible": false
+          },
+          {
+            "actual_display_mode": "white",
+            "actual_weights": [1.0, 1.0, 0.0],
+            "image": "res://artifacts/face_acceptance/supplement-1792198101-55635/frame_041.png",
+            "requested": {
+              "left": 1.0,
+              "mode": "white",
+              "mouth": 0.0,
+              "pitch": 0.0,
+              "right": 1.0,
+              "yaw": -90.0
+            },
+            "sha256": "971a4328b403c123a7dbf6aa355b54a1e69ba66ad6d2b88d5d63659667053dcf",
+            "wire_visible": false
+          }
+        ]
+      },
+      "acceptance_status": "Bounded comparison candidate only; not selected for delivery. Full directional-light review pending."
+    }
+  ]
+}
