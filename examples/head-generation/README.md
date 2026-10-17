@@ -1,6 +1,12 @@
 # Original semantic head-generation recipe
 
-Current review candidate:185. See review-results.md for actual checks and limitations.
+For the current experimental face-only workflow, see
+[Face-only creation and visual review](face-only-workflow.md). It documents the
+private baseline inputs, packaging and export contracts, and bounded native
+review evidence. Case709 remains the primary internal candidate; this does not
+replace the separately user-confirmed664 baseline below or imply final approval.
+
+Historical review candidate:185. See review-results.md for actual checks and limitations.
 
 Workflow: owner natural language → authoring brief → semantic planner mapping → face_style.json → packaged Beaver generation → native white/wire/render review. Do not run Blender from this packaging script. Generate bundle.py --output request.json and pass it through the existing Beaver blender.start tool.
 
