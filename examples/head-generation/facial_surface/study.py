@@ -16,6 +16,7 @@ from diagnostics import scope, measures
 sys.path.pop(0)
 sys.path.insert(0, str(HERE.parent / "semantic_eyes"))
 from parameters import adapt_style, validate as validate_eyes
+from source_upper_warp import adapt_face_source
 
 sys.path.pop(0)
 
@@ -28,6 +29,7 @@ def study(parameters, eyes):
         json.loads((recipe / "face_style.json").read_text()), validate_eyes(eyes)
     )
     c = style["calibration"]
+    source = adapt_face_source(source, bool(c.get("eye_upper_asymmetry", 0)))
     fit = fit_profile(source, c)
     base = scope(source, c, fit, 0)
     node = next(

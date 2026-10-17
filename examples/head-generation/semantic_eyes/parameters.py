@@ -2,12 +2,14 @@
 
 import copy
 import math
+from contour_warp import upper_shape, upper_shape_derivative
 
 # Multipliers default to one; offsets are fractions of calibrated face height H.
 LIMITS = {
     "eye_spacing": (1.0, 0.94, 1.04),
     "eye_width": (1.0, 0.92, 1.08),
     "upper_arch": (1.0, 0.70, 1.40),
+    "upper_asymmetry": (0.0, -0.10, 0.10),
     "lower_arch": (1.0, 0.50, 1.12),
     "lower_roundness": (1.0, 1.0, 1.25),
     "upper_roundness": (1.0, 1.0, 2.0),
@@ -81,6 +83,16 @@ def upper_change(t, calibration, parameters):
             * parameters["upper_horizontal_roundness"]
         ),
     ) ** (calibration["eye_upper_power"] * parameters["upper_roundness"])
+    if parameters["upper_asymmetry"]:
+        shaped = dict(
+            calibration,
+            eye_horizontal_power=calibration["eye_horizontal_power"]
+            * parameters["upper_horizontal_roundness"],
+            eye_upper_power=calibration["eye_upper_power"]
+            * parameters["upper_roundness"],
+            eye_upper_asymmetry=parameters["upper_asymmetry"],
+        )
+        new_arch = upper_shape(t, shaped)
     return calibration["eye_upper_arch"] * (parameters["upper_arch"] * new_arch - arch)
 
 
@@ -100,6 +112,12 @@ def adapt_style(original, request):
     c["eye_half_width"] *= p["eye_width"]
     c["eye_corner_y"] += p["eye_height_offset"]
     c["eye_corner_slope"] += p["corner_slope_offset"]
+    if p["upper_asymmetry"]:
+        if abs(c["eye_corner_slope"]) > 1e-12:
+            raise ValueError(
+                "Upper asymmetry requires level eye corners for the outer inverse"
+            )
+        c["eye_upper_asymmetry"] = p["upper_asymmetry"]
     c["eye_upper_arch"] *= p["upper_arch"]
     c["eye_upper_power"] *= p["upper_roundness"]
     c["eye_horizontal_power"] *= p["upper_horizontal_roundness"]
@@ -169,6 +187,8 @@ def adapt_style(original, request):
                 max(0.0, 1 - abs(tc) ** c["eye_horizontal_power"])
                 ** c["eye_upper_power"]
             )
+            if p["upper_asymmetry"]:
+                arch = upper_shape(tc, c)
             center = c["eye_upper_arch"] * arch + c["eye_corner_slope"] * tc * (
                 1 - style["accent_trajectory_slope_scale"]
             )
@@ -182,6 +202,10 @@ def adapt_style(original, request):
                 ) ** (v - 1) + c["eye_corner_slope"] * (
                     1 - style["accent_trajectory_slope_scale"]
                 )
+                if p["upper_asymmetry"]:
+                    slope = c["eye_upper_arch"] * upper_shape_derivative(join_t, c) + c[
+                        "eye_corner_slope"
+                    ] * (1 - style["accent_trajectory_slope_scale"])
                 tail_lift = 0.003 if style.get("illustrated_eye_art", False) else 0.020
                 end = tail_lift + c["eye_corner_slope"] * tail_end * (
                     1 - style["accent_trajectory_slope_scale"]

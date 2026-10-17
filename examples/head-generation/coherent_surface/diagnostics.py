@@ -18,12 +18,18 @@ FUNCTIONS = {
 
 
 def scope(source, c, fit, amount):
+    helpers = (
+        {"eye_warp", "eye_warp_derivative", "upper_shape", "upper_shape_derivative"}
+        if c.get("eye_upper_asymmetry", 0)
+        else set()
+    )
+    required = FUNCTIONS | helpers
     nodes = [
         n
         for n in ast.parse(source).body
-        if isinstance(n, ast.FunctionDef) and n.name in FUNCTIONS
+        if isinstance(n, ast.FunctionDef) and n.name in required
     ]
-    if {n.name for n in nodes} != FUNCTIONS:
+    if {n.name for n in nodes} != required:
         raise ValueError("Depth source contract changed")
     result = dict(
         C=c,

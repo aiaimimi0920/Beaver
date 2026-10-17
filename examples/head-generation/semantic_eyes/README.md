@@ -299,3 +299,32 @@ remain required; a displacement bound does not certify those clearances.
 `lower_roundness` is a bounded multiplier (1.0–1.25, default 1.0) for the lower aperture exponent. Increasing it raises intermediate lower-lid stations while preserving the central depth, corner endpoints, eye center and width; use `lower_arch` separately to adjust central depth. The default preserves the prior contour. It does not add asymmetric peak positioning or change the upper eyelid. Non-default values also use the matching inverse-power lower-pocket clearance classification. Blink, skin support and preflight receive the same adapted calibration. CPU tests do not certify native clearance or visual appeal; compare matched views and unchanged SDF shading policy before retaining a candidate.
 
 The range is provisional: a 2.0 candidate with lower_arch 0.70 failed the native continuous-pose triangle orientation guard; it was rejected, not retained. A 1.25 candidate passed generation, which does not certify all parameter combinations. Exactly 1.0 retains the legacy pocket classification for compatibility; opting into a non-default value also opts into the inverse-power classification. This compatibility switch is discrete even for an arbitrarily small shape change. Native pose and clearance checks remain mandatory.
+
+### Experimental upper-aperture asymmetry
+
+`upper_asymmetry` defaults to zero and is limited to [-0.10, 0.10]. Nonzero
+values require level corner calibration. The physical horizontal station,
+aperture width, lower contour, iris and eye centers stay fixed. Only the upper
+arch's shape coordinate uses `t + a * (1 - t*t)^3` inside [-1, 1], with identity
+outside. Positive values move the upper peak toward the nasal side for level
+corners; this is a stylistic experiment, not a universal beauty preference.
+The warp is globally increasing (derivative at least 0.82827 in this range),
+and its value and first two derivatives meet the identity extension at both
+ends. The existing outer inverse remains descending on its [0.4, 1] branch;
+heights above that branch keep the inherited endpoint saturation behavior.
+
+One helper contract drives the derived native contour, upper orbital support,
+lash guide and tail derivative, blink boundary and CPU interval enclosure.
+Facial preflight receives the same shape before fitting. The upper pocket
+classifier changes only its horizontal coordinate, retaining the legacy vertical
+classifier. Zero mode preserves inherited contour sources and calculations.
+The helper source texts are embedded in the retained packager as provenance;
+packager replay still requires the checkpoint recipe and its CPU dependencies.
+The generated native request is self-contained and remains within 64 outputs.
+
+The existing support certificate bounds the facial correction relative to its
+supplied support field, not the entire shape difference from a prior candidate.
+Patch envelope, clearance, attachment and continuous pose-orientation gates
+remain mandatory. Inspect neutral, partial/full blink, oblique and white-model
+views before retaining any nonzero candidate. CPU tests alone establish neither
+native validity nor visual improvement.

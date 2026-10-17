@@ -8,6 +8,7 @@ from pathlib import Path
 import re
 import tempfile
 from parameters import adapt_style, validate, adapt_lower_clearance
+from source_upper_warp import adapt_upper_sources, HELPERS
 
 HERE = Path(__file__).resolve().parent
 RECIPE = HERE.parent / "checkpoints/current"
@@ -142,9 +143,14 @@ def build_request(parameters, output_prefix, workspace, *, blink=False):
     sources["eye_socket.py"] = adapt_lower_clearance(
         sources["eye_socket.py"], p["lower_roundness"] != 1
     )
+    sources = adapt_upper_sources(sources, p["upper_asymmetry"] != 0)
     if blink:
         sources["semantic_eye_runtime.py"] += (
-            "\n\n" + (HERE / "blink_runtime.py").read_text()
+            "\n\n"
+            + (HELPERS if p["upper_asymmetry"] else "")
+            + (HERE / "blink_runtime.py")
+            .read_text()
+            .replace("from contour_warp import upper_shape\n", "")
         )
         sources["pipeline.py"] = replace_once(
             sources["pipeline.py"],
@@ -220,8 +226,20 @@ def build_request(parameters, output_prefix, workspace, *, blink=False):
     request["code"] = verification + request["code"]
     retained = {
         "semantic_parameters.json": json.dumps(p, indent=2),
-        "semantic_bundle.py": Path(__file__).read_text(),
-        "semantic_parameters.py": (HERE / "parameters.py").read_text(),
+        "semantic_bundle.py": Path(__file__).read_text()
+        + "\n\n# Frozen helper provenance; replay also requires the checkpoint recipe.\nRETAINED_UPPER_SHAPE_SOURCES = "
+        + repr(
+            {
+                "contour_warp.py": HELPERS,
+                "source_upper_warp.py": (HERE / "source_upper_warp.py").read_text(),
+            }
+        )
+        + "\n",
+        "semantic_parameters.py": HELPERS
+        + "\n\n"
+        + (HERE / "parameters.py")
+        .read_text()
+        .replace("from contour_warp import upper_shape, upper_shape_derivative\n", ""),
         "definition_guard.py": guard,
         "semantic_input_hashes.json": json.dumps(
             {
