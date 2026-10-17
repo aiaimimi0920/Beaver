@@ -31,6 +31,7 @@ pub fn prepare(
     tools: &BTreeMap<String, String>,
     inherited: BTreeMap<OsString, OsString>,
 ) -> Result<Launch> {
+    anyhow::ensure!(!crate::workflows::upgrade_blocked(store, task["projectId"].as_str().context("Project id missing")?)?, "NPR upgrade recovery pending");
     if crate::validation::task_gate::validation_only(task) {
         return Ok(Launch {
             external: None,
@@ -62,7 +63,7 @@ pub fn prepare(
     let task_id = task["id"].as_str().context("任务标识无效")?;
     let recorded_workspace = Path::new(task["workspace"].as_str().context("任务工作副本无效")?);
     let workspace = files.resolve_workspace(task_id, recorded_workspace)?;
-    crate::task_workflows::verify(&workspace, task)?;
+    crate::task_workflows::verify_for_execution(&workspace, task, store)?;
     let baseline = serde_json::from_value(task["baseline"].clone()).context("任务基线无效")?;
     crate::validation::task_completion::freeze_repair(store, files, &workspace, task)?;
     let environment = codex_home::prepare(
@@ -120,6 +121,7 @@ pub fn prepare_external(
     tools: &BTreeMap<String, String>,
     registry: crate::external_runs::ExternalRegistry,
 ) -> Result<Launch> {
+    anyhow::ensure!(!crate::workflows::upgrade_blocked(store, task["projectId"].as_str().context("Project id missing")?)?, "NPR upgrade recovery pending");
     anyhow::ensure!(
         crate::external_run_contract::enabled(task),
         "External execution mode required"
@@ -131,7 +133,7 @@ pub fn prepare_external(
             .context("Task workspace missing")?,
     );
     let workspace = files.resolve_workspace(id, recorded)?;
-    crate::task_workflows::verify(&workspace, task)?;
+    crate::task_workflows::verify_for_execution(&workspace, task, store)?;
     crate::validation::task_completion::freeze_repair(store, files, &workspace, task)?;
     let validate_only = crate::validation::task_gate::validation_only(task);
     Ok(Launch {

@@ -19,7 +19,8 @@ pub async fn call(host: Arc<Host>, method: String, input: Value) -> Result<Value
 
 fn dispatch(host: &Host, method: &str, input: Value) -> Result<Value> {
     match method {
-        "project.create" | "project.npr.install" | "workflow.list" | "workflow.run" => {
+        "project.create" | "project.npr.install" | "project.npr.inspectUpgrade"
+        | "project.npr.upgrade" | "project.npr.rollbackUpgrade" | "project.npr.reviewUpgrade" | "workflow.list" | "workflow.run" => {
             workflow::call(host, method, input)
         }
         "task.create" => {

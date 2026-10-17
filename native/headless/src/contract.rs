@@ -7,6 +7,10 @@ pub fn validate(method: &str, input: &Value) -> Result<()> {
         "state" | "settings.get" | "shutdown" | "external.pending" => ("", ""),
         "project.create" => ("parent:s,name:s,template:s", "design:o,blueprint:o,npr:o"),
         "project.npr.install" => ("id:s,godot:s", ""),
+        "project.npr.inspectUpgrade" => ("id:s", "taskId:s"),
+        "project.npr.upgrade" => ("id:s,expectedOldCommit:s,expectedRuntimeSha256:s", "taskId:s"),
+        "project.npr.reviewUpgrade" => ("id:s,taskId:s,operationId:s,expectedRuntimeSha256:s,expectedFrozenWorkflow:o,reviewedWorkflow:o,reviewReason:s,acceptance:s", ""),
+        "project.npr.rollbackUpgrade" => ("id:s,operationId:s", ""),
         "workflow.list" | "task.events" | "task.interrupt" => ("id:s", ""),
         "workflow.run" => ("id:s,workflow:s,action:s", "definition:s,camera:o,grayscale:b"),
         "external.context" | "external.history" => ("taskId:s", ""),
@@ -66,4 +70,28 @@ pub fn validate(method: &str, input: &Value) -> Result<()> {
         beaver_core::object_framework::require_legacy(&Value::Object(input.clone()))?;
     }
     Ok(())
+}
+
+#[cfg(test)]
+mod upgrade_tests {
+    use super::*;
+    use serde_json::json;
+
+    #[test]
+    fn upgrade_contract_requires_cas_and_explicit_review() -> Result<()> {
+        validate("project.npr.inspectUpgrade", &json!({"id":"p","taskId":"t"}))?;
+        let upgrade = json!({"id":"p","taskId":"t","expectedOldCommit":"old","expectedRuntimeSha256":"hash"});
+        validate("project.npr.upgrade", &upgrade)?;
+        for missing in ["expectedOldCommit", "expectedRuntimeSha256"] {
+            let mut invalid = upgrade.clone();
+            invalid.as_object_mut().unwrap().remove(missing);
+            assert!(validate("project.npr.upgrade", &invalid).is_err());
+        }
+        assert!(validate("project.npr.upgrade", &json!({"id":"p","path":"/arbitrary"})).is_err());
+        validate("project.npr.reviewUpgrade", &json!({"id":"p","taskId":"t","operationId":"o",
+            "expectedRuntimeSha256":"hash","expectedFrozenWorkflow":{},"reviewedWorkflow":{},
+            "reviewReason":"Reviewed dependency changes","acceptance":"Unchanged scope"}))?;
+        validate("project.npr.rollbackUpgrade", &json!({"id":"p","operationId":"o"}))?;
+        Ok(())
+    }
 }

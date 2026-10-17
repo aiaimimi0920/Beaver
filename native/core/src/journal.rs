@@ -72,7 +72,7 @@ impl<'a> Journal<'a> {
         Ok(())
     }
     pub fn blocked(&self, project: &str) -> Result<bool> {
-        Ok(crate::object_run_recovery::candidate::publication::blocked(
+        Ok(crate::workflows::upgrade_blocked(self.store, project)? || crate::object_run_recovery::candidate::publication::blocked(
             &self.store.connection,
             project,
         )? || self

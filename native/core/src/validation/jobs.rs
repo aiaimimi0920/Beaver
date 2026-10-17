@@ -67,6 +67,7 @@ fn claim(state: &State, kind: &str) -> Result<Option<(Run, Arc<AtomicBool>, Stor
         for run in store.list::<Run>("validationRun")? {
             let owned_by_storage = owned.contains(&run.project_id);
             if owned_by_storage
+                && !crate::workflows::upgrade_blocked(&store, &run.project_id)?
                 && run.managed
                 && matches_lane(&run.kind, kind)
                 && run.status == "queued"
@@ -92,6 +93,7 @@ fn claim(state: &State, kind: &str) -> Result<Option<(Run, Arc<AtomicBool>, Stor
         .map_err(|_| anyhow!("Database lock unavailable"))?;
     let current: Run = repository::get(&store, "validationRun", &run.id)?;
     if !owned_projects(&storage, &store, &project_ids)?.contains(&current.project_id)
+        || crate::workflows::upgrade_blocked(&store, &current.project_id)?
         || !current.managed
         || !matches_lane(&current.kind, kind)
         || current.status != "queued"
