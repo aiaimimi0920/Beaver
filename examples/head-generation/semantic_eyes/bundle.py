@@ -148,7 +148,7 @@ def build_request(parameters, output_prefix, workspace, *, blink=False):
             "        opened.value = 0.0",
             "        opened.value = 0.0\n"
             "        from semantic_eye_runtime import build_blink_shapes\n"
-            '        report["eyelid_closure"] = build_blink_shapes(members[0], semantic_part_ordinals, C)',
+            f'        report["eyelid_closure"] = build_blink_shapes(members[0], semantic_part_ordinals, C, ink_floor_closure={bool(style.get("illustrated_eye_art", False) and not p["short_upper_tuft"])!r})',
         )
         sources["glb_merge.py"] = replace_once(
             sources["glb_merge.py"],

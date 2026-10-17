@@ -118,7 +118,7 @@ mod tests {
         }
         let manifest = json!({"schemaVersion":1,"packages":{"npr-characters":{
             "status":"ready","sourcePath":"addons/npr_character_frame",
-            "sourceCommit":"05f3dceee965c9a5ec78ee8d159e962c133cfc57",
+            "sourceCommit":"eb5a05113492e1c1e291b3e8e33508b4cb5c0eaa",
             "contractVersion":"1.1.0","pluginVersion":"1.3.0"}}});
         std::fs::write(
             root.path().join(crate::workflows::RUNTIME_FILE),

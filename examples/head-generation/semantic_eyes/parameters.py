@@ -11,7 +11,7 @@ LIMITS = {
     "lower_arch": (1.0, 0.50, 1.12),
     "upper_roundness": (1.0, 1.0, 2.0),
     "upper_horizontal_roundness": (1.0, 0.70, 1.0),
-    "corner_slope_offset": (0.0, -0.008, 0.008),
+    "corner_slope_offset": (0.0, -0.018, 0.008),
     "eye_height_offset": (0.0, -0.006, 0.006),
     "iris_width": (1.0, 0.90, 1.08),
     "iris_height": (1.0, 0.90, 1.08),
@@ -144,10 +144,13 @@ def adapt_style(original, request):
     # the original unrelated hand-authored rise profile. Blend zero is identity.
     if p["lash_contour_follow"]:
         rails = []
+        tail_end = 1.06 if style.get("illustrated_eye_art", False) else 1.12
         for i in range(21):
-            t = -0.98 + 2.10 * i / 20
+            rail_span = 2.04 if style.get("illustrated_eye_art", False) else 2.10
+            t = -0.98 + rail_span * i / 20
             q = i / 20
-            tc = min(t, 0.75)
+            join_t = 0.96 if style.get("illustrated_eye_art", False) else 0.75
+            tc = min(t, join_t)
             arch = (
                 max(0.0, 1 - abs(tc) ** c["eye_horizontal_power"])
                 ** c["eye_upper_power"]
@@ -155,17 +158,18 @@ def adapt_style(original, request):
             center = c["eye_upper_arch"] * arch + c["eye_corner_slope"] * tc * (
                 1 - style["accent_trajectory_slope_scale"]
             )
-            if t > 0.75:
-                span = 0.37
-                u = (t - 0.75) / span
+            if t > join_t:
+                span = 0.10 if style.get("illustrated_eye_art", False) else 0.37
+                u = (t - join_t) / span
                 h = c["eye_horizontal_power"]
                 v = c["eye_upper_power"]
-                slope = -c["eye_upper_arch"] * v * h * 0.75 ** (h - 1) * (
-                    1 - 0.75**h
+                slope = -c["eye_upper_arch"] * v * h * join_t ** (h - 1) * (
+                    1 - join_t**h
                 ) ** (v - 1) + c["eye_corner_slope"] * (
                     1 - style["accent_trajectory_slope_scale"]
                 )
-                end = 0.020 + c["eye_corner_slope"] * 1.12 * (
+                tail_lift = 0.003 if style.get("illustrated_eye_art", False) else 0.020
+                end = tail_lift + c["eye_corner_slope"] * tail_end * (
                     1 - style["accent_trajectory_slope_scale"]
                 )
                 center = (

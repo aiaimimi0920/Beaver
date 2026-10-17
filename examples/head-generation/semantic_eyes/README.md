@@ -32,7 +32,7 @@ Multipliers default to 1:
 
 Offsets default to 0, in fractions of calibrated face height:
 
-- corner_slope_offset ±.008; eye_height_offset ±.006
+- corner_slope_offset −.018…+.008; eye_height_offset ±.006
 - iris_vertical_offset ±.01
 - brow_height_offset and brow_rise_offset ±.012
 
@@ -233,6 +233,14 @@ boundaries meet on a gently curved seam. This prevents the collapsed or reversed
 corner triangles found in the rejected full-translation prototype. Eyebrows,
 iris, ears and rear shell remain fixed by the explicit semantic membership.
 The neutral shape and existing mouth shape are not edited.
+
+For the opt-in illustrated profile without an independent upper tuft, final
+main-lash columns use their generated lower edge as the closure anchor. This
+avoids carrying an authored below-aperture offset underneath the closed seam.
+The entire signed-x column translates together, retaining its cross-section.
+Other profiles and retained tufts use the existing analytic-aperture mapping.
+This does not prove posed attachment or collision freedom; native review is
+required, including the transition to stationary outermost vertices.
 
 The native generator rejects any triangle coupling both independent eye
 controls. For every triangle it minimizes the quadratic oriented-area projection

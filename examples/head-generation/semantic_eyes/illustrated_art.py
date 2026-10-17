@@ -64,6 +64,13 @@ def adapt_sources(original):
         "            sclera_island = 0.6 < u < 0.95 and 0.405 < (py + 0.5) / 256 < 0.495\n"
         "            eye_pixel = (flat_region and eye[slot] or iris_island or sclera_island) and (not ear_island)",
     )
+    texture = once(
+        texture,
+        "            makeup.extend((0, 1 if flat_region and lip[slot] else 0, 0, 1))",
+        "            ink_island = 0.6 < u < 0.95 and 0.86 < (py + 0.5) / 256 < 0.89\n"
+        "            holdout = flat_region or iris_island or sclera_island or ink_island\n"
+        "            makeup.extend((0, 1 if flat_region and lip[slot] else 0, 1 if holdout else 0, 1))",
+    )
     sources["textures.py"] = texture
     sources["pipeline.py"] = once(
         sources["pipeline.py"],
@@ -74,6 +81,12 @@ def adapt_sources(original):
                 sy = ((v.z-Y0)/H-C["eye_corner_y"])/0.50+0.5
                 vv = 0.405+0.09*max(0.002,min(0.998,sy))
             if o.get("iris_detail", False):""",
+    )
+    sources["pipeline.py"] = once(
+        sources["pipeline.py"],
+        'Path(beaver_output(OUT + "aster_definition.tres")).write_text(definition)',
+        'definition = definition.replace(\'face_map = ExtResource("11")\', \'face_map = ExtResource("11")\\nface_outline_control = ExtResource("11")\')\n'
+        'Path(beaver_output(OUT + "aster_definition.tres")).write_text(definition)',
     )
     sources["eye_socket.py"] = once(
         sources["eye_socket.py"], "(0.012, 0.014, 0.024)", "(0.018, 0.055, 0.052)"

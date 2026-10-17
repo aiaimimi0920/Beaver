@@ -245,7 +245,8 @@ export passed structural, finite-stream, three-morph and same-job embedded-atlas
 checks (8,182 vertices, 10,972 triangles). 69 render/white/blink and 42 supplemental
 wireframe/opposite-side/mouth captures were checked against their actual weights,
 display modes, source identity and image hashes, then visually reviewed. This is
-an experimental improvement candidate, not final aesthetic acceptance. Existing
+a technically checked candidate that the user subsequently rejected for an
+upturned aperture. It is not aesthetic acceptance. Existing
 white-model cheek/temple shading bands and exact tangent-repeat limitations remain.
 No hair/body geometry was redesigned; the showcase still uses hidden frozen roles.
 
@@ -253,3 +254,35 @@ The source adaptation is retained in the generated `facial_surface_preflight.jso
 under `packager_helpers.semantic_illustrated_art.py`; transformed native sources
 are retained alongside the output. No third-party reference images or models are
 included in this profile.
+
+### Level-corner rounded-eye comparison
+
+`emerald-level-eyes.json` is a new opt-in comparison, using the illustrated
+profile with `--blink`. It cancels the baseline corner rise with
+`corner_slope_offset=-0.014`, uses eye width `1.0`, upper/lower arch `1.4/1.0`,
+and a restrained main lash with no independent upper tuft. The illustrated main
+rail follows the aperture to station 0.96 before a short outer return ending at
+1.06. Non-illustrated profile rails retain their previous constants.
+
+Use surface parameters `{"axial_smoothing":0.5,"cheek_roundness":0.05,"orbit_shallowing":0.15}`
+and the unchanged 0.0042 m support budget. The candidate's conservative bound is
+0.0036192162826032934 m. Lowering orbital adjustment, rather than widening the
+budget, makes room for the rounder aperture.
+
+Cases721 and723 improved the neutral contour but failed internal posed visual
+review because dark outer-lash fragments remained below the closed eyelid. They
+must not be treated as accepted models. Case724 tests anchoring the final generated
+main-lash column floor to the closed seam, instead of translating every column
+from the analytic aperture. This did not remove the visible fragments: a native
+magenta-outline isolation proved they came from exposed backfaces in the outline
+pass. Case725 adds an explicit control-map holdout for internal graphic/ocular
+atlas islands and binds it to the framework Face outline control. Native posed
+acceptance is pending. The correction
+is enabled only for illustrated eyes without a retained upper tuft; old profiles
+and retained-tuft motion keep their previous behavior.
+
+The illustrated profile reuses the existing face-map blue channel for outline
+holdout; red and green meanings stay unchanged. Skin atlas and ear islands remain
+unmasked. This requires the NPR framework's full-holdout fragment discard fix:
+zero extrusion width alone does not suppress inverted-hull backface fill. The
+map does not hide base-color geometry or disable the whole character outline.
