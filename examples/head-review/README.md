@@ -1,4 +1,4 @@
-# 664 head review and SDF controls
+# Head review and SDF controls
 
 Latest accepted checkpoint: 2026-10-15. Candidate geometry 662 plus corrected SDF664. The source-only example includes no private/reference assets.
 
@@ -12,7 +12,7 @@ The SDF implementation uses project-level extensions in sdf360, preserving pinne
 
 See ../head-generation/checkpoints/current/README.md for authorized baseline dependencies and ../head-generation/sdf360/README.md for native bake requests. The head-only scope does not claim full-wardrobe or general cast-shadow acceptance.
 
-Historical implementation records remain in Git history; the current source is the 664 publication checkpoint. No task databases, credentials, imported reference textures, runtime logs or user-local absolute paths are part of this source delivery.
+Historical implementation records remain in Git history; 664 is the separately accepted asset checkpoint, while the source includes the subsequent viewer improvements documented below. No task databases, credentials, imported reference textures, runtime logs or user-local absolute paths are part of this source delivery.
 
 ## Single-model close-up review
 
@@ -68,3 +68,20 @@ It covers real capture/cancel/restore and persisted weight metadata, in addition
 to render/white/wire synchronization and source identity. A separate supported
 variation passed 127 earlier checks. Manual slider clicks and reset were also
 captured. Restore the ordinary head-review scene after running the probe.
+
+## Dedicated face-review presentation
+
+The review subclass now hides wardrobe navigation, full/half-body views, Save
+and hair-only controls. Frozen Body/Hair roles remain loaded by the production
+actor but are hidden by default; this is not a new Face-only runtime format.
+The full wardrobe scene is unchanged. Advanced B/H visibility shortcuts remain
+available for diagnostics, while the default interface focuses on face angles,
+render/white/wire modes, light direction, outline, zoom and model comparison.
+
+The retained `tests/face_review_scope_probe.gd` observation records 30 actual
+GUI checks on a blink-capable candidate: hidden controls/roles, both comparison
+panes, blink-control availability, display-mode/wire readback, camera reset,
+input/update restoration and unchanged source geometry. It is an explicit
+temporary native probe; restore the ordinary scene afterward. The legacy GUT
+fixture assertion was updated from four sliders to two, but that private
+head188 fixture was not available for a separate GUT execution in this run.

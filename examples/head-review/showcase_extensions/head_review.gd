@@ -45,6 +45,7 @@ func _ready() -> void:
 		return
 	# Head-only comparison: visibility changes are preview-only.
 	preview.meshes[0].visible = false
+	preview.meshes[2].visible = false
 	var reference_head := preview.character.get_node_or_null("Head") as Node3D
 	if character_definition.resource_path.contains("head_recovery_900/") and reference_head != null:
 		reference_head.rotation = Vector3.ZERO
@@ -68,14 +69,18 @@ func _ready() -> void:
 	_build_ui()
 	for child in get_children():
 		if child is Label and child.text.begins_with("V"):
-			child.text = "NPR 1.3.0 · 头部审查"
-	for i in _navigation.size():
-		_navigation[i].disabled = i not in [2, 4, 6, 7, 8]
-		if _navigation[i].disabled:
-			_navigation[i].tooltip_text = "本轮仅审查头部；旧备份的此项作者数据尚未恢复"
+			child.text = "NPR 1.3.0 · 脸部审查"
+		elif child is Label and child.text.ends_with("角色装扮"):
+			child.text = character_display_name + " / 脸模"
+	# Reuse the production stage without presenting unrelated wardrobe controls.
+	get_node("Navigation").hide()
 	get_node("Save").disabled = true
-	get_node("Save").tooltip_text = "头部审查模式不写入完整装扮方案"
-	_status.text = "头部审查 · 动态表情与完整装扮待恢复"
+	get_node("Save").hide()
+	for name in ["FullView", "HalfView", "HairToggle"]:
+		find_child(name, true, false).hide()
+	find_child("Reset", true, false).text = "重置显示"
+	find_child("ResetView", true, false).tooltip_text = "恢复脸部正面取景、平移与缩放；不修改模型。"
+	_status.text = "脸部审查 · 模型对比中可检查已有表情"
 	select_section(6)
 	set_view("face")
 	print(
@@ -174,8 +179,8 @@ func select_section(index: int) -> void:
 		child.queue_free()
 	for i in _navigation.size():
 		_navigation[i].set_pressed_no_signal(i == index)
-	_section_title.text = "头部制作审查" if index != 4 else "灯光渲染"
-	_paragraph("仅看头部，默认正交。B：身体；H：头发；O：透视切换。完整人物尚未验收。")
+	_section_title.text = "脸部建模审查"
+	_paragraph("默认仅显示脸部，采用正交取景。O：透视切换。模型对比中可检查已有表情。")
 	for row in [
 		["正面", 0.0, 0.0],
 		["左45°", -45.0, 0.0],
@@ -191,14 +196,12 @@ func select_section(index: int) -> void:
 			)
 		)
 	var text := "运行时三角面数（不等同 Blender 作者四边面）\n"
-	for role in [1, 2]:
+	for role in [1]:
 		var a: Array = preview.meshes[role].mesh.surface_get_arrays(0)
 		var indices: PackedInt32Array = a[Mesh.ARRAY_INDEX]
 		text += "%s：%d\n" % [["Body", "Face", "Hair"][role], indices.size() / 3]
 	_paragraph(text)
 	_add_slider("主光方位", -180.0, 180.0, preview.light_yaw, func(v: float): preview.light_yaw = v)
-	_add_slider("发丝高光", 0.0, 1.0, 0.32, preview.set_hair_highlight)
-	_add_slider("头发接触阴影", 0.0, 1.0, 0.35, preview.set_hair_contact)
 	_add_slider("轮廓线宽", 0.0, 2.0, 1.0, preview.set_outline_width)
 
 

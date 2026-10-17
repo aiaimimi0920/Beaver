@@ -3,7 +3,10 @@ extends GutTest
 
 const REVIEW = preload("res://showcase/aster_head_review.tscn")
 const ORIGINAL = preload("res://assets/aster/head_recovery_188/aster_definition.tres")
-const WARDROBE_CONFIG = preload("res://addons/npr_character_frame/showcase/wardrobe_configuration.gd")
+const WARDROBE_CONFIG = preload(
+	"res://addons/npr_character_frame/showcase/wardrobe_configuration.gd"
+)
+
 
 func test_head_review_initializes_without_mutating_authoring_definition() -> void:
 	var original_height: float = ORIGINAL.display_height
@@ -19,13 +22,18 @@ func test_head_review_initializes_without_mutating_authoring_definition() -> voi
 	assert_eq(ORIGINAL.model_scene, original_scene)
 	assert_eq(ORIGINAL.display_height, original_height)
 	assert_false(review.preview.meshes[0].visible)
+	assert_false(review.preview.meshes[2].visible)
+	assert_false(review.get_node("Navigation").visible)
+	assert_false(review.get_node("Save").visible)
+	for name in ["FullView", "HalfView", "HairToggle"]:
+		assert_false(review.find_child(name, true, false).visible)
 	assert_eq(review.camera.projection, Camera3D.PROJECTION_ORTHOGONAL)
 	assert_true(review.get_node("Save").disabled)
 	var slider_count := 0
 	for control in review._content.get_children():
 		if control is HSlider:
 			slider_count += 1
-	assert_eq(slider_count, 4)
+	assert_eq(slider_count, 2)
 	review._head_angle(15.0, 0.0)
 	assert_almost_eq(review.turntable.rotation_degrees.y, 15.0, 0.001)
 	review.set_view("full")
@@ -34,6 +42,7 @@ func test_head_review_initializes_without_mutating_authoring_definition() -> voi
 	assert_almost_eq(review.turntable.rotation_degrees.y, 0.0, 0.001)
 	assert_almost_eq(review._target.y, review._head_focus.y, 0.001)
 	assert_eq(ORIGINAL.display_height, original_height)
+
 
 func test_head_only_definition_does_not_pass_full_wardrobe_acceptance() -> void:
 	var errors: PackedStringArray = WARDROBE_CONFIG.validate(ORIGINAL, "aster", "Aster", "")
