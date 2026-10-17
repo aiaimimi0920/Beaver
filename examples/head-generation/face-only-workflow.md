@@ -124,6 +124,10 @@ wink-with-mouth captures reviewed with weight readback and source identity
 checks. These are bounded secondary parameter cases, not improvements over or
 replacements for primary case709, and do not establish all-parameter stability.
 The existing white-model cheek shading bands remain in both variations.
+The per-case controls, native job IDs, all 69 capture hashes/poses and review
+records are retained in [variation evidence](semantic_eyes/variation-evidence.json).
+These blink-pose captures are separate from the UI cancellation probe; the latter
+does not provide visual acceptance.
 
 The rejected full-translation blink prototype folded eight eye-corner triangles.
 The retained closure keeps a small monotonic skin span and passes a positive
