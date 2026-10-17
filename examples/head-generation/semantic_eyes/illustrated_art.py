@@ -56,7 +56,8 @@ SKIN_HOLDOUT = """def ocular_skin_holdout(u, v):
     y = 1.5 + (v - 0.02) / 0.96 * 0.31
     t = (abs(x) / H - C["eye_center_x"]) / C["eye_half_width"]
     center = Y0 + H * (C["eye_corner_y"] + C["eye_corner_slope"] * t)
-    rx = 1.08 * H * C["eye_half_width"]
+    # Medial skin is exposed by oblique full blinks; preserve the temporal reach.
+    rx = (1.40 if abs(x) < H*C["eye_center_x"] else 1.08) * H * C["eye_half_width"]
     arch = C["eye_upper_arch"] if y >= center else C["eye_lower_arch"]
     ry = H * arch + 0.002
     q = sqrt(((abs(x) - H*C["eye_center_x"])/rx)**2 + ((y-center)/ry)**2)

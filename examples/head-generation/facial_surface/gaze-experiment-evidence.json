@@ -96,6 +96,31 @@
       "version": 731,
       "acceptance": "rejected",
       "reason": "Spacing .92 with adaptive medial collar failed native posed-triangle orientation. Experimental collar reverted; no guard bypass."
+    },
+    "734": {
+      "version": 734,
+      "verified_captures": 69,
+      "manifest": "res://artifacts/blink_probe/blink-1792232168-4249/manifest.json",
+      "acceptance": "rejected",
+      "root_review": "Original narrow skin mask did not remove the main medial closed-eye line; rejected."
+    },
+    "735": {
+      "version": 735,
+      "verified_captures": 69,
+      "manifest": "res://artifacts/blink_probe/blink-1792233509-23916/manifest.json",
+      "acceptance": "rejected",
+      "root_review": "Temporal extension did not remove the line; rejected and source reverted."
+    },
+    "736": {
+      "version": 736,
+      "generation_job": "c2a71af5-a001-4a15-94e2-1584288d98f1",
+      "sdf_job": "c8d5d7a8-2173-48d1-b998-2cdef5ecd422",
+      "generation_and_sdf": "succeeded",
+      "verified_captures": 0,
+      "acceptance": "pending package migration and full native review",
+      "geometry_equivalence": "Triangle-corner attributes and all morph deltas equal 733, excluding known nondeterministic tangents; material/images excluded",
+      "configuration": "emerald-medial-holdout-eyes.json",
+      "dependency_fix": "https://github.com/aiaimimi0920/NPRCharacterFrame/pull/10"
     }
   },
   "plane_experiment": {
@@ -110,8 +135,9 @@
   },
   "ocular_skin_outline_holdout": {
     "default": 0,
-    "native_status": "UNTESTED",
-    "scope": "Optional bounded skin-atlas ocular mask; CPU coverage only"
+    "native_status": "DIAGNOSTIC_ONLY; full candidate review blocked by pinned dependency migration",
+    "scope": "Medial radius 1.40, temporal radius 1.08. Same geometry as 733. Requires fragment base-level coverage sampling; ordinary mip sampling leaves a line.",
+    "diagnostic": "Same native closed-eye -45-degree view and control map: explicit fragment LOD0 removed the residual vertical line while nose/face outlines remained. Full pose and distance review pending."
   },
   "limitations": [
     "No final consumer aesthetic acceptance",
@@ -121,7 +147,7 @@
   ],
   "spacing_config": "emerald-compact-spacing-eyes.json",
   "preferred_internal_candidate": {
-    "native_case": 729,
-    "scope": "Subjective root whole-face composition preference over 726/727; not user acceptance"
+    "native_case": 733,
+    "scope": "User said the result looked good on 2026-10-17 and requested further optimization; retained baseline, not final acceptance"
   }
 }

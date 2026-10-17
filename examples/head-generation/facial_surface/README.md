@@ -370,3 +370,20 @@ parameter range. No geometry orientation or overlap guard was weakened.
 Use the native case records for actual capture and aesthetic-review status.
 CPU success and native structural validation do not establish aesthetic
 acceptance or complete posed-intersection safety.
+
+### Outline follow-up (734–736)
+
+733 remains the user-favored baseline. 734's original optional mask and 735's
+temporal extension did not remove the main oblique closed-eye line. Neither was
+selected. A native material diagnostic identified implicit mip averaging of the
+fragment coverage mask; explicit LOD0 removed the line with the same medial
+mask, while retaining the inspected nose and face outlines.
+
+`emerald-medial-holdout-eyes.json` retains the 736 experiment. The medial mask
+radius is 1.40 while temporal reach stays 1.08; the disabled default remains
+unchanged. Generation and SDF succeeded, but complete native review is pending
+[the NPR coverage fix](https://github.com/aiaimimi0920/NPRCharacterFrame/pull/10)
+and an approved dependency migration. The package integrity guard rejected a
+direct modified dependency, and the pinned file was restored. Do not treat the
+new config as delivered or visually accepted. CPU mask contracts do not certify
+filtered appearance, all poses, or distant temporal stability.

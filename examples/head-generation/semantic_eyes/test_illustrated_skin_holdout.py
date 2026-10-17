@@ -69,6 +69,33 @@ class IllustratedSkinHoldoutTests(unittest.TestCase):
                 self.assertEqual(self.mask(*self.uv(x, y)), 1)
                 self.assertEqual(self.mask(*self.uv(-x, y)), 1)
 
+    def test_medial_expansion_preserves_temporal_extent_and_symmetry(self):
+        c = self.c
+        h = c["height_m"]
+        cx = h * c["eye_center_x"]
+        cy = c["origin_y_m"] + h * c["eye_corner_y"]
+        for direction, scale in ((-1, 1.40), (1, 1.08)):
+            for q, expected in ((0.99, 1.0), (1.04, 0.5), (1.081, 0.0)):
+                x = cx + direction * scale * h * c["eye_half_width"] * q
+                for side in (-1, 1):
+                    self.assertAlmostEqual(self.mask(*self.uv(side * x, cy)), expected)
+
+    def test_supported_width_spacing_extrema_keep_nasal_center_clear(self):
+        base = json.loads((self.root / "face_style.json").read_text())
+        for spacing in (0.94, 1.04):
+            for width in (0.92, 1.08):
+                c = adapt_style(base, {"eye_spacing": spacing, "eye_width": width})[
+                    "calibration"
+                ]
+                self.ns["C"] = c
+                h, y0 = self.ns["H"], self.ns["Y0"]
+                cy = y0 + h * c["eye_corner_y"]
+                self.assertEqual(self.mask(*self.uv(0, cy)), 0.0)
+                for side in (-1, 1):
+                    x = side * h * (c["eye_center_x"] - c["eye_half_width"])
+                    y = cy - h * c["eye_corner_slope"]
+                    self.assertEqual(self.mask(*self.uv(x, y)), 1.0)
+
     def test_disabled_mask_preserves_entire_legacy_control_map(self):
         self.ns["STYLE"].clear()
         pixel, legacy = self.pixel_function(), self.pixel_function(legacy=True)
@@ -136,7 +163,7 @@ class IllustratedSkinHoldoutTests(unittest.TestCase):
         c = self.c
         h = c["height_m"]
         cx, cy = h * c["eye_center_x"], c["origin_y_m"] + h * c["eye_corner_y"]
-        reach = 1.08 * 1.08 * h * c["eye_half_width"]
+        reach = 1.08 * 1.40 * h * c["eye_half_width"]
         lower = cy - 1.08 * (h * c["eye_lower_arch"] + 0.002)
         upper = cy + 1.08 * (h * c["eye_upper_arch"] + 0.002)
         changed = plateau = transition = 0
@@ -158,13 +185,13 @@ class IllustratedSkinHoldoutTests(unittest.TestCase):
                     self.assertTrue(cx - reach < abs(x) < cx + reach)
                     self.assertTrue(lower < y < upper)
                     self.assertGreater(
-                        abs(x), 0.022
-                    )  # Main nose stays outside support.
+                        abs(x), cx - reach
+                    )  # Nasal core stays outside expanded medial support.
                     plateau += after[2] == 1
                     transition += 0 < after[2] < 1
                 if 0.02 < u < 0.55:
                     x = ((u - 0.02) / 0.53 - 0.5) * 0.235
-                    if abs(x) <= 0.022 or abs(x) >= 0.083:
+                    if abs(x) <= cx - reach or abs(x) >= 0.083:
                         self.assertEqual(before, after)
         self.assertGreater(changed, 0)
         self.assertGreater(plateau, 0)
