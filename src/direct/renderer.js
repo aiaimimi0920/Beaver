@@ -4,7 +4,40 @@ let state,
   lastRequest,
   lastJob,
   busy = false;
+// Bound only the DOM presentation; authoritative receipts and context stay intact.
+function displayCopy(value, depth = 0, budget = { left: 400 }) {
+  if (--budget.left < 0) return "[display limit; full receipt retained]";
+  if (typeof value === "string")
+    return value.length > 2000
+      ? value.slice(0, 1000) + " [display truncated] " + value.slice(-1000)
+      : value;
+  if (!value || typeof value !== "object") return value;
+  if (depth >= 6) return "[nested payload omitted from display]";
+  if (Array.isArray(value)) {
+    const items = value
+      .slice(0, 60)
+      .map((item) => displayCopy(item, depth + 1, budget));
+    if (value.length > 60)
+      items.push("[additional items omitted from display]");
+    return items;
+  }
+  const result = Object.create(null);
+  let count = 0;
+  for (const key in value) {
+    if (!Object.hasOwn(value, key)) continue;
+    if (count++ >= 60 || budget.left <= 0) break;
+    const label =
+      key.length > 200 ? key.slice(0, 200) + " [key truncated]" : key;
+    result[label] =
+      key === "fingerprint"
+        ? "[full fingerprint retained in receipt log]"
+        : displayCopy(value[key], depth + 1, budget);
+  }
+  return result;
+}
+
 const print = (value) => {
+  value = displayCopy(value);
   const texts = [];
   function collect(v, key = "") {
     if (
@@ -100,7 +133,7 @@ async function getContext() {
   context = await window.beaver.call("external.context", {
     taskId: $("task").value,
   });
-  $("details").textContent = JSON.stringify(context, null, 2);
+  $("details").textContent = JSON.stringify(displayCopy(context), null, 2);
   return context;
 }
 async function submit(method, args) {
