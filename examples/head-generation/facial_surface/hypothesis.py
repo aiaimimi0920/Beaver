@@ -6,6 +6,7 @@ BOUNDS = {
     "axial_smoothing": (0.0, 1.0),
     "cheek_roundness": (0.0, 0.15),
     "orbit_shallowing": (0.0, 0.5),
+    "orbit_rim_flattening": (0.0, 0.15),
 }
 
 

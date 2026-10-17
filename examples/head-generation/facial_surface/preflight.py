@@ -4,7 +4,7 @@ import ast
 from study import scope, fit_profile
 from transverse_fit import fit_response, continuous_base_bound
 from hypothesis import validate
-from runtime_field import base_delta
+from runtime_field import base_delta, rim_slope_delta
 from ocular_fit import fit_plane
 from interval_bounds import aperture_gap_bound, surface_motion_bound
 
@@ -31,6 +31,7 @@ def prepare(source, calibration, parameters, *, baseline_iris_plane_slope=None):
         lambda x, y: old["rim_depth"](x, y)
         + correction(x, y)
         + p["orbit_shallowing"] * (old["base_depth"](x, y) - old["rim_depth"](x, y))
+        + rim_slope_delta(x, calibration, data)
     )
     data["ocular_plane"] = fit_plane(calibration, old, changed)
     # Horizontal art-plane change is independent of the fitted orbital displacement.
@@ -58,10 +59,14 @@ def prepare(source, calibration, parameters, *, baseline_iris_plane_slope=None):
         data["transverse"],
     )
     aperture = aperture_gap_bound(calibration)
-    limits = surface_motion_bound(calibration, bound, p["orbit_shallowing"])
+    limits = surface_motion_bound(
+        calibration, bound, p["orbit_shallowing"],
+        rim_flattening=p["orbit_rim_flattening"],
+    )
     limits["aperture_rim_displacement_bound_m"] = bound + p["orbit_shallowing"] * max(
         abs(aperture["minimum_m"]), abs(aperture["maximum_m"])
     )
+    limits["aperture_rim_displacement_bound_m"] += limits["rim_slope_endpoint_bound_m"]
     # Medial crease correction is disjoint from the orbital support band.
     from interval_bounds import curve as interval_curve, I
 
