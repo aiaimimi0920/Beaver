@@ -84,6 +84,7 @@ def rim_depth(x, y, check_support=True):
     old = inherited_rim_depth(x, y)
     move = base_delta(x, y, C, curve, DATA)
     move += DATA['parameters']['orbit_shallowing'] * (inherited_base_depth(x, y) - old)
+    move += rim_slope_delta(x, C, DATA)
     if check_support and abs(move) > REVIEWED_BOUND:
         raise ValueError('Actual rim/support call exceeds reviewed displacement bound')
     return old + move
@@ -101,7 +102,7 @@ def depth(x, y):"""
             "    return result",
         )
         face = (
-            "from facial_surface_runtime import base_delta, ocular_delta, DATA, REVIEWED_BOUND, blend_medial_normal\n"
+            "from facial_surface_runtime import base_delta, ocular_delta, DATA, REVIEWED_BOUND, blend_medial_normal, rim_slope_delta\n"
             + face
         )
         socket = (recipe / "eye_socket.py").read_text()

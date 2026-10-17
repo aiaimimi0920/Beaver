@@ -253,7 +253,7 @@ def orbital_weight(x, h, c):
     return (w * fade).clamp(0, 1)
 
 
-def surface_motion_bound(c, base_bound, beta, steps=80):
+def surface_motion_bound(c, base_bound, beta, steps=80, *, rim_flattening=0.0):
     """Continuous field bound over 0<=height<=H and 0<=x<=max width."""
     xmax = c["height_m"] * max(row[1] for row in c["width_stations"])
     maximum = 0.0
@@ -266,8 +266,17 @@ def surface_motion_bound(c, base_bound, beta, steps=80):
             gap = raw_without_origin(x, h, c) - rim_without_origin(t, c)
             weighted = gap.absolute().hi * w.hi
             maximum = max(maximum, weighted)
+    # Outside this t interval the existing orbital fade is exactly zero.
+    # Include outward rounding independently of interval subdivision density.
+    slope_endpoint = (
+        abs(rim_flattening * (1 - beta) * c["height_m"]
+            * (c["eye_outer_depth"] - c["eye_inner_depth"]) / 2)
+    )
+    slope_skin = slope_endpoint * (1 + c["orbital_lateral_fade"])
     return dict(
-        maximum_depth_displacement_m=base_bound + beta * maximum + 1e-9,
+        maximum_depth_displacement_m=base_bound + beta * maximum + slope_skin + 1e-9,
+        rim_slope_endpoint_bound_m=slope_endpoint + (1e-12 if rim_flattening else 0),
+        additional_rim_slope_skin_bound_m=slope_skin + (1e-12 if rim_flattening else 0),
         base_component_bound_m=base_bound,
         weighted_orbit_gap_bound_m=maximum,
         domain_blender_x_height_m=[
