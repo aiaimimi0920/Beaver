@@ -207,7 +207,9 @@ candidate was reviewed in 69 render/white/blink poses, 42 supplementary
 wireframe/opposite-side/mouth poses, and 250 directional-light captures. All
 500 captured pane material states matched the requested SDF settings. The
 face-review UI probe passed 30 checks. The fuller lower return and larger iris
-were visually preferred in the reviewed front and both 45-degree views.
+were initially preferred in the internal review, but the user subsequently
+rejected case717 aesthetically. It is retained only as comparison evidence;
+technical coverage does not establish acceptable eye design.
 White-model cheek/temple shading bands remain unresolved.
 
 Independent case718 regenerated the same joint geometry, morphs, UVs, normals,
@@ -227,3 +229,167 @@ The local same-job standalone Face SHA-256 values were
 `284767265455745df8eb651c37ccbfe85026a9d8e071504bfc80f844dff75677`
 (case718). The native showcase still uses an assembled definition with hidden
 Body/Hair roles; these checks do not establish a standalone Face-only NPR runtime.
+
+### Illustrated eye-art experiment
+
+`--style-profile emerald_illustrated` is a further opt-in art experiment. Use
+`emerald-rounded-eyes.json`, the same surface parameters/bound, and `--blink`.
+The aperture is unchanged from case717. The profile tapers the inner upper lash,
+sweeps its small child blade along the parent, reduces/tints the pupil, relocates
+the key catchlight and groups iris paint into dark upper / colored middle / light
+lower regions. An isolated sclera atlas island adds upper occlusion and warm
+corners; its UV mapping and ocular ILM classification are changed together.
+
+Native case720 generated and rebaked its SDF through Beaver. Its standalone Face
+export passed structural, finite-stream, three-morph and same-job embedded-atlas
+checks (8,182 vertices, 10,972 triangles). 69 render/white/blink and 42 supplemental
+wireframe/opposite-side/mouth captures were checked against their actual weights,
+display modes, source identity and image hashes, then visually reviewed. This is
+a technically checked candidate that the user subsequently rejected for an
+upturned aperture. It is not aesthetic acceptance. Existing
+white-model cheek/temple shading bands and exact tangent-repeat limitations remain.
+No hair/body geometry was redesigned; the showcase still uses hidden frozen roles.
+
+The source adaptation is retained in the generated `facial_surface_preflight.json`
+under `packager_helpers.semantic_illustrated_art.py`; transformed native sources
+are retained alongside the output. No third-party reference images or models are
+included in this profile.
+
+### Level-corner rounded-eye comparison
+
+`emerald-level-eyes.json` is a new opt-in comparison, using the illustrated
+profile with `--blink`. It cancels the baseline corner rise with
+`corner_slope_offset=-0.014`, uses eye width `1.0`, upper/lower arch `1.4/1.0`,
+and a restrained main lash with no independent upper tuft. The illustrated main
+rail follows the aperture to station 0.96 before a short outer return ending at
+1.06. Non-illustrated profile rails retain their previous constants.
+
+Use surface parameters `{"axial_smoothing":0.5,"cheek_roundness":0.05,"orbit_shallowing":0.15}`
+and the unchanged 0.0042 m support budget. The candidate's conservative bound is
+0.0036192162826032934 m. Lowering orbital adjustment, rather than widening the
+budget, makes room for the rounder aperture.
+
+Cases721 and723 improved the neutral contour but failed internal posed visual
+review because dark outer-lash fragments remained below the closed eyelid. They
+must not be treated as accepted models. Case724 tests anchoring the final generated
+main-lash column floor to the closed seam, instead of translating every column
+from the analytic aperture. This did not remove the visible fragments: a native
+magenta-outline isolation proved they came from exposed backfaces in the outline
+pass. Case725 adds an explicit control-map holdout for internal graphic/ocular
+atlas islands and binds it to the framework Face outline control. Later native
+725/726 comparisons removed the outer fragments; see the controlled follow-up
+below for the remaining medial line and acceptance limits. The correction
+is enabled only for illustrated eyes without a retained upper tuft; old profiles
+and retained-tuft motion keep their previous behavior.
+
+The illustrated profile reuses the existing face-map blue channel for outline
+holdout; red and green meanings stay unchanged. By default, skin atlas and ear islands remain
+unmasked. This requires the NPR framework's full-holdout fragment discard fix:
+zero extrusion width alone does not suppress inverted-hull backface fill. The
+map does not hide base-color geometry or disable the whole character outline.
+
+### Controlled aperture and gaze follow-up (726–729)
+
+Use `emerald-soft-aperture-eyes.json` to reproduce the 726 parameter set, or
+`emerald-nasal-gaze-eyes.json` for 727. Both use `--style-profile
+emerald_illustrated --blink`, surface parameters
+`{"axial_smoothing":0.5,"cheek_roundness":0.05,"orbit_shallowing":0.15}`
+and `--reviewed-support-bound-m 0.0042`. Supply the chosen JSON as `--eyes`,
+a fresh output prefix and the authorized workspace to `bundle.py`. Generate
+and validate through the normal Beaver workflow, including SDF rebake and
+fixed-camera/lighting neutral, wink, full-blink, oblique and white-model views.
+Parameter snapshots are reproducibility inputs, not certified model presets.
+
+726 narrows the aperture and iris, deepens the lower bowl and lightens the
+upper stroke. Root review of 69 verified native captures found modest subjective
+improvement and no old outer closed-eye triangles. A residual far-eye medial
+vertical line remains; setting outline width to zero removed it without a visible
+skin gap in that diagnostic. This does not authorize globally hiding outlines.
+
+727 changes only `iris_horizontal_offset=-0.006`: both iris/pupil/catchlight
+assemblies move nasally by 1.416 mm. Root review of 69 verified captures found
+slight subjective frontal-focus improvement, no old triangles in reviewed winks,
+and the same medial line. This is not final consumer aesthetic acceptance.
+
+728 instead changes only `iris_plane_slope_scale=0.85` relative to 726 (offset
+and skin mask zero), with an explicitly reviewed 0.0045 m support budget. All
+69 captures were verified. The front-eye ROI `[435,400,742,490]` had zero changed
+pixels out of 27,630 versus 726. It was not selected as a frontal gaze fix; the
+control remains experimental. Actual 726's conservative support bound plus the
+0.62462946 mm plane allowance totals 0.00316360192 m. Plane orientation is an
+art-support parameter and must not be equated with a semantic visual gaze axis.
+
+729 uses `emerald-compact-spacing-eyes.json` with the same profile, blink,
+surface parameters and reviewed 0.0042 m budget as 726. It changes only
+`eye_spacing=0.96` versus 726; iris offset is zero, plane scale is one and skin
+holdout is zero. All 69 actual captures, hashes and weights were verified, and
+root reviewed the three-option full-face comparison and winks. Root prefers
+729's whole-face composition to 726/727, subjectively; this is an optional
+candidate, **not user-accepted final beauty**. The far-eye thin medial outline
+at full blink and white-model shading bands remain. No broader geometric or
+posed-clearance certification follows from this preference.
+
+The independent `ocular_skin_outline_holdout` is numeric 0/1, default 0 and
+**NATIVE UNTESTED**. It is active only in the illustrated profile and affects
+only face-map B inside a bounded, calibration-derived ocular skin ellipse. It
+preserves R/G/A, existing island B, nose and ear regions. The plateau (`q<=1`)
+is B=1, transitioning to zero by `q=1.08`. With lip correction disabled, the
+current shader does not taper partial-B outline width: only the full plateau
+discards coverage. CPU mask tests do not establish visual safety or acceptance.
+Keep this switch off when comparing translation or plane controls.
+
+`gaze-experiment-evidence.json` retains the exact root review summaries, capture
+manifest identifiers and comparison limits. The previously recorded tangent
+repeatability, hidden showcase roles and posed-clearance limitations still apply.
+
+Research informed separating aperture, translation and support-plane controls:
+[OLM, Flexible Eye Design (2020)](https://history.siggraph.org/wp-content/uploads/2022/08/2020-Talks-Derouet-Jourdan_Flexible-Eye-Design-for-Japanese-Animation.pdf)
+supports independent artistic eye components;
+[PAniC-3D (2023)](https://openaccess.thecvf.com/content/CVPR2023/html/Chen_PAniC-3D_Stylized_Single-View_3D_Reconstruction_From_Portraits_of_Anime_Characters_CVPR_2023_paper.html)
+discusses stylized single-view ambiguity;
+[Pejsa et al. (2013)](https://graphics.cs.wisc.edu/Papers/2013/PMG13/eg13-pejsa_preprint.pdf),
+[Sweeny and Whitney (2017)](https://whitneylab.berkeley.edu/PDFs/Sweeny_Whitney_Gaze_VR_2017.pdf)
+and [Disney eye rigging (2019)](https://studios.disneyresearch.com/2019/05/06/practical-person-specific-eye-rigging/)
+motivate separating geometric and perceived gaze. These sources do not validate
+our proportions or aesthetic judgments. Reference images remain private and are
+not included in the repository.
+
+### Whole-face layout follow-up (730–733)
+
+732 uses `emerald-narrow-layout-eyes.json`: spacing .94 versus 729's .96,
+with the original medial correction collar and .0042 m support budget.
+733 uses `emerald-balanced-layout-eyes.json`: the same layout with lower arch
+1.00 instead of 1.08. These remain optional comparative candidates.
+
+730's .90 lower arch made the lower aperture too flat in root review.
+731's .92 spacing with an experimental adaptive medial collar passed CPU
+support checks but failed native posed-triangle orientation; it was rejected.
+The adaptive collar is not retained, and .92 spacing is outside the supported
+parameter range. No geometry orientation or overlap guard was weakened.
+
+Use the native case records for actual capture and aesthetic-review status.
+CPU success and native structural validation do not establish aesthetic
+acceptance or complete posed-intersection safety.
+
+### Outline follow-up (734–736)
+
+733 remains the user-favored baseline. 734's original optional mask and 735's
+temporal extension did not remove the main oblique closed-eye line. Neither was
+selected. A native material diagnostic identified implicit mip averaging of the
+fragment coverage mask; explicit LOD0 removed the line with the same medial
+mask, while retaining the inspected nose and face outlines.
+
+`emerald-medial-holdout-eyes.json` retains the 736 candidate. The medial mask
+radius is 1.40 while temporal reach stays 1.08; the disabled default remains
+unchanged. Generation and SDF succeeded. After the approved host-owned migration
+to NPR `c1efb92784a84b712192d0f19650347e5ce55db9`, 69 pose captures and 18 extra
+closed-eye scale/angle captures were hash/source/morph checked. The main medial
+line is absent in the inspected bilateral 44/45/46-degree views at camera-size
+factors .7/1/1.5; nose and face outlines remain. The ordinary 736 preview is
+restored for user review. No runtime pins or package checks were bypassed.
+
+Geometry attributes and morph deltas match 733, excluding known nondeterministic
+tangents. White-mode shading bands and final user aesthetic acceptance remain
+open. Sampled static captures do not certify all models, distances or continuous
+temporal motion. The focused NPR fix is tracked in
+[PR 10](https://github.com/aiaimimi0920/NPRCharacterFrame/pull/10).

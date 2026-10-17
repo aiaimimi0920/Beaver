@@ -4,6 +4,16 @@ use beaver_core::{journal::Journal, project_runtime::ProjectRuntime, workflows};
 use serde_json::{json, Value};
 
 pub fn call(host: &Host, method: &str, mut input: Value) -> Result<Value> {
+    if matches!(
+        method,
+        "project.npr.inspectUpgrade"
+            | "project.npr.upgrade"
+            | "project.npr.rollbackUpgrade"
+            | "project.npr.reviewUpgrade"
+    ) {
+        let id = input["id"].as_str().context("Missing project id")?;
+        return workflows::upgrade_call(&host.router.runtime_for_project(id)?, method, input);
+    }
     let options = if method == "project.create" {
         input
             .as_object_mut()

@@ -10,6 +10,12 @@ from bundle import build_request
 
 class ProfilePackagingTests(unittest.TestCase):
     def test_layered_scope_helpers_and_output_budget(self):
+        self.check_profile("emerald_layered")
+
+    def test_illustrated_scope_helpers_and_output_budget(self):
+        self.check_profile("emerald_illustrated")
+
+    def check_profile(self, profile):
         here = Path(__file__).parent
         eyes = json.loads((here / "emerald-layered-eyes.json").read_text())
         with tempfile.TemporaryDirectory() as workspace:
@@ -38,7 +44,7 @@ class ProfilePackagingTests(unittest.TestCase):
                 "assets/aster/general_face_eyes_cpu/",
                 Path(workspace),
                 0.0042,
-                "emerald_layered",
+                profile,
             )
         outputs = [v["path"] for v in request["outputs"]]
         self.assertEqual(len(outputs), 64)
@@ -74,6 +80,13 @@ class ProfilePackagingTests(unittest.TestCase):
             helpers["source_styles.py"], (here / "source_styles.py").read_text()
         )
         self.assertIn("nose-plane pigment", payloads["report"]["style_profile_scope"])
+        if profile == "emerald_illustrated":
+            self.assertEqual(
+                helpers["semantic_illustrated_art.py"],
+                (here.parent / "semantic_eyes/illustrated_art.py").read_text(),
+            )
+            self.assertIn("sclera_art_color", source)
+            self.assertIn("or sclera_island", source)
 
 
 if __name__ == "__main__":

@@ -151,6 +151,22 @@ pub fn call(backend: &Backend, method: &str, mut input: Value) -> Result<Value, 
         if backend.closing.load(Ordering::SeqCst) {
             bail!("应用正在退出");
         }
+        if matches!(
+            method,
+            "project.npr.inspectUpgrade"
+                | "project.npr.upgrade"
+                | "project.npr.rollbackUpgrade"
+                | "project.npr.reviewUpgrade"
+        ) {
+            let id = input["id"].as_str().context("Missing project id")?;
+            let runtime = project_runtime(backend, id)?
+                .context("NPR upgrade requires project-local storage")?;
+            return backend.players.with_idle(|| {
+                backend.validation.with_closed_preview(id, || {
+                    workflows::upgrade_call(&runtime, method, input.clone())
+                })
+            });
+        }
         let options = if method == "project.create" {
             input
                 .as_object_mut()

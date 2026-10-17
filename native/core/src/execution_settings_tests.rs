@@ -63,7 +63,7 @@ fn launch_uses_frozen_host_configuration_and_never_project_credentials() -> Resu
         ask_user_tool: Value::Null,
     };
     let tools = BTreeMap::from([("codex".into(), executable.to_string_lossy().into_owned())]);
-    let task = json!({"id":"host-boundary","capability":"code","workspace":workspace,"baseline":{},"prompt":"Fixture","references":[]});
+    let task = json!({"id":"host-boundary","projectId":"project-a","capability":"code","workspace":workspace,"baseline":{},"prompt":"Fixture","references":[]});
     let launch = launch::prepare(
         &Files::new(root.clone()),
         &project,
@@ -122,7 +122,7 @@ fn validation_only_needs_no_provider_decryption_or_codex() -> Result<()> {
             &Files::new(temp.path().to_owned()),
             &host,
             &snapshot,
-            &json!({flag:true}),
+            &json!({flag:true,"projectId":"project-a"}),
             &resources,
             &BTreeMap::new(),
             BTreeMap::new(),
@@ -130,6 +130,23 @@ fn validation_only_needs_no_provider_decryption_or_codex() -> Result<()> {
         assert!(launch.command.is_none());
         assert!(launch.secrets.is_empty());
     }
+    host.put(
+        "npr-upgrade",
+        "pending",
+        &json!({"operationId":"pending","createdAt":"fixture",
+        "projectId":"project-a","taskId":null,"status":"applying","changes":[],
+        "transitionalRuntime":"fixture","runtime":{},"previousProjectNpr":null}),
+    )?;
+    assert!(launch::prepare(
+        &Files::new(temp.path().to_owned()),
+        &host,
+        &snapshot,
+        &json!({"validationOnly":true,"projectId":"project-a"}),
+        &resources,
+        &BTreeMap::new(),
+        BTreeMap::new()
+    )
+    .is_err());
     assert!(ExecutionSettings::read(&host, &TestVault, Value::Null, Some("code")).is_err());
     Ok(())
 }

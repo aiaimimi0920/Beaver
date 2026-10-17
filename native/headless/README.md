@@ -146,3 +146,9 @@ success report never clears the recovery barrier.
 A receipt with `status: succeeded` means the API request was handled. For example,
 a Blender start may still be running, and a workflow result can have `ok: false`.
 Inspect the actual job/validation result; request success is not character acceptance.
+
+Existing NPR installations can be upgraded with `project.npr.inspectUpgrade`,
+`project.npr.upgrade`, and `project.npr.rollbackUpgrade`. An optional `taskId`
+selects one owned stopped task workspace. Frozen task bindings require the
+separate explicit `project.npr.reviewUpgrade` action before continuation.
+See [the upgrade and recovery contract](../../docs/NPR-UPGRADES.md).

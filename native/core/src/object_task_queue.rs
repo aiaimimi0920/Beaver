@@ -256,6 +256,9 @@ pub(crate) fn claim_next_in(
     project_id: &str,
     owner: &str,
 ) -> Result<Option<Claim>> {
+    if crate::workflows::upgrade_blocked_connection(connection, project_id)? {
+        return Ok(None);
+    }
     let entries = list_in(connection, project_id)?;
     let mut reserved_objects = HashSet::new();
     for entry in entries.iter().filter(|entry| entry.holds_object()) {

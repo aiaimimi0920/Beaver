@@ -87,6 +87,24 @@ class BlinkTests(unittest.TestCase):
             self.assertTrue(all(a < b for a, b in zip(posed, posed[1:])))
         self.assertEqual(closure_delta(100, center, "skin", c), 0)
 
+    def test_upper_ink_column_floor_meets_closed_seam(self):
+        c = adapt_style(
+            json.loads((RECIPE / "face_style.json").read_text()), validate({})
+        )["calibration"]
+        for side in (-1, 1):
+            for t in (-0.9, 0.0, 0.7, 0.94):
+                x = side * c["height_m"] * (c["eye_center_x"] + c["eye_half_width"] * t)
+                seam = (
+                    c["origin_y_m"]
+                    + c["height_m"] * (c["eye_corner_y"] + c["eye_corner_slope"] * t)
+                    - 0.0015 * (1 - t * t)
+                )
+                floor = seam + 0.01
+                delta = closure_delta(x, floor, "upper_ink", c)
+                self.assertAlmostEqual(floor + delta, seam)
+                self.assertAlmostEqual((floor + 0.002 + delta) - (floor + delta), 0.002)
+        self.assertEqual(closure_delta(100, 0, "upper_ink", c), 0)
+
     def test_export_requires_explicit_blinks(self):
         doc, data = read_glb(export())
         mesh = doc["meshes"][0]

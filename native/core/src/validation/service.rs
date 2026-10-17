@@ -151,6 +151,14 @@ impl Service {
         Ok(result)
     }
 
+    pub fn with_closed_preview<T>(
+        &self,
+        project: &str,
+        work: impl FnOnce() -> Result<T>,
+    ) -> Result<T> {
+        self.previews.with_closed(project, work)
+    }
+
     pub fn preview(&self, method: &str, input: &Value) -> Result<Value> {
         anyhow::ensure!(
             !self.state.stop.load(Ordering::SeqCst),

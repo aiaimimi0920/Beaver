@@ -184,7 +184,7 @@ pub(crate) async fn call(
         return result;
     }
     if method == "project.create"
-        || method == "project.npr.install"
+        || method.starts_with("project.npr.")
         || method.starts_with("workflow.")
     {
         let backend = state.clone();

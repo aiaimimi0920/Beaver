@@ -20,6 +20,9 @@ def closure_delta(x, y, kind, c):
         * max(0, 1 - abs(t) ** c["eye_lower_horizontal_power"]) ** c["eye_lower_power"]
     )
     seam = center - 0.0015 * (1 - t * t)
+    if kind == "upper_ink":
+        # y is the final generated column floor, not the analytic aperture.
+        return seam - y
     if kind == "upper":
         return seam - upper
     if kind == "lower":
@@ -41,12 +44,14 @@ def closure_delta(x, y, kind, c):
     return delta * weight
 
 
-def build_blink_shapes(obj, ordinals, calibration):
+def build_blink_shapes(obj, ordinals, calibration, ink_floor_closure=False):
     data = obj.data
     regions = data.attributes["NormalRegion"]
     tags = {}
     for name, ordinal in ordinals.items():
-        if name.startswith(
+        if ink_floor_closure and name.startswith("Upper lash "):
+            tags[ordinal] = "upper_ink"
+        elif name.startswith(
             ("Upper lash ", "Upper skin lid ", "Upper swept lash tuft ")
         ):
             tags[ordinal] = "upper"
@@ -59,6 +64,13 @@ def build_blink_shapes(obj, ordinals, calibration):
         if kind:
             for i in polygon.vertices:
                 memberships[i].add(kind)
+    ink_floors = {}
+    for vertex in data.vertices:
+        if "upper_ink" in memberships[vertex.index]:
+            station = round(vertex.co.x, 8)
+            ink_floors[station] = min(
+                ink_floors.get(station, float("inf")), vertex.co.z + 0.021
+            )
     report = {}
     for side, name in [(-1, "blink.L"), (1, "blink.R")]:
         key = obj.shape_key_add(name=name)
@@ -69,9 +81,20 @@ def build_blink_shapes(obj, ordinals, calibration):
             # A shared skin/lash vertex follows the explicit lid boundary.
             kinds = memberships[vertex.index]
             kind = (
-                "upper" if "upper" in kinds else "lower" if "lower" in kinds else "skin"
+                "upper_ink"
+                if "upper_ink" in kinds
+                else (
+                    "upper"
+                    if "upper" in kinds
+                    else "lower" if "lower" in kinds else "skin"
+                )
             )
-            dy = closure_delta(vertex.co.x, vertex.co.z + 0.021, kind, calibration)
+            height = (
+                ink_floors[round(vertex.co.x, 8)]
+                if kind == "upper_ink"
+                else vertex.co.z + 0.021
+            )
+            dy = closure_delta(vertex.co.x, height, kind, calibration)
             if abs(dy) > 1e-10:
                 key.data[vertex.index].co.z += dy
                 changed.append(abs(dy))

@@ -103,6 +103,30 @@ class SemanticEyeTests(unittest.TestCase):
                     request.update(supplemental_lashes=0, lash_contour_follow=1)
                 adapt_style(self.style, request)
 
+    def test_nasal_spacing_extension_preserves_width_and_local_features(self):
+        old = adapt_style(self.style, {"eye_spacing": .96})
+        new = adapt_style(self.style, {"eye_spacing": .94})
+        a, b = old["calibration"], new["calibration"]
+        shift = b["eye_center_x"] - a["eye_center_x"]
+        self.assertLess(shift, 0)
+        self.assertEqual(a["eye_half_width"], b["eye_half_width"])
+        self.assertGreater(b["eye_center_x"] - b["eye_half_width"], 0)
+        for key in ("iris_center_x", "brow_inner_x", "brow_outer_x"):
+            self.assertAlmostEqual(b[key] - a[key], shift)
+        for key in ("nose_stations", "mouth_height", "eye_corner_y"):
+            self.assertEqual(a[key], b[key])
+        with self.assertRaises(ValueError):
+            validate({"eye_spacing": .939})
+
+    def test_retained_layout_configs(self):
+        root = Path(__file__).resolve().parent.parent / "facial_surface"
+        a = json.loads((root / "emerald-narrow-layout-eyes.json").read_text())
+        b = json.loads((root / "emerald-balanced-layout-eyes.json").read_text())
+        self.assertEqual(validate(a)["eye_spacing"], .94)
+        self.assertEqual(validate(b)["eye_spacing"], .94)
+        self.assertEqual([key for key in a if a[key] != b[key]], ["lower_arch"])
+        self.assertEqual(b["lower_arch"], 1.)
+
     def test_roundness_tracks_actual_upper_rim(self):
         request = dict(
             TARGET,

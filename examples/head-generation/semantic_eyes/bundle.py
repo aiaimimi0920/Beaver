@@ -148,7 +148,7 @@ def build_request(parameters, output_prefix, workspace, *, blink=False):
             "        opened.value = 0.0",
             "        opened.value = 0.0\n"
             "        from semantic_eye_runtime import build_blink_shapes\n"
-            '        report["eyelid_closure"] = build_blink_shapes(members[0], semantic_part_ordinals, C)',
+            f'        report["eyelid_closure"] = build_blink_shapes(members[0], semantic_part_ordinals, C, ink_floor_closure={bool(style.get("illustrated_eye_art", False) and not p["short_upper_tuft"])!r})',
         )
         sources["glb_merge.py"] = replace_once(
             sources["glb_merge.py"],
@@ -197,6 +197,10 @@ def build_request(parameters, output_prefix, workspace, *, blink=False):
         ")) / 0.2)) * 0.7",
         ')) / 0.2)) * STYLE.get("iris_accent_strength", .7)',
     )
+    if style.get("illustrated_eye_art", False):
+        from illustrated_art import adapt_sources
+
+        sources = adapt_sources(sources)
     base.OUTPUT_PREFIX = output_prefix
     with tempfile.TemporaryDirectory() as directory:
         snapshot = Path(directory)

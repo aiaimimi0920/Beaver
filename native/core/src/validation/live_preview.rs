@@ -93,6 +93,24 @@ impl Session {
 pub(super) struct Sessions(Mutex<Option<Session>>);
 
 impl Sessions {
+    pub(super) fn with_closed<T>(
+        &self,
+        project: &str,
+        work: impl FnOnce() -> Result<T>,
+    ) -> Result<T> {
+        let slot = self
+            .0
+            .lock()
+            .map_err(|_| anyhow::anyhow!("Preview lock unavailable"))?;
+        ensure!(
+            !slot
+                .as_ref()
+                .is_some_and(|session| session.project == project),
+            "Close the project preview before upgrading dependencies"
+        );
+        work()
+    }
+
     pub fn call(&self, state: &State, method: &str, input: &Value) -> Result<Value> {
         let project = operations::string(input, "projectId")?;
         if method == "validation.preview.close" {

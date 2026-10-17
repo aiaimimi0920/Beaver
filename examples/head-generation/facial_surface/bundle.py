@@ -57,12 +57,13 @@ def build_request(
         )
         style = builder.adapt_style(baseline_style, builder.validate(eyes))
         face = (recipe / "face.py").read_text()
-        data, report = prepare(face, style["calibration"], parameters)
-        bound = max(
-            report["surface"]["maximum_depth_displacement_m"],
-            report["surface"]["aperture_rim_displacement_bound_m"],
-            data["ocular_plane"]["continuous_plane_displacement_bound_m"],
+        data, report = prepare(
+            face,
+            style["calibration"],
+            parameters,
+            baseline_iris_plane_slope=baseline_style["calibration"]["iris_plane_slope"],
         )
+        bound = report["surface"]["conservative_support_displacement_bound_m"]
         if bound > reviewed_support_bound_m:
             raise ValueError(
                 f"Conservative support bound {bound:.9g}m exceeds explicitly reviewed {reviewed_support_bound_m:.9g}m"
@@ -144,10 +145,10 @@ def depth(x, y):"""
     request["code"] = preamble + request["code"]
     profile_scope = (
         "Layered eye art direction plus reduced nose-plane pigment; nose geometry unchanged"
-        if style_profile == "emerald_layered"
+        if style_profile in ("emerald_layered", "emerald_illustrated")
         else "Inherited or clean eye art direction"
     )
-    if style_profile == "emerald_layered":
+    if style_profile in ("emerald_layered", "emerald_illustrated"):
         request["code"] += f'report["semantic_eyes"]["scope"] = {profile_scope!r}\n'
     report.update(
         style_profile_scope=profile_scope,
@@ -186,7 +187,10 @@ def depth(x, y):"""
             data=data,
             report=report,
             packager_helpers={
-                path.name: path.read_text() for path in HERE.glob("source_*.py")
+                **{path.name: path.read_text() for path in HERE.glob("source_*.py")},
+                "semantic_illustrated_art.py": (
+                    EYES / "illustrated_art.py"
+                ).read_text(),
             },
         ),
         indent=2,
@@ -226,7 +230,10 @@ if __name__ == "__main__":
     parser.add_argument("--prefix", required=True)
     parser.add_argument("--workspace", type=Path, required=True)
     parser.add_argument("--reviewed-support-bound-m", type=float, required=True)
-    parser.add_argument("--style-profile", choices=["clean_emerald", "emerald_layered"])
+    parser.add_argument(
+        "--style-profile",
+        choices=["clean_emerald", "emerald_layered", "emerald_illustrated"],
+    )
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument(
         "--blink", action="store_true", help="Experimental independent eyelid closure"

@@ -18,9 +18,16 @@ mod package;
 #[cfg(test)]
 #[path = "workflows_tests.rs"]
 mod tests;
+#[path = "workflows_upgrade.rs"]
+mod upgrade;
 
 pub use integrity::verify_package;
 pub use package::{configured_engine, engine_path, install, runtime};
+pub use upgrade::call as upgrade_call;
+pub(crate) use upgrade::{
+    blocked as upgrade_blocked, blocked_connection as upgrade_blocked_connection,
+    verify_review as verify_upgrade_review,
+};
 pub const RUNTIME_FILE: &str = "beaver.runtime.json";
 pub const WORKFLOW: &str = "npr-character";
 

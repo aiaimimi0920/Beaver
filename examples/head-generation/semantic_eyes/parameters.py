@@ -5,17 +5,20 @@ import math
 
 # Multipliers default to one; offsets are fractions of calibrated face height H.
 LIMITS = {
-    "eye_spacing": (1.0, 0.96, 1.04),
+    "eye_spacing": (1.0, 0.94, 1.04),
     "eye_width": (1.0, 0.92, 1.08),
     "upper_arch": (1.0, 0.70, 1.40),
     "lower_arch": (1.0, 0.50, 1.12),
     "upper_roundness": (1.0, 1.0, 2.0),
     "upper_horizontal_roundness": (1.0, 0.70, 1.0),
-    "corner_slope_offset": (0.0, -0.008, 0.008),
+    "corner_slope_offset": (0.0, -0.018, 0.008),
     "eye_height_offset": (0.0, -0.006, 0.006),
     "iris_width": (1.0, 0.90, 1.08),
     "iris_height": (1.0, 0.90, 1.08),
     "iris_vertical_offset": (0.0, -0.01, 0.01),
+    "iris_plane_slope_scale": (1.0, 0.85, 1.0),
+    "iris_horizontal_offset": (0.0, -0.012, 0.012),
+    "ocular_skin_outline_holdout": (0.0, 0.0, 1.0),
     "simple_iris": (0.0, 0.0, 1.0),
     "short_upper_tuft": (0.0, 0.0, 1.0),
     "brow_height_offset": (0.0, -0.012, 0.012),
@@ -47,6 +50,7 @@ def validate(request):
             "lid_fold",
             "simple_iris",
             "short_upper_tuft",
+            "ocular_skin_outline_holdout",
         ) and value not in (
             0,
             1,
@@ -83,8 +87,12 @@ def adapt_style(original, request):
     p = validate(request)
     style = copy.deepcopy(original)
     c, old = style["calibration"], original["calibration"]
+    if p["ocular_skin_outline_holdout"]:
+        style["ocular_skin_outline_holdout"] = True
+    else:
+        style.pop("ocular_skin_outline_holdout", None)
     # Preserve the exact neutral parameter snapshot.
-    if p == validate({}):
+    if p == validate({}) and not style.get("illustrated_eye_art", False):
         return style
     old_center = old["eye_center_x"]
     c["eye_center_x"] *= p["eye_spacing"]
@@ -104,6 +112,10 @@ def adapt_style(original, request):
     # Iris and brows follow the same eye-local horizontal frame.
     for key in ("iris_center_x", "brow_inner_x", "brow_outer_x"):
         c[key] = c["eye_center_x"] + (old[key] - old_center) * p["eye_width"]
+    # The signed side is applied by the eye geometry: negative moves both nasally.
+    c["iris_center_x"] += p["iris_horizontal_offset"]
+    # Pivot only the authored horizontal support plane about the iris center.
+    c["iris_plane_slope"] *= p["iris_plane_slope_scale"]
     c["iris_center_y"] += p["eye_height_offset"] + p["iris_vertical_offset"]
     c["iris_half_width"] *= p["iris_width"]
     c["iris_half_height"] *= p["iris_height"]
@@ -144,10 +156,13 @@ def adapt_style(original, request):
     # the original unrelated hand-authored rise profile. Blend zero is identity.
     if p["lash_contour_follow"]:
         rails = []
+        tail_end = 1.06 if style.get("illustrated_eye_art", False) else 1.12
         for i in range(21):
-            t = -0.98 + 2.10 * i / 20
+            rail_span = 2.04 if style.get("illustrated_eye_art", False) else 2.10
+            t = -0.98 + rail_span * i / 20
             q = i / 20
-            tc = min(t, 0.75)
+            join_t = 0.96 if style.get("illustrated_eye_art", False) else 0.75
+            tc = min(t, join_t)
             arch = (
                 max(0.0, 1 - abs(tc) ** c["eye_horizontal_power"])
                 ** c["eye_upper_power"]
@@ -155,17 +170,18 @@ def adapt_style(original, request):
             center = c["eye_upper_arch"] * arch + c["eye_corner_slope"] * tc * (
                 1 - style["accent_trajectory_slope_scale"]
             )
-            if t > 0.75:
-                span = 0.37
-                u = (t - 0.75) / span
+            if t > join_t:
+                span = 0.10 if style.get("illustrated_eye_art", False) else 0.37
+                u = (t - join_t) / span
                 h = c["eye_horizontal_power"]
                 v = c["eye_upper_power"]
-                slope = -c["eye_upper_arch"] * v * h * 0.75 ** (h - 1) * (
-                    1 - 0.75**h
+                slope = -c["eye_upper_arch"] * v * h * join_t ** (h - 1) * (
+                    1 - join_t**h
                 ) ** (v - 1) + c["eye_corner_slope"] * (
                     1 - style["accent_trajectory_slope_scale"]
                 )
-                end = 0.020 + c["eye_corner_slope"] * 1.12 * (
+                tail_lift = 0.003 if style.get("illustrated_eye_art", False) else 0.020
+                end = tail_lift + c["eye_corner_slope"] * tail_end * (
                     1 - style["accent_trajectory_slope_scale"]
                 )
                 center = (
@@ -232,6 +248,31 @@ def adapt_style(original, request):
             [0.83, sample(rails, 0.55, 2) - 0.004],
             [0.60, mid(0.60) - 0.001],
         ]
+    if style.get("illustrated_eye_art", False):
+        # Preserve the aperture; vary stroke weight along its continuous path.
+        rails = style["upper_lash_rails"]
+        for row in rails:
+            t, lo, hi = row
+            q = max(0.0, min(1.0, (t + 0.98) / 2.10))
+            width = (hi - lo) * (0.48 + 0.90 * q)
+            row[1], row[2] = lo, lo + width
+        if p["short_upper_tuft"]:
+
+            def top(t):
+                return sample(rails, t, 2)
+
+            def middle(t):
+                return (sample(rails, t, 1) + top(t)) / 2
+
+            # A low, swept child blade; root remains embedded in the parent.
+            style["upper_swept_tuft_outline"] = [
+                [0.42, middle(0.42)],
+                [0.56, top(0.56) - 0.002],
+                [0.73, top(0.73) + 0.002],
+                [0.94, top(0.78) + 0.005],
+                [0.81, middle(0.81)],
+                [0.60, middle(0.60) - 0.001],
+            ]
     # Geometry must remain within the fixed inherited feature-patch footprint.
     low = c["origin_y_m"] + c["height_m"] * (
         c["eye_corner_y"] - abs(c["eye_corner_slope"]) - c["eye_lower_arch"]

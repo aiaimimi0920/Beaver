@@ -9,7 +9,7 @@ from ocular_fit import fit_plane
 from interval_bounds import aperture_gap_bound, surface_motion_bound
 
 
-def prepare(source, calibration, parameters):
+def prepare(source, calibration, parameters, *, baseline_iris_plane_slope=None):
     p = validate(parameters)
     fit = fit_profile(source, calibration)
     old = scope(source, calibration, fit, 0)
@@ -33,6 +33,22 @@ def prepare(source, calibration, parameters):
         + p["orbit_shallowing"] * (old["base_depth"](x, y) - old["rim_depth"](x, y))
     )
     data["ocular_plane"] = fit_plane(calibration, old, changed)
+    # Horizontal art-plane change is independent of the fitted orbital displacement.
+    # Certify every ocular component, including asymmetric catchlight offsets.
+    plane = data["ocular_plane"]
+    slope_delta = (
+        0.0
+        if baseline_iris_plane_slope is None
+        else calibration["iris_plane_slope"] - baseline_iris_plane_slope
+    )
+    plane["authored_horizontal_slope_delta"] = slope_delta
+    plane["authored_horizontal_displacement_bound_m"] = abs(slope_delta) * max(
+        abs(x) for x in plane["domain_relative_m"][0]
+    )
+    plane["combined_ocular_displacement_bound_m"] = (
+        plane["continuous_plane_displacement_bound_m"]
+        + plane["authored_horizontal_displacement_bound_m"]
+    )
     # Profile fit's bound is already in meters, independently of applied strength.
     bound = continuous_base_bound(
         calibration,
@@ -82,6 +98,20 @@ def prepare(source, calibration, parameters):
     limits["medial_support_disjoint_from_orbit"] = True
     limits["medial_correction_scope"] = (
         "C2 radial collar, q<0.2; vertical collar h=0.1..0.9; nasal relief retained"
+    )
+    support = max(
+        limits["maximum_depth_displacement_m"],
+        limits["aperture_rim_displacement_bound_m"],
+        plane["continuous_plane_displacement_bound_m"],
+    )
+    # Deliberately conservative: add the independent plane budget to the old
+    # global maximum rather than assuming the two supports cannot overlap.
+    limits["support_bound_before_iris_plane_change_m"] = support
+    limits["additional_iris_plane_displacement_bound_m"] = plane[
+        "authored_horizontal_displacement_bound_m"
+    ]
+    limits["conservative_support_displacement_bound_m"] = (
+        support + plane["authored_horizontal_displacement_bound_m"]
     )
     return data, dict(
         base_bound_m=bound + center_bound,

@@ -11,7 +11,7 @@ use std::{
 };
 
 pub(super) const PACKAGE_ROOT: &str = "addons/npr_character_frame";
-pub(super) const SOURCE_COMMIT: &str = "05f3dceee965c9a5ec78ee8d159e962c133cfc57";
+pub(super) const SOURCE_COMMIT: &str = "c1efb92784a84b712192d0f19650347e5ce55db9";
 
 pub fn engine_path(configured: &str) -> Result<PathBuf> {
     let path = Path::new(configured);

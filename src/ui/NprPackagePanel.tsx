@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { NprUpgradePanel } from "./NprUpgradePanel";
 import type { Project } from "../shared/types";
 import { call, type Run } from "./api";
 
@@ -70,6 +71,7 @@ export function NprPackagePanel({
           。安装状态与具体角色的美术、渲染验收分别记录。
         </p>
       )}
+      <NprUpgradePanel key={project.id} id={project.id} run={run} />
       <details>
         <summary>项目调用日志</summary>
         <p className="muted">
