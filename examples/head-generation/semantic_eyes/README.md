@@ -302,13 +302,13 @@ The range is provisional: a 2.0 candidate with lower_arch 0.70 failed the native
 
 ### Experimental upper-aperture asymmetry
 
-`upper_asymmetry` defaults to zero and is limited to [-0.10, 0.10]. Nonzero
+`upper_asymmetry` defaults to zero and is limited to [-0.25, 0.25]. Nonzero
 values require level corner calibration. The physical horizontal station,
-aperture width, lower contour, iris and eye centers stay fixed. Only the upper
+aperture width, lower contour, iris shape/position parameters and eye centers stay fixed. The ocular support plane is refitted and must be checked for perceived gaze changes. Only the upper
 arch's shape coordinate uses `t + a * (1 - t*t)^3` inside [-1, 1], with identity
 outside. Positive values move the upper peak toward the nasal side for level
 corners; this is a stylistic experiment, not a universal beauty preference.
-The warp is globally increasing (derivative at least 0.82827 in this range),
+The warp is globally increasing (derivative at least 0.57067 in this range),
 and its value and first two derivatives meet the identity extension at both
 ends. The existing outer inverse remains descending on its [0.4, 1] branch;
 heights above that branch keep the inherited endpoint saturation behavior.

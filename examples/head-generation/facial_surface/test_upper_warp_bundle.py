@@ -35,11 +35,16 @@ def retained_sources(code):
 
 class UpperWarpBundleTests(unittest.TestCase):
     def test_preflight_native_and_retained_helper_agree(self):
+        for amount in (-0.25, 0.05, 0.25):
+            with self.subTest(amount=amount):
+                self.check_preflight_native_and_retained_helper(amount)
+
+    def check_preflight_native_and_retained_helper(self, amount):
         eyes = json.loads(
             (Path(__file__).parent / "emerald-balanced-layout-eyes.json").read_text()
         )
         eyes.update(
-            upper_asymmetry=0.05,
+            upper_asymmetry=amount,
             corner_slope_offset=-0.014,
             lower_arch=0.7,
             lower_roundness=1.25,
@@ -76,7 +81,7 @@ class UpperWarpBundleTests(unittest.TestCase):
                 )
             args = spy.call_args.args
             self.assertIn("def eye_warp(", args[0])
-            self.assertEqual(args[1]["eye_upper_asymmetry"], 0.05)
+            self.assertEqual(args[1]["eye_upper_asymmetry"], amount)
         retained = retained_sources(request["code"])
         self.assertIn("def eye_warp(", retained["face.py"])
         self.assertIn("def eye_warp(", retained["semantic_eye_runtime.py"])
@@ -91,7 +96,7 @@ class UpperWarpBundleTests(unittest.TestCase):
             ),
             scope,
         )
-        self.assertEqual(scope["validate"](eyes)["upper_asymmetry"], 0.05)
+        self.assertEqual(scope["validate"](eyes)["upper_asymmetry"], amount)
         ast_tree = ast.parse(retained["semantic_bundle.py"])
         embedded = next(
             ast.literal_eval(n.value)

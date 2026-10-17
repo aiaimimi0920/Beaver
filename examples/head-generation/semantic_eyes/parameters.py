@@ -9,7 +9,7 @@ LIMITS = {
     "eye_spacing": (1.0, 0.94, 1.04),
     "eye_width": (1.0, 0.92, 1.08),
     "upper_arch": (1.0, 0.70, 1.40),
-    "upper_asymmetry": (0.0, -0.10, 0.10),
+    "upper_asymmetry": (0.0, -0.25, 0.25),
     "lower_arch": (1.0, 0.50, 1.12),
     "lower_roundness": (1.0, 1.0, 1.25),
     "upper_roundness": (1.0, 1.0, 2.0),

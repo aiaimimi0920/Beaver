@@ -46,7 +46,7 @@ class UpperWarpTests(unittest.TestCase):
         source = (RECIPE / "face.py").read_text()
         self.assertEqual(adapt_face_source(source, False), source)
         self.assertEqual(adapt_style(self.style, {"upper_asymmetry": 0}), self.style)
-        for value in (-0.10001, 0.10001, True, float("nan")):
+        for value in (-0.25001, 0.25001, True, float("nan")):
             with self.assertRaises(ValueError):
                 validate({"upper_asymmetry": value})
         with self.assertRaisesRegex(ValueError, "level eye corners"):
@@ -55,14 +55,14 @@ class UpperWarpTests(unittest.TestCase):
             adapt_face_source("changed", True)
 
     def test_monotonicity_endpoints_extension_and_derivative(self):
-        for a in (-0.1, -0.03, 0, 0.03, 0.1):
+        for a in (-0.25, -0.1, -0.03, 0, 0.03, 0.1, 0.25):
             c = dict(self.base, eye_upper_asymmetry=a)
             last = -2
             for i in range(1001):
                 t = -1 + i / 500
                 value = eye_warp(t, c)
                 self.assertGreater(value, last)
-                self.assertGreaterEqual(eye_warp_derivative(t, c), 0.828)
+                self.assertGreaterEqual(eye_warp_derivative(t, c), 0.570)
                 last = value
                 if abs(t) < 0.99 and abs(eye_warp(t, c)) > 0.02:
                     numeric = (
@@ -77,7 +77,7 @@ class UpperWarpTests(unittest.TestCase):
 
     def test_actual_contour_lower_layout_and_blink_are_coupled(self):
         old = self.contour(self.base, False)
-        for a in (-0.1, 0.1):
+        for a in (-0.25, -0.1, 0.1, 0.25):
             p = dict(self.p, upper_asymmetry=a)
             c = adapt_style(self.style, p)["calibration"]
             new = self.contour(c, True)
@@ -119,9 +119,9 @@ class UpperWarpTests(unittest.TestCase):
             from interval_bounds import I, upper_coordinate_interval
         finally:
             sys.path.pop(0)
-        for a in (-0.1, 0.1):
+        for a in (-0.25, -0.1, 0.1, 0.25):
             c = dict(self.base, eye_upper_asymmetry=a)
-            for lo, hi in [(-1.2, -0.9), (-0.2, 0.2), (0.4, 0.6), (0.9, 1.2)]:
+            for lo, hi in [(-1.2, -0.9), (-0.35, 0.35), (0.4, 0.6), (0.9, 1.2)]:
                 result = upper_coordinate_interval(I(lo, hi), c)
                 for i in range(101):
                     v = eye_warp(lo + (hi - lo) * i / 100, c)
@@ -146,7 +146,7 @@ class UpperWarpTests(unittest.TestCase):
             ),
             env,
         )
-        for a in (-0.1, 0.1):
+        for a in (-0.25, -0.1, 0.1, 0.25):
             c = dict(self.base, eye_upper_asymmetry=a)
             contour = self.contour(c, True)
             inverse = env["eye_rim_x_at_height"]
@@ -172,7 +172,7 @@ class UpperWarpTests(unittest.TestCase):
             for n in ast.parse(source).body
             if isinstance(n, ast.FunctionDef) and n.name in HELPER_NAMES | {"depth"}
         ]
-        for a in (-0.1, 0.1):
+        for a in (-0.25, -0.1, 0.1, 0.25):
             c = dict(self.base, eye_upper_asymmetry=a)
             env = dict(
                 C=c,
@@ -189,7 +189,7 @@ class UpperWarpTests(unittest.TestCase):
                 ),
                 env,
             )
-            for t in (-1.1, -0.8, -0.1, 0, 0.4, 0.9, 1.1):
+            for t in (-1.1, -0.8, -0.22, -0.1, 0, 0.22, 0.4, 0.9, 1.1):
                 x = c["height_m"] * (c["eye_center_x"] + c["eye_half_width"] * t)
                 for rel in (-0.05, -0.001, 0, 0.001, 0.05):
                     h = c["eye_corner_y"] + rel
@@ -207,7 +207,7 @@ class UpperWarpTests(unittest.TestCase):
                 path = root / name
                 path.parent.mkdir(parents=True, exist_ok=True)
                 path.write_bytes(b"fixture input; never executed")
-            for amount in (0, 0.05):
+            for amount in (0, -0.25, 0.05, 0.25):
                 p = dict(
                     self.p,
                     upper_asymmetry=amount,
