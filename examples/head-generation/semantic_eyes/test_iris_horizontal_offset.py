@@ -76,6 +76,17 @@ class IrisHorizontalOffsetTests(unittest.TestCase):
         self.assertEqual(baseline.pop("iris_horizontal_offset"), 0)
         self.assertEqual(nasal, baseline)
 
+    def test_retained_spacing_candidate_isolates_whole_eye_spacing(self):
+        folder = self.recipe.parent.parent / "facial_surface"
+        baseline = json.loads((folder / "emerald-soft-aperture-eyes.json").read_text())
+        compact = json.loads((folder / "emerald-compact-spacing-eyes.json").read_text())
+        self.assertEqual(validate(compact)["iris_horizontal_offset"], 0)
+        self.assertEqual(validate(compact)["iris_plane_slope_scale"], 1)
+        self.assertEqual(validate(compact)["ocular_skin_outline_holdout"], 0)
+        self.assertEqual(compact.pop("eye_spacing"), 0.96)
+        self.assertEqual(baseline.pop("eye_spacing"), 1)
+        self.assertEqual(compact, baseline)
+
     def test_actual_geometry_centers_follow_shared_iris_calibration(self):
         # Extract production center assignments rather than duplicating its formulas.
         tree = ast.parse((self.recipe / "eye_socket.py").read_text())

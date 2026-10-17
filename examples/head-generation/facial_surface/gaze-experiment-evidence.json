@@ -46,6 +46,19 @@
       "front_eye_ROI_total_pixels": 27630,
       "root_review": "No frontal visual improvement; not selected as frontal gaze fix. Side-view differences small; no old closed triangles in reviewed pose sheet.",
       "acceptance": "experimental control, not accepted beauty improvement"
+    },
+    "729": {
+      "version": 729,
+      "manifest": "artifacts/blink_probe/blink-1792223748-51958/manifest.json",
+      "verified_captures": 69,
+      "changed_factor": "eye_spacing=.96 only relative to726; iris_horizontal_offset0; iris_plane_slope_scale1; skin holdout0",
+      "root_preference": "729 is a more promising whole-face composition candidate than iris-only727; subjective evaluation, not consumer study or user acceptance",
+      "remaining": [
+        "far-eye medial outline in full blink",
+        "white-model shading bands",
+        "final aesthetic acceptance pending"
+      ],
+      "source": "faye729/comparison/three-options.jpg"
     }
   },
   "plane_experiment": {
@@ -68,5 +81,10 @@
     "No general collision or clearance certificate",
     "Far-eye medial outline remains in reviewed candidates",
     "No third-party images or models redistributed"
-  ]
+  ],
+  "spacing_config": "emerald-compact-spacing-eyes.json",
+  "preferred_internal_candidate": {
+    "native_case": 729,
+    "scope": "Subjective root whole-face composition preference over 726/727; not user acceptance"
+  }
 }

@@ -288,7 +288,7 @@ unmasked. This requires the NPR framework's full-holdout fragment discard fix:
 zero extrusion width alone does not suppress inverted-hull backface fill. The
 map does not hide base-color geometry or disable the whole character outline.
 
-### Controlled aperture and gaze follow-up (726–728)
+### Controlled aperture and gaze follow-up (726–729)
 
 Use `emerald-soft-aperture-eyes.json` to reproduce the 726 parameter set, or
 `emerald-nasal-gaze-eyes.json` for 727. Both use `--style-profile
@@ -318,6 +318,16 @@ pixels out of 27,630 versus 726. It was not selected as a frontal gaze fix; the
 control remains experimental. Actual 726's conservative support bound plus the
 0.62462946 mm plane allowance totals 0.00316360192 m. Plane orientation is an
 art-support parameter and must not be equated with a semantic visual gaze axis.
+
+729 uses `emerald-compact-spacing-eyes.json` with the same profile, blink,
+surface parameters and reviewed 0.0042 m budget as 726. It changes only
+`eye_spacing=0.96` versus 726; iris offset is zero, plane scale is one and skin
+holdout is zero. All 69 actual captures, hashes and weights were verified, and
+root reviewed the three-option full-face comparison and winks. Root prefers
+729's whole-face composition to 726/727, subjectively; this is an optional
+candidate, **not user-accepted final beauty**. The far-eye thin medial outline
+at full blink and white-model shading bands remain. No broader geometric or
+posed-clearance certification follows from this preference.
 
 The independent `ocular_skin_outline_holdout` is numeric 0/1, default 0 and
 **NATIVE UNTESTED**. It is active only in the illustrated profile and affects
