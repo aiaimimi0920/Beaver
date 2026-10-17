@@ -45,11 +45,40 @@ def sclera_art_color(u,v):
 """
 
 
+SKIN_HOLDOUT = """def ocular_skin_holdout(u, v):
+    # Experimental author-controlled skin outline mask, in the spatial skin island.
+    # UVs stay bound to the neutral surface during blink; no geometry is changed.
+    if not STYLE.get("ocular_skin_outline_holdout", False):
+        return 0.0
+    if not (0.02 < u < 0.55 and 0.02 < v < 0.98):
+        return 0.0
+    x = ((u - 0.02) / 0.53 - 0.5) * 0.235
+    y = 1.5 + (v - 0.02) / 0.96 * 0.31
+    t = (abs(x) / H - C["eye_center_x"]) / C["eye_half_width"]
+    center = Y0 + H * (C["eye_corner_y"] + C["eye_corner_slope"] * t)
+    rx = 1.08 * H * C["eye_half_width"]
+    arch = C["eye_upper_arch"] if y >= center else C["eye_lower_arch"]
+    ry = H * arch + 0.002
+    q = sqrt(((abs(x) - H*C["eye_center_x"])/rx)**2 + ((y-center)/ry)**2)
+    if q <= 1.0:
+        return 1.0
+    if q >= 1.08:
+        return 0.0
+    f = (q - 1.0) / 0.08
+    # Current shader only scales partial B widths when lip-fix is enabled.
+    # With its default disabled, only the full-B plateau removes the outline;
+    # this transition is authored data, not a claim of smooth rendered taper.
+    return 1.0 - f*f*(3.0 - 2.0*f)
+
+
+"""
+
+
 def adapt_sources(original):
     sources = dict(original)
     texture = sources["textures.py"]
     start, end = texture.index("def iris_color("), texture.index("def eye_atlas_color(")
-    texture = texture[:start] + IRIS + texture[end:]
+    texture = texture[:start] + IRIS + SKIN_HOLDOUT + texture[end:]
     texture = once(
         texture,
         '            if role == "Face" and 0.6 < u < 0.95 and 0.86 < v < 0.89:',
@@ -69,7 +98,7 @@ def adapt_sources(original):
         "            makeup.extend((0, 1 if flat_region and lip[slot] else 0, 0, 1))",
         "            ink_island = 0.6 < u < 0.95 and 0.86 < (py + 0.5) / 256 < 0.89\n"
         "            holdout = flat_region or iris_island or sclera_island or ink_island\n"
-        "            makeup.extend((0, 1 if flat_region and lip[slot] else 0, 1 if holdout else 0, 1))",
+        "            makeup.extend((0, 1 if flat_region and lip[slot] else 0, max(1 if holdout else 0, ocular_skin_holdout(u, (py + 0.5) / 256)), 1))",
     )
     sources["textures.py"] = texture
     sources["pipeline.py"] = once(

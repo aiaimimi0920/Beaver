@@ -57,12 +57,13 @@ def build_request(
         )
         style = builder.adapt_style(baseline_style, builder.validate(eyes))
         face = (recipe / "face.py").read_text()
-        data, report = prepare(face, style["calibration"], parameters)
-        bound = max(
-            report["surface"]["maximum_depth_displacement_m"],
-            report["surface"]["aperture_rim_displacement_bound_m"],
-            data["ocular_plane"]["continuous_plane_displacement_bound_m"],
+        data, report = prepare(
+            face,
+            style["calibration"],
+            parameters,
+            baseline_iris_plane_slope=baseline_style["calibration"]["iris_plane_slope"],
         )
+        bound = report["surface"]["conservative_support_displacement_bound_m"]
         if bound > reviewed_support_bound_m:
             raise ValueError(
                 f"Conservative support bound {bound:.9g}m exceeds explicitly reviewed {reviewed_support_bound_m:.9g}m"

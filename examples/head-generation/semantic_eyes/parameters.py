@@ -16,6 +16,9 @@ LIMITS = {
     "iris_width": (1.0, 0.90, 1.08),
     "iris_height": (1.0, 0.90, 1.08),
     "iris_vertical_offset": (0.0, -0.01, 0.01),
+    "iris_plane_slope_scale": (1.0, 0.85, 1.0),
+    "iris_horizontal_offset": (0.0, -0.012, 0.012),
+    "ocular_skin_outline_holdout": (0.0, 0.0, 1.0),
     "simple_iris": (0.0, 0.0, 1.0),
     "short_upper_tuft": (0.0, 0.0, 1.0),
     "brow_height_offset": (0.0, -0.012, 0.012),
@@ -47,6 +50,7 @@ def validate(request):
             "lid_fold",
             "simple_iris",
             "short_upper_tuft",
+            "ocular_skin_outline_holdout",
         ) and value not in (
             0,
             1,
@@ -83,6 +87,10 @@ def adapt_style(original, request):
     p = validate(request)
     style = copy.deepcopy(original)
     c, old = style["calibration"], original["calibration"]
+    if p["ocular_skin_outline_holdout"]:
+        style["ocular_skin_outline_holdout"] = True
+    else:
+        style.pop("ocular_skin_outline_holdout", None)
     # Preserve the exact neutral parameter snapshot.
     if p == validate({}) and not style.get("illustrated_eye_art", False):
         return style
@@ -104,6 +112,10 @@ def adapt_style(original, request):
     # Iris and brows follow the same eye-local horizontal frame.
     for key in ("iris_center_x", "brow_inner_x", "brow_outer_x"):
         c[key] = c["eye_center_x"] + (old[key] - old_center) * p["eye_width"]
+    # The signed side is applied by the eye geometry: negative moves both nasally.
+    c["iris_center_x"] += p["iris_horizontal_offset"]
+    # Pivot only the authored horizontal support plane about the iris center.
+    c["iris_plane_slope"] *= p["iris_plane_slope_scale"]
     c["iris_center_y"] += p["eye_height_offset"] + p["iris_vertical_offset"]
     c["iris_half_width"] *= p["iris_width"]
     c["iris_half_height"] *= p["iris_height"]

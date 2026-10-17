@@ -1,0 +1,72 @@
+{
+  "schema_version": 1,
+  "profile": "emerald_illustrated",
+  "blink": true,
+  "surface_parameters": {
+    "axial_smoothing": 0.5,
+    "cheek_roundness": 0.05,
+    "orbit_shallowing": 0.15
+  },
+  "reviewed_support_bound_m": 0.0042,
+  "baseline_config": "emerald-soft-aperture-eyes.json",
+  "nasal_config": "emerald-nasal-gaze-eyes.json",
+  "native_review_provenance": "Root native capture review; CPU tests do not establish visual acceptance",
+  "native_cases": {
+    "726": {
+      "version": 726,
+      "captured": 69,
+      "manifest": "artifacts/blink_probe/blink-1792220614-01788/manifest.json",
+      "structural_native_validation": "pass, visual appearance not evaluated by validator",
+      "root_visual_review": "modest improvement in aperture/iris slenderness; no old closed-eye triangles; residual far-eye vertical line",
+      "diagnostic": "outline width zero removes the residual far-eye line without visible skin gap in actual render",
+      "acceptance": "candidate; user final aesthetic review pending"
+    },
+    "727": {
+      "version": 727,
+      "manifest": "artifacts/blink_probe/blink-1792222180-51394/manifest.json",
+      "verified_captures": 69,
+      "root_review": "small subjective frontal focus improvement; all reviewed winks remain free of old dark triangles; medial vertical outline remains",
+      "changed_factor": "iris_horizontal_offset=-0.006 only relative to726, ocular skin mask disabled",
+      "iris_translation_per_side_m": 0.001416,
+      "whole_model_acceptance": false,
+      "next": "independent support-plane flattening comparison rather than further uncontrolled nasal shifts"
+    },
+    "728": {
+      "version": 728,
+      "manifest": "artifacts/blink_probe/blink-1792223084-8203/manifest.json",
+      "verified_captures": 69,
+      "changed_factor": "iris_plane_slope_scale=.85 only vs726; iris offset0; skin holdout0",
+      "front_eye_ROI": [
+        435,
+        400,
+        742,
+        490
+      ],
+      "front_eye_ROI_changed_pixels": 0,
+      "front_eye_ROI_total_pixels": 27630,
+      "root_review": "No frontal visual improvement; not selected as frontal gaze fix. Side-view differences small; no old closed triangles in reviewed pose sheet.",
+      "acceptance": "experimental control, not accepted beauty improvement"
+    }
+  },
+  "plane_experiment": {
+    "base_case": 726,
+    "iris_plane_slope_scale": 0.85,
+    "iris_horizontal_offset": 0,
+    "ocular_skin_outline_holdout": 0,
+    "reviewed_support_bound_m": 0.0045,
+    "additional_plane_displacement_bound_m": 0.0006246294600000001,
+    "total_conservative_support_bound_m": 0.0031636019205883463,
+    "status": "Retained experimental control; not selected as frontal gaze fix"
+  },
+  "ocular_skin_outline_holdout": {
+    "default": 0,
+    "native_status": "UNTESTED",
+    "scope": "Optional bounded skin-atlas ocular mask; CPU coverage only"
+  },
+  "limitations": [
+    "No final consumer aesthetic acceptance",
+    "No general collision or clearance certificate",
+    "Far-eye medial outline remains in reviewed candidates",
+    "No third-party images or models redistributed"
+  ]
+}

@@ -276,13 +276,70 @@ main-lash column floor to the closed seam, instead of translating every column
 from the analytic aperture. This did not remove the visible fragments: a native
 magenta-outline isolation proved they came from exposed backfaces in the outline
 pass. Case725 adds an explicit control-map holdout for internal graphic/ocular
-atlas islands and binds it to the framework Face outline control. Native posed
-acceptance is pending. The correction
+atlas islands and binds it to the framework Face outline control. Later native
+725/726 comparisons removed the outer fragments; see the controlled follow-up
+below for the remaining medial line and acceptance limits. The correction
 is enabled only for illustrated eyes without a retained upper tuft; old profiles
 and retained-tuft motion keep their previous behavior.
 
 The illustrated profile reuses the existing face-map blue channel for outline
-holdout; red and green meanings stay unchanged. Skin atlas and ear islands remain
+holdout; red and green meanings stay unchanged. By default, skin atlas and ear islands remain
 unmasked. This requires the NPR framework's full-holdout fragment discard fix:
 zero extrusion width alone does not suppress inverted-hull backface fill. The
 map does not hide base-color geometry or disable the whole character outline.
+
+### Controlled aperture and gaze follow-up (726–728)
+
+Use `emerald-soft-aperture-eyes.json` to reproduce the 726 parameter set, or
+`emerald-nasal-gaze-eyes.json` for 727. Both use `--style-profile
+emerald_illustrated --blink`, surface parameters
+`{"axial_smoothing":0.5,"cheek_roundness":0.05,"orbit_shallowing":0.15}`
+and `--reviewed-support-bound-m 0.0042`. Supply the chosen JSON as `--eyes`,
+a fresh output prefix and the authorized workspace to `bundle.py`. Generate
+and validate through the normal Beaver workflow, including SDF rebake and
+fixed-camera/lighting neutral, wink, full-blink, oblique and white-model views.
+Parameter snapshots are reproducibility inputs, not certified model presets.
+
+726 narrows the aperture and iris, deepens the lower bowl and lightens the
+upper stroke. Root review of 69 verified native captures found modest subjective
+improvement and no old outer closed-eye triangles. A residual far-eye medial
+vertical line remains; setting outline width to zero removed it without a visible
+skin gap in that diagnostic. This does not authorize globally hiding outlines.
+
+727 changes only `iris_horizontal_offset=-0.006`: both iris/pupil/catchlight
+assemblies move nasally by 1.416 mm. Root review of 69 verified captures found
+slight subjective frontal-focus improvement, no old triangles in reviewed winks,
+and the same medial line. This is not final consumer aesthetic acceptance.
+
+728 instead changes only `iris_plane_slope_scale=0.85` relative to 726 (offset
+and skin mask zero), with an explicitly reviewed 0.0045 m support budget. All
+69 captures were verified. The front-eye ROI `[435,400,742,490]` had zero changed
+pixels out of 27,630 versus 726. It was not selected as a frontal gaze fix; the
+control remains experimental. Actual 726's conservative support bound plus the
+0.62462946 mm plane allowance totals 0.00316360192 m. Plane orientation is an
+art-support parameter and must not be equated with a semantic visual gaze axis.
+
+The independent `ocular_skin_outline_holdout` is numeric 0/1, default 0 and
+**NATIVE UNTESTED**. It is active only in the illustrated profile and affects
+only face-map B inside a bounded, calibration-derived ocular skin ellipse. It
+preserves R/G/A, existing island B, nose and ear regions. The plateau (`q<=1`)
+is B=1, transitioning to zero by `q=1.08`. With lip correction disabled, the
+current shader does not taper partial-B outline width: only the full plateau
+discards coverage. CPU mask tests do not establish visual safety or acceptance.
+Keep this switch off when comparing translation or plane controls.
+
+`gaze-experiment-evidence.json` retains the exact root review summaries, capture
+manifest identifiers and comparison limits. The previously recorded tangent
+repeatability, hidden showcase roles and posed-clearance limitations still apply.
+
+Research informed separating aperture, translation and support-plane controls:
+[OLM, Flexible Eye Design (2020)](https://history.siggraph.org/wp-content/uploads/2022/08/2020-Talks-Derouet-Jourdan_Flexible-Eye-Design-for-Japanese-Animation.pdf)
+supports independent artistic eye components;
+[PAniC-3D (2023)](https://openaccess.thecvf.com/content/CVPR2023/html/Chen_PAniC-3D_Stylized_Single-View_3D_Reconstruction_From_Portraits_of_Anime_Characters_CVPR_2023_paper.html)
+discusses stylized single-view ambiguity;
+[Pejsa et al. (2013)](https://graphics.cs.wisc.edu/Papers/2013/PMG13/eg13-pejsa_preprint.pdf),
+[Sweeny and Whitney (2017)](https://whitneylab.berkeley.edu/PDFs/Sweeny_Whitney_Gaze_VR_2017.pdf)
+and [Disney eye rigging (2019)](https://studios.disneyresearch.com/2019/05/06/practical-person-specific-eye-rigging/)
+motivate separating geometric and perceived gaze. These sources do not validate
+our proportions or aesthetic judgments. Reference images remain private and are
+not included in the repository.

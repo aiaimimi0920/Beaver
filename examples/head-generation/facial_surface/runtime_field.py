@@ -63,7 +63,13 @@ def ocular_delta(x, y, data):
     ):
         raise ValueError("Ocular sample outside certified displacement-plane domain")
     a, b, d = plane["coefficients"]
-    return a * dx + b * dy + d
+    displacement = a * dx + b * dy + d
+    # The authored slope is already in C; check its contribution without adding
+    # it twice to geometry. Legacy standalone callers have no reviewed gate.
+    combined = displacement + plane.get("authored_horizontal_slope_delta", 0.0) * dx
+    if "REVIEWED_BOUND" in globals() and abs(combined) > REVIEWED_BOUND:
+        raise ValueError("Actual ocular support exceeds reviewed displacement bound")
+    return displacement
 
 
 def blend_medial_normal(normal, smooth_normal, region, side, z, calibration, data):

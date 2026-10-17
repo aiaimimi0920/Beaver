@@ -34,12 +34,22 @@ Offsets default to 0, in fractions of calibrated face height:
 
 - corner_slope_offset −.018…+.008; eye_height_offset ±.006
 - iris_vertical_offset ±.01
+- iris_horizontal_offset ±.012; negative moves both iris centers toward the nose,
+  after the eye-width mapping. Pupil/catchlight geometry follows each iris center;
+  aperture, eye spacing, and whole-orbit geometry are unchanged.
 - brow_height_offset and brow_rise_offset ±.012
 
 Numeric layer controls accept only 0 or 1. `supplemental_lashes` and `lid_fold`
 default 1. `simple_iris` defaults 0. Booleans, unknown keys, nonfinite values and
 out-of-range values fail. Combined values must also satisfy the inherited
 aperture-height envelope.
+
+`ocular_skin_outline_holdout` is a separate numeric 0/1 control, default 0,
+effective only with the illustrated art profile. It changes only FaceMap B around
+the calibrated skin aperture, preserving existing island masks and R/G/A. This
+experimental art-direction control leaves geometry and gaze unchanged. With the
+current shader's lip fix disabled, only its full-B plateau removes outline;
+partial B values do not produce a smooth width taper. Test it separately from gaze.
 
 `lash_contour_follow` is 0–1, default 0. Full follow uses 21 stations, variable
 width, pointed ends and a Hermite outer continuation after t=.75. The outer tip
@@ -270,3 +280,15 @@ then independent winks and bilateral closure with MouthOpen 0.6. Check its
 manifest hashes, requested/read-back weights, images, and unchanged source hash;
 restore the ordinary head-review scene afterward. The probe does not establish
 acceptance merely by writing a manifest.
+
+`iris_plane_slope_scale` defaults to 1 and is bounded to [.85, 1]. It scales
+only the baseline horizontal iris support-plane slope, pivoting at each iris
+center; pupil and catchlight use that same calibration. This is an art-plane
+control, not a certified gaze direction. It is independent of iris translation
+and ocular outline holdout. Facial-surface preflight adds the maximum absolute
+slope-change displacement over the entire iris/pupil/catchlight domain to its
+previous conservative support bound, and rejects an insufficient explicitly
+reviewed bound. At the current .85 experiment this adds about .625 mm; the
+reviewed experiment budget is .0045 m (unchanged controls retain .0042 m).
+Native limbus/socket/lid clearance, side intersections and posed acceptance
+remain required; a displacement bound does not certify those clearances.
