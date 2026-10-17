@@ -9,6 +9,7 @@ LIMITS = {
     "eye_width": (1.0, 0.92, 1.08),
     "upper_arch": (1.0, 0.70, 1.40),
     "lower_arch": (1.0, 0.50, 1.12),
+    "lower_roundness": (1.0, 1.0, 1.25),
     "upper_roundness": (1.0, 1.0, 2.0),
     "upper_horizontal_roundness": (1.0, 0.70, 1.0),
     "corner_slope_offset": (0.0, -0.018, 0.008),
@@ -103,6 +104,7 @@ def adapt_style(original, request):
     c["eye_upper_power"] *= p["upper_roundness"]
     c["eye_horizontal_power"] *= p["upper_horizontal_roundness"]
     c["eye_lower_arch"] *= p["lower_arch"]
+    c["eye_lower_power"] *= p["lower_roundness"]
     if p["simple_iris"]:
         style["iris_graphic_disc_strength"] = 0.0
         style["iris_accent_strength"] = 0.0
@@ -285,3 +287,13 @@ def adapt_style(original, request):
             "Combined eye controls exceed inherited eye patch vertical envelope"
         )
     return style
+
+
+def adapt_lower_clearance(source, enabled):
+    if not enabled:
+        return source
+    old = "+ abs((y - cy) / (H * arch))"
+    new = "+ abs((y - cy) / (H * arch)) ** (1.0 / power if y < cy else 1.0)"
+    if source.count(old) != 1:
+        raise ValueError("Inherited pocket clearance radius contract changed")
+    return source.replace(old, new, 1)

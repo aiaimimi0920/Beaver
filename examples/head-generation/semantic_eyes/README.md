@@ -292,3 +292,10 @@ reviewed bound. At the current .85 experiment this adds about .625 mm; the
 reviewed experiment budget is .0045 m (unchanged controls retain .0042 m).
 Native limbus/socket/lid clearance, side intersections and posed acceptance
 remain required; a displacement bound does not certify those clearances.
+
+
+### Optional lower-lid contour shoulder
+
+`lower_roundness` is a bounded multiplier (1.0–1.25, default 1.0) for the lower aperture exponent. Increasing it raises intermediate lower-lid stations while preserving the central depth, corner endpoints, eye center and width; use `lower_arch` separately to adjust central depth. The default preserves the prior contour. It does not add asymmetric peak positioning or change the upper eyelid. Non-default values also use the matching inverse-power lower-pocket clearance classification. Blink, skin support and preflight receive the same adapted calibration. CPU tests do not certify native clearance or visual appeal; compare matched views and unchanged SDF shading policy before retaining a candidate.
+
+The range is provisional: a 2.0 candidate with lower_arch 0.70 failed the native continuous-pose triangle orientation guard; it was rejected, not retained. A 1.25 candidate passed generation, which does not certify all parameter combinations. Exactly 1.0 retains the legacy pocket classification for compatibility; opting into a non-default value also opts into the inverse-power classification. This compatibility switch is discrete even for an arbitrarily small shape change. Native pose and clearance checks remain mandatory.

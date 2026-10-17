@@ -7,7 +7,7 @@ import json
 from pathlib import Path
 import re
 import tempfile
-from parameters import adapt_style, validate
+from parameters import adapt_style, validate, adapt_lower_clearance
 
 HERE = Path(__file__).resolve().parent
 RECIPE = HERE.parent / "checkpoints/current"
@@ -138,6 +138,9 @@ def build_request(parameters, output_prefix, workspace, *, blink=False):
             "pipeline.py": pipeline,
             "semantic_eye_runtime.py": (HERE / "runtime.py").read_text(),
         }
+    )
+    sources["eye_socket.py"] = adapt_lower_clearance(
+        sources["eye_socket.py"], p["lower_roundness"] != 1
     )
     if blink:
         sources["semantic_eye_runtime.py"] += (
