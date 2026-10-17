@@ -5,7 +5,7 @@ import math
 
 # Multipliers default to one; offsets are fractions of calibrated face height H.
 LIMITS = {
-    "eye_spacing": (1.0, 0.96, 1.04),
+    "eye_spacing": (1.0, 0.94, 1.04),
     "eye_width": (1.0, 0.92, 1.08),
     "upper_arch": (1.0, 0.70, 1.40),
     "lower_arch": (1.0, 0.50, 1.12),

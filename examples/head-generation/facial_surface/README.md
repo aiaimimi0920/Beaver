@@ -353,3 +353,20 @@ and [Disney eye rigging (2019)](https://studios.disneyresearch.com/2019/05/06/pr
 motivate separating geometric and perceived gaze. These sources do not validate
 our proportions or aesthetic judgments. Reference images remain private and are
 not included in the repository.
+
+### Whole-face layout follow-up (730–733)
+
+732 uses `emerald-narrow-layout-eyes.json`: spacing .94 versus 729's .96,
+with the original medial correction collar and .0042 m support budget.
+733 uses `emerald-balanced-layout-eyes.json`: the same layout with lower arch
+1.00 instead of 1.08. These remain optional comparative candidates.
+
+730's .90 lower arch made the lower aperture too flat in root review.
+731's .92 spacing with an experimental adaptive medial collar passed CPU
+support checks but failed native posed-triangle orientation; it was rejected.
+The adaptive collar is not retained, and .92 spacing is outside the supported
+parameter range. No geometry orientation or overlap guard was weakened.
+
+Use the native case records for actual capture and aesthetic-review status.
+CPU success and native structural validation do not establish aesthetic
+acceptance or complete posed-intersection safety.

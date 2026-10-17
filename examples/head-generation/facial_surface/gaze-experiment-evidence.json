@@ -59,6 +59,43 @@
         "final aesthetic acceptance pending"
       ],
       "source": "faye729/comparison/three-options.jpg"
+    },
+    "730": {
+      "version": 730,
+      "verified_captures": 69,
+      "manifest": "res://artifacts/blink_probe/blink-1792229275-29463/manifest.json",
+      "model_sha256": "de263398e385701ee2e0ec659dd4694dc06789c5ae04a75fd552e49247dd79d9",
+      "source_unchanged": true,
+      "acceptance": "candidate only; final user aesthetic acceptance pending",
+      "root_review": "Lower arch .90 reduces roundness but looks too flat; not selected."
+    },
+    "732": {
+      "version": 732,
+      "verified_captures": 69,
+      "manifest": "res://artifacts/blink_probe/blink-1792230412-39137/manifest.json",
+      "model_sha256": "7f0bafaecdda540ce405e48af128c8bf96262c1bcbb1c674e67d998bf132f43e",
+      "source_unchanged": true,
+      "acceptance": "candidate only; final user aesthetic acceptance pending",
+      "root_review": "Spacing .94 gives modestly more medial layout; original .2 nasal collar retained."
+    },
+    "733": {
+      "version": 733,
+      "verified_captures": 69,
+      "manifest": "res://artifacts/blink_probe/blink-1792231028-31336/manifest.json",
+      "model_sha256": "cb0517a11373db55cf656a11e1d0e0d5c0795f912be89631e7a1f267d31ce3aa",
+      "source_unchanged": true,
+      "acceptance": "candidate only; final user aesthetic acceptance pending",
+      "root_review": "Lower arch 1.00 on 732 layout gives a gentler compromise than .90; preferred candidate for user review, not final acceptance.",
+      "remaining": [
+        "Far-eye medial outline in full blink",
+        "White-model shading bands",
+        "Final aesthetic acceptance"
+      ]
+    },
+    "731": {
+      "version": 731,
+      "acceptance": "rejected",
+      "reason": "Spacing .92 with adaptive medial collar failed native posed-triangle orientation. Experimental collar reverted; no guard bypass."
     }
   },
   "plane_experiment": {

@@ -23,7 +23,7 @@ slots; do not silently omit an evidence file when extending it.
 
 Multipliers default to 1:
 
-- eye_spacing .96–1.04; eye_width .92–1.08
+- eye_spacing .94–1.04; eye_width .92–1.08
 - upper_arch .70–1.40; lower_arch .50–1.12
 - upper_roundness 1–2; upper_horizontal_roundness .70–1
 - iris_width and iris_height .90–1.08
