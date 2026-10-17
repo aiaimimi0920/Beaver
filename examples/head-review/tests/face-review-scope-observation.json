@@ -1,0 +1,135 @@
+{
+  "checks": [
+    {
+      "check": "Production actor initialized",
+      "passed": true
+    },
+    {
+      "check": "Face visible",
+      "passed": true
+    },
+    {
+      "check": "Frozen Body hidden",
+      "passed": true
+    },
+    {
+      "check": "Frozen Hair hidden",
+      "passed": true
+    },
+    {
+      "check": "Navigation hidden",
+      "passed": true
+    },
+    {
+      "check": "Save hidden",
+      "passed": true
+    },
+    {
+      "check": "Save remains disabled",
+      "passed": true
+    },
+    {
+      "check": "FullView hidden",
+      "passed": true
+    },
+    {
+      "check": "HalfView hidden",
+      "passed": true
+    },
+    {
+      "check": "HairToggle hidden",
+      "passed": true
+    },
+    {
+      "check": "Comparison accessible",
+      "passed": true
+    },
+    {
+      "check": "Camera reset accessible",
+      "passed": true
+    },
+    {
+      "check": "Only face light and outline sliders",
+      "passed": true
+    },
+    {
+      "check": "Actual display mode white",
+      "passed": true
+    },
+    {
+      "check": "Actual Face wire white",
+      "passed": true
+    },
+    {
+      "check": "Actual display mode edges",
+      "passed": true
+    },
+    {
+      "check": "Actual Face wire edges",
+      "passed": true
+    },
+    {
+      "check": "Actual display mode render",
+      "passed": true
+    },
+    {
+      "check": "Actual Face wire render",
+      "passed": true
+    },
+    {
+      "check": "Angle control",
+      "passed": true
+    },
+    {
+      "check": "Reset front",
+      "passed": true
+    },
+    {
+      "check": "Orthographic retained",
+      "passed": true
+    },
+    {
+      "check": "Comparison opened",
+      "passed": true
+    },
+    {
+      "check": "Both comparison panes",
+      "passed": true
+    },
+    {
+      "check": "Blink controls available",
+      "passed": true
+    },
+    {
+      "check": "Parent input suspended",
+      "passed": true
+    },
+    {
+      "check": "Parent input restored",
+      "passed": true
+    },
+    {
+      "check": "Preview updates restored",
+      "passed": true
+    },
+    {
+      "check": "Source geometry unchanged",
+      "passed": true
+    },
+    {
+      "check": "Screenshot saved",
+      "passed": true
+    }
+  ],
+  "failures": 0,
+  "image": "res://artifacts/face_review_scope/preview.png",
+  "image_sha256": "65df569f354b5471e67850c5b5a9dcb68395313f6ff1ca593a3e144178f947c8",
+  "source": "res://assets/aster/general_face_eyes_717_open/aster_head.glb",
+  "source_sha256": "600125beb80e539bd251437b0b04d2f0b7dd2db9732c273ebad06e3eff889376",
+  "observed_utc": "2026-10-17T01:28:00Z",
+  "scope": "Native GUI checks for the dedicated face-review presentation. No full wardrobe or final aesthetic acceptance.",
+  "native_source_difference": "Only the authorized reference definition path differs from the public source default.",
+  "public_head_review_sha256": "0c174376ea905360aa11e8712769148833c80b33310a6ec4fc5f3d6aa1ceade2",
+  "native_head_review_sha256": "7ad559cb9e607d082b7783c2521957141012cbbadea48d7b5a58f09ca5c8724d",
+  "probe_sha256": "cac484a3964fcf7f7c896b26bf4a2af5181ee60096dd36efaf9521e78cf13e5e"
+}
