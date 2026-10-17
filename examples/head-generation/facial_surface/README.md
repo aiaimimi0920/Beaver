@@ -207,7 +207,9 @@ candidate was reviewed in 69 render/white/blink poses, 42 supplementary
 wireframe/opposite-side/mouth poses, and 250 directional-light captures. All
 500 captured pane material states matched the requested SDF settings. The
 face-review UI probe passed 30 checks. The fuller lower return and larger iris
-were visually preferred in the reviewed front and both 45-degree views.
+were initially preferred in the internal review, but the user subsequently
+rejected case717 aesthetically. It is retained only as comparison evidence;
+technical coverage does not establish acceptable eye design.
 White-model cheek/temple shading bands remain unresolved.
 
 Independent case718 regenerated the same joint geometry, morphs, UVs, normals,
@@ -227,3 +229,27 @@ The local same-job standalone Face SHA-256 values were
 `284767265455745df8eb651c37ccbfe85026a9d8e071504bfc80f844dff75677`
 (case718). The native showcase still uses an assembled definition with hidden
 Body/Hair roles; these checks do not establish a standalone Face-only NPR runtime.
+
+### Illustrated eye-art experiment
+
+`--style-profile emerald_illustrated` is a further opt-in art experiment. Use
+`emerald-rounded-eyes.json`, the same surface parameters/bound, and `--blink`.
+The aperture is unchanged from case717. The profile tapers the inner upper lash,
+sweeps its small child blade along the parent, reduces/tints the pupil, relocates
+the key catchlight and groups iris paint into dark upper / colored middle / light
+lower regions. An isolated sclera atlas island adds upper occlusion and warm
+corners; its UV mapping and ocular ILM classification are changed together.
+
+Native case720 generated and rebaked its SDF through Beaver. Its standalone Face
+export passed structural, finite-stream, three-morph and same-job embedded-atlas
+checks (8,182 vertices, 10,972 triangles). 69 render/white/blink and 42 supplemental
+wireframe/opposite-side/mouth captures were checked against their actual weights,
+display modes, source identity and image hashes, then visually reviewed. This is
+an experimental improvement candidate, not final aesthetic acceptance. Existing
+white-model cheek/temple shading bands and exact tangent-repeat limitations remain.
+No hair/body geometry was redesigned; the showcase still uses hidden frozen roles.
+
+The source adaptation is retained in the generated `facial_surface_preflight.json`
+under `packager_helpers.semantic_illustrated_art.py`; transformed native sources
+are retained alongside the output. No third-party reference images or models are
+included in this profile.

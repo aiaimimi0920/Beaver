@@ -32,12 +32,12 @@ def apply_style_profile(style, name):
     """Opt-in original eye-art direction; the inherited baseline stays intact."""
     if name is None:
         return json.loads(json.dumps(style))
-    if name not in ("clean_emerald", "emerald_layered"):
+    if name not in ("clean_emerald", "emerald_layered", "emerald_illustrated"):
         raise ValueError("Unknown face style profile: " + str(name))
     result = json.loads(json.dumps(style))
     result.update(PROFILE_STYLE)
     result["calibration"].update(PROFILE_CALIBRATION)
-    if name == "emerald_layered":
+    if name in ("emerald_layered", "emerald_illustrated"):
         result.update(
             {
                 "nose_plane_tint_strength": 0.08,
@@ -58,5 +58,15 @@ def apply_style_profile(style, name):
                 "iris_radial_samples": 64,
                 "iris_radial_rings": 4,
             }
+        )
+    if name == "emerald_illustrated":
+        result["illustrated_eye_art"] = True
+        result["calibration"].update(
+            pupil_half_width=0.0115,
+            pupil_half_height=0.021,
+            catchlight_offset_x=-0.025,
+            catchlight_offset_y=0.027,
+            catchlight_half_width=0.012,
+            catchlight_half_height=0.010,
         )
     return result

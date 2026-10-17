@@ -84,7 +84,7 @@ def adapt_style(original, request):
     style = copy.deepcopy(original)
     c, old = style["calibration"], original["calibration"]
     # Preserve the exact neutral parameter snapshot.
-    if p == validate({}):
+    if p == validate({}) and not style.get("illustrated_eye_art", False):
         return style
     old_center = old["eye_center_x"]
     c["eye_center_x"] *= p["eye_spacing"]
@@ -232,6 +232,31 @@ def adapt_style(original, request):
             [0.83, sample(rails, 0.55, 2) - 0.004],
             [0.60, mid(0.60) - 0.001],
         ]
+    if style.get("illustrated_eye_art", False):
+        # Preserve the aperture; vary stroke weight along its continuous path.
+        rails = style["upper_lash_rails"]
+        for row in rails:
+            t, lo, hi = row
+            q = max(0.0, min(1.0, (t + 0.98) / 2.10))
+            width = (hi - lo) * (0.48 + 0.90 * q)
+            row[1], row[2] = lo, lo + width
+        if p["short_upper_tuft"]:
+
+            def top(t):
+                return sample(rails, t, 2)
+
+            def middle(t):
+                return (sample(rails, t, 1) + top(t)) / 2
+
+            # A low, swept child blade; root remains embedded in the parent.
+            style["upper_swept_tuft_outline"] = [
+                [0.42, middle(0.42)],
+                [0.56, top(0.56) - 0.002],
+                [0.73, top(0.73) + 0.002],
+                [0.94, top(0.78) + 0.005],
+                [0.81, middle(0.81)],
+                [0.60, middle(0.60) - 0.001],
+            ]
     # Geometry must remain within the fixed inherited feature-patch footprint.
     low = c["origin_y_m"] + c["height_m"] * (
         c["eye_corner_y"] - abs(c["eye_corner_slope"]) - c["eye_lower_arch"]

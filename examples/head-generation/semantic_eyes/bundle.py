@@ -197,6 +197,10 @@ def build_request(parameters, output_prefix, workspace, *, blink=False):
         ")) / 0.2)) * 0.7",
         ')) / 0.2)) * STYLE.get("iris_accent_strength", .7)',
     )
+    if style.get("illustrated_eye_art", False):
+        from illustrated_art import adapt_sources
+
+        sources = adapt_sources(sources)
     base.OUTPUT_PREFIX = output_prefix
     with tempfile.TemporaryDirectory() as directory:
         snapshot = Path(directory)
