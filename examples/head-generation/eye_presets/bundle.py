@@ -1,4 +1,5 @@
 """Select an explicit eye preset and package it; never run Blender here."""
+
 import argparse
 import hashlib
 import importlib.util
@@ -12,9 +13,20 @@ SURFACE = HERE.parent / "facial_surface"
 
 def load_preset(preset_id):
     if preset_id not in {
-        "almond-balanced-796", "slender-flat-797", "soft-downturned-798",
-        "sharp-upturned-799", "flat-upper-round-lower-800",
-        "arched-upper-flat-lower-801", "angular-upper-802",
+        "almond-balanced-796",
+        "slender-flat-797",
+        "soft-downturned-798",
+        "sharp-upturned-799",
+        "flat-upper-round-lower-800",
+        "arched-upper-flat-lower-801",
+        "angular-upper-802",
+        "almond-taper-experiment-803",
+        "rounded-arch-shallow-805",
+        "asymmetric-angular-807",
+        "soft-wing-downturned-808",
+        "clean-angular-811",
+        "clean-downturned-810",
+        "clean-slender-812",
     }:
         raise ValueError("Unknown explicit eye preset")
     spec = json.loads((HERE / (preset_id + ".json")).read_text())
@@ -26,8 +38,10 @@ def load_preset(preset_id):
 
 def build_request(preset_id, prefix, workspace):
     spec = load_preset(preset_id)
-    if prefix in {"assets/aster/general_face_eyes_795/",
-                  "assets/aster/general_face_eyes_796/"}:
+    if prefix in {
+        "assets/aster/general_face_eyes_795/",
+        "assets/aster/general_face_eyes_796/",
+    }:
         raise ValueError("Never overwrite a preserved baseline")
     previous_path = sys.path[:]
     sys.path.insert(0, str(SURFACE))
@@ -38,13 +52,16 @@ def build_request(preset_id, prefix, workspace):
         module = importlib.util.module_from_spec(module_spec)
         module_spec.loader.exec_module(module)
         return module.build_request(
-            spec["surface_parameters"], spec["eye_parameters"], prefix,
-            workspace, spec["reviewed_support_bound_m"], spec["style_profile"],
+            spec["surface_parameters"],
+            spec["eye_parameters"],
+            prefix,
+            workspace,
+            spec["reviewed_support_bound_m"],
+            spec["style_profile"],
             blink=spec["blink"],
         )
     finally:
         sys.path[:] = previous_path
-
 
 
 def validate_output_path(output):
@@ -63,6 +80,6 @@ if __name__ == "__main__":
     parser.add_argument("--output", type=Path, required=True)
     args = parser.parse_args()
     validate_output_path(args.output)
-    args.output.write_text(json.dumps(build_request(
-        args.preset, args.prefix, args.workspace
-    )))
+    args.output.write_text(
+        json.dumps(build_request(args.preset, args.prefix, args.workspace))
+    )

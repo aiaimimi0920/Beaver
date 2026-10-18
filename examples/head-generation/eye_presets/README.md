@@ -26,8 +26,8 @@ and blink captures. CPU tests do not establish visual quality.
 The selector checks hashes of all three preserved 795 files and refuses the baseline
 model directories (795 and 796). Its request-output path must also be outside retained recipe directories. Reusing an existing non-baseline prefix still follows the existing
 packager's expected-hash overwrite checks. Future presets need their own authored
-configuration, prompt and verification. The catalog now provides seven explicit alternatives
-to the retained 795 baseline.
+configuration, prompt and verification. The catalog preserves the initial seven alternatives and separately lists
+reference-refined candidates. Selecting a candidate does not overwrite the baseline.
 
 The `recipe_commit` records the geometry recipe used for the recorded candidate;
 it does not silently check out that commit. Use that code revision for historical
@@ -123,3 +123,79 @@ continuous orientation minimum is positive but small (.00995316), and its 16
 closest-parent bands at five blink weights reached 0.2248 mm; these do not prove
 all-root continuity or absence of all collisions. Other reference families remain
 unfinished, and technical success is not the owner's aesthetic acceptance.
+
+## Reference-refined selection
+
+The selector also accepts `almond-taper-experiment-803`,
+`rounded-arch-shallow-805`, `asymmetric-angular-807`, and
+`soft-wing-downturned-808`. Each is independently authored and verified; the old
+796–802 snapshots remain available as initial-study records. Visually rejected
+804 is deliberately not selectable. Use a fresh output prefix for every replay.
+
+The selector packages with the currently checked-out code; recorded recipe commit
+fields do not automatically restore historical implementations. A selected snapshot
+is not a claim of byte-identical historical output. Native generation, SDF and
+visual checks are required before adopting any replay. After self-review passes,
+continue to the next workflow stage; per-iteration owner review is not a gate.
+
+Recorded GLB, complete parameter files and every captured image for 803/805/807/808
+were rechecked locally against their stored manifests. The checked metadata is in
+[refined native evidence](refined-native-evidence.json). Repository tests verify
+coverage and parameter/identity consistency; they do not contain or rerender the
+large native asset archives. Each of the four IDs also successfully packaged through
+the real CLI with a new replay prefix. Packaging alone is not a new native replay.
+
+## Lash styling is a separate design decision
+
+Do not assign the same dense lash ornament to every aperture. The retained round-open
+and sharp-upturned variants can keep richer outer groups. Low-opening, downturned
+and segmented contours benefit from a lighter band and fewer tips. This does not
+change the independently authored aperture parameters.
+
+`clean-downturned-810` keeps the true descending corner of 808, uses a .82 primary
+band scale, and retains one short child blade per eye. Disabling layered lashes also
+shortens the main tail and changes child positioning; it is not a pure deletion
+operation. Its native component list, SDF and 84 captures were checked. Two remaining
+child-root bands at five blink weights reached 0.0604 mm, below the unchanged 0.8 mm
+limit. Front, oblique, white and closed-eye visual self-review passed.
+
+809 isolates band thinning with all the richer components retained. It passed
+technical and visual checks but the outer group still dominates; it is a controlled
+comparison rather than the selected soft-family style.
+
+`clean-angular-811` keeps 807's independent segmented aperture and simplifies only
+the lash styling. The normal and closed contours passed visual self-review. Its
+first screenshot set was rejected because interactive shortcuts contaminated the
+camera and visibility state; geometry/SDF were unaffected. A fresh input-isolated
+84-frame set passed actual yaw/pitch, orthographic size, head-only visibility,
+expression and image/source hash checks. Do not use the rejected first set.
+
+For new captures use the input-isolated
+[eye-family probe](../../head-review/tests/eye_family_capture_probe.gd), which keeps
+body/hair hidden and fixes orthographic size before every frame. Run
+`verify_capture.py --workspace WORKSPACE --manifest MANIFEST.json
+--expected-source res://assets/aster/SELECTED_PREFIX/aster_head.glb` afterwards.
+The verifier rejects missing actual view metadata, perspective/hair/body changes,
+actual render-mode or pose/zoom/expression mismatch, viewport changes, hidden faces,
+unexpected or changed sources/images, PNG header/dimension mismatch, and incomplete
+capture schedules. PNG header verification does not prove complete decoding or
+nonblank meaningful content; visual review remains required. The legacy capture manifests are historical evidence, not passing inputs
+for this stricter new verifier. It still does not judge beauty or prove collision
+freedom.
+
+## Current family choices
+
+The catalog's `current_family_choices` identifies the working comparison set:
+795 retained round-open, 803 balanced almond, 812 clean slender, 810 clean
+downturned, 799 sharp-upturned, 800 shallow-upper/round-lower, 805 rounded-upper/
+shallow-lower and 811 clean segmented. `baseline-795` denotes the retained baseline
+asset and prompt; it is deliberately not an alternative selector ID. The other
+seven choices resolve through `bundle.py --preset`. These are design starting
+points, not a universal taxonomy or approval for arbitrary parameter combinations.
+
+811 and 812 were generated through that explicit selector with fresh output
+prefixes and complete snapshots, then received native SDF and visual review.
+Both kept their original aperture families while simplifying the lash ornament.
+812's sampled child roots reached 0.0621 mm; its continuous orientation minimum
+remained positive at .0624564. The three simplified candidates are not applied
+to the richer round-open and sharp-upturned styles.
