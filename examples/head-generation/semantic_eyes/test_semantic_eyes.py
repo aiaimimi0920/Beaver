@@ -116,7 +116,7 @@ class SemanticEyeTests(unittest.TestCase):
                     request["corner_slope_offset"] = -self.style["calibration"][
                         "eye_corner_slope"
                     ]
-                if key == "upper_angularity" and bound:
+                if key in ("upper_angularity", "aperture_corner_taper") and bound:
                     request["lash_contour_follow"] = 1
                 adapt_style(self.style, request)
 

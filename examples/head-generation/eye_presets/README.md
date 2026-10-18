@@ -95,3 +95,10 @@ orientation and sampled attachment measurements, including their scope limits.
 The 802 orientation minimum is positive but small (0.00591148); this is a tested
 first candidate, not evidence that stronger angular parameters or every face work.
 Owner aesthetic acceptance is pending. Failed intermediate candidates are excluded.
+
+## Reference-match correction
+
+The owner rejected the eight-style study as insufficiently faithful to the researched
+contours. Technical checks remain valid but are not shape-family acceptance. See
+[reference review](reference-review.zh-CN.md). Candidate 803 is an independent
+corner-taper experiment, not a replacement of 796 or a solution for all families.

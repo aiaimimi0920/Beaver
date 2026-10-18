@@ -9,6 +9,7 @@ LIMITS = {
     "eye_spacing": (1.0, 0.94, 1.04),
     "eye_width": (1.0, 0.92, 1.08),
     "upper_arch": (1.0, 0.70, 1.40),
+    "aperture_corner_taper": (0.0, 0.0, 1.0),
     "upper_asymmetry": (0.0, -0.25, 0.25),
     "upper_angularity": (0.0, 0.0, 1.0),
     "lower_arch": (1.0, 0.50, 1.12),
@@ -74,6 +75,8 @@ def validate(request):
         ):
             raise ValueError("Layer control must be numeric zero or one: " + key)
         result[key] = float(value)
+    if result["aperture_corner_taper"] and result["lash_contour_follow"] != 1:
+        raise ValueError("Corner taper requires full lash contour following")
     if result["upper_angularity"] and result["lash_contour_follow"] != 1:
         raise ValueError("Angular upper contour requires full lash contour following")
     if result["short_upper_tuft"] and (
@@ -96,6 +99,9 @@ def upper_change(t, calibration, parameters):
         max(0.0, 1 - abs(t) ** calibration["eye_horizontal_power"])
         ** calibration["eye_upper_power"]
     )
+    taper = parameters["aperture_corner_taper"]
+    upper_power = calibration["eye_upper_power"] * parameters["upper_roundness"]
+    upper_power = (1-taper)*upper_power + taper
     new_arch = max(
         0.0,
         1
@@ -104,14 +110,13 @@ def upper_change(t, calibration, parameters):
             calibration["eye_horizontal_power"]
             * parameters["upper_horizontal_roundness"]
         ),
-    ) ** (calibration["eye_upper_power"] * parameters["upper_roundness"])
+    ) ** upper_power
     if parameters["upper_asymmetry"] or parameters["upper_angularity"]:
         shaped = dict(
             calibration,
             eye_horizontal_power=calibration["eye_horizontal_power"]
             * parameters["upper_horizontal_roundness"],
-            eye_upper_power=calibration["eye_upper_power"]
-            * parameters["upper_roundness"],
+            eye_upper_power=upper_power,
             eye_upper_asymmetry=parameters["upper_asymmetry"],
             eye_upper_angularity=parameters["upper_angularity"],
         )
@@ -128,6 +133,10 @@ def adapt_style(original, request):
     if p["lateral_aperture_follow"]:
         # New presets retain the face-derived depth instead of an endpoint chord.
         style["accent_lateral_depth_blend"] = 0.0
+    if p["aperture_corner_taper"]:
+        taper = p["aperture_corner_taper"]
+        style["accent_lateral_guide_inward_power"] = (1-taper)*style["accent_lateral_guide_inward_power"] + taper
+        style["accent_lateral_guide_bow_fraction"] = (1-taper)*style["accent_lateral_guide_bow_fraction"] + taper
     if p["ocular_skin_outline_holdout"]:
         style["ocular_skin_outline_holdout"] = True
     else:
@@ -153,6 +162,10 @@ def adapt_style(original, request):
     c["eye_horizontal_power"] *= p["upper_horizontal_roundness"]
     c["eye_lower_arch"] *= p["lower_arch"]
     c["eye_lower_power"] *= p["lower_roundness"]
+    if p["aperture_corner_taper"]:
+        taper = p["aperture_corner_taper"]
+        for key in ("eye_upper_power", "eye_lower_power"):
+            c[key] = (1-taper)*c[key] + taper
     c["eye_lower_horizontal_power"] *= p["lower_horizontal_roundness"]
     if p["lower_shoulder"]:
         if abs(c["eye_corner_slope"]) > 1e-12:
