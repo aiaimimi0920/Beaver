@@ -116,8 +116,10 @@ class SemanticEyeTests(unittest.TestCase):
                     request["corner_slope_offset"] = -self.style["calibration"][
                         "eye_corner_slope"
                     ]
-                if key in ("upper_angularity", "aperture_corner_taper") and bound:
+                if key in ("upper_angularity", "aperture_corner_taper", "aperture_upper_share") and bound:
                     request["lash_contour_follow"] = 1
+                if key == "aperture_upper_share" and bound:
+                    request.update(upper_arch=.7, lower_arch=.5)
                 adapt_style(self.style, request)
 
     def test_nasal_spacing_extension_preserves_width_and_local_features(self):

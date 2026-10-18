@@ -231,7 +231,8 @@ def build_request(parameters, output_prefix, workspace, *, blink=False):
         )
     sources["eye_socket.py"] = adapt_lower_clearance(
         sources["eye_socket.py"],
-        p["aperture_corner_taper"] != 0
+        p["aperture_upper_share"] != 0
+        or p["aperture_corner_taper"] != 0
         or p["lower_roundness"] != 1
         or p["lower_shoulder"] != 0
         or p["lower_horizontal_roundness"] != 1,

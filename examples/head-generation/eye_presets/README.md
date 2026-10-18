@@ -102,3 +102,24 @@ The owner rejected the eight-style study as insufficiently faithful to the resea
 contours. Technical checks remain valid but are not shape-family acceptance. See
 [reference review](reference-review.zh-CN.md). Candidate 803 is an independent
 corner-taper experiment, not a replacement of 796 or a solution for all families.
+
+The experimental [805 rounded upper/shallow lower candidate](rounded-arch-shallow-805.json)
+uses actual upper/lower arch allocation rather than unequal base multipliers.
+`aperture_upper_share=0` disables redistribution; active values .2–.8 partition
+the sum of the two arch amplitudes and shift the iris center by the nominal
+aperture-center change. This does not preserve opening height at every horizontal
+position or all iris occlusion. The existing vertical-envelope checks remain active.
+`lateral_guide_inward_power=0` keeps the prior guide selection; active values 1–4
+select the endpoint-guided inward curve without changing local fit thresholds.
+`upper_corner_softness` reduces the adapted upper exponent by up to 30%; default 0
+preserves prior behavior. In 805 the upper exponent is .805, so its endpoint is
+again round/vertical-tangent while the lower exponent stays 1. Do not apply 803's
+finite-upper-endpoint claim to 805.
+
+804 passed technical checks but was rejected visually for a triangular apex.
+805 softens and widens the apex; both preserve shallow lower structure. Native
+generation, receipt-bound SDF and 84 captures are recorded per candidate. 805's
+continuous orientation minimum is positive but small (.00995316), and its 16
+closest-parent bands at five blink weights reached 0.2248 mm; these do not prove
+all-root continuity or absence of all collisions. Other reference families remain
+unfinished, and technical success is not the owner's aesthetic acceptance.

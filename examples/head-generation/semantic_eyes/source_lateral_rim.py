@@ -29,6 +29,8 @@ def adapt_lateral_depth(source, enabled):
     if not enabled:
         return source
     replacements = [
+        ("'Final lateral guide requires structural redesign'",
+         "('Final lateral guide requires structural redesign', f, base, target, delta)"),
         ("        shifts=depth_shifts(stations,centers)",
          "        assert len(stations)==len(centers) and len(stations)>1\n"
          "        assert stations[0]==0 and stations[-1]==1\n"

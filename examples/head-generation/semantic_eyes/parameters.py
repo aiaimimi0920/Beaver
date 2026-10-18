@@ -10,6 +10,8 @@ LIMITS = {
     "eye_width": (1.0, 0.92, 1.08),
     "upper_arch": (1.0, 0.70, 1.40),
     "aperture_corner_taper": (0.0, 0.0, 1.0),
+    "aperture_upper_share": (0.0, 0.0, 0.8),
+    "upper_corner_softness": (0.0, 0.0, 1.0),
     "upper_asymmetry": (0.0, -0.25, 0.25),
     "upper_angularity": (0.0, 0.0, 1.0),
     "lower_arch": (1.0, 0.50, 1.12),
@@ -44,6 +46,7 @@ LIMITS = {
     "lid_fold": (1.0, 0.0, 1.0),
     "lateral_aperture_follow": (0.0, 0.0, 1.0),
     "lateral_blink_follow": (0.85, 0.65, 0.85),
+    "lateral_guide_inward_power": (0.0, 0.0, 4.0),
 }
 
 
@@ -75,6 +78,12 @@ def validate(request):
         ):
             raise ValueError("Layer control must be numeric zero or one: " + key)
         result[key] = float(value)
+    if 0 < result["lateral_guide_inward_power"] < 1:
+        raise ValueError("Active lateral guide power must be between 1 and 4")
+    if 0 < result["aperture_upper_share"] < .2:
+        raise ValueError("Active upper share must be between .2 and .8")
+    if result["aperture_upper_share"] and result["lash_contour_follow"] != 1:
+        raise ValueError("Upper share requires full lash contour following")
     if result["aperture_corner_taper"] and result["lash_contour_follow"] != 1:
         raise ValueError("Corner taper requires full lash contour following")
     if result["upper_angularity"] and result["lash_contour_follow"] != 1:
@@ -101,7 +110,7 @@ def upper_change(t, calibration, parameters):
     )
     taper = parameters["aperture_corner_taper"]
     upper_power = calibration["eye_upper_power"] * parameters["upper_roundness"]
-    upper_power = (1-taper)*upper_power + taper
+    upper_power = ((1-taper)*upper_power + taper)*(1-.3*parameters["upper_corner_softness"])
     new_arch = max(
         0.0,
         1
@@ -121,7 +130,11 @@ def upper_change(t, calibration, parameters):
             eye_upper_angularity=parameters["upper_angularity"],
         )
         new_arch = upper_shape(t, shaped)
-    return calibration["eye_upper_arch"] * (parameters["upper_arch"] * new_arch - arch)
+    upper_height = calibration["eye_upper_arch"] * parameters["upper_arch"]
+    if parameters["aperture_upper_share"]:
+        total = upper_height + calibration["eye_lower_arch"]*parameters["lower_arch"]
+        upper_height = total*parameters["aperture_upper_share"]
+    return upper_height*new_arch - calibration["eye_upper_arch"]*arch
 
 
 def adapt_style(original, request):
@@ -137,6 +150,8 @@ def adapt_style(original, request):
         taper = p["aperture_corner_taper"]
         style["accent_lateral_guide_inward_power"] = (1-taper)*style["accent_lateral_guide_inward_power"] + taper
         style["accent_lateral_guide_bow_fraction"] = (1-taper)*style["accent_lateral_guide_bow_fraction"] + taper
+    if p["lateral_guide_inward_power"]:
+        style["accent_lateral_guide_inward_power"] = p["lateral_guide_inward_power"]
     if p["ocular_skin_outline_holdout"]:
         style["ocular_skin_outline_holdout"] = True
     else:
@@ -161,11 +176,18 @@ def adapt_style(original, request):
     c["eye_upper_power"] *= p["upper_roundness"]
     c["eye_horizontal_power"] *= p["upper_horizontal_roundness"]
     c["eye_lower_arch"] *= p["lower_arch"]
+    aperture_center_shift = 0.0
+    if p["aperture_upper_share"]:
+        total = c["eye_upper_arch"]+c["eye_lower_arch"]
+        new_upper = total*p["aperture_upper_share"]
+        aperture_center_shift = new_upper-c["eye_upper_arch"]
+        c["eye_upper_arch"], c["eye_lower_arch"] = new_upper, total-new_upper
     c["eye_lower_power"] *= p["lower_roundness"]
     if p["aperture_corner_taper"]:
         taper = p["aperture_corner_taper"]
         for key in ("eye_upper_power", "eye_lower_power"):
             c[key] = (1-taper)*c[key] + taper
+    c["eye_upper_power"] *= 1-.3*p["upper_corner_softness"]
     c["eye_lower_horizontal_power"] *= p["lower_horizontal_roundness"]
     if p["lower_shoulder"]:
         if abs(c["eye_corner_slope"]) > 1e-12:
@@ -184,7 +206,7 @@ def adapt_style(original, request):
     c["iris_center_x"] += p["iris_horizontal_offset"]
     # Pivot only the authored horizontal support plane about the iris center.
     c["iris_plane_slope"] *= p["iris_plane_slope_scale"]
-    c["iris_center_y"] += p["eye_height_offset"] + p["iris_vertical_offset"]
+    c["iris_center_y"] += p["eye_height_offset"] + p["iris_vertical_offset"] + aperture_center_shift
     c["iris_half_width"] *= p["iris_width"]
     c["iris_half_height"] *= p["iris_height"]
     c["brow_height"] += p["eye_height_offset"] + p["brow_height_offset"]
