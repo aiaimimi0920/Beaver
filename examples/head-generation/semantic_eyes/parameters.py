@@ -20,7 +20,7 @@ LIMITS = {
     "lower_shoulder": (0.0, 0.0, 1.0),
     "upper_roundness": (1.0, 1.0, 2.0),
     "upper_horizontal_roundness": (1.0, 0.70, 1.0),
-    "corner_slope_offset": (0.0, -0.018, 0.008),
+    "corner_slope_offset": (0.0, -0.030, 0.008),
     "eye_height_offset": (0.0, -0.006, 0.006),
     "iris_width": (1.0, 0.90, 1.08),
     "iris_height": (1.0, 0.90, 1.08),
@@ -43,6 +43,7 @@ LIMITS = {
     "supplemental_lashes": (1.0, 0.0, 1.0),
     "layered_lashes": (0.0, 0.0, 1.0),
     "upper_lash_layer": (0.0, 0.0, 1.0),
+    "wing_lift_scale": (1.0, 0.0, 1.0),
     "lid_fold": (1.0, 0.0, 1.0),
     "lateral_aperture_follow": (0.0, 0.0, 1.0),
     "lateral_blink_follow": (0.85, 0.65, 0.85),
@@ -80,7 +81,7 @@ def validate(request):
         result[key] = float(value)
     if 0 < result["lateral_guide_inward_power"] < 1:
         raise ValueError("Active lateral guide power must be between 1 and 4")
-    if 0 < result["aperture_upper_share"] < .2:
+    if 0 < result["aperture_upper_share"] < 0.2:
         raise ValueError("Active upper share must be between .2 and .8")
     if result["aperture_upper_share"] and result["lash_contour_follow"] != 1:
         raise ValueError("Upper share requires full lash contour following")
@@ -96,6 +97,8 @@ def validate(request):
         )
     if result["layered_lashes"] and not result["short_upper_tuft"]:
         raise ValueError("Layered lashes require the calibrated short upper tuft")
+    if result["wing_lift_scale"] != 1 and not result["layered_lashes"]:
+        raise ValueError("Wing lift control requires layered lashes")
     if result["upper_lash_layer"] and not result["layered_lashes"]:
         raise ValueError("Upper lash layer requires the calibrated layered lashes")
     if result["secondary_lash_scale"] != 1 and not result["short_upper_tuft"]:
@@ -110,16 +113,21 @@ def upper_change(t, calibration, parameters):
     )
     taper = parameters["aperture_corner_taper"]
     upper_power = calibration["eye_upper_power"] * parameters["upper_roundness"]
-    upper_power = ((1-taper)*upper_power + taper)*(1-.3*parameters["upper_corner_softness"])
-    new_arch = max(
-        0.0,
-        1
-        - abs(t)
-        ** (
-            calibration["eye_horizontal_power"]
-            * parameters["upper_horizontal_roundness"]
-        ),
-    ) ** upper_power
+    upper_power = ((1 - taper) * upper_power + taper) * (
+        1 - 0.3 * parameters["upper_corner_softness"]
+    )
+    new_arch = (
+        max(
+            0.0,
+            1
+            - abs(t)
+            ** (
+                calibration["eye_horizontal_power"]
+                * parameters["upper_horizontal_roundness"]
+            ),
+        )
+        ** upper_power
+    )
     if parameters["upper_asymmetry"] or parameters["upper_angularity"]:
         shaped = dict(
             calibration,
@@ -132,9 +140,9 @@ def upper_change(t, calibration, parameters):
         new_arch = upper_shape(t, shaped)
     upper_height = calibration["eye_upper_arch"] * parameters["upper_arch"]
     if parameters["aperture_upper_share"]:
-        total = upper_height + calibration["eye_lower_arch"]*parameters["lower_arch"]
-        upper_height = total*parameters["aperture_upper_share"]
-    return upper_height*new_arch - calibration["eye_upper_arch"]*arch
+        total = upper_height + calibration["eye_lower_arch"] * parameters["lower_arch"]
+        upper_height = total * parameters["aperture_upper_share"]
+    return upper_height * new_arch - calibration["eye_upper_arch"] * arch
 
 
 def adapt_style(original, request):
@@ -148,8 +156,12 @@ def adapt_style(original, request):
         style["accent_lateral_depth_blend"] = 0.0
     if p["aperture_corner_taper"]:
         taper = p["aperture_corner_taper"]
-        style["accent_lateral_guide_inward_power"] = (1-taper)*style["accent_lateral_guide_inward_power"] + taper
-        style["accent_lateral_guide_bow_fraction"] = (1-taper)*style["accent_lateral_guide_bow_fraction"] + taper
+        style["accent_lateral_guide_inward_power"] = (1 - taper) * style[
+            "accent_lateral_guide_inward_power"
+        ] + taper
+        style["accent_lateral_guide_bow_fraction"] = (1 - taper) * style[
+            "accent_lateral_guide_bow_fraction"
+        ] + taper
     if p["lateral_guide_inward_power"]:
         style["accent_lateral_guide_inward_power"] = p["lateral_guide_inward_power"]
     if p["ocular_skin_outline_holdout"]:
@@ -178,16 +190,16 @@ def adapt_style(original, request):
     c["eye_lower_arch"] *= p["lower_arch"]
     aperture_center_shift = 0.0
     if p["aperture_upper_share"]:
-        total = c["eye_upper_arch"]+c["eye_lower_arch"]
-        new_upper = total*p["aperture_upper_share"]
-        aperture_center_shift = new_upper-c["eye_upper_arch"]
-        c["eye_upper_arch"], c["eye_lower_arch"] = new_upper, total-new_upper
+        total = c["eye_upper_arch"] + c["eye_lower_arch"]
+        new_upper = total * p["aperture_upper_share"]
+        aperture_center_shift = new_upper - c["eye_upper_arch"]
+        c["eye_upper_arch"], c["eye_lower_arch"] = new_upper, total - new_upper
     c["eye_lower_power"] *= p["lower_roundness"]
     if p["aperture_corner_taper"]:
         taper = p["aperture_corner_taper"]
         for key in ("eye_upper_power", "eye_lower_power"):
-            c[key] = (1-taper)*c[key] + taper
-    c["eye_upper_power"] *= 1-.3*p["upper_corner_softness"]
+            c[key] = (1 - taper) * c[key] + taper
+    c["eye_upper_power"] *= 1 - 0.3 * p["upper_corner_softness"]
     c["eye_lower_horizontal_power"] *= p["lower_horizontal_roundness"]
     if p["lower_shoulder"]:
         if abs(c["eye_corner_slope"]) > 1e-12:
@@ -206,7 +218,9 @@ def adapt_style(original, request):
     c["iris_center_x"] += p["iris_horizontal_offset"]
     # Pivot only the authored horizontal support plane about the iris center.
     c["iris_plane_slope"] *= p["iris_plane_slope_scale"]
-    c["iris_center_y"] += p["eye_height_offset"] + p["iris_vertical_offset"] + aperture_center_shift
+    c["iris_center_y"] += (
+        p["eye_height_offset"] + p["iris_vertical_offset"] + aperture_center_shift
+    )
     c["iris_half_width"] *= p["iris_width"]
     c["iris_half_height"] *= p["iris_height"]
     c["brow_height"] += p["eye_height_offset"] + p["brow_height_offset"]
@@ -324,11 +338,18 @@ def adapt_style(original, request):
 
         if p["upper_angularity"]:
             # Preserve the two authored shoulders in the primary ink guide.
-            for t in (-.55, .55):
-                q = (t+.98)/(tail_end+.98)
-                center = c["eye_upper_arch"]*upper_shape(t,c)-.002*math.sin(math.pi*q)
-                width = .018*p["lash_band_thickness"]*math.sin(math.pi*q)**.8*(.45+.90*q)
-                rails.append([t,center-width*.55,center+width*.45])
+            for t in (-0.55, 0.55):
+                q = (t + 0.98) / (tail_end + 0.98)
+                center = c["eye_upper_arch"] * upper_shape(t, c) - 0.002 * math.sin(
+                    math.pi * q
+                )
+                width = (
+                    0.018
+                    * p["lash_band_thickness"]
+                    * math.sin(math.pi * q) ** 0.8
+                    * (0.45 + 0.90 * q)
+                )
+                rails.append([t, center - width * 0.55, center + width * 0.45])
             rails.sort(key=lambda row: row[0])
         old_rails = style["upper_lash_rails"]
         amount = p["lash_contour_follow"]
@@ -407,6 +428,8 @@ def adapt_style(original, request):
             ]
             for t, y in style["upper_swept_tuft_outline"]
         ]
+    if p["wing_lift_scale"] != 1:
+        style["accent_wing_lift_scale"] = p["wing_lift_scale"]
     if p["layered_lashes"]:
         # Keep the lower side accent subordinate to the primary lateral leaf.
         style["lateral_accent_profile"][6][1] *= 0.45
@@ -461,7 +484,7 @@ def adapt_style(original, request):
         for row in wing:
             u = (row[0] - start) / (end - start)
             row[0] = start + (1.10 - start) * u
-            lift = 0.022 * u * u * (3 - 2 * u)
+            lift = 0.022 * p["wing_lift_scale"] * u * u * (3 - 2 * u)
             center = (row[1] + row[2]) * 0.5 + lift
             half_width = (row[2] - row[1]) * 0.5
             row[1], row[2] = center - half_width, center + half_width

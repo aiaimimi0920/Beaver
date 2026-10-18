@@ -151,9 +151,9 @@ class IllustratedArtTests(unittest.TestCase):
         outer = [row for row in result["upper_lash_rails"] if row[0] > 0.75]
         for lane in (1, 2):
             self.assertTrue(all(a[lane] >= b[lane] for a, b in zip(outer, outer[1:])))
-        for boundary in (-0.018, 0.008):
+        for boundary in (-0.030, 0.008):
             adapt_style(base, dict(request, corner_slope_offset=boundary))
-        for bad in (-0.019, 0.009):
+        for bad in (-0.031, 0.009):
             with self.assertRaises(ValueError):
                 adapt_style(base, dict(request, corner_slope_offset=bad))
 

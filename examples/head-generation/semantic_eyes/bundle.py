@@ -184,7 +184,7 @@ def build_request(parameters, output_prefix, workspace, *, blink=False):
                 for vertex in column:
                     vertex.co.z = center + (vertex.co.z - center) * scale
                     tip_u = max(0.0, min(1.0, (t - 1.0) / 0.1))
-                    vertex.co.z += H * 0.012 * tip_u*tip_u*(3-2*tip_u)
+                    vertex.co.z += H * 0.012 * STYLE.get("accent_wing_lift_scale", 1.0) * tip_u*tip_u*(3-2*tip_u)
             wing.data.update()
 """
         sources["eye_accents.py"] = replace_once(
@@ -244,13 +244,20 @@ def build_request(parameters, output_prefix, workspace, *, blink=False):
         sources["eye_accents.py"], p["lateral_aperture_follow"]
     )
     sources = adapt_upper_sources(
-        sources, p["upper_asymmetry"] != 0 or p["lower_shoulder"] != 0 or p["upper_angularity"] != 0
+        sources,
+        p["upper_asymmetry"] != 0
+        or p["lower_shoulder"] != 0
+        or p["upper_angularity"] != 0,
     )
     sources = adapt_angular_samples(sources, p["upper_angularity"])
     if blink:
         sources["semantic_eye_runtime.py"] += (
             "\n\n"
-            + (HELPERS if p["upper_asymmetry"] or p["lower_shoulder"] or p["upper_angularity"] else "")
+            + (
+                HELPERS
+                if p["upper_asymmetry"] or p["lower_shoulder"] or p["upper_angularity"]
+                else ""
+            )
             + (HERE / "blink_runtime.py")
             .read_text()
             .replace("from contour_warp import upper_shape, lower_shape\n", "")
@@ -336,7 +343,9 @@ def build_request(parameters, output_prefix, workspace, *, blink=False):
                 "contour_warp.py": HELPERS,
                 "source_upper_warp.py": (HERE / "source_upper_warp.py").read_text(),
                 "source_lateral_rim.py": (HERE / "source_lateral_rim.py").read_text(),
-                "source_angular_samples.py": (HERE / "source_angular_samples.py").read_text(),
+                "source_angular_samples.py": (
+                    HERE / "source_angular_samples.py"
+                ).read_text(),
             }
         )
         + "\n",

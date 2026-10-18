@@ -9,6 +9,11 @@ import unittest
 
 class LeafNarrowingTests(unittest.TestCase):
     def test_column_narrowing_is_symmetric_and_root_preserving(self):
+        for lift_scale in (None, 0.0, 0.5, 1.0):
+            with self.subTest(lift_scale=lift_scale):
+                self.check_columns(lift_scale)
+
+    def check_columns(self, lift_scale):
         tree = ast.parse(Path(__file__).with_name("bundle.py").read_text())
         block = next(
             node.value
@@ -38,7 +43,14 @@ class LeafNarrowingTests(unittest.TestCase):
             )
         exec(
             textwrap.dedent(block),
-            dict(PARTS=parts, H=1.0, C=dict(eye_center_x=0.04, eye_half_width=0.02)),
+            dict(
+                PARTS=parts,
+                H=1.0,
+                C=dict(eye_center_x=0.04, eye_half_width=0.02),
+                STYLE=(
+                    {} if lift_scale is None else {"accent_wing_lift_scale": lift_scale}
+                ),
+            ),
         )
         for vertex, prefix, t, side, offset in records:
             u = min(1, max(0, (t - 0.65) / 0.2))
@@ -46,7 +58,13 @@ class LeafNarrowingTests(unittest.TestCase):
                 1 - 0.35 * u * u * (3 - 2 * u) if prefix.startswith("Attached") else 1
             )
             tip = min(1, max(0, (t - 1.0) / 0.1))
-            lift = 0.012 * tip * tip * (3 - 2 * tip)
+            lift = (
+                0.012
+                * (1 if lift_scale is None else lift_scale)
+                * tip
+                * tip
+                * (3 - 2 * tip)
+            )
             self.assertAlmostEqual(vertex.co.x, side * (0.04 + 0.02 * t))
             self.assertEqual(vertex.co.y, -0.03)
             self.assertAlmostEqual(
