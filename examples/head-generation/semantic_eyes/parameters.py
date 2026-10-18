@@ -38,6 +38,7 @@ LIMITS = {
     "lash_contour_follow": (0.0, 0.0, 1.0),
     "supplemental_lashes": (1.0, 0.0, 1.0),
     "layered_lashes": (0.0, 0.0, 1.0),
+    "upper_lash_layer": (0.0, 0.0, 1.0),
     "lid_fold": (1.0, 0.0, 1.0),
 }
 
@@ -58,6 +59,7 @@ def validate(request):
         if key in (
             "supplemental_lashes",
             "layered_lashes",
+            "upper_lash_layer",
             "lid_fold",
             "simple_iris",
             "short_upper_tuft",
@@ -76,6 +78,8 @@ def validate(request):
         )
     if result["layered_lashes"] and not result["short_upper_tuft"]:
         raise ValueError("Layered lashes require the calibrated short upper tuft")
+    if result["upper_lash_layer"] and not result["layered_lashes"]:
+        raise ValueError("Upper lash layer requires the calibrated layered lashes")
     if result["secondary_lash_scale"] != 1 and not result["short_upper_tuft"]:
         raise ValueError("Secondary lash scale requires the isolated short upper tuft")
     return result
@@ -354,6 +358,18 @@ def adapt_style(original, request):
 
         def lash_mid(t):
             return (sample(rails, t, 1) + sample(rails, t, 2)) / 2
+
+        if p["upper_lash_layer"]:
+            # A swept intermediate sheet between the micro tip and outer fork.
+            # Reuse its independent mesh, not its former medial placement.
+            style["inner_lash_fork_outline"] = [
+                [0.24, lash_mid(0.24)],
+                [0.36, sample(rails, 0.36, 2) + 0.001],
+                [0.53, sample(rails, 0.53, 2) + 0.008],
+                [0.68, sample(rails, 0.68, 2) + 0.020],
+                [0.58, sample(rails, 0.58, 2) + 0.006],
+                [0.34, lash_mid(0.34) - 0.001],
+            ]
 
         # Distribute the small upper blade medially; reserve the outer fork
         # for the independent wing rather than stacking all tips at one corner.

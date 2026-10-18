@@ -21,6 +21,23 @@ class LashLayerTests(unittest.TestCase):
             simple_iris=1,
         )
 
+    def test_upper_layer_repositions_only_its_own_outline(self):
+        original = json.loads((RECIPE / "face_style.json").read_text())
+        plain = adapt_style(original, self.controls(1))
+        added = adapt_style(original, dict(self.controls(1), upper_lash_layer=1))
+        changed = {key for key in plain if plain[key] != added[key]}
+        self.assertEqual(changed, {"inner_lash_fork_outline"})
+        stations = [row[0] for row in added["inner_lash_fork_outline"]]
+        self.assertEqual(min(stations), 0.24)
+        self.assertEqual(max(stations), 0.68)
+        outline = added["inner_lash_fork_outline"]
+        self.assertTrue(all(a[1] < b[1] for a, b in zip(outline[:3], outline[1:4])))
+        self.assertLess(outline[4][1], outline[3][1])
+        with self.assertRaises(ValueError):
+            validate(dict(self.controls(0), upper_lash_layer=1))
+        with self.assertRaises(ValueError):
+            validate(dict(self.controls(1), upper_lash_layer=0.5))
+
     def test_layered_lower_accents_have_distinct_visual_roles(self):
         original = json.loads((RECIPE / "face_style.json").read_text())
         before = json.dumps(original, sort_keys=True)
@@ -75,12 +92,14 @@ class LashLayerTests(unittest.TestCase):
                     "Pupil separate accent ",
                 )
             ]
-        for enabled, expected in [(0, 2), (1, 14)]:
+        for enabled, extra, expected in [(0, 0, 2), (1, 0, 14), (1, 1, 16)]:
             parts = [
                 SimpleNamespace(name=n, data=SimpleNamespace(attributes={}))
                 for n in names
             ]
-            report = scope["select_components"](parts, validate(self.controls(enabled)))
+            report = scope["select_components"](
+                parts, validate(dict(self.controls(enabled), upper_lash_layer=extra))
+            )
             self.assertEqual(len(report["retained_lash_components"]), expected)
             self.assertTrue(
                 all(
@@ -102,6 +121,10 @@ class LashLayerTests(unittest.TestCase):
                         )
                     )
                 }
+                if extra:
+                    wanted.update(
+                        n for n in names if n.startswith("Inner forked lash blade ")
+                    )
                 self.assertEqual(set(report["retained_lash_components"]), wanted)
 
     def test_layered_package_keeps_full_connection_check(self):
@@ -112,7 +135,7 @@ class LashLayerTests(unittest.TestCase):
                 p.parent.mkdir(parents=True, exist_ok=True)
                 p.write_text("CPU fixture, never execute")
             request = build_request(
-                self.controls(1),
+                dict(self.controls(1), upper_lash_layer=1),
                 "assets/aster/general_face_eyes_test/",
                 root,
                 blink=True,
@@ -130,6 +153,10 @@ class LashLayerTests(unittest.TestCase):
             self.assertFalse(
                 any(n.func.id == "validate_retained_tuft_roots" for n in calls)
             )
+            self.assertIn(
+                "Intermediate layer attachment exceeds design bound", request["code"]
+            )
+            self.assertIn("Intermediate upper layer root disconnected", request["code"])
             compile(request["code"], "layered request", "exec")
 
     def test_invalid_controls(self):

@@ -377,3 +377,17 @@ for the actual checks and limitations.
 
 See [illustrated eye finish verification](eye-finish-native-verification.md) for
 the fixed-camera paint/outline diagnosis and 762–763 native checks.
+
+## Intermediate upper lash layer
+
+`upper_lash_layer` is an opt-in 0/1 control, default 0, requiring
+`layered_lashes=1`. It adds one independent, outward-sweeping thin upper leaf
+per eye between the small upright tuft and the outer wing. It repositions the
+otherwise omitted inner-fork component; it does not add another medial spike.
+The lower and lateral component inventory is unchanged.
+
+Its closed root is seated onto the final main upper band with a displacement
+strictly below 4 mm, smoothly fading to zero at the free tip. Subsequent surface
+clearance and the final 0.8 mm root-point check remain mandatory. This check
+covers the collapsed root point, not the entire attachment region. Validate
+native posed geometry and matched renders before claiming visual improvement.

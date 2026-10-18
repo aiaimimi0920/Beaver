@@ -27,6 +27,7 @@ def select_components(parts, parameters):
             omit = False
         omit = omit or (
             parameters.get("layered_lashes", 0)
+            and not parameters.get("upper_lash_layer", 0)
             and obj.name.startswith("Inner forked lash blade ")
         )
         omit = omit or (

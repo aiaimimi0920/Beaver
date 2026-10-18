@@ -99,9 +99,12 @@ class SemanticEyeTests(unittest.TestCase):
                 # Single-axis supported endpoints must be valid; combinations
                 # are additionally protected by the geometric envelope guard.
                 request = {key: bound}
-                if key == "layered_lashes" and bound:
+                if key in ("layered_lashes", "upper_lash_layer") and bound:
                     request.update(
-                        short_upper_tuft=1, supplemental_lashes=0, lash_contour_follow=1
+                        short_upper_tuft=1,
+                        supplemental_lashes=0,
+                        lash_contour_follow=1,
+                        layered_lashes=1,
                     )
                 if key == "secondary_lash_scale" and bound != 1:
                     request.update(

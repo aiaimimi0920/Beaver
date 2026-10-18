@@ -194,6 +194,39 @@ def build_request(parameters, output_prefix, workspace, *, blink=False):
             '(b[0]-a[0])/STYLE["accent_max_station_gap"]',
             '(b[0]-a[0])/(min(STYLE["accent_max_station_gap"],0.025) if key == "outer_lash_wing_rails" else STYLE["accent_max_station_gap"])',
         )
+    if p["upper_lash_layer"]:
+        # The intermediate leaf is rooted on the final upper band, not on
+        # the inherited medial skin support used by the old inner fork.
+        seating = """
+        for side in (-1, 1):
+            parent = next(o for o in PARTS if o.name == "Upper lash " + str(side))
+            leaf = next(o for o in PARTS if o.name == "Inner forked lash blade " + str(side))
+            parent_tree = BVHTree.FromPolygons([v.co.copy() for v in parent.data.vertices], [tuple(p.vertices) for p in parent.data.polygons])
+            root = leaf.data.vertices[0].co.copy()
+            hit = parent_tree.find_nearest(root)[0]
+            assert hit is not None, "Intermediate layer parent missing"
+            delta = hit - root
+            assert delta.length < .004, "Intermediate layer attachment exceeds design bound"
+            lo = min(abs(v.co.x) for v in leaf.data.vertices)
+            hi = max(abs(v.co.x) for v in leaf.data.vertices)
+            for vertex in leaf.data.vertices:
+                u = max(0., min(1., (abs(vertex.co.x)-lo)/(hi-lo)))
+                vertex.co += delta * (1-u*u*(3-2*u))
+            leaf.data.update()
+"""
+        seat_anchor = "        tuft_seating = seat_tuft_roots_on_parent(PARTS)"
+        sources["eye_accents.py"] = replace_once(
+            sources["eye_accents.py"], seat_anchor, seat_anchor + seating
+        )
+    if p["upper_lash_layer"]:
+        anchor = "        maximum = max(distances)"
+        check = """        fork = next(o for o in PARTS if o.name == "Inner forked lash blade "+str(side))
+        fork_distance = tree.find_nearest(fork.data.vertices[0].co)[3]
+        assert fork_distance is not None and fork_distance < .0008, "Intermediate upper layer root disconnected"
+"""
+        sources["eye_accents.py"] = replace_once(
+            sources["eye_accents.py"], anchor, check + anchor
+        )
     sources["eye_socket.py"] = adapt_lower_clearance(
         sources["eye_socket.py"],
         p["lower_roundness"] != 1

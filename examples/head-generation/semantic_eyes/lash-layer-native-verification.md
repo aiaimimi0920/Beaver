@@ -56,3 +56,30 @@ Runtime blend SHA-256: `143d27be6e4812d2ab68955b9e73039968800a89c1215a0722c65c82
 Semantic regression tests: 132 passed. Frontal and oblique native views retain
 the face and eye shape while reducing the row-of-teeth appearance. Owner final
 aesthetic acceptance remains separate from these checks.
+
+## Intermediate upper layer: candidate 791
+
+The owner requested more upper-lash detail after the 788 side/lower refinement.
+Reference comparison identified a thin intermediate outward-sweeping layer
+between the small upright tuft and outer fork. This is an interpretation of
+visible layering, not a claim about the reference mesh's exact component count.
+`upper_lash_layer=1` adds one independent sheet per eye (16 optional retained
+components across both eyes, versus 14). Candidate 789 failed root attachment;
+790 passed technical checks but its new silhouette looked like a rounded bump.
+791 raises the sweep progressively toward a thin free tip, retaining 788's
+lateral/lower settings and all aperture/face controls.
+
+Native generation and receipt-bound SDF passed. The 16 closest-parent-band pairs
+remained within 0.000157092 m over bilateral blink samples 0/.25/.5/.75/1.
+This includes the new sheet, but does not prove continuous collision freedom or
+all authored root vertices. Continuous triangle-orientation minimum remained
+0.059159739495675545 over 12512 triangles. All 84 image/source/morph checks passed
+in `blink-1792318472-96212`. Frontal, oblique, white-model and closed-eye views
+were inspected; owner aesthetic approval remains pending.
+
+Runtime blend SHA-256:
+`1e60232da375a9816c3854e9c1911ee49d600eb7737edb3c1627dabf0280a085`.
+135 semantic and 35 facial-surface CPU tests passed. New tests execute the
+packaged seating code on both sides, including quarter/mid-span weights,
+stationary free tips/parent geometry and refusal of missing or >=4 mm targets.
+No reference assets are included in the repository.
