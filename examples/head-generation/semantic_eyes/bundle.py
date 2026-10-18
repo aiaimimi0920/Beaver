@@ -141,16 +141,21 @@ def build_request(parameters, output_prefix, workspace, *, blink=False):
         }
     )
     sources["eye_socket.py"] = adapt_lower_clearance(
-        sources["eye_socket.py"], p["lower_roundness"] != 1
+        sources["eye_socket.py"],
+        p["lower_roundness"] != 1
+        or p["lower_shoulder"] != 0
+        or p["lower_horizontal_roundness"] != 1,
     )
-    sources = adapt_upper_sources(sources, p["upper_asymmetry"] != 0)
+    sources = adapt_upper_sources(
+        sources, p["upper_asymmetry"] != 0 or p["lower_shoulder"] != 0
+    )
     if blink:
         sources["semantic_eye_runtime.py"] += (
             "\n\n"
-            + (HELPERS if p["upper_asymmetry"] else "")
+            + (HELPERS if p["upper_asymmetry"] or p["lower_shoulder"] else "")
             + (HERE / "blink_runtime.py")
             .read_text()
-            .replace("from contour_warp import upper_shape\n", "")
+            .replace("from contour_warp import upper_shape, lower_shape\n", "")
         )
         sources["pipeline.py"] = replace_once(
             sources["pipeline.py"],

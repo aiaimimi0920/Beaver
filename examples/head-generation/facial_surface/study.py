@@ -30,7 +30,10 @@ def study(parameters, eyes):
         json.loads((recipe / "face_style.json").read_text()), validate_eyes(eyes)
     )
     c = style["calibration"]
-    source = adapt_face_source(source, bool(c.get("eye_upper_asymmetry", 0)))
+    source = adapt_face_source(
+        source,
+        bool((c.get("eye_upper_asymmetry", 0) or c.get("eye_lower_shoulder", 0))),
+    )
     fit = fit_profile(source, c)
     base = scope(source, c, fit, 0)
     node = next(

@@ -60,7 +60,11 @@ def build_request(
         from source_upper_warp import adapt_face_source
 
         analysis_face = adapt_face_source(
-            face, bool(style["calibration"].get("eye_upper_asymmetry", 0))
+            face,
+            bool(
+                style["calibration"].get("eye_upper_asymmetry", 0)
+                or style["calibration"].get("eye_lower_shoulder", 0)
+            ),
         )
         data, report = prepare(
             analysis_face,

@@ -242,8 +242,14 @@ class UpperWarpTests(unittest.TestCase):
         }
         self.assertIs(adapt_upper_sources(sources, False), sources)
         altered = adapt_upper_sources(sources, True)
-        self.assertIn("q = eye_warp(t, C) if y >= cy else t", altered["face.py"])
-        self.assertIn("abs(eye_warp(t, C) if y >= cy else t)", altered["eye_socket.py"])
+        self.assertIn(
+            "q = eye_warp(t, C) if y >= cy else lower_coordinate(t, C)",
+            altered["face.py"],
+        )
+        self.assertIn(
+            "abs(eye_warp(t, C) if y >= cy else lower_coordinate(t, C))",
+            altered["eye_socket.py"],
+        )
         self.assertIn("shape=upper_shape(t,c) if upper else", altered["lateral_fit.py"])
         for source in altered.values():
             compile(source, "<derived native>", "exec")

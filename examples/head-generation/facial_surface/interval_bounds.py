@@ -194,6 +194,24 @@ def upper_coordinate_interval(t, c):
     return I(lo.lo, hi.hi)
 
 
+def lower_coordinate_interval(t, c):
+    # q is monotone for 0<=a<=1; see contour_warp.lower_coordinate proof.
+    a = c.get("eye_lower_shoulder", 0.0)
+    if not a:
+        return t
+    if not math.isfinite(a) or not 0 <= a <= 1:
+        raise ValueError("Uncertified lower shoulder range")
+
+    def endpoint(v):
+        if abs(v) >= 1:
+            return I(v)
+        point = I(v)
+        return point + a * point**3 * (1 - point * point).clamp(0, 1) ** 3
+
+    lo, hi = endpoint(t.lo), endpoint(t.hi)
+    return I(lo.lo, hi.hi)
+
+
 def aperture_gap_bound(c, subdivisions=2048):
     bounds = []
     for upper in (False, True):
@@ -204,7 +222,11 @@ def aperture_gap_bound(c, subdivisions=2048):
                 c["eye_horizontal_power"] if upper else c["eye_lower_horizontal_power"]
             )
             power = c["eye_upper_power"] if upper else c["eye_lower_power"]
-            q = upper_coordinate_interval(t, c) if upper else t
+            q = (
+                upper_coordinate_interval(t, c)
+                if upper
+                else lower_coordinate_interval(t, c)
+            )
             shape = (1 - q.absolute() ** horizontal).clamp(0, 1) ** power
             h = c["eye_corner_y"] + c["eye_corner_slope"] * t + arch * shape
             x = c["height_m"] * (c["eye_center_x"] + c["eye_half_width"] * t)
@@ -239,7 +261,11 @@ def orbital_weight(x, h, c):
         # Both summands are analytically nonnegative; outward rounding at zero
         # may produce a negative subnormal lower endpoint. Intersect that
         # known domain before applying the square root.
-        q = upper_coordinate_interval(t, c) if upper else t
+        q = (
+            upper_coordinate_interval(t, c)
+            if upper
+            else lower_coordinate_interval(t, c)
+        )
         squared = (
             q.absolute() ** horizontal + (vertical / arch).absolute() ** (1 / power)
         ).clamp(0, math.inf)
@@ -268,9 +294,12 @@ def surface_motion_bound(c, base_bound, beta, steps=80, *, rim_flattening=0.0):
             maximum = max(maximum, weighted)
     # Outside this t interval the existing orbital fade is exactly zero.
     # Include outward rounding independently of interval subdivision density.
-    slope_endpoint = (
-        abs(rim_flattening * (1 - beta) * c["height_m"]
-            * (c["eye_outer_depth"] - c["eye_inner_depth"]) / 2)
+    slope_endpoint = abs(
+        rim_flattening
+        * (1 - beta)
+        * c["height_m"]
+        * (c["eye_outer_depth"] - c["eye_inner_depth"])
+        / 2
     )
     slope_skin = slope_endpoint * (1 + c["orbital_lateral_fade"])
     return dict(

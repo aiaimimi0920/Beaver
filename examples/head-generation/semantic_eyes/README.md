@@ -26,6 +26,7 @@ Multipliers default to 1:
 - eye_spacing .94–1.04; eye_width .92–1.08
 - upper_arch .70–1.40; lower_arch .50–1.12
 - upper_roundness 1–2; upper_horizontal_roundness .70–1
+- lower_roundness 1–1.25; lower_horizontal_roundness 1–1.5
 - iris_width and iris_height .90–1.08
 - brow_thickness .70–1.20; brow_arch .50–1.50
 - lash_band_thickness .55–1.15
@@ -328,3 +329,23 @@ Patch envelope, clearance, attachment and continuous pose-orientation gates
 remain mandatory. Inspect neutral, partial/full blink, oblique and white-model
 views before retaining any nonzero candidate. CPU tests alone establish neither
 native validity nor visual improvement.
+
+## Independent lower contour controls
+
+`lower_shoulder` is optional, default 0, bounded to 0–1. It symmetrically
+raises intermediate lower shoulders while preserving the central bottom and
+both aperture corners. It requires level calibrated eye corners. Its monotone
+coordinate warp is shared by the face, pocket radius, lateral fit, blink and
+conservative support analysis; it is not a post-export mesh edit.
+
+`lower_horizontal_roundness` defaults to 1, bounded to 1–1.5. Increasing it
+flattens and broadens the lower center, with a steeper return near the corners.
+This is distinct from raising the shoulders and can partly counter that change.
+Neither control guarantees a prettier face or a valid combination. Native
+support, topology, attachment and full-blink orientation gates remain mandatory.
+
+The facial-surface preset `emerald-lower-profile-eyes.json` records candidate759,
+which received relative-improvement feedback, not final character acceptance.
+The private authoring baseline is still required. See
+[`lower-profile-native-verification.md`](lower-profile-native-verification.md)
+for the actual checks and limitations.

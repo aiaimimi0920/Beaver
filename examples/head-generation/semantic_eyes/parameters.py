@@ -12,6 +12,8 @@ LIMITS = {
     "upper_asymmetry": (0.0, -0.25, 0.25),
     "lower_arch": (1.0, 0.50, 1.12),
     "lower_roundness": (1.0, 1.0, 1.25),
+    "lower_horizontal_roundness": (1.0, 1.0, 1.5),
+    "lower_shoulder": (0.0, 0.0, 1.0),
     "upper_roundness": (1.0, 1.0, 2.0),
     "upper_horizontal_roundness": (1.0, 0.70, 1.0),
     "corner_slope_offset": (0.0, -0.018, 0.008),
@@ -123,6 +125,11 @@ def adapt_style(original, request):
     c["eye_horizontal_power"] *= p["upper_horizontal_roundness"]
     c["eye_lower_arch"] *= p["lower_arch"]
     c["eye_lower_power"] *= p["lower_roundness"]
+    c["eye_lower_horizontal_power"] *= p["lower_horizontal_roundness"]
+    if p["lower_shoulder"]:
+        if abs(c["eye_corner_slope"]) > 1e-12:
+            raise ValueError("Lower shoulder requires level eye corners")
+        c["eye_lower_shoulder"] = p["lower_shoulder"]
     if p["simple_iris"]:
         style["iris_graphic_disc_strength"] = 0.0
         style["iris_accent_strength"] = 0.0

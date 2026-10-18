@@ -37,3 +37,23 @@ def upper_shape_derivative(t, c):
         * (1 - abs(u) ** h) ** (p - 1)
         * eye_warp_derivative(t, c)
     )
+
+
+def lower_coordinate(t, c):
+    """Symmetric shoulder warp. For 0<=a<=1, derivative >=1/9.
+
+    q'=1+3*a*u*(1-u)^2*(1-3*u), u=t^2. On [0,1],
+    u*(1-u)^2<=4/27 and (1-3*u)>=-2, hence q'>=1-8*a/9.
+    Identity outside the aperture; center and endpoint derivatives stay one.
+    """
+    a = c.get("eye_lower_shoulder", 0.0)
+    if not a or abs(t) >= 1:
+        return t
+    return t + a * t**3 * (1 - t * t) ** 3
+
+
+def lower_shape(t, c):
+    q = lower_coordinate(t, c)
+    return (
+        max(0.0, 1 - abs(q) ** c["eye_lower_horizontal_power"]) ** c["eye_lower_power"]
+    )

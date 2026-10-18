@@ -1,6 +1,6 @@
 """Experimental local eyelid closure; neutral mesh and non-eye geometry stay fixed."""
 
-from contour_warp import upper_shape
+from contour_warp import upper_shape, lower_shape
 
 
 def closure_delta(x, y, kind, c):
@@ -23,6 +23,8 @@ def closure_delta(x, y, kind, c):
         * c["eye_lower_arch"]
         * max(0, 1 - abs(t) ** c["eye_lower_horizontal_power"]) ** c["eye_lower_power"]
     )
+    if c.get("eye_lower_shoulder", 0):
+        lower = center - h * c["eye_lower_arch"] * lower_shape(t, c)
     seam = center - 0.0015 * (1 - t * t)
     if kind == "upper_ink":
         # y is the final generated column floor, not the analytic aperture.
