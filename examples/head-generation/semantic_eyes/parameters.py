@@ -10,6 +10,7 @@ LIMITS = {
     "eye_width": (1.0, 0.92, 1.08),
     "upper_arch": (1.0, 0.70, 1.40),
     "upper_asymmetry": (0.0, -0.25, 0.25),
+    "upper_angularity": (0.0, 0.0, 1.0),
     "lower_arch": (1.0, 0.50, 1.12),
     "lower_roundness": (1.0, 1.0, 1.25),
     "lower_horizontal_roundness": (1.0, 1.0, 1.5),
@@ -73,6 +74,8 @@ def validate(request):
         ):
             raise ValueError("Layer control must be numeric zero or one: " + key)
         result[key] = float(value)
+    if result["upper_angularity"] and result["lash_contour_follow"] != 1:
+        raise ValueError("Angular upper contour requires full lash contour following")
     if result["short_upper_tuft"] and (
         result["supplemental_lashes"] != 0 or result["lash_contour_follow"] != 1
     ):
@@ -102,7 +105,7 @@ def upper_change(t, calibration, parameters):
             * parameters["upper_horizontal_roundness"]
         ),
     ) ** (calibration["eye_upper_power"] * parameters["upper_roundness"])
-    if parameters["upper_asymmetry"]:
+    if parameters["upper_asymmetry"] or parameters["upper_angularity"]:
         shaped = dict(
             calibration,
             eye_horizontal_power=calibration["eye_horizontal_power"]
@@ -110,6 +113,7 @@ def upper_change(t, calibration, parameters):
             eye_upper_power=calibration["eye_upper_power"]
             * parameters["upper_roundness"],
             eye_upper_asymmetry=parameters["upper_asymmetry"],
+            eye_upper_angularity=parameters["upper_angularity"],
         )
         new_arch = upper_shape(t, shaped)
     return calibration["eye_upper_arch"] * (parameters["upper_arch"] * new_arch - arch)
@@ -136,12 +140,14 @@ def adapt_style(original, request):
     c["eye_half_width"] *= p["eye_width"]
     c["eye_corner_y"] += p["eye_height_offset"]
     c["eye_corner_slope"] += p["corner_slope_offset"]
-    if p["upper_asymmetry"]:
+    if p["upper_asymmetry"] or p["upper_angularity"]:
         if abs(c["eye_corner_slope"]) > 1e-12:
             raise ValueError(
                 "Upper asymmetry requires level eye corners for the outer inverse"
             )
         c["eye_upper_asymmetry"] = p["upper_asymmetry"]
+        if p["upper_angularity"]:
+            c["eye_upper_angularity"] = p["upper_angularity"]
     c["eye_upper_arch"] *= p["upper_arch"]
     c["eye_upper_power"] *= p["upper_roundness"]
     c["eye_horizontal_power"] *= p["upper_horizontal_roundness"]
@@ -229,7 +235,7 @@ def adapt_style(original, request):
                 max(0.0, 1 - abs(tc) ** c["eye_horizontal_power"])
                 ** c["eye_upper_power"]
             )
-            if p["upper_asymmetry"]:
+            if p["upper_asymmetry"] or p["upper_angularity"]:
                 arch = upper_shape(tc, c)
             center = c["eye_upper_arch"] * arch + c["eye_corner_slope"] * tc * (
                 1 - style["accent_trajectory_slope_scale"]
@@ -244,7 +250,7 @@ def adapt_style(original, request):
                 ) ** (v - 1) + c["eye_corner_slope"] * (
                     1 - style["accent_trajectory_slope_scale"]
                 )
-                if p["upper_asymmetry"]:
+                if p["upper_asymmetry"] or p["upper_angularity"]:
                     slope = c["eye_upper_arch"] * upper_shape_derivative(join_t, c) + c[
                         "eye_corner_slope"
                     ] * (1 - style["accent_trajectory_slope_scale"])
@@ -281,6 +287,14 @@ def adapt_style(original, request):
                     q = (t - a[0]) / (b[0] - a[0])
                     return a[lane] * (1 - q) + b[lane] * q
 
+        if p["upper_angularity"]:
+            # Preserve the two authored shoulders in the primary ink guide.
+            for t in (-.55, .55):
+                q = (t+.98)/(tail_end+.98)
+                center = c["eye_upper_arch"]*upper_shape(t,c)-.002*math.sin(math.pi*q)
+                width = .018*p["lash_band_thickness"]*math.sin(math.pi*q)**.8*(.45+.90*q)
+                rails.append([t,center-width*.55,center+width*.45])
+            rails.sort(key=lambda row: row[0])
         old_rails = style["upper_lash_rails"]
         amount = p["lash_contour_follow"]
         style["upper_lash_rails"] = [

@@ -63,6 +63,7 @@ def build_request(
             face,
             bool(
                 style["calibration"].get("eye_upper_asymmetry", 0)
+                or style["calibration"].get("eye_upper_angularity", 0)
                 or style["calibration"].get("eye_lower_shoulder", 0)
             ),
         )

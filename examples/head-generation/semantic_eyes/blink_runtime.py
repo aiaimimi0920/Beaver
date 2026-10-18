@@ -19,7 +19,7 @@ def closure_delta(x, y, kind, c):
         * c["eye_upper_arch"]
         * max(0, 1 - abs(t) ** c["eye_horizontal_power"]) ** c["eye_upper_power"]
     )
-    if c.get("eye_upper_asymmetry", 0):
+    if c.get("eye_upper_asymmetry", 0) or c.get("eye_upper_angularity", 0):
         upper = center + h * c["eye_upper_arch"] * upper_shape(t, c)
     lower = (
         center

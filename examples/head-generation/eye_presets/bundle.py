@@ -11,7 +11,11 @@ SURFACE = HERE.parent / "facial_surface"
 
 
 def load_preset(preset_id):
-    if preset_id not in {"almond-balanced-796", "slender-flat-797"}:
+    if preset_id not in {
+        "almond-balanced-796", "slender-flat-797", "soft-downturned-798",
+        "sharp-upturned-799", "flat-upper-round-lower-800",
+        "arched-upper-flat-lower-801", "angular-upper-802",
+    }:
         raise ValueError("Unknown explicit eye preset")
     spec = json.loads((HERE / (preset_id + ".json")).read_text())
     for name, expected in spec["baseline_files_sha256"].items():

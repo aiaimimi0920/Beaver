@@ -10,6 +10,7 @@ import tempfile
 from parameters import adapt_style, validate, adapt_lower_clearance, adapt_brow_source
 from source_upper_warp import adapt_upper_sources, HELPERS
 from source_lateral_rim import adapt_lateral_rim, adapt_lateral_depth
+from source_angular_samples import adapt_angular_samples
 
 HERE = Path(__file__).resolve().parent
 RECIPE = HERE.parent / "checkpoints/current"
@@ -241,12 +242,13 @@ def build_request(parameters, output_prefix, workspace, *, blink=False):
         sources["eye_accents.py"], p["lateral_aperture_follow"]
     )
     sources = adapt_upper_sources(
-        sources, p["upper_asymmetry"] != 0 or p["lower_shoulder"] != 0
+        sources, p["upper_asymmetry"] != 0 or p["lower_shoulder"] != 0 or p["upper_angularity"] != 0
     )
+    sources = adapt_angular_samples(sources, p["upper_angularity"])
     if blink:
         sources["semantic_eye_runtime.py"] += (
             "\n\n"
-            + (HELPERS if p["upper_asymmetry"] or p["lower_shoulder"] else "")
+            + (HELPERS if p["upper_asymmetry"] or p["lower_shoulder"] or p["upper_angularity"] else "")
             + (HERE / "blink_runtime.py")
             .read_text()
             .replace("from contour_warp import upper_shape, lower_shape\n", "")
@@ -331,6 +333,8 @@ def build_request(parameters, output_prefix, workspace, *, blink=False):
             {
                 "contour_warp.py": HELPERS,
                 "source_upper_warp.py": (HERE / "source_upper_warp.py").read_text(),
+                "source_lateral_rim.py": (HERE / "source_lateral_rim.py").read_text(),
+                "source_angular_samples.py": (HERE / "source_angular_samples.py").read_text(),
             }
         )
         + "\n",

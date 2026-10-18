@@ -32,7 +32,7 @@ def study(parameters, eyes):
     c = style["calibration"]
     source = adapt_face_source(
         source,
-        bool((c.get("eye_upper_asymmetry", 0) or c.get("eye_lower_shoulder", 0))),
+        bool((c.get("eye_upper_asymmetry", 0) or c.get("eye_lower_shoulder", 0) or c.get("eye_upper_angularity", 0))),
     )
     fit = fit_profile(source, c)
     base = scope(source, c, fit, 0)

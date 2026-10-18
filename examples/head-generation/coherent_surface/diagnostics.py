@@ -20,6 +20,8 @@ FUNCTIONS = {
 def scope(source, c, fit, amount):
     helpers = (
         {
+            "angular_coordinate",
+            "angular_derivative",
             "eye_warp",
             "eye_warp_derivative",
             "upper_shape",
@@ -27,7 +29,7 @@ def scope(source, c, fit, amount):
             "lower_coordinate",
             "lower_shape",
         }
-        if (c.get("eye_upper_asymmetry", 0) or c.get("eye_lower_shoulder", 0))
+        if (c.get("eye_upper_asymmetry", 0) or c.get("eye_lower_shoulder", 0) or c.get("eye_upper_angularity", 0))
         else set()
     )
     required = FUNCTIONS | helpers

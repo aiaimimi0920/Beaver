@@ -37,6 +37,33 @@ class PresetTests(unittest.TestCase):
             with self.assertRaises(ValueError):
                 packager.validate_output_path(path)
 
+    def test_selectable_presets_have_separate_prompts(self):
+        for entry in json.loads((packager.HERE / "catalog.json").read_text())["presets"]:
+            name = entry["id"]
+            item=packager.load_preset(name)
+            prompt=packager.HERE/item["prompt_file"]
+            self.assertTrue(prompt.is_file())
+            self.assertTrue(item["eye_parameters"])
+            self.assertEqual(item["shading_policy"],"smooth_proxy")
+
+    def test_native_evidence_matches_selected_parameters(self):
+        evidence = json.loads((packager.HERE / "native-evidence.json").read_text())
+        catalog = json.loads((packager.HERE / "catalog.json").read_text())
+        names = {int(e["id"][-3:]): e["id"] for e in catalog["presets"]}
+        for row in evidence["presets"]:
+            params = row["native_parameter_snapshot"]
+            if row["version"] == 795:
+                selected = json.loads((packager.SURFACE /
+                    "emerald-baseline-795-eyes.json").read_text())
+            else:
+                selected = packager.load_preset(names[row["version"]])["eye_parameters"]
+            for key, value in selected.items():
+                self.assertEqual(params[key], value)
+            ratio = (.044 * params["upper_arch"] + .088 * params["lower_arch"]) / (.22 * params["eye_width"])
+            self.assertAlmostEqual(row["analytic_aperture_height_width_ratio"], ratio)
+            self.assertEqual(row["captures"], 84)
+            self.assertGreater(row["native_orientation"]["minimum_orientation_ratio"], 0)
+
     def test_explicit_selection_required(self):
         for value in ("", "default", "../facial_surface"):
             with self.assertRaises(ValueError):
@@ -47,6 +74,13 @@ class PresetTests(unittest.TestCase):
             packager.build_request(
                 "almond-balanced-796", "assets/aster/general_face_eyes_795/", Path(".")
             )
+
+    def test_both_preserved_model_directories_are_protected(self):
+        for version in (795,796):
+            with self.assertRaisesRegex(ValueError,"Never overwrite"):
+                packager.build_request("slender-flat-797",
+                    f"assets/aster/general_face_eyes_{version}/",Path("."))
+
 
 
 if __name__ == "__main__":

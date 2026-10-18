@@ -176,19 +176,23 @@ def rim_without_origin(t, c):
 
 
 def upper_coordinate_interval(t, c):
-    # The fixed-scalar warp is globally monotone for |a| <= .25.
-    # Evaluate each endpoint with outward-rounded arithmetic, not raw floats.
+    # Composition of two strictly monotone maps. Endpoint arithmetic is outward rounded.
     a = c.get("eye_upper_asymmetry", 0.0)
-    if not a:
+    g = c.get("eye_upper_angularity", 0.0)
+    if not (a or g):
         return t
-    if not math.isfinite(a) or abs(a) > 0.25:
+    if not math.isfinite(a) or abs(a) > .25 or not math.isfinite(g) or not 0 <= g <= 1:
         raise ValueError("Uncertified upper warp range")
 
     def endpoint(v):
         if abs(v) >= 1:
             return I(v)
         point = I(v)
-        return point + a * (1 - point * point).clamp(0, 1) ** 3
+        if g:
+            u = I(abs(v))
+            q = (I(.30)/.55)*u if abs(v) <= .55 else I(.30)+(I(.70)/.45)*(u-.55)
+            point = ((1-I(g))*u+g*q)*(1 if v >= 0 else -1)
+        return point+a*(1-point*point).clamp(0,1)**3
 
     lo, hi = endpoint(t.lo), endpoint(t.hi)
     return I(lo.lo, hi.hi)
