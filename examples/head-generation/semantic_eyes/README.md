@@ -44,6 +44,17 @@ Multipliers default to 1:
   Existing 3D flare/bow/scoop are retained; native views and blink review are
   required to assess attachment and silhouette.
 
+- layered_lashes 0/1, default 0; requires short_upper_tuft=1.
+  Opts into the restored upper wing, lateral band, thin companion, two lateral
+  children and lower tuft. Moves the small upper tuft medially and shapes a
+  short rising upper leaf above the longer main tail. The retained inventory
+  is seven optional components per eye, not a claim of seven visible tips.
+  Full inherited connection and obstacle checks stay active. Root seating uses
+  a bounded local translation search; it does not guarantee a global optimum.
+  Side accents use 85% of the skin blink field, independently per eye. Review
+  native neutral, oblique and closed-eye views; triangle-orientation checks
+  do not prove absence of every possible intersection.
+
 Offsets default to 0, in fractions of calibrated face height:
 
 - corner_slope_offset −.018…+.008; eye_height_offset ±.006

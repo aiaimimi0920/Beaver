@@ -4,6 +4,10 @@ from contour_warp import upper_shape, lower_shape
 
 
 def closure_delta(x, y, kind, c):
+    if kind == "lateral":
+        # Side sheets follow the surrounding skin with a softer closure field.
+        # Full skin compression can fold the narrow closed return.
+        return 0.85 * closure_delta(x, y, "skin", c)
     h = c["height_m"]
     t = (abs(x) / h - c["eye_center_x"]) / c["eye_half_width"]
     if abs(t) >= 1.0:
@@ -58,11 +62,27 @@ def build_blink_shapes(obj, ordinals, calibration, ink_floor_closure=False):
         if ink_floor_closure and name.startswith("Upper lash "):
             tags[ordinal] = "upper_ink"
         elif name.startswith(
-            ("Upper lash ", "Upper skin lid ", "Upper swept lash tuft ")
+            (
+                "Upper lash ",
+                "Upper skin lid ",
+                "Upper swept lash tuft ",
+                "Attached outer lash wing ",
+                "Inner forked lash blade ",
+            )
         ):
             tags[ordinal] = "upper"
-        elif name.startswith(("Lower lash ", "Lower skin lid ")):
+        elif name.startswith(
+            ("Lower lash ", "Lower skin lid ", "Lower outer lash tuft ")
+        ):
             tags[ordinal] = "lower"
+        elif name.startswith(
+            (
+                "Outer lateral eye liner ",
+                "Outer companion lash ",
+                "Embedded lateral child ",
+            )
+        ):
+            tags[ordinal] = "lateral"
     memberships = [set() for _ in data.vertices]
     for polygon in data.polygons:
         region = regions.data[polygon.index].value
@@ -92,7 +112,11 @@ def build_blink_shapes(obj, ordinals, calibration, ink_floor_closure=False):
                 else (
                     "upper"
                     if "upper" in kinds
-                    else "lower" if "lower" in kinds else "skin"
+                    else (
+                        "lower"
+                        if "lower" in kinds
+                        else "lateral" if "lateral" in kinds else "skin"
+                    )
                 )
             )
             height = (

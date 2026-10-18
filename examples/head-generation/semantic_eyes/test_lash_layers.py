@@ -1,0 +1,120 @@
+"""Layer selection preserves the reference-like groups and their full checks."""
+
+import ast
+from pathlib import Path
+from types import SimpleNamespace
+import tempfile
+import unittest
+from parameters import validate
+from bundle import build_request, REQUIRED
+
+
+class LashLayerTests(unittest.TestCase):
+    def controls(self, enabled):
+        return dict(
+            short_upper_tuft=1,
+            supplemental_lashes=0,
+            lash_contour_follow=1,
+            layered_lashes=enabled,
+            lid_fold=0,
+            simple_iris=1,
+        )
+
+    def test_selection_counts_each_retained_group_on_both_sides(self):
+        tree = ast.parse(Path(__file__).with_name("runtime.py").read_text())
+        tree.body = [
+            n for n in tree.body if not isinstance(n, (ast.Import, ast.ImportFrom))
+        ]
+        removed = []
+        scope = {
+            "bpy": SimpleNamespace(
+                data=SimpleNamespace(
+                    objects=SimpleNamespace(
+                        remove=lambda obj, do_unlink: removed.append(obj.name)
+                    )
+                )
+            ),
+            "store_mouth_deltas": lambda obj: None,
+        }
+        exec(compile(tree, "mock selection", "exec"), scope)
+        names = []
+        for side in (-1, 1):
+            names += [
+                prefix + str(side)
+                for prefix in (
+                    "Upper lash ",
+                    "Inner forked lash blade ",
+                    "Upper swept lash tuft ",
+                    "Attached outer lash wing ",
+                    "Outer lateral eye liner ",
+                    "Outer companion lash ",
+                    "Lower outer lash tuft ",
+                    "Embedded lateral child 0 ",
+                    "Embedded lateral child 1 ",
+                    "Tapered upper eyelid fold ",
+                    "Pupil separate accent ",
+                )
+            ]
+        for enabled, expected in [(0, 2), (1, 14)]:
+            parts = [
+                SimpleNamespace(name=n, data=SimpleNamespace(attributes={}))
+                for n in names
+            ]
+            report = scope["select_components"](parts, validate(self.controls(enabled)))
+            self.assertEqual(len(report["retained_lash_components"]), expected)
+            self.assertTrue(
+                all(
+                    not p.name.startswith(("Tapered upper eyelid", "Pupil separate"))
+                    for p in parts
+                )
+            )
+            self.assertEqual(len(parts), expected + 2)
+            if enabled:
+                wanted = {
+                    n
+                    for n in names
+                    if not n.startswith(
+                        (
+                            "Upper lash ",
+                            "Inner forked lash blade ",
+                            "Tapered upper eyelid fold ",
+                            "Pupil separate accent ",
+                        )
+                    )
+                }
+                self.assertEqual(set(report["retained_lash_components"]), wanted)
+
+    def test_layered_package_keeps_full_connection_check(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            for name in REQUIRED:
+                p = root / name
+                p.parent.mkdir(parents=True, exist_ok=True)
+                p.write_text("CPU fixture, never execute")
+            request = build_request(
+                self.controls(1),
+                "assets/aster/general_face_eyes_test/",
+                root,
+                blink=True,
+            )
+            self.assertIn("measure_accent_connections()", request["code"])
+            tree = ast.parse(request["code"])
+            calls = [
+                n
+                for n in ast.walk(tree)
+                if isinstance(n, ast.Call) and isinstance(n.func, ast.Name)
+            ]
+            self.assertTrue(
+                any(n.func.id == "measure_accent_connections" for n in calls)
+            )
+            self.assertFalse(
+                any(n.func.id == "validate_retained_tuft_roots" for n in calls)
+            )
+            compile(request["code"], "layered request", "exec")
+
+    def test_invalid_controls(self):
+        for value in (0.5, True, -1, 2):
+            with self.assertRaises(ValueError):
+                validate(dict(self.controls(0), layered_lashes=value))
+        with self.assertRaises(ValueError):
+            validate({"layered_lashes": 1})

@@ -37,6 +37,7 @@ LIMITS = {
     "lash_band_thickness": (1.0, 0.55, 1.15),
     "lash_contour_follow": (0.0, 0.0, 1.0),
     "supplemental_lashes": (1.0, 0.0, 1.0),
+    "layered_lashes": (0.0, 0.0, 1.0),
     "lid_fold": (1.0, 0.0, 1.0),
 }
 
@@ -56,6 +57,7 @@ def validate(request):
             raise ValueError("Outside bounded eye-family range: " + key)
         if key in (
             "supplemental_lashes",
+            "layered_lashes",
             "lid_fold",
             "simple_iris",
             "short_upper_tuft",
@@ -72,6 +74,8 @@ def validate(request):
         raise ValueError(
             "Short upper tuft requires isolated layers and full contour following"
         )
+    if result["layered_lashes"] and not result["short_upper_tuft"]:
+        raise ValueError("Layered lashes require the calibrated short upper tuft")
     if result["secondary_lash_scale"] != 1 and not result["short_upper_tuft"]:
         raise ValueError("Secondary lash scale requires the isolated short upper tuft")
     return result
@@ -198,9 +202,13 @@ def adapt_style(original, request):
     # the original unrelated hand-authored rise profile. Blend zero is identity.
     if p["lash_contour_follow"]:
         rails = []
-        tail_end = 1.025 if style.get("illustrated_eye_art", False) else 1.12
+        tail_end = (
+            1.18
+            if p["layered_lashes"]
+            else 1.025 if style.get("illustrated_eye_art", False) else 1.12
+        )
         for i in range(21):
-            rail_span = 2.005 if style.get("illustrated_eye_art", False) else 2.10
+            rail_span = tail_end + 0.98
             t = -0.98 + rail_span * i / 20
             q = i / 20
             join_t = 0.96 if style.get("illustrated_eye_art", False) else 0.75
@@ -215,7 +223,7 @@ def adapt_style(original, request):
                 1 - style["accent_trajectory_slope_scale"]
             )
             if t > join_t:
-                span = 0.065 if style.get("illustrated_eye_art", False) else 0.37
+                span = tail_end - join_t
                 u = (t - join_t) / span
                 h = c["eye_horizontal_power"]
                 v = c["eye_upper_power"]
@@ -338,6 +346,33 @@ def adapt_style(original, request):
             ]
             for t, y in style["upper_swept_tuft_outline"]
         ]
+    if p["layered_lashes"]:
+        rails = style["upper_lash_rails"]
+
+        def lash_mid(t):
+            return (sample(rails, t, 1) + sample(rails, t, 2)) / 2
+
+        # Distribute the small upper blade medially; reserve the outer fork
+        # for the independent wing rather than stacking all tips at one corner.
+        style["upper_swept_tuft_outline"] = [
+            [t - 0.55, lash_mid(t - 0.55) + y - lash_mid(t)]
+            for t, y in style["upper_swept_tuft_outline"]
+        ]
+        wing = style["outer_lash_wing_rails"]
+        start, end = wing[0][0], wing[-1][0]
+        shift = lash_mid(start) - wing[0][1]
+        for row in wing:
+            weight = (1 - (row[0] - start) / (end - start)) ** 2
+            row[1] += shift * weight
+            row[2] += shift * weight
+        # Shorter rising upper leaf above the longer parent tail.
+        for row in wing:
+            u = (row[0] - start) / (end - start)
+            row[0] = start + (1.10 - start) * u
+            lift = 0.022 * u * u * (3 - 2 * u)
+            center = (row[1] + row[2]) * 0.5 + lift
+            half_width = (row[2] - row[1]) * 0.5
+            row[1], row[2] = center - half_width, center + half_width
     # Geometry must remain within the fixed inherited feature-patch footprint.
     low = c["origin_y_m"] + c["height_m"] * (
         c["eye_corner_y"] - abs(c["eye_corner_slope"]) - c["eye_lower_arch"]

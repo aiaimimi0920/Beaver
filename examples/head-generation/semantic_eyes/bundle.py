@@ -92,14 +92,14 @@ def build_request(parameters, output_prefix, workspace, *, blink=False):
         "        region = part_index + 10",
         "        region = semantic_part_ordinals[part.name]",
     )
-    if p["short_upper_tuft"]:
+    if p["short_upper_tuft"] and not p["layered_lashes"]:
         pipeline = replace_once(
             pipeline,
             'report["eye_accent_connections"] = measure_accent_connections()',
             "from semantic_eye_runtime import validate_retained_tuft_roots\n"
             'report["eye_accent_connections"] = validate_retained_tuft_roots(PARTS)',
         )
-    elif p["supplemental_lashes"] == 0:
+    elif p["supplemental_lashes"] == 0 and not p["layered_lashes"]:
         pipeline = replace_once(
             pipeline,
             'report["eye_accent_connections"] = measure_accent_connections()',
@@ -141,6 +141,59 @@ def build_request(parameters, output_prefix, workspace, *, blink=False):
         }
     )
     sources["face.py"] = adapt_brow_source(sources["face.py"], p["brow_head_rounding"])
+    if p["layered_lashes"]:
+        root_fit = """        delta = target-center
+        # Rigid minimax seating preserves the closed six-vertex root section.
+        # The final clearance and 0.8 mm connection checks remain mandatory.
+        def score(move):
+            values = [tree.find_nearest(v.co + move)[3] for v in roots]
+            return (max(values), sum(values))
+        for step in (.0004, .0002, .0001, .00005, .000025):
+            for iteration in range(8):
+                choices = [delta.copy()]
+                for axis in range(2):
+                    for sign in (-1, 1):
+                        candidate = delta.copy()
+                        candidate[axis] += sign * step
+                        if candidate.length < .004:
+                            choices.append(candidate)
+                best = min(choices, key=score)
+                if score(best) >= score(delta):
+                    break
+                delta = best
+"""
+        sources["eye_accents.py"] = replace_once(
+            sources["eye_accents.py"], "        delta = target-center\n", root_fit
+        )
+    if p["layered_lashes"]:
+        seat = "        lateral_curve = regularize_lateral_sections(PARTS, lateral_sections(), STYLE, obstacle_trees[0][1])"
+        slender = """
+        for wing in PARTS:
+            if not wing.name.startswith("Attached outer lash wing "):
+                continue
+            columns = {}
+            for vertex in wing.data.vertices:
+                columns.setdefault(round(abs(vertex.co.x), 8), []).append(vertex)
+            for x, column in columns.items():
+                t = (x / H - C["eye_center_x"]) / C["eye_half_width"]
+                u = max(0.0, min(1.0, (t - 0.65) / 0.2))
+                scale = 1.0 - 0.35 * u*u*(3-2*u)
+                center = min(v.co.z for v in column)
+                for vertex in column:
+                    vertex.co.z = center + (vertex.co.z - center) * scale
+                    tip_u = max(0.0, min(1.0, (t - 1.0) / 0.1))
+                    vertex.co.z += H * 0.012 * tip_u*tip_u*(3-2*tip_u)
+            wing.data.update()
+"""
+        sources["eye_accents.py"] = replace_once(
+            sources["eye_accents.py"], seat, seat + slender
+        )
+    if p["layered_lashes"]:
+        sources["thin_ribbon.py"] = replace_once(
+            sources["thin_ribbon.py"],
+            '(b[0]-a[0])/STYLE["accent_max_station_gap"]',
+            '(b[0]-a[0])/(min(STYLE["accent_max_station_gap"],0.025) if key == "outer_lash_wing_rails" else STYLE["accent_max_station_gap"])',
+        )
     sources["eye_socket.py"] = adapt_lower_clearance(
         sources["eye_socket.py"],
         p["lower_roundness"] != 1
