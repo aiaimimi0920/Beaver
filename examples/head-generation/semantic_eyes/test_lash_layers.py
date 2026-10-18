@@ -28,15 +28,47 @@ class LashLayerTests(unittest.TestCase):
         changed = {key for key in plain if plain[key] != added[key]}
         self.assertEqual(changed, {"inner_lash_fork_outline"})
         stations = [row[0] for row in added["inner_lash_fork_outline"]]
-        self.assertEqual(min(stations), 0.24)
-        self.assertEqual(max(stations), 0.68)
+        self.assertAlmostEqual(min(stations), 0.36)
+        self.assertAlmostEqual(max(stations), 0.76)
         outline = added["inner_lash_fork_outline"]
-        self.assertTrue(all(a[1] < b[1] for a, b in zip(outline[:3], outline[1:4])))
-        self.assertLess(outline[4][1], outline[3][1])
+        self.assertEqual(len(outline), 32)
+        top = outline[:17]
+        bottom = list(reversed(outline[17:]))
+        for a, b in zip(top[1:-1], bottom):
+            self.assertEqual(a[0], b[0])
+            self.assertGreater(a[1], b[1])
+            self.assertLessEqual(a[1] - b[1], 0.008000001)
+        self.assertTrue(all(b[0] > a[0] for a, b in zip(top, top[1:])))
         with self.assertRaises(ValueError):
             validate(dict(self.controls(0), upper_lash_layer=1))
         with self.assertRaises(ValueError):
             validate(dict(self.controls(1), upper_lash_layer=0.5))
+
+    def test_upper_layer_native_sections_have_only_closed_endpoints(self):
+        tree = ast.parse((RECIPE / "thin_ribbon.py").read_text())
+        fn = next(
+            n
+            for n in tree.body
+            if isinstance(n, ast.FunctionDef) and n.name == "outline_sections"
+        )
+        for illustrated in (0, 1):
+            params = dict(self.controls(1), upper_lash_layer=1, simple_iris=illustrated)
+            style = adapt_style(
+                json.loads((RECIPE / "face_style.json").read_text()), params
+            )
+            scope = {"STYLE": style}
+            exec(
+                compile(
+                    ast.Module(body=[fn], type_ignores=[]), "native sections", "exec"
+                ),
+                scope,
+            )
+            sections = scope["outline_sections"](style["inner_lash_fork_outline"])
+            self.assertEqual(len(sections), 17)
+            self.assertAlmostEqual(sections[0][1], sections[0][2])
+            self.assertAlmostEqual(sections[-1][1], sections[-1][2])
+            self.assertTrue(all(hi > lo for _, lo, hi in sections[1:-1]))
+            self.assertTrue(all(b[0] > a[0] for a, b in zip(sections, sections[1:])))
 
     def test_layered_lower_accents_have_distinct_visual_roles(self):
         original = json.loads((RECIPE / "face_style.json").read_text())

@@ -83,3 +83,29 @@ Runtime blend SHA-256:
 packaged seating code on both sides, including quarter/mid-span weights,
 stationary free tips/parent geometry and refusal of missing or >=4 mm targets.
 No reference assets are included in the repository.
+
+## Reference-led sweep refinement: candidate 793
+
+Six-game screenshot comparison motivated reducing the intermediate leaf's broad
+root rather than adding components. Candidate 792 used a narrow 17-station
+lens, but native views made its horizontal extension too prominent. 793 shortens
+the sweep from .48 to .40 station units, limits its width to .008 calibrated H
+units, and lowers the tip lift to .021 H. The root starts at .36. Smooth sampled
+boundaries replace the old six-control polygon. All other controls and the
+16-component retained inventory remain unchanged.
+
+136 semantic and 35 facial-surface tests passed. A new test executes the actual
+native outline_sections function, checking 17 monotone sections, closed end
+points and positive interior widths in both illustrated modes. Native 793
+creation, receipt-bound SDF, and 16-pair sampled blink proximity passed; maximum
+sampled distance was 0.000157092 m. The same root-band sampling limitations apply.
+All 84 captures in `blink-1792321255-1166` passed source/image/morph verification.
+The continuous orientation check covers 12776 triangles, minimum ratio
+0.059159739495675545; it remains an orientation check, not an intersection proof.
+Runtime blend SHA-256:
+`a6693d608d0a07230ca8ac9a0395ecbd354c329b2b56dd6c860fe1cd2d5f96f7`.
+
+Frontal/oblique and closed-eye renders reduce the previous upper-root black
+block; 793 is more compact than the 792 intermediate. This is an incremental
+candidate for owner review, not final aesthetic acceptance. Reference images
+remain outside the repository. No face aperture, lower lash or side leaf edits.

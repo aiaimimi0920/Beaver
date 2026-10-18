@@ -362,14 +362,17 @@ def adapt_style(original, request):
         if p["upper_lash_layer"]:
             # A swept intermediate sheet between the micro tip and outer fork.
             # Reuse its independent mesh, not its former medial placement.
-            style["inner_lash_fork_outline"] = [
-                [0.24, lash_mid(0.24)],
-                [0.36, sample(rails, 0.36, 2) + 0.001],
-                [0.53, sample(rails, 0.53, 2) + 0.008],
-                [0.68, sample(rails, 0.68, 2) + 0.020],
-                [0.58, sample(rails, 0.58, 2) + 0.006],
-                [0.34, lash_mid(0.34) - 0.001],
-            ]
+            upper, lower = [], []
+            for index in range(17):
+                u = index / 16
+                t = 0.36 + 0.40 * u
+                center = sample(rails, t, 2) + 0.021 * u * u - 0.006 * (1 - u) ** 2
+                half_width = 0.004 * math.sin(math.pi * u)
+                upper.append([t, center + half_width])
+                lower.append([t, center - half_width])
+            # Smooth, narrow lens with closed endpoints; do not widen its root
+            # into another dark block on the central upper eyelid.
+            style["inner_lash_fork_outline"] = upper + list(reversed(lower[1:-1]))
 
         # Distribute the small upper blade medially; reserve the outer fork
         # for the independent wing rather than stacking all tips at one corner.
