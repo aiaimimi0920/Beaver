@@ -349,3 +349,6 @@ which received relative-improvement feedback, not final character acceptance.
 The private authoring baseline is still required. See
 [`lower-profile-native-verification.md`](lower-profile-native-verification.md)
 for the actual checks and limitations.
+
+See [illustrated eye finish verification](eye-finish-native-verification.md) for
+the fixed-camera paint/outline diagnosis and 762–763 native checks.

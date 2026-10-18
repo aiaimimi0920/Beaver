@@ -183,9 +183,9 @@ def adapt_style(original, request):
     # the original unrelated hand-authored rise profile. Blend zero is identity.
     if p["lash_contour_follow"]:
         rails = []
-        tail_end = 1.06 if style.get("illustrated_eye_art", False) else 1.12
+        tail_end = 1.025 if style.get("illustrated_eye_art", False) else 1.12
         for i in range(21):
-            rail_span = 2.04 if style.get("illustrated_eye_art", False) else 2.10
+            rail_span = 2.005 if style.get("illustrated_eye_art", False) else 2.10
             t = -0.98 + rail_span * i / 20
             q = i / 20
             join_t = 0.96 if style.get("illustrated_eye_art", False) else 0.75
@@ -200,7 +200,7 @@ def adapt_style(original, request):
                 1 - style["accent_trajectory_slope_scale"]
             )
             if t > join_t:
-                span = 0.10 if style.get("illustrated_eye_art", False) else 0.37
+                span = 0.065 if style.get("illustrated_eye_art", False) else 0.37
                 u = (t - join_t) / span
                 h = c["eye_horizontal_power"]
                 v = c["eye_upper_power"]
@@ -213,7 +213,7 @@ def adapt_style(original, request):
                     slope = c["eye_upper_arch"] * upper_shape_derivative(join_t, c) + c[
                         "eye_corner_slope"
                     ] * (1 - style["accent_trajectory_slope_scale"])
-                tail_lift = 0.003 if style.get("illustrated_eye_art", False) else 0.020
+                tail_lift = 0.012 if style.get("illustrated_eye_art", False) else 0.020
                 end = tail_lift + c["eye_corner_slope"] * tail_end * (
                     1 - style["accent_trajectory_slope_scale"]
                 )

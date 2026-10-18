@@ -35,8 +35,8 @@ def sclera_art_color(u,v):
     y = Y0+H*(C["eye_corner_y"]+(v-0.5)*0.50)
     _, upper = eye_contour(1,max(-0.999,min(0.999,t)),True)
     # Painted upper occlusion follows the actual aperture, not a screen overlay.
-    shadow = max(0.,min(1.,1-(upper-y)/(H*0.045))) * 0.32
-    corner = exp(-((abs(t)-0.94)/0.16)**2)*0.13
+    shadow = max(0.,min(1.,1-(upper-y)/(H*0.025))) * 0.14
+    corner = exp(-((abs(t)-0.94)/0.16)**2)*0.08
     c = [WHITE[i]*(1-shadow)+(0.45,0.43,0.48)[i]*shadow for i in range(3)]
     c = [c[i]*(1-corner)+(0.82,0.56,0.58)[i]*corner for i in range(3)]
     return (*c,1)

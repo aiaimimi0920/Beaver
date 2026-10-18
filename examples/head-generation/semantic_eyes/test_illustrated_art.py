@@ -125,8 +125,8 @@ class IllustratedArtTests(unittest.TestCase):
         )
         result = adapt_style(dict(base, illustrated_eye_art=True), request)
         self.assertAlmostEqual(result["calibration"]["eye_corner_slope"], 0.0)
-        self.assertAlmostEqual(result["upper_lash_rails"][-1][0], 1.06)
-        self.assertAlmostEqual(result["upper_lash_rails"][-1][1], 0.003)
+        self.assertAlmostEqual(result["upper_lash_rails"][-1][0], 1.025)
+        self.assertAlmostEqual(result["upper_lash_rails"][-1][1], 0.012)
         c = result["calibration"]
         for i, (t, lo, hi) in enumerate(result["upper_lash_rails"]):
             if not 0.75 < t <= 0.96:
