@@ -109,3 +109,25 @@ Frontal/oblique and closed-eye renders reduce the previous upper-root black
 block; 793 is more compact than the 792 intermediate. This is an incremental
 candidate for owner review, not final aesthetic acceptance. Reference images
 remain outside the repository. No face aperture, lower lash or side leaf edits.
+
+## Upper group hierarchy: candidate 795
+
+After 793 the owner requested a more natural arrangement rather than more
+components. In upper-layer mode the small middle tuft is shortened to 75% of
+its prior horizontal span, moved outward by .14 station units and given 82%
+of its prior height relative to the local parent band. The intermediate leaf
+lift changes from .021 to .0185 H. Count remains 16; all unrelated style fields,
+including actual brows, aperture, side and lower lashes, remain unchanged.
+Candidate 794 reduced these accents too far and appeared flat in the native
+render; 795 restores part of their bend. This is an incremental hierarchy test,
+not a claim that all natural-arrangement concerns are resolved.
+
+136 semantic and 35 facial-surface tests passed. Native generation, receipt-bound
+SDF and 16-pair sampled blink proximity passed with maximum .000157092 m.
+Continuous triangle orientation: 12776 triangles, minimum .059159739495675545.
+All 84 source/image/morph capture checks passed in `blink-1792322720-21972`.
+Runtime blend SHA-256:
+`733564558dde2897e6f14f5cf04069936edeb8f60883abadd15ee231b5f44ba8`.
+Frontal/oblique and closed-eye comparisons show the central high spike is less
+prominent. Owner visual acceptance remains pending; static samples and proximity
+checks do not prove continuous collision freedom.

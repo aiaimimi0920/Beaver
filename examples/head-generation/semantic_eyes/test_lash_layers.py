@@ -21,12 +21,22 @@ class LashLayerTests(unittest.TestCase):
             simple_iris=1,
         )
 
-    def test_upper_layer_repositions_only_its_own_outline(self):
+    def test_upper_layers_only_change_the_two_upper_outlines(self):
         original = json.loads((RECIPE / "face_style.json").read_text())
         plain = adapt_style(original, self.controls(1))
         added = adapt_style(original, dict(self.controls(1), upper_lash_layer=1))
         changed = {key for key in plain if plain[key] != added[key]}
-        self.assertEqual(changed, {"inner_lash_fork_outline"})
+        self.assertEqual(
+            changed, {"inner_lash_fork_outline", "upper_swept_tuft_outline"}
+        )
+        old_tuft = plain["upper_swept_tuft_outline"]
+        new_tuft = added["upper_swept_tuft_outline"]
+        self.assertEqual(len(old_tuft), len(new_tuft))
+        span = lambda points: max(t for t, _ in points) - min(t for t, _ in points)
+        self.assertAlmostEqual(span(new_tuft), span(old_tuft) * 0.75)
+        self.assertAlmostEqual(
+            min(t for t, _ in new_tuft) - min(t for t, _ in old_tuft), 0.14
+        )
         stations = [row[0] for row in added["inner_lash_fork_outline"]]
         self.assertAlmostEqual(min(stations), 0.36)
         self.assertAlmostEqual(max(stations), 0.76)

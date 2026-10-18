@@ -366,7 +366,7 @@ def adapt_style(original, request):
             for index in range(17):
                 u = index / 16
                 t = 0.36 + 0.40 * u
-                center = sample(rails, t, 2) + 0.021 * u * u - 0.006 * (1 - u) ** 2
+                center = sample(rails, t, 2) + 0.0185 * u * u - 0.006 * (1 - u) ** 2
                 half_width = 0.004 * math.sin(math.pi * u)
                 upper.append([t, center + half_width])
                 lower.append([t, center - half_width])
@@ -380,6 +380,19 @@ def adapt_style(original, request):
             [t - 0.55, lash_mid(t - 0.55) + y - lash_mid(t)]
             for t, y in style["upper_swept_tuft_outline"]
         ]
+        if p["upper_lash_layer"]:
+            # The middle tuft is subordinate; progressively stronger outward
+            # accents should not read as equally tall inserted spikes.
+            outline = style["upper_swept_tuft_outline"]
+            root = min(t for t, _ in outline)
+            style["upper_swept_tuft_outline"] = [
+                [
+                    root + (t - root) * 0.75 + 0.14,
+                    lash_mid(root + (t - root) * 0.75 + 0.14)
+                    + (rise - lash_mid(t)) * 0.82,
+                ]
+                for t, rise in outline
+            ]
         wing = style["outer_lash_wing_rails"]
         start, end = wing[0][0], wing[-1][0]
         shift = lash_mid(start) - wing[0][1]
