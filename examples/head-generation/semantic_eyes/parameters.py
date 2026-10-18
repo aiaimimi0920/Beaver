@@ -26,6 +26,7 @@ LIMITS = {
     "ocular_skin_outline_holdout": (0.0, 0.0, 1.0),
     "simple_iris": (0.0, 0.0, 1.0),
     "short_upper_tuft": (0.0, 0.0, 1.0),
+    "secondary_lash_scale": (1.0, 0.70, 1.0),
     "brow_height_offset": (0.0, -0.012, 0.012),
     "brow_rise_offset": (0.0, -0.012, 0.012),
     "brow_thickness": (1.0, 0.70, 1.20),
@@ -68,6 +69,8 @@ def validate(request):
         raise ValueError(
             "Short upper tuft requires isolated layers and full contour following"
         )
+    if result["secondary_lash_scale"] != 1 and not result["short_upper_tuft"]:
+        raise ValueError("Secondary lash scale requires the isolated short upper tuft")
     return result
 
 
@@ -306,6 +309,23 @@ def adapt_style(original, request):
                 [0.81, middle(0.81)],
                 [0.60, middle(0.60) - 0.001],
             ]
+    if p["short_upper_tuft"] and p["secondary_lash_scale"] != 1:
+        # Scale the child blade about its embedded root in the parent frame.
+        # Keep the full primary band and the eye aperture unchanged.
+        amount = p["secondary_lash_scale"]
+        rails = style["upper_lash_rails"]
+
+        def parent_mid(t):
+            return (sample(rails, t, 1) + sample(rails, t, 2)) / 2
+
+        root = style["upper_swept_tuft_outline"][0][0]
+        style["upper_swept_tuft_outline"] = [
+            [
+                root + (t - root) * amount,
+                parent_mid(root + (t - root) * amount) + (y - parent_mid(t)) * amount,
+            ]
+            for t, y in style["upper_swept_tuft_outline"]
+        ]
     # Geometry must remain within the fixed inherited feature-patch footprint.
     low = c["origin_y_m"] + c["height_m"] * (
         c["eye_corner_y"] - abs(c["eye_corner_slope"]) - c["eye_lower_arch"]

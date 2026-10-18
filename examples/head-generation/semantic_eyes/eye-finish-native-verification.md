@@ -38,3 +38,31 @@ and diff whitespace checks passed. Four changed Python files have simple
 nonblank/noncomment counts 102, 296, 150 and 35. Local official effective-line
 scanner was blocked because Cargo is absent; remote CI must verify that check.
 No third-party images or models are included in this change.
+
+## Isolated secondary blade, candidate 764
+
+The optional secondary_lash_scale control defaults to 1 (identity). Candidate
+764 uses .78 with the otherwise unchanged reconstructed 763 controls. This
+shrinks the independent child blade along the sampled parent midpoint, leaving
+its root fixed. Main lash rails, aperture, iris and eyebrow calibration remain
+unchanged. Existing 3D bow/flare offsets are not scaled.
+
+Native generation job ab1625ee-ae4f-496f-ad05-1a4fc3cd0a15 and SDF job
+692e5198-9352-400c-80e8-115e120cb58d succeeded. Runtime blend SHA-256:
+1a1df328a7f8021308f32e49a81647c83d30b276c8be2c2108c52ed7e887f98c.
+The analytic orientation minimum remains 0.059159739495675545 on 10,980
+triangles. Capture set blink-1792305908-95443 contains 84 native views with
+image hashes, source-model identity and requested morph weights verified.
+
+Front, +/-45, profile, raised/lowered views, half/full blink, independent wink,
+white and edge views were captured. Inspected images show a shorter secondary
+tip, clearer primary/secondary hierarchy and no obvious new damage in the
+reviewed views. This is a modest finish change, not final user acceptance or
+proof of no intersections. The existing thin bright upper-lid strip remains.
+
+117 semantic-eye tests and 35 facial-surface tests passed. Black and diff
+whitespace checks passed. The new regression checks cover both illustrated
+modes, root preservation, all unchanged non-tuft fields, relative scaling,
+identity and invalid inputs. Local official effective-line scanner remains
+blocked by missing Cargo; remote CI must verify it. No external reference
+images or third-party model assets are committed.

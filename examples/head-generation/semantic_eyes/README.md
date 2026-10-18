@@ -30,6 +30,11 @@ Multipliers default to 1:
 - iris_width and iris_height .90–1.08
 - brow_thickness .70–1.20; brow_arch .50–1.50
 - lash_band_thickness .55–1.15
+- secondary_lash_scale .70–1, default 1; requires short_upper_tuft=1.
+  Shrinks only the independent child blade about its embedded root, along the
+  adapted parent midpoint. Primary band, aperture, iris and brows remain fixed.
+  Existing 3D flare/bow/scoop are retained; native views and blink review are
+  required to assess attachment and silhouette.
 
 Offsets default to 0, in fractions of calibrated face height:
 
