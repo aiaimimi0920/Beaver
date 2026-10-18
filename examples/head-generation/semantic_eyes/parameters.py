@@ -28,9 +28,12 @@ LIMITS = {
     "short_upper_tuft": (0.0, 0.0, 1.0),
     "secondary_lash_scale": (1.0, 0.70, 1.0),
     "brow_height_offset": (0.0, -0.012, 0.012),
-    "brow_rise_offset": (0.0, -0.012, 0.012),
+    "brow_rise_offset": (0.0, -0.0255, 0.012),
     "brow_thickness": (1.0, 0.70, 1.20),
     "brow_arch": (1.0, 0.5, 1.5),
+    "brow_fullness_offset": (0.0, 0.0, 0.25),
+    "brow_softness": (0.0, 0.0, 1.0),
+    "brow_head_rounding": (0.0, 0.0, 1.0),
     "lash_band_thickness": (1.0, 0.55, 1.15),
     "lash_contour_follow": (0.0, 0.0, 1.0),
     "supplemental_lashes": (1.0, 0.0, 1.0),
@@ -153,6 +156,15 @@ def adapt_style(original, request):
     c["brow_rise"] += p["brow_rise_offset"]
     c["brow_thickness"] *= p["brow_thickness"]
     style["brow_arch_m"] *= p["brow_arch"]
+    c["brow_inner_fullness"] += p["brow_fullness_offset"]
+    if p["brow_head_rounding"]:
+        c["brow_head_rounding"] = p["brow_head_rounding"]
+    if p["brow_softness"]:
+        # Keep the authored hue; lighten the independent eyebrow only.
+        amount = 0.12 * p["brow_softness"]
+        style["brow_rgb"] = [
+            value + (1 - value) * amount for value in style["brow_rgb"]
+        ]
     for field, key in [
         ("eye_center_x_m", "eye_center_x"),
         ("eye_half_width_m", "eye_half_width"),
@@ -347,4 +359,15 @@ def adapt_lower_clearance(source, enabled):
     new = "+ abs((y - cy) / (H * arch)) ** (1.0 / power if y < cy else 1.0)"
     if source.count(old) != 1:
         raise ValueError("Inherited pocket clearance radius contract changed")
+    return source.replace(old, new, 1)
+
+
+def adapt_brow_source(source, amount):
+    """Round the medial cap without moving the existing eyebrow centerline."""
+    if amount == 0:
+        return source
+    old = "    return original * 0.5 + (lane - 0.5) * original * factor"
+    new = '    width = H * C["brow_thickness"] * sin(pi * t) ** (\n        0.7 - 0.3 * C["brow_head_rounding"] * (1 - t) ** 3\n    )\n    return original * 0.5 + (lane - 0.5) * width * factor'
+    if source.count(old) != 1:
+        raise ValueError("Inherited eyebrow width contract changed")
     return source.replace(old, new, 1)

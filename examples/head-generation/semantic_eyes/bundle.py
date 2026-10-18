@@ -7,7 +7,7 @@ import json
 from pathlib import Path
 import re
 import tempfile
-from parameters import adapt_style, validate, adapt_lower_clearance
+from parameters import adapt_style, validate, adapt_lower_clearance, adapt_brow_source
 from source_upper_warp import adapt_upper_sources, HELPERS
 
 HERE = Path(__file__).resolve().parent
@@ -140,6 +140,7 @@ def build_request(parameters, output_prefix, workspace, *, blink=False):
             "semantic_eye_runtime.py": (HERE / "runtime.py").read_text(),
         }
     )
+    sources["face.py"] = adapt_brow_source(sources["face.py"], p["brow_head_rounding"])
     sources["eye_socket.py"] = adapt_lower_clearance(
         sources["eye_socket.py"],
         p["lower_roundness"] != 1

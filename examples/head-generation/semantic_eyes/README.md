@@ -29,6 +29,14 @@ Multipliers default to 1:
 - lower_roundness 1–1.25; lower_horizontal_roundness 1–1.5
 - iris_width and iris_height .90–1.08
 - brow_thickness .70–1.20; brow_arch .50–1.50
+- brow_fullness_offset 0–.25, default 0: adds inner fullness to the existing
+  eyebrow width profile while retaining its zero-width endpoints.
+- brow_softness 0–1, default 0: lightens only the authored eyebrow RGB by up to
+  12% toward white. It does not change alpha, lashes, or eye shading.
+- brow_head_rounding 0–1, default 0: softens the medial width falloff using
+  a bounded exponent, strongest at the head and fading cubically toward the
+  tail. The existing centerline and closed endpoints remain. This adapts only
+  the eyebrow width function; zero leaves source bytes unchanged.
 - lash_band_thickness .55–1.15
 - secondary_lash_scale .70–1, default 1; requires short_upper_tuft=1.
   Shrinks only the independent child blade about its embedded root, along the
@@ -43,7 +51,8 @@ Offsets default to 0, in fractions of calibrated face height:
 - iris_horizontal_offset ±.012; negative moves both iris centers toward the nose,
   after the eye-width mapping. Pupil/catchlight geometry follows each iris center;
   aperture, eye spacing, and whole-orbit geometry are unchanged.
-- brow_height_offset and brow_rise_offset ±.012
+- brow_height_offset ±.012; brow_rise_offset −.0255…+.012. The lower endpoint
+  levels the authored .0255 rise; it does not alter aperture corners.
 
 Numeric layer controls accept only 0 or 1. `supplemental_lashes` and `lid_fold`
 default 1. `simple_iris` defaults 0. Booleans, unknown keys, nonfinite values and

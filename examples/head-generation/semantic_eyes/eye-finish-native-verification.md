@@ -66,3 +66,35 @@ modes, root preservation, all unchanged non-tuft fields, relative scaling,
 identity and invalid inputs. Local official effective-line scanner remains
 blocked by missing Cargo; remote CI must verify it. No external reference
 images or third-party model assets are committed.
+
+## True-eyebrow refinement, candidates 765–767
+
+The prior 764 refinement changed the eye-edge child lash, not the true eyebrows.
+Three native iterations were compared with fixed cameras:
+
+- 765: brow height offset -.010, rise offset -.010, thickness .90,
+  fullness offset .20 and softness .4, with 764's eye/lash controls retained.
+  The change was slight; the medial end still read as an overly long sharp wedge.
+- 766: adds brow_head_rounding=1, preserving the inherited centerline while
+  broadening the medial width falloff. At ordinary face size the result remained
+  too similar to 765, so it was not chosen as the final review candidate.
+- 767: retains the rounded width profile, height offset -.006, rise offset -.022
+  and thickness .85. The reduced rise makes the neutral expression noticeably
+  more relaxed, with a shorter fuller medial entry and a fine temporal tail.
+  The innermost endpoint remains a small point; this is not a literal round cap.
+
+Candidate 767 generation 33bc643c-cf9a-4be6-bcef-88383f6ee5fc and SDF
+07365445-09d7-417c-81e9-bc9d6f5d9ed8 succeeded. Runtime blend SHA-256:
+ec9172e80a48ec6d5fc341915b898438339824b98de0ab65cbde741acbd150ad.
+Capture blink-1792308653-35546 contains 84 verified native images. Source hashes
+before/after and actual requested blink/mouth weights matched. Orientation
+minimum remains .059159739495675545 over 10,980 triangles; not an intersection proof.
+Front, +/-45, profile, pitch, white, half/full blink and wink images were inspected.
+This candidate is judged suitable for user aesthetic review, not universally
+optimal or finally accepted. Existing upper-lid bright strip remains unresolved.
+
+123 semantic-eye and 35 facial-surface tests pass. New tests cover default
+identity, bounded controls, unaffected non-brow fields, positive widths,
+source-contract failure, closed endpoints, unchanged centerline and the new
+level-rise endpoint. Black, Python compilation and whitespace checks pass.
+Local Cargo is unavailable; the official effective-line report must run in CI.
