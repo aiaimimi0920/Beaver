@@ -1,0 +1,20 @@
+{
+  "baseline": "795",
+  "status": "owner provisionally accepted",
+  "date": "2026-10-18",
+  "recipe_commit": "eed2bbf39162a3ee738bd95ec89280c379bb6bf4",
+  "eye_parameters_file": "emerald-baseline-795-eyes.json",
+  "surface_parameters": {
+    "axial_smoothing": 0.5,
+    "cheek_roundness": 0.05,
+    "orbit_shallowing": 0.15
+  },
+  "reviewed_support_bound_m": 0.0042,
+  "style_profile": "emerald_illustrated",
+  "blink": true,
+  "shading_policy": "smooth_proxy",
+  "scope": "face-only",
+  "runtime_blend_sha256": "733564558dde2897e6f14f5cf04069936edeb8f60883abadd15ee231b5f44ba8",
+  "native_capture_id": "blink-1792322720-21972",
+  "notes": "Requires retained authoring inputs and pinned recipe; not a universal eye-shape preset."
+}

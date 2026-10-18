@@ -419,3 +419,11 @@ back wall follows its inherited minimum-rim-depth construction rather than a
 rigid rotation; main lash planes rely on existing attachment fitting. Native
 clearance, posed-triangle guards and matched multi-angle visual review remain
 mandatory before retaining any candidate.
+
+## Provisionally accepted face baseline 795
+
+The [consolidated Chinese production prompt](face-baseline-795-prompt.zh-CN.md),
+[eye controls](emerald-baseline-795-eyes.json), and
+[replay metadata](face-baseline-795.json) record the owner's temporary visual
+acceptance on 2026-10-18. Replay requires the retained inputs and pinned recipe.
+This baseline does not prescribe every future character's eye shape.
