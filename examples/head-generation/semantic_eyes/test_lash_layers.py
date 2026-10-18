@@ -1,12 +1,13 @@
 """Layer selection preserves the reference-like groups and their full checks."""
 
 import ast
+import json
 from pathlib import Path
 from types import SimpleNamespace
 import tempfile
 import unittest
-from parameters import validate
-from bundle import build_request, REQUIRED
+from parameters import validate, adapt_style
+from bundle import build_request, REQUIRED, RECIPE
 
 
 class LashLayerTests(unittest.TestCase):
@@ -18,6 +19,25 @@ class LashLayerTests(unittest.TestCase):
             layered_lashes=enabled,
             lid_fold=0,
             simple_iris=1,
+        )
+
+    def test_layered_lower_accents_have_distinct_visual_roles(self):
+        original = json.loads((RECIPE / "face_style.json").read_text())
+        before = json.dumps(original, sort_keys=True)
+        plain = adapt_style(original, self.controls(0))
+        layered = adapt_style(original, self.controls(1))
+        self.assertEqual(json.dumps(original, sort_keys=True), before)
+        self.assertEqual(plain["accent_lower_tip_t"], original["accent_lower_tip_t"])
+        self.assertEqual(layered["accent_lower_tip_t"], 0.40)
+        self.assertEqual(
+            layered["lateral_accent_profile"][3], original["lateral_accent_profile"][3]
+        )
+        self.assertAlmostEqual(
+            layered["lateral_accent_profile"][6][1],
+            original["lateral_accent_profile"][6][1] * 0.45,
+        )
+        self.assertEqual(
+            layered["accent_lower_tip_drop_H"], original["accent_lower_tip_drop_H"]
         )
 
     def test_selection_counts_each_retained_group_on_both_sides(self):

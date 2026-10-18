@@ -347,6 +347,9 @@ def adapt_style(original, request):
             for t, y in style["upper_swept_tuft_outline"]
         ]
     if p["layered_lashes"]:
+        # Keep the lower side accent subordinate to the primary lateral leaf.
+        style["lateral_accent_profile"][6][1] *= 0.45
+        style["accent_lower_tip_t"] = 0.40
         rails = style["upper_lash_rails"]
 
         def lash_mid(t):

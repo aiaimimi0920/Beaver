@@ -39,3 +39,20 @@ curve stations avoid a coarse six-station outline. Earlier failed candidates
 were rejected, not treated as accepted output. This is a face-only candidate
 ready for owner review, not a claim of universal aesthetic acceptance or full
 character/product completion. No hair/body generation or production release.
+
+## Follow-up visual hierarchy: candidate 788
+
+The owner liked 787 but requested another reference-based quantity pass. The
+reference separates one dominant side leaf, a subtle side-band ending and an
+independent lower-edge tuft. It does not justify adding equally prominent teeth.
+Candidate 788 reduces the lower lateral child reach to 45%, moves the lower tuft
+station from .56 to .40 without enlarging it, and uses secondary_lash_scale=.70.
+Component inventory is unchanged; visible emphasis and spacing are the changes.
+
+Native generation and receipt-bound SDF passed. All 84 source/image/morph capture
+checks passed in `blink-1792316511-71974`; bilateral root proximity sampling
+remained below 0.000157092 m. The same sampling limitations above apply.
+Runtime blend SHA-256: `143d27be6e4812d2ab68955b9e73039968800a89c1215a0722c65c82d0ca8701`.
+Semantic regression tests: 132 passed. Frontal and oblique native views retain
+the face and eye shape while reducing the row-of-teeth appearance. Owner final
+aesthetic acceptance remains separate from these checks.
