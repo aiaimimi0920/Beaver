@@ -9,6 +9,7 @@ import re
 import tempfile
 from parameters import adapt_style, validate, adapt_lower_clearance, adapt_brow_source
 from source_upper_warp import adapt_upper_sources, HELPERS
+from source_lateral_rim import adapt_lateral_rim, adapt_lateral_depth
 
 HERE = Path(__file__).resolve().parent
 RECIPE = HERE.parent / "checkpoints/current"
@@ -232,6 +233,12 @@ def build_request(parameters, output_prefix, workspace, *, blink=False):
         p["lower_roundness"] != 1
         or p["lower_shoulder"] != 0
         or p["lower_horizontal_roundness"] != 1,
+    )
+    sources["lateral_fit.py"] = adapt_lateral_depth(
+        sources["lateral_fit.py"], p["lateral_aperture_follow"]
+    )
+    sources["eye_accents.py"] = adapt_lateral_rim(
+        sources["eye_accents.py"], p["lateral_aperture_follow"]
     )
     sources = adapt_upper_sources(
         sources, p["upper_asymmetry"] != 0 or p["lower_shoulder"] != 0

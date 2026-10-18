@@ -7,7 +7,7 @@ def closure_delta(x, y, kind, c):
     if kind == "lateral":
         # Side sheets follow the surrounding skin with a softer closure field.
         # Full skin compression can fold the narrow closed return.
-        return 0.85 * closure_delta(x, y, "skin", c)
+        return c.get("lateral_blink_follow", 0.85) * closure_delta(x, y, "skin", c)
     h = c["height_m"]
     t = (abs(x) / h - c["eye_center_x"]) / c["eye_half_width"]
     if abs(t) >= 1.0:

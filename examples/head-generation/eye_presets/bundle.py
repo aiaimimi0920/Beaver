@@ -11,7 +11,7 @@ SURFACE = HERE.parent / "facial_surface"
 
 
 def load_preset(preset_id):
-    if preset_id != "almond-balanced-796":
+    if preset_id not in {"almond-balanced-796", "slender-flat-797"}:
         raise ValueError("Unknown explicit eye preset")
     spec = json.loads((HERE / (preset_id + ".json")).read_text())
     for name, expected in spec["baseline_files_sha256"].items():
@@ -22,8 +22,9 @@ def load_preset(preset_id):
 
 def build_request(preset_id, prefix, workspace):
     spec = load_preset(preset_id)
-    if prefix == "assets/aster/general_face_eyes_795/":
-        raise ValueError("Never overwrite the preserved 795 baseline")
+    if prefix in {"assets/aster/general_face_eyes_795/",
+                  "assets/aster/general_face_eyes_796/"}:
+        raise ValueError("Never overwrite a preserved baseline")
     previous_path = sys.path[:]
     sys.path.insert(0, str(SURFACE))
     try:

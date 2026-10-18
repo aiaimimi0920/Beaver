@@ -40,6 +40,8 @@ LIMITS = {
     "layered_lashes": (0.0, 0.0, 1.0),
     "upper_lash_layer": (0.0, 0.0, 1.0),
     "lid_fold": (1.0, 0.0, 1.0),
+    "lateral_aperture_follow": (0.0, 0.0, 1.0),
+    "lateral_blink_follow": (0.85, 0.65, 0.85),
 }
 
 
@@ -61,6 +63,7 @@ def validate(request):
             "layered_lashes",
             "upper_lash_layer",
             "lid_fold",
+            "lateral_aperture_follow",
             "simple_iris",
             "short_upper_tuft",
             "ocular_skin_outline_holdout",
@@ -116,6 +119,11 @@ def adapt_style(original, request):
     p = validate(request)
     style = copy.deepcopy(original)
     c, old = style["calibration"], original["calibration"]
+    if p["lateral_blink_follow"] != 0.85:
+        c["lateral_blink_follow"] = p["lateral_blink_follow"]
+    if p["lateral_aperture_follow"]:
+        # New presets retain the face-derived depth instead of an endpoint chord.
+        style["accent_lateral_depth_blend"] = 0.0
     if p["ocular_skin_outline_holdout"]:
         style["ocular_skin_outline_holdout"] = True
     else:
