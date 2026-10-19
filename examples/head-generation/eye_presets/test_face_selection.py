@@ -31,7 +31,12 @@ class FaceSelectionTests(unittest.TestCase):
         from test_refined_selection import validate
         for name in NAMES:
             spec=packager.load_preset(name)
-            self.assertEqual(validate(spec['eye_parameters']),spec['eye_parameters'])
+            # Retained snapshots predate this identity-default control.
+            # Require exactly this one addition; keep all stored parameters frozen.
+            normalized=validate(spec['eye_parameters'])
+            self.assertEqual(set(normalized)-set(spec['eye_parameters']),{'lateral_guide_regularization'})
+            self.assertEqual(normalized.pop('lateral_guide_regularization'),1.0)
+            self.assertEqual(normalized,spec['eye_parameters'])
             self.assertEqual(set(spec['silhouette_parameters']),{'face_width','jaw_width','chin_width'})
             self.assertIn('orbit_rim_flattening',spec['surface_parameters'])
 

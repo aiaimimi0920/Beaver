@@ -6,7 +6,16 @@
     "candidate": "combo829",
     "generation_job": "050c5347-b120-43ea-8855-70e417601db4",
     "reason": "Legacy almond + wide-face guide displacement 0.0040874569974635325 m exceeds unchanged 0.004 m limit",
-    "replacement": "combo831 with explicitly selected skin-seated-075 fit policy"
+    "replacement": "combo831 with explicitly selected skin-seated-075 fit policy",
+    "selection": {
+      "eyes": "almond",
+      "brows": "soft-level",
+      "mouth": "wide-neutral",
+      "nose": "defined-bridge",
+      "ears": "compact-human",
+      "face": "wide-face"
+    },
+    "fit_policy": "legacy"
   },
   "candidates": [
     {
