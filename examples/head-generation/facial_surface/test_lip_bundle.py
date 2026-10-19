@@ -48,6 +48,9 @@ class LipBundleTests(unittest.TestCase):
                     silhouette_parameters=preset["silhouette_parameters"], lip_parameters=lips)
             baseline = build()
             self.assertEqual(baseline, build({"upper_lip_relief_scale":1}))
+            self.assertEqual(baseline, build_request(preset["surface_parameters"], preset["eye_parameters"],
+                "assets/aster/general_face_eyes_lip_cpu/", root, .0042, "emerald_illustrated", blink=True,
+                silhouette_parameters=preset["silhouette_parameters"], normal_parameters={"lower_medial_blend":0}))
             data = payloads(build({"upper_lip_relief_scale":.9})["code"])
             styles = [p for p in data if "calibration" in p]
             self.assertTrue(styles)

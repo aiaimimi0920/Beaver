@@ -36,8 +36,9 @@ def build_request(
     blink=False,
     silhouette_parameters=None,
     lip_parameters=None,
+    normal_parameters=None,
 ):
-    if (silhouette_parameters or lip_parameters) and prefix in {
+    if (silhouette_parameters or lip_parameters or normal_parameters) and prefix in {
         "assets/aster/general_face_eyes_795/",
         "assets/aster/general_face_eyes_796/",
     }:
@@ -51,6 +52,8 @@ def build_request(
         raise ValueError(
             "Supply the explicitly reviewed positive support bound in meters"
         )
+    from source_normals import validate as validate_normals, adapt_pipeline
+    normal_amount = validate_normals(normal_parameters)
     sys.path.insert(0, str(EYES))
     try:
         spec = importlib.util.spec_from_file_location(
@@ -168,6 +171,7 @@ def depth(x, y):"""
                     (recipe / "ear_width.py").read_text(),
                     silhouette_report["original_width_stations"],
                 ))
+            pipeline = adapt_pipeline(pipeline, normal_amount)
             (snapshot / "pipeline.py").write_text(pipeline)
             (snapshot / "face.py").write_text(face)
             (snapshot / "eye_socket.py").write_text(socket)
@@ -189,6 +193,11 @@ def depth(x, y):"""
         request["code"] += f'report["semantic_eyes"]["scope"] = {profile_scope!r}\n'
     if silhouette_report is not None:
         report["silhouette"] = silhouette_report
+    if normal_amount:
+        report["lower_medial_normals"] = dict(
+            amount=normal_amount, height_window=[0.05, 0.10, 0.20, 0.23],
+            regions=[1, 2], scope="Center vertices only, same-region area-weighted normals",
+            geometry_displacement_m=0.0, validation="Native posed shading not yet verified")
     report.update(
         style_profile_scope=profile_scope,
         parameters=data["parameters"],
@@ -268,6 +277,7 @@ if __name__ == "__main__":
     parser.add_argument("--eyes", default="{}")
     parser.add_argument("--silhouette", default="{}")
     parser.add_argument("--lips", default="{}")
+    parser.add_argument("--normals", default="{}")
     parser.add_argument("--prefix", required=True)
     parser.add_argument("--workspace", type=Path, required=True)
     parser.add_argument("--reviewed-support-bound-m", type=float, required=True)
@@ -292,6 +302,7 @@ if __name__ == "__main__":
                 blink=args.blink,
                 silhouette_parameters=json.loads(args.silhouette),
                 lip_parameters=json.loads(args.lips),
+                normal_parameters=json.loads(args.normals),
             )
         )
     )

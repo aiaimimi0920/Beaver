@@ -100,3 +100,8 @@ def rim_slope_delta(x, calibration, data):
         -amount * (1 - p["orbit_shallowing"]) * c["height_m"]
         * (c["eye_outer_depth"] - c["eye_inner_depth"]) * t / 2
     )
+
+
+def lower_medial_normal_weight(height, amount):
+    """C2 height window, zero outside lower face; no geometry displacement."""
+    return amount * ease((height - 0.05) / 0.05) * ease((0.23 - height) / 0.03)
