@@ -7,6 +7,7 @@ from pathlib import Path
 import re
 
 from compose import HERE, verify_snapshot
+from verify_outline import verify_outline_guard
 
 
 def sha(path):
@@ -139,6 +140,7 @@ def verify_run(spec):
         raise ValueError("SDF binding differs from generation job")
     report = json.loads(resource(root, prefix + "generation_report.json").read_text())
     snapshot = verify_snapshot(report["face_components"])
+    verify_outline_guard(snapshot, report)
     verify_template_reports(
         snapshot,
         report.get("facial_surface", {}),

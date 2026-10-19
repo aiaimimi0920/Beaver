@@ -257,5 +257,197 @@
     "cross_section": "rounded-quartic",
     "fairing_interface": "flat-apex-v1",
     "template_sha256": "0715bea9ba91b5abadadedd11ec5288a49e0f59283660a25017c5ebd8a84c528"
+  },
+  "broad-blunt-chin-v1": {
+    "id": "broad-blunt-chin-v1",
+    "version": 3,
+    "slot": "face",
+    "reference_sources": [
+      "https://delicious-in-dungeon.com/",
+      "https://delicious-in-dungeon.com/assets/character/1f.png"
+    ],
+    "width_stations": [
+      [
+        0,
+        0.075
+      ],
+      [
+        0.03,
+        0.135
+      ],
+      [
+        0.07,
+        0.2
+      ],
+      [
+        0.12,
+        0.244
+      ],
+      [
+        0.16,
+        0.276
+      ],
+      [
+        0.2,
+        0.29
+      ],
+      [
+        0.3,
+        0.325
+      ],
+      [
+        0.45,
+        0.37
+      ],
+      [
+        0.6,
+        0.402
+      ],
+      [
+        0.75,
+        0.417
+      ],
+      [
+        0.85,
+        0.407
+      ],
+      [
+        1,
+        0.4
+      ]
+    ],
+    "retained_width_sha256": "4d2b2112dccd8554dbb6f62484d73f4fec00dcf90eef76986da5ca31bc60a818",
+    "max_baseline_width_change_m": 0.012,
+    "attachment_interface": "root-protected-ear-v3",
+    "residual_controls": {},
+    "template_sha256": "91215117a5d47b1bd7b688c3b7c9bf4d845c8a3a0a0bf6573e4f019c509d804b"
+  },
+  "broad-blunt-chin-v2": {
+    "id": "broad-blunt-chin-v2",
+    "version": 3,
+    "slot": "face",
+    "reference_sources": [
+      "https://delicious-in-dungeon.com/",
+      "https://delicious-in-dungeon.com/assets/character/1f.png"
+    ],
+    "width_stations": [
+      [
+        0,
+        0.075
+      ],
+      [
+        0.03,
+        0.125
+      ],
+      [
+        0.07,
+        0.185
+      ],
+      [
+        0.12,
+        0.244
+      ],
+      [
+        0.16,
+        0.276
+      ],
+      [
+        0.2,
+        0.29
+      ],
+      [
+        0.3,
+        0.325
+      ],
+      [
+        0.45,
+        0.37
+      ],
+      [
+        0.6,
+        0.402
+      ],
+      [
+        0.75,
+        0.417
+      ],
+      [
+        0.85,
+        0.407
+      ],
+      [
+        1,
+        0.4
+      ]
+    ],
+    "retained_width_sha256": "4d2b2112dccd8554dbb6f62484d73f4fec00dcf90eef76986da5ca31bc60a818",
+    "max_baseline_width_change_m": 0.012,
+    "attachment_interface": "root-protected-ear-v3",
+    "residual_controls": {},
+    "template_sha256": "b1e64dfd3f089697e59c0ad2177574dd986d43555f94f4a4c415c46a660a2da5"
+  },
+  "broad-blunt-chin-v3": {
+    "id": "broad-blunt-chin-v3",
+    "version": 3,
+    "slot": "face",
+    "reference_sources": [
+      "https://delicious-in-dungeon.com/",
+      "https://delicious-in-dungeon.com/assets/character/1f.png"
+    ],
+    "width_stations": [
+      [
+        0,
+        0.075
+      ],
+      [
+        0.03,
+        0.125
+      ],
+      [
+        0.07,
+        0.185
+      ],
+      [
+        0.12,
+        0.244
+      ],
+      [
+        0.16,
+        0.276
+      ],
+      [
+        0.2,
+        0.29
+      ],
+      [
+        0.3,
+        0.325
+      ],
+      [
+        0.45,
+        0.37
+      ],
+      [
+        0.6,
+        0.402
+      ],
+      [
+        0.75,
+        0.417
+      ],
+      [
+        0.85,
+        0.407
+      ],
+      [
+        1,
+        0.4
+      ]
+    ],
+    "retained_width_sha256": "4d2b2112dccd8554dbb6f62484d73f4fec00dcf90eef76986da5ca31bc60a818",
+    "max_baseline_width_change_m": 0.012,
+    "attachment_interface": "root-protected-ear-v3",
+    "residual_controls": {},
+    "template_sha256": "38a76c79874d63388f55c3166f5462d99d416943636ad5950ca7c5911b92d70f"
   }
 }
