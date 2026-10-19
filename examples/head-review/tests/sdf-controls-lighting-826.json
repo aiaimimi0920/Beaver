@@ -1,0 +1,670 @@
+{
+  "models": [
+    826,
+    825
+  ],
+  "native_capture_count": 31,
+  "failures": [],
+  "source_assets_unchanged": true,
+  "asset_hashes": {
+    "res://assets/aster/general_face_eyes_825/aster_definition.tres": "5eb35f7a0e3b3d47913d2f3179a78a3c34ace13d7a3be6c2e6c48b62e34c3a0e",
+    "res://assets/aster/general_face_eyes_825/aster_head.glb": "c5141245730a9bd1a0a83a12a02dd07455044b3e04ab3709ba5b1c15c259fbc3",
+    "res://assets/aster/general_face_eyes_825/sdf/face_sdf360.png": "25969224699a1bcec09e2df78f48922cf91bd652c3e855cf939cc436073b6223",
+    "res://assets/aster/general_face_eyes_826/aster_definition.tres": "ddbf306b36793d9214fa63e2cc5389b39375036c788894210801ae7d62e32fd8",
+    "res://assets/aster/general_face_eyes_826/aster_head.glb": "b5713263ba8d98b9f8f5344a664a140311452ae6e27a074ee9db9ed28aa04b86",
+    "res://assets/aster/general_face_eyes_826/sdf/face_sdf360.png": "25969224699a1bcec09e2df78f48922cf91bd652c3e855cf939cc436073b6223"
+  },
+  "button_roundtrip_states": [
+    [
+      true,
+      false
+    ],
+    [
+      true,
+      true
+    ],
+    [
+      false,
+      true
+    ],
+    [
+      false,
+      false
+    ],
+    [
+      true,
+      false
+    ]
+  ],
+  "light_elevation_degrees": [
+    45,
+    0
+  ],
+  "main_light_yaw": -45,
+  "face_art_light_weight": 0,
+  "model_yaw_degrees": [
+    0,
+    -45,
+    45
+  ],
+  "mouth_weights": [
+    0,
+    1
+  ],
+  "actual_material_and_uniform_readback": true,
+  "real_ui_slider_values_match_state": true,
+  "white_override_not_claimed_as_render_material": true,
+  "final_state_restored": {
+    "body": false,
+    "elevation": 45.0,
+    "hair": false,
+    "light": -45.0,
+    "mode": "render",
+    "mouth": 0.0,
+    "pan_x": 0.0,
+    "pan_y": 0.0,
+    "pitch": 0.0,
+    "sdf360": true,
+    "sdf_debug": false,
+    "yaw": 0.0,
+    "zoom": 1.2
+  },
+  "fix": "Replace material script path equality with actual bool-uniform capability detection, already present in repository head_compare_pane.gd; applied to restored workspace only.",
+  "workspace_file_sha256": "95d8170e23ea8f5b84b5516292f0b662de4b979e22a231b1a8ea601284ca25f3",
+  "probe_sha256": "a0d153cc0de11530aeeefc57f92a022d449ee0c6d9aebd5884feb760d3d67253",
+  "visual_conclusion": "Diagonal lower-face boundary changes to more lateral boundary at horizontal light; consistent with elevated-light smooth SDF proxy design, not evidence of a mesh defect. Horizontal light is a diagnostic, not a promoted art direction.",
+  "limitations": [
+    "No SDF+normal hybrid implemented",
+    "Neutral UV-based SDF is not an expression-aware shadow proof",
+    "Earlier 31-frame run had stale slider labels; excluded from final evidence",
+    "One intermediate probe revision failed mixed indentation parse; repaired and rerun"
+  ],
+  "captures": [
+    {
+      "phase": "ui_roundtrip",
+      "state": {
+        "body": false,
+        "elevation": 45.0,
+        "hair": false,
+        "light": -45.0,
+        "mode": "render",
+        "mouth": 0.0,
+        "pan_x": 0.0,
+        "pan_y": 0.0,
+        "pitch": 0.0,
+        "yaw": 0.0,
+        "zoom": 1.2
+      },
+      "image_sha256": "c07a75b32c4cd327701091bc5074e7d5e0364d3931d2eb4e80c0e91dee7f17f5"
+    },
+    {
+      "phase": "ui_roundtrip",
+      "state": {
+        "body": false,
+        "elevation": 45.0,
+        "hair": false,
+        "light": -45.0,
+        "mode": "render",
+        "mouth": 0.0,
+        "pan_x": 0.0,
+        "pan_y": 0.0,
+        "pitch": 0.0,
+        "sdf_debug": true,
+        "yaw": 0.0,
+        "zoom": 1.2
+      },
+      "image_sha256": "3cf3fb04d93216292f5d201c7509a814a52f0ef0961f171e3fb15dfde9c4a3cd"
+    },
+    {
+      "phase": "ui_roundtrip",
+      "state": {
+        "body": false,
+        "elevation": 45.0,
+        "hair": false,
+        "light": -45.0,
+        "mode": "render",
+        "mouth": 0.0,
+        "pan_x": 0.0,
+        "pan_y": 0.0,
+        "pitch": 0.0,
+        "sdf360": false,
+        "sdf_debug": true,
+        "yaw": 0.0,
+        "zoom": 1.2
+      },
+      "image_sha256": "dfa9dc92a6590404e74408437ef9c58a0f7ef616ca4fb72524077083fac6f9a4"
+    },
+    {
+      "phase": "ui_roundtrip",
+      "state": {
+        "body": false,
+        "elevation": 45.0,
+        "hair": false,
+        "light": -45.0,
+        "mode": "render",
+        "mouth": 0.0,
+        "pan_x": 0.0,
+        "pan_y": 0.0,
+        "pitch": 0.0,
+        "sdf360": false,
+        "sdf_debug": false,
+        "yaw": 0.0,
+        "zoom": 1.2
+      },
+      "image_sha256": "d110c900ac73d04f05c6483d0dbbc61639da738dc6f3449d56dc51b239006337"
+    },
+    {
+      "phase": "ui_roundtrip",
+      "state": {
+        "body": false,
+        "elevation": 45.0,
+        "hair": false,
+        "light": -45.0,
+        "mode": "render",
+        "mouth": 0.0,
+        "pan_x": 0.0,
+        "pan_y": 0.0,
+        "pitch": 0.0,
+        "sdf360": true,
+        "sdf_debug": false,
+        "yaw": 0.0,
+        "zoom": 1.2
+      },
+      "image_sha256": "c07a75b32c4cd327701091bc5074e7d5e0364d3931d2eb4e80c0e91dee7f17f5"
+    },
+    {
+      "phase": "render_restored",
+      "state": {
+        "body": false,
+        "elevation": 45.0,
+        "hair": false,
+        "light": -45.0,
+        "mode": "render",
+        "mouth": 0.0,
+        "pan_x": 0.0,
+        "pan_y": 0.0,
+        "pitch": 0.0,
+        "sdf360": true,
+        "sdf_debug": false,
+        "yaw": 0.0,
+        "zoom": 1.2
+      },
+      "image_sha256": "c07a75b32c4cd327701091bc5074e7d5e0364d3931d2eb4e80c0e91dee7f17f5"
+    },
+    {
+      "phase": "light_elevation",
+      "state": {
+        "body": false,
+        "elevation": 45.0,
+        "hair": false,
+        "light": -45.0,
+        "mode": "render",
+        "mouth": 0.0,
+        "pan_x": 0.0,
+        "pan_y": 0.0,
+        "pitch": 0.0,
+        "sdf360": true,
+        "sdf_debug": false,
+        "yaw": 0.0,
+        "zoom": 1.2
+      },
+      "image_sha256": "c07a75b32c4cd327701091bc5074e7d5e0364d3931d2eb4e80c0e91dee7f17f5"
+    },
+    {
+      "phase": "light_elevation",
+      "state": {
+        "body": false,
+        "elevation": 45.0,
+        "hair": false,
+        "light": -45.0,
+        "mode": "render",
+        "mouth": 0.0,
+        "pan_x": 0.0,
+        "pan_y": 0.0,
+        "pitch": 0.0,
+        "sdf360": true,
+        "sdf_debug": true,
+        "yaw": 0.0,
+        "zoom": 1.2
+      },
+      "image_sha256": "3cf3fb04d93216292f5d201c7509a814a52f0ef0961f171e3fb15dfde9c4a3cd"
+    },
+    {
+      "phase": "light_elevation",
+      "state": {
+        "body": false,
+        "elevation": 45.0,
+        "hair": false,
+        "light": -45.0,
+        "mode": "render",
+        "mouth": 1.0,
+        "pan_x": 0.0,
+        "pan_y": 0.0,
+        "pitch": 0.0,
+        "sdf360": true,
+        "sdf_debug": false,
+        "yaw": 0.0,
+        "zoom": 1.2
+      },
+      "image_sha256": "0560e36e8aa82f6017974757ccea412b6853037bbc2e4ceda66eea2035a29977"
+    },
+    {
+      "phase": "light_elevation",
+      "state": {
+        "body": false,
+        "elevation": 45.0,
+        "hair": false,
+        "light": -45.0,
+        "mode": "render",
+        "mouth": 1.0,
+        "pan_x": 0.0,
+        "pan_y": 0.0,
+        "pitch": 0.0,
+        "sdf360": true,
+        "sdf_debug": true,
+        "yaw": 0.0,
+        "zoom": 1.2
+      },
+      "image_sha256": "666155da79929300478725b7ad8158b1a3f4251bb02db6a92d37bf7835793782"
+    },
+    {
+      "phase": "light_elevation",
+      "state": {
+        "body": false,
+        "elevation": 45.0,
+        "hair": false,
+        "light": -45.0,
+        "mode": "render",
+        "mouth": 0.0,
+        "pan_x": 0.0,
+        "pan_y": 0.0,
+        "pitch": 0.0,
+        "sdf360": true,
+        "sdf_debug": false,
+        "yaw": -45.0,
+        "zoom": 1.2
+      },
+      "image_sha256": "ef3f524bc8def409a40b87f3d95d2a0e04bfcb0df92df24afff5f76e3eaf3a44"
+    },
+    {
+      "phase": "light_elevation",
+      "state": {
+        "body": false,
+        "elevation": 45.0,
+        "hair": false,
+        "light": -45.0,
+        "mode": "render",
+        "mouth": 0.0,
+        "pan_x": 0.0,
+        "pan_y": 0.0,
+        "pitch": 0.0,
+        "sdf360": true,
+        "sdf_debug": true,
+        "yaw": -45.0,
+        "zoom": 1.2
+      },
+      "image_sha256": "918502850afd4a3b0479897999feb9ace341560de9e42f28cbd5494b849e488b"
+    },
+    {
+      "phase": "light_elevation",
+      "state": {
+        "body": false,
+        "elevation": 45.0,
+        "hair": false,
+        "light": -45.0,
+        "mode": "render",
+        "mouth": 1.0,
+        "pan_x": 0.0,
+        "pan_y": 0.0,
+        "pitch": 0.0,
+        "sdf360": true,
+        "sdf_debug": false,
+        "yaw": -45.0,
+        "zoom": 1.2
+      },
+      "image_sha256": "d1a2e47d8392313f9d437fa89ef82ffe443b34082f0738303277caf22a2ff9ea"
+    },
+    {
+      "phase": "light_elevation",
+      "state": {
+        "body": false,
+        "elevation": 45.0,
+        "hair": false,
+        "light": -45.0,
+        "mode": "render",
+        "mouth": 1.0,
+        "pan_x": 0.0,
+        "pan_y": 0.0,
+        "pitch": 0.0,
+        "sdf360": true,
+        "sdf_debug": true,
+        "yaw": -45.0,
+        "zoom": 1.2
+      },
+      "image_sha256": "d302dd8888574f1bf671a6beab6ad6cf837aafcae6cf0915a3665a2ec43aa55f"
+    },
+    {
+      "phase": "light_elevation",
+      "state": {
+        "body": false,
+        "elevation": 45.0,
+        "hair": false,
+        "light": -45.0,
+        "mode": "render",
+        "mouth": 0.0,
+        "pan_x": 0.0,
+        "pan_y": 0.0,
+        "pitch": 0.0,
+        "sdf360": true,
+        "sdf_debug": false,
+        "yaw": 45.0,
+        "zoom": 1.2
+      },
+      "image_sha256": "dc681b220622b4fed82a2c75965f1f0628e825b3970ee5c1f556ce3a0a506f51"
+    },
+    {
+      "phase": "light_elevation",
+      "state": {
+        "body": false,
+        "elevation": 45.0,
+        "hair": false,
+        "light": -45.0,
+        "mode": "render",
+        "mouth": 0.0,
+        "pan_x": 0.0,
+        "pan_y": 0.0,
+        "pitch": 0.0,
+        "sdf360": true,
+        "sdf_debug": true,
+        "yaw": 45.0,
+        "zoom": 1.2
+      },
+      "image_sha256": "122ebda56e1566e21b01b5a9b4860762554e7fbd76a5effc2cf129eaa2f864a9"
+    },
+    {
+      "phase": "light_elevation",
+      "state": {
+        "body": false,
+        "elevation": 45.0,
+        "hair": false,
+        "light": -45.0,
+        "mode": "render",
+        "mouth": 1.0,
+        "pan_x": 0.0,
+        "pan_y": 0.0,
+        "pitch": 0.0,
+        "sdf360": true,
+        "sdf_debug": false,
+        "yaw": 45.0,
+        "zoom": 1.2
+      },
+      "image_sha256": "4051de2d3b30cf28d694dd5b96f25eb5da6ce3e101c630b580d8d571452dcab4"
+    },
+    {
+      "phase": "light_elevation",
+      "state": {
+        "body": false,
+        "elevation": 45.0,
+        "hair": false,
+        "light": -45.0,
+        "mode": "render",
+        "mouth": 1.0,
+        "pan_x": 0.0,
+        "pan_y": 0.0,
+        "pitch": 0.0,
+        "sdf360": true,
+        "sdf_debug": true,
+        "yaw": 45.0,
+        "zoom": 1.2
+      },
+      "image_sha256": "4b04214de2550b831e17de0e6925ab778ed78f2ec6bbdf5b81e85fdcbba011fb"
+    },
+    {
+      "phase": "light_elevation",
+      "state": {
+        "body": false,
+        "elevation": 0.0,
+        "hair": false,
+        "light": -45.0,
+        "mode": "render",
+        "mouth": 0.0,
+        "pan_x": 0.0,
+        "pan_y": 0.0,
+        "pitch": 0.0,
+        "sdf360": true,
+        "sdf_debug": false,
+        "yaw": 0.0,
+        "zoom": 1.2
+      },
+      "image_sha256": "49a66be304282fe971b41ea3c723ce603280e043cd2b8a41da5aad2c62a3a83a"
+    },
+    {
+      "phase": "light_elevation",
+      "state": {
+        "body": false,
+        "elevation": 0.0,
+        "hair": false,
+        "light": -45.0,
+        "mode": "render",
+        "mouth": 0.0,
+        "pan_x": 0.0,
+        "pan_y": 0.0,
+        "pitch": 0.0,
+        "sdf360": true,
+        "sdf_debug": true,
+        "yaw": 0.0,
+        "zoom": 1.2
+      },
+      "image_sha256": "303ca46861dd19e87ebc4e69ed5fab4e0866c1da574e8085603acaa1e600bee4"
+    },
+    {
+      "phase": "light_elevation",
+      "state": {
+        "body": false,
+        "elevation": 0.0,
+        "hair": false,
+        "light": -45.0,
+        "mode": "render",
+        "mouth": 1.0,
+        "pan_x": 0.0,
+        "pan_y": 0.0,
+        "pitch": 0.0,
+        "sdf360": true,
+        "sdf_debug": false,
+        "yaw": 0.0,
+        "zoom": 1.2
+      },
+      "image_sha256": "45b5ee46da988557b8ab5610b7abe1b20f655a413e9549d58600a21de78b9cc2"
+    },
+    {
+      "phase": "light_elevation",
+      "state": {
+        "body": false,
+        "elevation": 0.0,
+        "hair": false,
+        "light": -45.0,
+        "mode": "render",
+        "mouth": 1.0,
+        "pan_x": 0.0,
+        "pan_y": 0.0,
+        "pitch": 0.0,
+        "sdf360": true,
+        "sdf_debug": true,
+        "yaw": 0.0,
+        "zoom": 1.2
+      },
+      "image_sha256": "423ebbca310c647feb499bf24357400d38c86a70f663cb27e3c52d61dc819bd2"
+    },
+    {
+      "phase": "light_elevation",
+      "state": {
+        "body": false,
+        "elevation": 0.0,
+        "hair": false,
+        "light": -45.0,
+        "mode": "render",
+        "mouth": 0.0,
+        "pan_x": 0.0,
+        "pan_y": 0.0,
+        "pitch": 0.0,
+        "sdf360": true,
+        "sdf_debug": false,
+        "yaw": -45.0,
+        "zoom": 1.2
+      },
+      "image_sha256": "2bdd420970ecbd3e97a7fcb8c6636d8eea1a2042cf3281c84be2629603874b58"
+    },
+    {
+      "phase": "light_elevation",
+      "state": {
+        "body": false,
+        "elevation": 0.0,
+        "hair": false,
+        "light": -45.0,
+        "mode": "render",
+        "mouth": 0.0,
+        "pan_x": 0.0,
+        "pan_y": 0.0,
+        "pitch": 0.0,
+        "sdf360": true,
+        "sdf_debug": true,
+        "yaw": -45.0,
+        "zoom": 1.2
+      },
+      "image_sha256": "5ae440a69967e808623a85f398f2658476f676dddf16aaa34e8001ab8bef8dd3"
+    },
+    {
+      "phase": "light_elevation",
+      "state": {
+        "body": false,
+        "elevation": 0.0,
+        "hair": false,
+        "light": -45.0,
+        "mode": "render",
+        "mouth": 1.0,
+        "pan_x": 0.0,
+        "pan_y": 0.0,
+        "pitch": 0.0,
+        "sdf360": true,
+        "sdf_debug": false,
+        "yaw": -45.0,
+        "zoom": 1.2
+      },
+      "image_sha256": "78002997e11d2f7739cb4cf8aaeace361d0f72d2d32b035df3accb9d49abe4eb"
+    },
+    {
+      "phase": "light_elevation",
+      "state": {
+        "body": false,
+        "elevation": 0.0,
+        "hair": false,
+        "light": -45.0,
+        "mode": "render",
+        "mouth": 1.0,
+        "pan_x": 0.0,
+        "pan_y": 0.0,
+        "pitch": 0.0,
+        "sdf360": true,
+        "sdf_debug": true,
+        "yaw": -45.0,
+        "zoom": 1.2
+      },
+      "image_sha256": "50c3c85dc0e89594b4e4ca00830f1571fd99908b14262db1f719b9bff3b50f33"
+    },
+    {
+      "phase": "light_elevation",
+      "state": {
+        "body": false,
+        "elevation": 0.0,
+        "hair": false,
+        "light": -45.0,
+        "mode": "render",
+        "mouth": 0.0,
+        "pan_x": 0.0,
+        "pan_y": 0.0,
+        "pitch": 0.0,
+        "sdf360": true,
+        "sdf_debug": false,
+        "yaw": 45.0,
+        "zoom": 1.2
+      },
+      "image_sha256": "be81ee457f632bc36e72d36763edc1bd36aa890b3f400eeaa9b8f388a70b1574"
+    },
+    {
+      "phase": "light_elevation",
+      "state": {
+        "body": false,
+        "elevation": 0.0,
+        "hair": false,
+        "light": -45.0,
+        "mode": "render",
+        "mouth": 0.0,
+        "pan_x": 0.0,
+        "pan_y": 0.0,
+        "pitch": 0.0,
+        "sdf360": true,
+        "sdf_debug": true,
+        "yaw": 45.0,
+        "zoom": 1.2
+      },
+      "image_sha256": "4d290e22c47d9e010205bbb86b98f76f68c1246c9b87ca1fabc8522328b406a6"
+    },
+    {
+      "phase": "light_elevation",
+      "state": {
+        "body": false,
+        "elevation": 0.0,
+        "hair": false,
+        "light": -45.0,
+        "mode": "render",
+        "mouth": 1.0,
+        "pan_x": 0.0,
+        "pan_y": 0.0,
+        "pitch": 0.0,
+        "sdf360": true,
+        "sdf_debug": false,
+        "yaw": 45.0,
+        "zoom": 1.2
+      },
+      "image_sha256": "7382fb04d751a705028511357e96f7aff6ba8aec012f87678e7530f5ad4ee7ae"
+    },
+    {
+      "phase": "light_elevation",
+      "state": {
+        "body": false,
+        "elevation": 0.0,
+        "hair": false,
+        "light": -45.0,
+        "mode": "render",
+        "mouth": 1.0,
+        "pan_x": 0.0,
+        "pan_y": 0.0,
+        "pitch": 0.0,
+        "sdf360": true,
+        "sdf_debug": true,
+        "yaw": 45.0,
+        "zoom": 1.2
+      },
+      "image_sha256": "0b44c39a50ebacfc19261d08d23933c0d8de648dfa16d029bdc5f037a6cb1607"
+    },
+    {
+      "phase": "final_restored",
+      "state": {
+        "body": false,
+        "elevation": 45.0,
+        "hair": false,
+        "light": -45.0,
+        "mode": "render",
+        "mouth": 0.0,
+        "pan_x": 0.0,
+        "pan_y": 0.0,
+        "pitch": 0.0,
+        "sdf360": true,
+        "sdf_debug": false,
+        "yaw": 0.0,
+        "zoom": 1.2
+      },
+      "image_sha256": "c07a75b32c4cd327701091bc5074e7d5e0364d3931d2eb4e80c0e91dee7f17f5"
+    }
+  ]
+}
