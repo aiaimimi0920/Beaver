@@ -201,6 +201,17 @@
           "distinct_upper_profile_grammar",
           "independent_tip_width"
         ]
+      },
+      "short-rounded": {
+        "title": "圆钝低投影鼻",
+        "presets": [
+          "short-rounded"
+        ],
+        "status": "implemented_with_historical_samples",
+        "sources": [
+          "https://frieren-anime.jp/character/chara_group1/1-6/"
+        ],
+        "missing_controls": []
       }
     },
     "ears": {

@@ -92,6 +92,9 @@
       "nose_bridge_scale": 1.2,
       "nose_bridge_length_scale": 1.2,
       "nose_tip_projection_scale": 1.08
+    },
+    "short-rounded": {
+      "template_id": "short-rounded-nose-v1"
     }
   },
   "ears": {

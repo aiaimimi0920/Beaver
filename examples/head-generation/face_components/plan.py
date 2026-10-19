@@ -17,6 +17,7 @@ def evidence_records():
         "cross-combination-evidence.json",
         "brow-family-evidence.json",
         "nose-variant-evidence.json",
+        "nose-template-evidence.json",
         "ear-family-evidence.json",
         "mouth-variant-evidence.json",
         "mouth-template-evidence.json",

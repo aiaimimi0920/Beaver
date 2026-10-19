@@ -29,3 +29,21 @@ class TemplateReportTests(unittest.TestCase):
             verify_template_reports(
                 snapshot, {"family_template": surface["family_template"]}, c
             )
+
+    def test_nose_calibration_binding(self):
+        t = {
+            "slot": "nose",
+            "nose_stations": [[0, 0, 0.1]],
+            "cross_section": "rounded-quartic",
+        }
+        s = {"family_templates": [t]}
+        r = {"nose_template": {"template": t}}
+        c = {
+            "nose_stations": t["nose_stations"],
+            "nose_template_mode": "rounded-quartic",
+        }
+        verify_template_reports(s, r, c)
+        with self.assertRaises(ValueError):
+            verify_template_reports(s, r, {**c, "nose_template_mode": "legacy"})
+        with self.assertRaises(ValueError):
+            verify_template_reports(s, r, {**c, "nose_stations": []})

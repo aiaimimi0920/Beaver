@@ -91,7 +91,21 @@ def build_request(
             adapt_mouth_companions,
         )
 
-        face_templates, mouth_templates = split_templates(family_templates)
+        raw_templates = [] if family_templates is None else family_templates
+        if not isinstance(raw_templates, list) or any(
+            not isinstance(t, dict) for t in raw_templates
+        ):
+            raise ValueError("Expected component template objects")
+        nose_templates = [t for t in raw_templates if t.get("slot") == "nose"]
+        face_templates, mouth_templates = split_templates(
+            [t for t in raw_templates if t.get("slot") != "nose"]
+        )
+        from source_nose_templates import (
+            apply_nose_template,
+            adapt_nose_face,
+            adapt_nose_companion,
+        )
+
         baseline_style, family_report = apply_family_templates(
             baseline_style, face_templates, silhouette_parameters
         )
@@ -99,6 +113,9 @@ def build_request(
 
         baseline_style, component_report = apply_components(
             baseline_style, component_parameters
+        )
+        baseline_style, nose_template_report = apply_nose_template(
+            baseline_style, nose_templates
         )
         from source_silhouette import apply_silhouette
 
@@ -130,6 +147,7 @@ def build_request(
             (recipe / "face.py").read_text(), baseline_style["calibration"]
         )
         face = adapt_mouth_face(face, mouth_template_report is not None)
+        face = adapt_nose_face(face, nose_template_report is not None)
         from source_upper_warp import adapt_face_source
 
         analysis_face = adapt_face_source(
@@ -210,6 +228,14 @@ def depth(x, y):"""
                         companion,
                         (recipe / companion).read_text(),
                         mouth_template_report is not None,
+                    )
+                )
+            for companion in ("nose_refine.py", "nose_fair.py"):
+                (snapshot / companion).write_text(
+                    adapt_nose_companion(
+                        companion,
+                        (recipe / companion).read_text(),
+                        nose_template_report is not None,
                     )
                 )
             from source_ear_profile import adapt_ear_profile
@@ -298,6 +324,8 @@ def depth(x, y):"""
         report["family_template"] = family_report
     if mouth_template_report is not None:
         report["mouth_template"] = mouth_template_report
+    if nose_template_report is not None:
+        report["nose_template"] = nose_template_report
     if silhouette_report is not None:
         report["silhouette"] = silhouette_report
     if normal_amount:

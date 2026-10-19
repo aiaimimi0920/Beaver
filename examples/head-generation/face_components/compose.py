@@ -73,6 +73,7 @@ def resolve(selection, fit_policy="legacy"):
             "nose_bridge_scale",
             "nose_bridge_length_scale",
             "nose_tip_projection_scale",
+            "template_id",
         },
         "ears": {
             "ear_span_scale",
@@ -94,7 +95,11 @@ def resolve(selection, fit_policy="legacy"):
             raise ValueError("Component overrides another slot: " + slot)
     mouth = catalog["mouth"][selection["mouth"]]
     components = {
-        **catalog["nose"][selection["nose"]],
+        **{
+            k: v
+            for k, v in catalog["nose"][selection["nose"]].items()
+            if k != "template_id"
+        },
         **catalog["ears"][selection["ears"]],
     }
     if "mouth_width_scale" in mouth:
@@ -141,7 +146,7 @@ def resolve(selection, fit_policy="legacy"):
     }
     templates = []
     registry = json.loads((HERE / "family-templates.json").read_text())
-    for slot in ("face", "mouth"):
+    for slot in ("face", "mouth", "nose"):
         template_id = catalog[slot][selection[slot]].get("template_id")
         if template_id is not None:
             if template_id not in registry or registry[template_id]["slot"] != slot:

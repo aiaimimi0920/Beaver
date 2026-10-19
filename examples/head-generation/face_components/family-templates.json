@@ -208,5 +208,54 @@
     "seam_bow_height": 0.004,
     "shoulder_radius_ratio": 0.7,
     "template_sha256": "7e8def161573f91b513d491f13a579649016f89800ce416f5201575d731f8cbe"
+  },
+  "short-rounded-nose-v1": {
+    "id": "short-rounded-nose-v1",
+    "slot": "nose",
+    "version": 1,
+    "reference_sources": [
+      "https://frieren-anime.jp/character/chara_group1/1-6/"
+    ],
+    "retained_stations_sha256": "589fe9d35708b3fc965cc0cbbde61dd291501170e020f5943277f0b26dde2000",
+    "nose_stations": [
+      [
+        0.19,
+        0,
+        0.045
+      ],
+      [
+        0.22,
+        0.014,
+        0.05
+      ],
+      [
+        0.25,
+        0.0475,
+        0.066
+      ],
+      [
+        0.286,
+        0.08910000000000001,
+        0.064
+      ],
+      [
+        0.303,
+        0.0855,
+        0.062
+      ],
+      [
+        0.34,
+        0.0304,
+        0.041
+      ],
+      [
+        0.4,
+        0,
+        0.038
+      ]
+    ],
+    "cross_section": "rounded-quartic",
+    "fairing_interface": "flat-apex-v1",
+    "template_sha256": "0715bea9ba91b5abadadedd11ec5288a49e0f59283660a25017c5ebd8a84c528"
   }
 }

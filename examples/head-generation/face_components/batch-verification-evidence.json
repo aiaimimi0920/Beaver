@@ -416,9 +416,73 @@
         }
       },
       "scope": "Current artifact integrity and recorded native states, not aesthetic approval, current-generator reproducibility or untested combinations"
+    },
+    {
+      "selection": {
+        "eyes": "downturned",
+        "brows": "soft-arched",
+        "mouth": "retained",
+        "nose": "short-rounded",
+        "ears": "retained",
+        "face": "retained"
+      },
+      "fit_policy": "legacy",
+      "prefix": "assets/aster/general_face_eyes_combo849/",
+      "status": "technically_verified",
+      "composition_sha256": "3df029a3ba2637bc5de751e6063e01d470b34ce03e248cb94e92486b9d4bff0c",
+      "glb_sha256": "456f2863961f371ed2265267095f9078a39ff55b3319e0a29f732e71ab824313",
+      "generation_job": "10017ed9-7f0c-48b6-b5bb-68c4396a9bc6",
+      "sdf_job": "8e0f8f46-5663-4043-a39d-00b793d84c87",
+      "captures": {
+        "eye": {
+          "captures_verified": 84,
+          "source_sha256": "456f2863961f371ed2265267095f9078a39ff55b3319e0a29f732e71ab824313",
+          "camera_size": 0.430432230234146,
+          "scope": "Integrity, expression and view state; not aesthetic acceptance"
+        },
+        "mouth": {
+          "captures_verified": 18,
+          "source_sha256": "456f2863961f371ed2265267095f9078a39ff55b3319e0a29f732e71ab824313",
+          "camera_size": 0.430432230234146,
+          "scope": "Integrity, expression and view state; not aesthetic acceptance"
+        }
+      },
+      "scope": "Current artifact integrity and recorded native states, not aesthetic approval, current-generator reproducibility or untested combinations"
+    },
+    {
+      "selection": {
+        "eyes": "slender",
+        "brows": "soft-arched",
+        "mouth": "bowed-contour",
+        "nose": "short-rounded",
+        "ears": "retained",
+        "face": "root-protected-round-chin"
+      },
+      "fit_policy": "legacy",
+      "prefix": "assets/aster/general_face_eyes_combo850/",
+      "status": "technically_verified",
+      "composition_sha256": "e9fcfed06cc4127fb10f1730407e00f2b5d98e8eb08ae95866ae725001b63918",
+      "glb_sha256": "fa09a8264d972acf17f696acfdaeaf4c24ec2617655746e18054885bf0a5c665",
+      "generation_job": "0a780650-90b7-41b2-8ff2-46ba65963690",
+      "sdf_job": "e2cb54e3-b7fe-4a0f-bc35-610b67e21a65",
+      "captures": {
+        "eye": {
+          "captures_verified": 84,
+          "source_sha256": "fa09a8264d972acf17f696acfdaeaf4c24ec2617655746e18054885bf0a5c665",
+          "camera_size": 0.430432230234146,
+          "scope": "Integrity, expression and view state; not aesthetic acceptance"
+        },
+        "mouth": {
+          "captures_verified": 18,
+          "source_sha256": "fa09a8264d972acf17f696acfdaeaf4c24ec2617655746e18054885bf0a5c665",
+          "camera_size": 0.430432230234146,
+          "scope": "Integrity, expression and view state; not aesthetic acceptance"
+        }
+      },
+      "scope": "Current artifact integrity and recorded native states, not aesthetic approval, current-generator reproducibility or untested combinations"
     }
   ],
-  "technically_verified_runs": 13,
+  "technically_verified_runs": 15,
   "observed_pairs": {
     "eyes/brows": [
       [
@@ -501,8 +565,18 @@
         "legacy"
       ],
       [
+        "downturned",
+        "short-rounded",
+        "legacy"
+      ],
+      [
         "slender",
         "retained",
+        "legacy"
+      ],
+      [
+        "slender",
+        "short-rounded",
         "legacy"
       ]
     ],
@@ -624,6 +698,11 @@
         "legacy"
       ],
       [
+        "soft-arched",
+        "short-rounded",
+        "legacy"
+      ],
+      [
         "soft-level",
         "defined-bridge",
         "skin-seated-075"
@@ -705,6 +784,11 @@
         "legacy"
       ],
       [
+        "bowed-contour",
+        "short-rounded",
+        "legacy"
+      ],
+      [
         "bowed-volumetric",
         "retained",
         "legacy"
@@ -722,6 +806,11 @@
       [
         "retained",
         "retained",
+        "legacy"
+      ],
+      [
+        "retained",
+        "short-rounded",
         "legacy"
       ],
       [
@@ -795,6 +884,11 @@
       ],
       [
         "retained",
+        "retained",
+        "legacy"
+      ],
+      [
+        "retained",
         "root-protected-round-chin",
         "legacy"
       ],
@@ -827,6 +921,11 @@
       ],
       [
         "retained",
+        "retained",
+        "legacy"
+      ],
+      [
+        "short-rounded",
         "retained",
         "legacy"
       ]
@@ -865,6 +964,16 @@
       [
         "retained",
         "wide-jaw",
+        "legacy"
+      ],
+      [
+        "short-rounded",
+        "retained",
+        "legacy"
+      ],
+      [
+        "short-rounded",
+        "root-protected-round-chin",
         "legacy"
       ]
     ],

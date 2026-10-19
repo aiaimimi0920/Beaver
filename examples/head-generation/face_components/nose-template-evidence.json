@@ -1,0 +1,335 @@
+{
+  "scope": "Exact native samples only; untested combinations and final aesthetic acceptance remain separate",
+  "candidates": [
+    {
+      "candidate": "combo849",
+      "selection": {
+        "eyes": "downturned",
+        "brows": "soft-arched",
+        "mouth": "retained",
+        "nose": "short-rounded",
+        "ears": "retained",
+        "face": "retained"
+      },
+      "composition_sha256": "3df029a3ba2637bc5de751e6063e01d470b34ce03e248cb94e92486b9d4bff0c",
+      "generation_status": "succeeded",
+      "sdf_status": "succeeded",
+      "generation_job_id": "10017ed9-7f0c-48b6-b5bb-68c4396a9bc6",
+      "sdf_job_id": "8e0f8f46-5663-4043-a39d-00b793d84c87",
+      "glb_sha256": "456f2863961f371ed2265267095f9078a39ff55b3319e0a29f732e71ab824313",
+      "nose_template": {
+        "template": {
+          "id": "short-rounded-nose-v1",
+          "slot": "nose",
+          "version": 1,
+          "reference_sources": [
+            "https://frieren-anime.jp/character/chara_group1/1-6/"
+          ],
+          "retained_stations_sha256": "589fe9d35708b3fc965cc0cbbde61dd291501170e020f5943277f0b26dde2000",
+          "nose_stations": [
+            [
+              0.19,
+              0,
+              0.045
+            ],
+            [
+              0.22,
+              0.014,
+              0.05
+            ],
+            [
+              0.25,
+              0.0475,
+              0.066
+            ],
+            [
+              0.286,
+              0.08910000000000001,
+              0.064
+            ],
+            [
+              0.303,
+              0.0855,
+              0.062
+            ],
+            [
+              0.34,
+              0.0304,
+              0.041
+            ],
+            [
+              0.4,
+              0,
+              0.038
+            ]
+          ],
+          "cross_section": "rounded-quartic",
+          "fairing_interface": "flat-apex-v1",
+          "template_sha256": "0715bea9ba91b5abadadedd11ec5288a49e0f59283660a25017c5ebd8a84c528"
+        },
+        "retained_stations": [
+          [
+            0.19,
+            0,
+            0.045
+          ],
+          [
+            0.22,
+            0.014,
+            0.05
+          ],
+          [
+            0.25,
+            0.05,
+            0.066
+          ],
+          [
+            0.286,
+            0.099,
+            0.064
+          ],
+          [
+            0.303,
+            0.095,
+            0.062
+          ],
+          [
+            0.34,
+            0.038,
+            0.041
+          ],
+          [
+            0.4,
+            0,
+            0.038
+          ]
+        ],
+        "projection_support_h": [
+          0.19,
+          0.4
+        ],
+        "endpoint_projection_slope": 0,
+        "cross_section_center_and_outer_slope": 0,
+        "scope": "Authored short-rounded baseline and matched flat-apex fairing; existing 3mm refinement and 0.8mm fairing caps retained, not a global displacement or final appearance certificate"
+      },
+      "nose_refinement": {
+        "apex_support_h": [
+          0.274,
+          0.332
+        ],
+        "apex_center_h": 0.298,
+        "apex_projection_m": 0.0,
+        "template_interface": "flat-apex-v1",
+        "lower_curve_center_h": 0.242,
+        "width_contraction": 0.12,
+        "tip_retraction_m": 0.000944,
+        "selected_vertices": 199,
+        "max_delta_m": 0.0012970711190264826,
+        "outside_nose_unchanged": true,
+        "continuous_falloff": "C2 polynomial bump",
+        "parameter_stage": "after ear topology; before normals"
+      },
+      "nose_arc_fairing": {
+        "kind": "two quintic arcs with fixed endpoints and zero apex tangent targets",
+        "template_interface": "flat-apex-v1",
+        "lower_applied_strength": 0.35,
+        "upper_applied_strength": 1.0,
+        "selected_vertices": 184,
+        "max_delta_m": 0.00013999837252638703,
+        "apex_blender_z": 1.5901148319244385,
+        "apex_depth_m": 0.11169569194316864,
+        "lower_arc": [
+          1.571193814277649,
+          1.5901148319244385,
+          0.09854741394519806,
+          0.11169569194316864,
+          0.0,
+          0.0,
+          0.014327441655529828,
+          -0.017265634938092383
+        ],
+        "upper_arc": [
+          1.5901148319244385,
+          1.623000144958496,
+          0.11169569194316864,
+          0.09316094219684601,
+          0.0,
+          -0.12,
+          -0.10560603724106761,
+          0.056598781187932684
+        ],
+        "outside_nose_unchanged": true
+      },
+      "eye_capture_count": 84,
+      "mouth_capture_count": 18,
+      "visual_status": "Rounded lower-projection tip visible in 90-degree silhouette and 45-degree white; no obvious new breaks in inspected neutral/open views. Not longitudinal shortening or exhaustive collision proof.",
+      "model_library_file_id": "libfile_6b20b70bff0c81918d3585bcdae42346",
+      "captures_library_file_id": "libfile_7162b36eb84c8191bbb78f9cc888af6d"
+    },
+    {
+      "candidate": "combo850",
+      "selection": {
+        "eyes": "slender",
+        "brows": "soft-arched",
+        "mouth": "bowed-contour",
+        "nose": "short-rounded",
+        "ears": "retained",
+        "face": "root-protected-round-chin"
+      },
+      "composition_sha256": "e9fcfed06cc4127fb10f1730407e00f2b5d98e8eb08ae95866ae725001b63918",
+      "generation_status": "succeeded",
+      "sdf_status": "succeeded",
+      "generation_job_id": "0a780650-90b7-41b2-8ff2-46ba65963690",
+      "sdf_job_id": "e2cb54e3-b7fe-4a0f-bc35-610b67e21a65",
+      "glb_sha256": "fa09a8264d972acf17f696acfdaeaf4c24ec2617655746e18054885bf0a5c665",
+      "nose_template": {
+        "template": {
+          "id": "short-rounded-nose-v1",
+          "slot": "nose",
+          "version": 1,
+          "reference_sources": [
+            "https://frieren-anime.jp/character/chara_group1/1-6/"
+          ],
+          "retained_stations_sha256": "589fe9d35708b3fc965cc0cbbde61dd291501170e020f5943277f0b26dde2000",
+          "nose_stations": [
+            [
+              0.19,
+              0,
+              0.045
+            ],
+            [
+              0.22,
+              0.014,
+              0.05
+            ],
+            [
+              0.25,
+              0.0475,
+              0.066
+            ],
+            [
+              0.286,
+              0.08910000000000001,
+              0.064
+            ],
+            [
+              0.303,
+              0.0855,
+              0.062
+            ],
+            [
+              0.34,
+              0.0304,
+              0.041
+            ],
+            [
+              0.4,
+              0,
+              0.038
+            ]
+          ],
+          "cross_section": "rounded-quartic",
+          "fairing_interface": "flat-apex-v1",
+          "template_sha256": "0715bea9ba91b5abadadedd11ec5288a49e0f59283660a25017c5ebd8a84c528"
+        },
+        "retained_stations": [
+          [
+            0.19,
+            0,
+            0.045
+          ],
+          [
+            0.22,
+            0.014,
+            0.05
+          ],
+          [
+            0.25,
+            0.05,
+            0.066
+          ],
+          [
+            0.286,
+            0.099,
+            0.064
+          ],
+          [
+            0.303,
+            0.095,
+            0.062
+          ],
+          [
+            0.34,
+            0.038,
+            0.041
+          ],
+          [
+            0.4,
+            0,
+            0.038
+          ]
+        ],
+        "projection_support_h": [
+          0.19,
+          0.4
+        ],
+        "endpoint_projection_slope": 0,
+        "cross_section_center_and_outer_slope": 0,
+        "scope": "Authored short-rounded baseline and matched flat-apex fairing; existing 3mm refinement and 0.8mm fairing caps retained, not a global displacement or final appearance certificate"
+      },
+      "nose_refinement": {
+        "apex_support_h": [
+          0.274,
+          0.332
+        ],
+        "apex_center_h": 0.298,
+        "apex_projection_m": 0.0,
+        "template_interface": "flat-apex-v1",
+        "lower_curve_center_h": 0.242,
+        "width_contraction": 0.12,
+        "tip_retraction_m": 0.000944,
+        "selected_vertices": 199,
+        "max_delta_m": 0.0012970711190264826,
+        "outside_nose_unchanged": true,
+        "continuous_falloff": "C2 polynomial bump",
+        "parameter_stage": "after ear topology; before normals"
+      },
+      "nose_arc_fairing": {
+        "kind": "two quintic arcs with fixed endpoints and zero apex tangent targets",
+        "template_interface": "flat-apex-v1",
+        "lower_applied_strength": 0.35,
+        "upper_applied_strength": 1.0,
+        "selected_vertices": 202,
+        "max_delta_m": 0.00013999837252638703,
+        "apex_blender_z": 1.5901148319244385,
+        "apex_depth_m": 0.11169569194316864,
+        "lower_arc": [
+          1.5711956024169922,
+          1.5901148319244385,
+          0.09855389595031738,
+          0.11169569194316864,
+          0.0,
+          0.0,
+          0.014256705650978382,
+          -0.017195881204348097
+        ],
+        "upper_arc": [
+          1.5901148319244385,
+          1.623000144958496,
+          0.11169569194316864,
+          0.09316094219684601,
+          0.0,
+          -0.12,
+          -0.10560603724106761,
+          0.056598781187932684
+        ],
+        "outside_nose_unchanged": true
+      },
+      "eye_capture_count": 84,
+      "mouth_capture_count": 18,
+      "visual_status": "Rounded low-projection tip remains visible with slender eyes, bowed mouth and protected round chin; inspected front/profile neutral and front/oblique open-mouth render, white and available edges. No obvious new seam breaks; not exhaustive collision or aesthetic acceptance.",
+      "model_library_file_id": "libfile_db58d6d44748819181f90583085f5e30",
+      "captures_library_file_id": "libfile_13eb9ddf1bd08191b043baf66e3aa030"
+    }
+  ]
+}

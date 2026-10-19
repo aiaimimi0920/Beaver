@@ -52,7 +52,11 @@ def verify_template_reports(snapshot, surface, calibration):
     if not isinstance(templates, list):
         raise ValueError("Invalid template snapshot")
     seen = set()
-    fields = {"face": "family_template", "mouth": "mouth_template"}
+    fields = {
+        "face": "family_template",
+        "mouth": "mouth_template",
+        "nose": "nose_template",
+    }
     for template in templates:
         slot = template.get("slot")
         if slot not in fields or slot in seen:
@@ -71,6 +75,11 @@ def verify_template_reports(snapshot, surface, calibration):
             != template["shoulder_radius_ratio"]
         ):
             raise ValueError("Template/mouth calibration mismatch")
+        if slot == "nose" and (
+            calibration.get("nose_stations") != template["nose_stations"]
+            or calibration.get("nose_template_mode") != template["cross_section"]
+        ):
+            raise ValueError("Template/nose calibration mismatch")
     if any(field in surface and slot not in seen for slot, field in fields.items()):
         raise ValueError("Unexpected generated template report")
 

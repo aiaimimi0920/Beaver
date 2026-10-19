@@ -43,6 +43,6 @@ class FamilyInventoryTests(unittest.TestCase):
 
     def test_nose_variant_does_not_inflate_family_count(self):
         result = family_inventory()["nose"]
-        self.assertEqual(result["selectable_options"], 3)
-        self.assertEqual(result["implemented_families"], 1)
+        self.assertEqual(result["selectable_options"], 4)
+        self.assertEqual(result["implemented_families"], 2)
         self.assertEqual(result["planned_families"], 1)
