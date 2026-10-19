@@ -14,6 +14,25 @@ class CompositionTests(unittest.TestCase):
     def setUp(self):
         self.selection = json.loads((HERE / "example-selection.json").read_text())
 
+    def test_template_is_snapshotted_and_not_a_residual(self):
+        result = resolve({**self.selection, "face": "root-protected-round-chin"})
+        self.assertEqual(result["silhouette_parameters"], {})
+        template = result["family_templates"][0]
+        self.assertEqual(template["slot"], "face")
+        self.assertEqual(
+            template["template_sha256"],
+            digest({k: v for k, v in template.items() if k != "template_sha256"}),
+        )
+        self.assertEqual(verify_snapshot(result), result)
+
+    def test_template_snapshot_detached(self):
+        selected = {**self.selection, "face": "root-protected-round-chin"}
+        a = resolve(selected)
+        a["family_templates"][0]["width_stations"][0][1] = 99
+        b = resolve(selected)
+        self.assertNotEqual(a["family_templates"], b["family_templates"])
+        self.assertNotIn("family_templates", resolve(self.selection))
+
     def test_six_explicit_slots_required(self):
         for slot in SLOTS:
             choice = dict(self.selection)

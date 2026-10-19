@@ -225,7 +225,8 @@
           "narrow-jaw",
           "wide-face",
           "narrow-chin",
-          "narrow-soft-chin"
+          "narrow-soft-chin",
+          "root-protected-round-chin"
         ],
         "status": "implemented_with_historical_samples",
         "sources": [
@@ -234,6 +235,18 @@
         "missing_controls": [
           "independent_outline_family_research"
         ]
+      },
+      "soft-oval-template": {
+        "title": "卵圆轮廓模板实验",
+        "presets": [],
+        "status": "planned",
+        "sources": [
+          "https://frieren-anime.jp/character/chara_group1/1-1/"
+        ],
+        "missing_controls": [
+          "safe_wider_lower_face_attachment_interface"
+        ],
+        "prototype_result": "841 completed native captures but has bilateral under-ear notches; 843 target transport hit lower-root diagonal optimization assertion. Pending diagnosis, not accepted."
       }
     }
   }

@@ -38,12 +38,14 @@ def build_request(
     lip_parameters=None,
     normal_parameters=None,
     component_parameters=None,
+    family_templates=None,
 ):
     if (
         silhouette_parameters
         or lip_parameters
         or normal_parameters
         or component_parameters
+        or family_templates
     ) and prefix in {
         "assets/aster/general_face_eyes_795/",
         "assets/aster/general_face_eyes_796/",
@@ -72,6 +74,19 @@ def build_request(
         baseline_style = apply_style_profile(
             json.loads((recipe / "face_style.json").read_text()), style_profile
         )
+        from source_family_templates import (
+            apply_family_templates,
+            width_change_bound,
+            instrument_ear_constraints,
+            transport_ear_constraints,
+        )
+
+        retained_width_stations = [
+            row[:] for row in baseline_style["calibration"]["width_stations"]
+        ]
+        baseline_style, family_report = apply_family_templates(
+            baseline_style, family_templates, silhouette_parameters
+        )
         from source_components import apply_components
 
         baseline_style, component_report = apply_components(
@@ -82,6 +97,20 @@ def build_request(
         baseline_style, silhouette_report = apply_silhouette(
             baseline_style, silhouette_parameters
         )
+        if family_report is not None:
+            family_report["final_width_stations"] = baseline_style["calibration"][
+                "width_stations"
+            ]
+            family_report["residual_half_width_change_bound_m"] = (
+                0
+                if silhouette_report is None
+                else silhouette_report["continuous_half_width_change_bound_m"]
+            )
+            family_report["total_half_width_change_bound_m"] = width_change_bound(
+                retained_width_stations,
+                baseline_style["calibration"]["width_stations"],
+                baseline_style["calibration"]["height_m"],
+            )
         from source_lips import apply_lip_relief, adapt_lip_source
 
         baseline_style, lip_report = apply_lip_relief(baseline_style, lip_parameters)
@@ -196,13 +225,24 @@ def depth(x, y):"""
             (snapshot / "ear_boundary.py").write_text(
                 adapt_ear_boundary_source((recipe / "ear_boundary.py").read_text())
             )
-            if silhouette_report is not None:
+            if family_report is not None:
+                boundary_path = snapshot / "ear_boundary.py"
+                boundary_source = instrument_ear_constraints(boundary_path.read_text())
+                if (
+                    family_report["template"]["attachment_interface"]
+                    == "transported-ear-v2"
+                ):
+                    boundary_source = transport_ear_constraints(
+                        boundary_source, retained_width_stations
+                    )
+                boundary_path.write_text(boundary_source)
+            if silhouette_report is not None or family_report is not None:
                 from source_silhouette import adapt_ear_envelope
 
                 (snapshot / "ear_width.py").write_text(
                     adapt_ear_envelope(
                         (recipe / "ear_width.py").read_text(),
-                        silhouette_report["original_width_stations"],
+                        retained_width_stations,
                     )
                 )
             pipeline = adapt_pipeline(pipeline, normal_amount)
@@ -234,6 +274,8 @@ def depth(x, y):"""
         profile_scope += (
             "; explicit component calibration changes are recorded separately"
         )
+    if family_report is not None:
+        report["family_template"] = family_report
     if silhouette_report is not None:
         report["silhouette"] = silhouette_report
     if normal_amount:

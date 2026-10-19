@@ -1,0 +1,106 @@
+{
+  "scope": "Experimental template attempts; failed or visually rejected candidates are not accepted families. Historical files unchanged.",
+  "candidates": [
+    {
+      "candidate": "combo841",
+      "selection": {
+        "eyes": "downturned",
+        "brows": "soft-arched",
+        "mouth": "retained",
+        "nose": "retained",
+        "ears": "retained",
+        "face": "soft-oval-template"
+      },
+      "generation_job_id": "c4f7fe4e-019a-41b1-a17d-2a72d8a4d915",
+      "generation_request_id": "01096bb8-ffbd-42cf-9ae3-76523b0f6765",
+      "generation_status": "succeeded",
+      "composition_sha256": "7b6b39487e18c700131428b15b59974b8e7e1739866fd7fb422b0e5779a92975",
+      "glb_sha256": "a1243cb6f5c0d1d83c8e54cb7de605ed0a6117ed091301d55a98c9b4edada8a5",
+      "visual_status": "rejected_bilateral_under_ear_notch",
+      "eye_capture_count": 84,
+      "mouth_capture_count": 18
+    },
+    {
+      "candidate": "combo843",
+      "selection": {
+        "eyes": "downturned",
+        "brows": "soft-arched",
+        "mouth": "retained",
+        "nose": "retained",
+        "ears": "retained",
+        "face": "soft-oval-template"
+      },
+      "generation_job_id": "765bdfd7-e2bd-4803-a4c3-85f62aabaa39",
+      "generation_request_id": "229f6237-9cf0-4bff-86fb-92215a41b46a",
+      "generation_status": "failed",
+      "failure": "No safe lower-root quality improvement found",
+      "sdf_status": "not_run",
+      "visual_status": "not_available"
+    },
+    {
+      "candidate": "combo844",
+      "selection": {
+        "eyes": "downturned",
+        "brows": "soft-arched",
+        "mouth": "retained",
+        "nose": "retained",
+        "ears": "retained",
+        "face": "soft-oval-template"
+      },
+      "generation_job_id": "2684c05d-d38b-4591-8f57-433d5ca6b7c7",
+      "generation_request_id": "91380fa9-ab69-48ce-9393-8c5e7ea8395b",
+      "generation_status": "failed",
+      "failure": "No safe lower-root quality improvement found",
+      "sdf_status": "not_run",
+      "visual_status": "not_available"
+    },
+    {
+      "candidate": "combo845",
+      "selection": {
+        "eyes": "downturned",
+        "brows": "soft-arched",
+        "mouth": "retained",
+        "nose": "retained",
+        "ears": "retained",
+        "face": "root-protected-round-chin"
+      },
+      "generation_status": "succeeded",
+      "generation_job_id": "629344b0-eb18-4450-8c51-e0c3299e9faa",
+      "sdf_status": "succeeded",
+      "sdf_job_id": "30a747b5-f76b-4bb3-aacf-3e165d84ab2f",
+      "eye_capture_count": 84,
+      "visual_status": "No new under-ear notch or obvious oral leak observed in inspected front/oblique render, white and wire; not exhaustive collision testing",
+      "classification": "root-protected template construction variant, not accepted independent oval family",
+      "mouth_capture_count": 18,
+      "model_library_file_id": "libfile_e85aca6a833c819197d8a36ca46fa87b",
+      "captures_library_file_id": "libfile_d7a0b1351de081919a81ac7aeab1a09c",
+      "composition_sha256": "bdabdb4b6d37d7a84938f113aaa03b2bd31e9d4f7afc590f26c4892b3df3f058",
+      "template_sha256": "d70909232de52338897f38c46c838c77683dcba6c8497fdf474dfaded0709d61",
+      "glb_sha256": "a10b200ea5fe8aa829a8c39362ac6377a1fbffbefe0f5d69c2632a2ad2bdb170"
+    },
+    {
+      "candidate": "combo846",
+      "selection": {
+        "eyes": "slender",
+        "brows": "soft-arched",
+        "mouth": "retained",
+        "nose": "retained",
+        "ears": "retained",
+        "face": "root-protected-round-chin"
+      },
+      "generation_status": "succeeded",
+      "generation_job_id": "ba9687db-3ca9-42be-a178-05bdaeb697d7",
+      "sdf_status": "succeeded",
+      "sdf_job_id": "3ad628f5-5ba6-4359-86cf-f21a75aed60b",
+      "eye_capture_count": 84,
+      "visual_status": "No new under-ear notch or obvious oral leak observed in inspected front/oblique render, white and wire; not exhaustive collision testing",
+      "classification": "root-protected template construction variant, not accepted independent oval family",
+      "mouth_capture_count": 18,
+      "model_library_file_id": "libfile_2677c4135964819187dcc7ad073c38fc",
+      "captures_library_file_id": "libfile_37ecebb90b388191b06c078c8b6c2694",
+      "composition_sha256": "5c100c52f30d4918e1bea51c6927f9b87a5b637f9995355c93a898850e0c3f99",
+      "template_sha256": "d70909232de52338897f38c46c838c77683dcba6c8497fdf474dfaded0709d61",
+      "glb_sha256": "cca44f8f173cc9b8d5df453adfaa87b52bcd7caa7730d7162adcf6bd50aa98a0"
+    }
+  ]
+}

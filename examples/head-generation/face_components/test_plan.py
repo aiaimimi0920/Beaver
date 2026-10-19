@@ -122,3 +122,13 @@ class PlanTests(unittest.TestCase):
                 )
                 self.assertEqual(record["match"], expected)
             self.assertEqual(result["current_output_status"], "not_generated")
+
+    def test_template_record_stays_historical_evidence(self):
+        selection = {**self.selection, "face": "root-protected-round-chin"}
+        result = build_plan(selection)
+        record = next(
+            r for r in result["recorded_evidence"] if r["candidate"] == "combo845"
+        )
+        self.assertEqual(record["recorded_generation_status"], "succeeded")
+        self.assertEqual(result["current_output_status"], "not_generated")
+        self.assertEqual(result["family_inventory"]["face"]["implemented_families"], 1)

@@ -37,6 +37,7 @@ def build_request(selection, prefix, workspace, fit_policy="legacy"):
             silhouette_parameters=snapshot["silhouette_parameters"],
             lip_parameters=snapshot["lip_parameters"],
             component_parameters=snapshot["component_parameters"],
+            family_templates=snapshot.get("family_templates"),
         )
     finally:
         sys.path[:] = old_path
