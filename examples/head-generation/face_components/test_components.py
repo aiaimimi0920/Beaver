@@ -69,10 +69,24 @@ class CompositionTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "changed"):
             verify_snapshot(snapshot)
 
-    def test_retained_nose_ear_scope_is_honest(self):
+    def test_retained_nose_ear_controls_are_empty(self):
         catalog = json.loads((HERE / "catalog.json").read_text())
         for slot in ("nose", "ears"):
-            self.assertEqual(catalog[slot], {"retained": {}})
+            self.assertEqual(catalog[slot]["retained"], {})
+
+    def test_catalog_cannot_override_another_slot(self):
+        catalog = json.loads((HERE / "catalog.json").read_text())
+        catalog["nose"]["retained"] = {"ear_span_scale": 0.94}
+        original = Path.read_text
+
+        def changed(path, *args, **kwargs):
+            if path == HERE / "catalog.json":
+                return json.dumps(catalog)
+            return original(path, *args, **kwargs)
+
+        with patch.object(Path, "read_text", changed):
+            with self.assertRaisesRegex(ValueError, "another slot"):
+                resolve(self.selection)
 
     def test_output_is_fresh_and_cannot_overwrite_baseline(self):
         with tempfile.TemporaryDirectory() as folder:

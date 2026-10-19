@@ -22,5 +22,14 @@
   "formatter": "Black 26.10.1",
   "effective_line_check": "Local official checker unavailable: cargo not found; remote check pending",
   "archive_library_id": "libfile_3f438578c5148191b250588848ba687f",
-  "archive_sha256": "7dd028706712d73254bb10436a6ca0645ad02b7becab71ea02f5f67980d3711a"
+  "archive_sha256": "7dd028706712d73254bb10436a6ca0645ad02b7becab71ea02f5f67980d3711a",
+  "ci": {
+    "commit": "92bbb9507ede165e7971f1cdc4b4403b38ad1c24",
+    "status": "all three successful",
+    "runs": [
+      39239648681,
+      39239648793,
+      39239648819
+    ]
+  }
 }

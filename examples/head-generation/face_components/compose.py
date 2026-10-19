@@ -53,8 +53,27 @@ def resolve(selection):
     if set(brow) != BROW_KEYS:
         raise ValueError("Brow preset must own all and only brow parameters")
     parameters.update(brow)
-    if catalog["nose"][selection["nose"]] or catalog["ears"][selection["ears"]]:
-        raise ValueError("Nose and ear alternatives are not implemented yet")
+    owned_keys = {
+        "mouth": {
+            "mouth_width_scale",
+            "upper_lip_relief_scale",
+            "upper_lip_lateral_power",
+        },
+        "nose": {"nose_bridge_scale"},
+        "ears": {"ear_span_scale"},
+        "face": {"face_width", "jaw_width", "chin_width"},
+    }
+    for slot, allowed in owned_keys.items():
+        values = catalog[slot][selection[slot]]
+        if not isinstance(values, dict) or set(values) - allowed:
+            raise ValueError("Component overrides another slot: " + slot)
+    mouth = catalog["mouth"][selection["mouth"]]
+    components = {
+        **catalog["nose"][selection["nose"]],
+        **catalog["ears"][selection["ears"]],
+    }
+    if "mouth_width_scale" in mouth:
+        components["mouth_width_scale"] = mouth["mouth_width_scale"]
     resolved = {
         "schema_version": 1,
         "selection": copy.deepcopy(selection),
@@ -62,14 +81,15 @@ def resolve(selection):
         "surface_parameters": spec["surface_parameters"],
         "eye_parameters": parameters,
         "silhouette_parameters": catalog["face"][selection["face"]],
-        "lip_parameters": catalog["mouth"][selection["mouth"]],
+        "lip_parameters": {k: v for k, v in mouth.items() if k != "mouth_width_scale"},
+        "component_parameters": components,
         "style_profile": spec["style_profile"],
         "blink": spec["blink"],
         "shading_policy": spec["shading_policy"],
         "reviewed_support_bound_m": spec["reviewed_support_bound_m"],
         "catalog_sha256": digest(catalog),
         "source_recipe_sha256": digest(spec),
-        "scope": "Head only; lashes/iris follow eye family; nose/ears retained",
+        "scope": "Head only; lashes/iris follow eye family; component alternatives remain experimental",
         "acceptance": "New combination requires native generation, SDF and visual checks",
     }
     return {**resolved, "composition_sha256": digest(resolved)}

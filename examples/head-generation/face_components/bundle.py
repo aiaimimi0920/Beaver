@@ -36,6 +36,7 @@ def build_request(selection, prefix, workspace):
             blink=snapshot["blink"],
             silhouette_parameters=snapshot["silhouette_parameters"],
             lip_parameters=snapshot["lip_parameters"],
+            component_parameters=snapshot["component_parameters"],
         )
     finally:
         sys.path[:] = old_path

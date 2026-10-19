@@ -37,8 +37,14 @@ def build_request(
     silhouette_parameters=None,
     lip_parameters=None,
     normal_parameters=None,
+    component_parameters=None,
 ):
-    if (silhouette_parameters or lip_parameters or normal_parameters) and prefix in {
+    if (
+        silhouette_parameters
+        or lip_parameters
+        or normal_parameters
+        or component_parameters
+    ) and prefix in {
         "assets/aster/general_face_eyes_795/",
         "assets/aster/general_face_eyes_796/",
     }:
@@ -53,6 +59,7 @@ def build_request(
             "Supply the explicitly reviewed positive support bound in meters"
         )
     from source_normals import validate as validate_normals, adapt_pipeline
+
     normal_amount = validate_normals(normal_parameters)
     sys.path.insert(0, str(EYES))
     try:
@@ -64,6 +71,11 @@ def build_request(
         recipe = builder.RECIPE
         baseline_style = apply_style_profile(
             json.loads((recipe / "face_style.json").read_text()), style_profile
+        )
+        from source_components import apply_components
+
+        baseline_style, component_report = apply_components(
+            baseline_style, component_parameters
         )
         from source_silhouette import apply_silhouette
 
@@ -167,10 +179,13 @@ def depth(x, y):"""
             )
             if silhouette_report is not None:
                 from source_silhouette import adapt_ear_envelope
-                (snapshot / "ear_width.py").write_text(adapt_ear_envelope(
-                    (recipe / "ear_width.py").read_text(),
-                    silhouette_report["original_width_stations"],
-                ))
+
+                (snapshot / "ear_width.py").write_text(
+                    adapt_ear_envelope(
+                        (recipe / "ear_width.py").read_text(),
+                        silhouette_report["original_width_stations"],
+                    )
+                )
             pipeline = adapt_pipeline(pipeline, normal_amount)
             (snapshot / "pipeline.py").write_text(pipeline)
             (snapshot / "face.py").write_text(face)
@@ -189,15 +204,28 @@ def depth(x, y):"""
         if style_profile in ("emerald_layered", "emerald_illustrated")
         else "Inherited or clean eye art direction"
     )
+    if component_report and component_report["parameters"]["nose_bridge_scale"] != 1:
+        profile_scope = profile_scope.replace(
+            "nose geometry unchanged", "nose bridge calibration altered"
+        )
     if style_profile in ("emerald_layered", "emerald_illustrated"):
         request["code"] += f'report["semantic_eyes"]["scope"] = {profile_scope!r}\n'
+    if component_report is not None:
+        report["component_calibration"] = component_report
+        profile_scope += (
+            "; explicit component calibration changes are recorded separately"
+        )
     if silhouette_report is not None:
         report["silhouette"] = silhouette_report
     if normal_amount:
         report["lower_medial_normals"] = dict(
-            amount=normal_amount, height_window=[0.05, 0.10, 0.20, 0.23],
-            regions=[1, 2], scope="Center vertices only, same-region area-weighted normals",
-            geometry_displacement_m=0.0, validation="Native posed shading not yet verified")
+            amount=normal_amount,
+            height_window=[0.05, 0.10, 0.20, 0.23],
+            regions=[1, 2],
+            scope="Center vertices only, same-region area-weighted normals",
+            geometry_displacement_m=0.0,
+            validation="Native posed shading not yet verified",
+        )
     report.update(
         style_profile_scope=profile_scope,
         parameters=data["parameters"],

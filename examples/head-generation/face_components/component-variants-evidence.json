@@ -1,0 +1,208 @@
+{
+  "schema_version": 1,
+  "candidate": "combo828",
+  "selection": {
+    "eyes": "downturned",
+    "brows": "soft-arched",
+    "mouth": "wide-neutral",
+    "nose": "defined-bridge",
+    "ears": "compact-human",
+    "face": "narrow-chin"
+  },
+  "composition_sha256": "0b5b5acc3c544ab08ba9cca12464e51d6ee44df2b8ef85f38ba4179e37cfbb86",
+  "glb_sha256": "ed348c3d006bf2859854c48f447524ecb33e183cd0c0bdcc1b67c14ff7a79def",
+  "generation_job": "31a7660d-27b9-42d7-9788-900e67ca611d",
+  "sdf_job": "68bf6adf-cb7d-459a-b0de-5b7537758606",
+  "calibration": {
+    "parameters": {
+      "mouth_width_scale": 1.08,
+      "nose_bridge_scale": 1.2,
+      "ear_span_scale": 0.94
+    },
+    "before": {
+      "mouth_half_width": 0.065,
+      "upper_lip_lateral_width": 0.075,
+      "ear_outward_span": 0.095,
+      "nose_stations": [
+        [
+          0.19,
+          0,
+          0.045
+        ],
+        [
+          0.22,
+          0.014,
+          0.05
+        ],
+        [
+          0.25,
+          0.05,
+          0.066
+        ],
+        [
+          0.286,
+          0.099,
+          0.064
+        ],
+        [
+          0.303,
+          0.095,
+          0.062
+        ],
+        [
+          0.34,
+          0.038,
+          0.041
+        ],
+        [
+          0.4,
+          0,
+          0.038
+        ]
+      ]
+    },
+    "after": {
+      "mouth_half_width": 0.07020000000000001,
+      "upper_lip_lateral_width": 0.081,
+      "ear_outward_span": 0.08929999999999999,
+      "nose_stations": [
+        [
+          0.19,
+          0,
+          0.045
+        ],
+        [
+          0.22,
+          0.014,
+          0.05
+        ],
+        [
+          0.25,
+          0.05,
+          0.066
+        ],
+        [
+          0.286,
+          0.099,
+          0.064
+        ],
+        [
+          0.303,
+          0.095,
+          0.062
+        ],
+        [
+          0.34,
+          0.045599999999999995,
+          0.041
+        ],
+        [
+          0.4,
+          0,
+          0.038
+        ]
+      ]
+    },
+    "scope": "Pre-construction feature dimensions; unchanged connection algorithms",
+    "bound_scope": "Surface correction bound excludes these baseline calibration changes; native shape and attachment checks required",
+    "native_acceptance": "pending"
+  },
+  "triangle_orientation": {
+    "triangles": 10980,
+    "minimum_orientation_ratio": 0.03508340078668637,
+    "worst_blink_weight": 1.0,
+    "worst_mouth_weight": 0.0,
+    "worst_triangle": 2529,
+    "scope": "Floating-point analytic quadratic minimum over blink and MouthOpen [0,1]; no triangle couples both eyes. Not an intersection proof."
+  },
+  "ear_seams": [
+    {
+      "name": "Ear hollow pinna -1",
+      "shared_manifold_root_edges": 15,
+      "edge_face_usage": [
+        2
+      ]
+    },
+    {
+      "name": "Ear hollow pinna 1",
+      "shared_manifold_root_edges": 15,
+      "edge_face_usage": [
+        2
+      ]
+    }
+  ],
+  "oral_clearance": {
+    "scope": "neutral hidden wall vertices against evaluated skin; not a global collision test",
+    "sampled_vertices": 60,
+    "maximum_signed_distance_m": -0.005008290754631162,
+    "rear_cap_planarity_m": 0.0
+  },
+  "geometry_comparison": {
+    "source": "Decoded GLB positions, point-cloud nearest-neighbour distances; not a surface Hausdorff bound or indexed correspondence",
+    "827_vertices": 8185,
+    "828_vertices": 8187,
+    "827_triangles": 10980,
+    "828_triangles": 10980,
+    "maximum_nearest_vertex_distance_m": 0.0026270411908626556,
+    "827_bbox": [
+      [
+        -0.10750486701726913,
+        1.523673176765442,
+        -0.028443096205592155
+      ],
+      [
+        0.10750486701726913,
+        1.758910894393921,
+        0.1144905611872673
+      ]
+    ],
+    "828_bbox": [
+      [
+        -0.10619240999221802,
+        1.523673176765442,
+        -0.028443096205592155
+      ],
+      [
+        0.10619240999221802,
+        1.758910894393921,
+        0.11477402597665787
+      ]
+    ],
+    "positions_finite": true,
+    "morph_names": [
+      "MouthOpen",
+      "blink.L",
+      "blink.R"
+    ],
+    "position_morphs_finite": true
+  },
+  "eye_captures_verified": 84,
+  "mouth_captures_verified": 18,
+  "source_manifest_hashes": {
+    "828-manifest.json": "681b2396b2ed26743a391214101b7bb493846c080e75bbe08118f4ea3e524784",
+    "828-mouth-manifest.json": "451e9c19bfae505490af0c3e13555237ba79c4d900237a3ebdc4c5e97a92f983"
+  },
+  "visual_review": "Front,45/90 render and white vs827 plus mouth .6/1 and blink views inspected. Nose bridge fuller, ear span smaller, mouth wider; no new blocking connection or expression issue observed. Existing baseline white-shading unevenness remains. Not final aesthetic or all-combination acceptance.",
+  "tests": {
+    "facial_surface": 60,
+    "face_components": 12
+  },
+  "scope": "One combined change of nose/ear/mouth. Parameter ownership unit-tested; all catalog cross combinations are not natively validated.",
+  "archives": [
+    {
+      "name": "Aster-combo828-model.zip",
+      "library_file_id": "libfile_dee0f3322f948191823c5a1f78b6bb9b",
+      "sha256": "b0de3c78fe05d7c29a37b84c8f2b75fbf58f9d4521227c41d06204598d632719"
+    },
+    {
+      "name": "Aster-combo828-captures.zip",
+      "library_file_id": "libfile_7d87d9e7b51c81918a7a1266492ee3fa",
+      "sha256": "d3afa5bac5f159f99a1166f044ea9e19c5bd3f18c0f2d6a9072369e016d1b216"
+    },
+    {
+      "name": "combo827-828-render.jpg",
+      "library_file_id": "libfile_2b7378b97e6881919fce465466cf1e81",
+      "sha256": "63d454a717be3c8f00e390e6716ec67f4ae8314c48b4178aef3336efa9dc2924"
+    }
+  ]
+}
