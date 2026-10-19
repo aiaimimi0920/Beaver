@@ -71,7 +71,12 @@ def resolve(selection, fit_policy="legacy"):
             "nose_bridge_length_scale",
             "nose_tip_projection_scale",
         },
-        "ears": {"ear_span_scale"},
+        "ears": {
+            "ear_span_scale",
+            "ear_tip_length_scale",
+            "ear_point_strength",
+            "ear_tip_lift",
+        },
         "face": {"face_width", "jaw_width", "chin_width"},
     }
     for slot, allowed in owned_keys.items():

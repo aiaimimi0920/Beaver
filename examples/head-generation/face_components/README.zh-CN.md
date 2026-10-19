@@ -120,3 +120,20 @@ SDF入口读取实际生成报告，不重新套用最新目录；报告必须�
 834初步正面/45°/90°检查表明变化较克制，主要是鼻梁稍延长和鼻尖稍前突，整体仍保留原紧凑鼻型的轮廓组织。因此 `long-bridge` 暂作为紧凑楔鼻的族内实验变体登记，不计作第二个独立鼻型族；独立长鼻梁族仍为 planned。保留有用的构造控制，继续推进其他部位，不通过重复命名增加完成数量。
 
 834完整原生生成、SDF与102张状态校验记录见 [nose-variant-evidence.json](nose-variant-evidence.json)。相对827，最终鼻尖深度增加约1.934 mm，弧线平滑最大位移0.435 mm，仍在原0.8 mm限制内。
+
+## 批量证据复核
+
+`coverage.py --batch <运行清单.json>` 只读复核明确列出的组合，不启动 Beaver。
+清单是 JSON 数组，每行包含 `workspace`、`prefix`、六槽 `selection`、显式
+`fit_policy`、`generation_receipt`、`sdf_receipt`、`eye_manifest`、`mouth_manifest`。
+路径相对调用目录或使用绝对路径。必须使用原生 Beaver 回执；这是调用者提供的
+可信记录，不是签名证明。当前仅支持回执所指的同一工作区。
+
+复核包括生成阶段未被替代的全部输出、SDF 最终输出、SDF 输入清单与原生成报告
+的哈希关系、不可变几何与参数、组合快照、着色策略，以及两组截图的图像哈希和
+实际相机/表情状态。历史快照只补已知的恒等默认参数，不重新套用当前目录。
+报告区分 `generation_failed`、`sdf_failed`、`incomplete`、`integrity_failed` 和
+`technically_verified`；损坏的一行不会阻止其他行复核。
+
+技术复核通过不表示美学验收或当前生成器可重现。`observed_pairs` 仅列已验证完整
+组合中实际出现的部件对，不能外推其他组合；未提供证据的组合仍为未测试。

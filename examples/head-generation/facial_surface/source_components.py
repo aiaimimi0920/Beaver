@@ -9,6 +9,9 @@ LIMITS = {
     "nose_bridge_length_scale": (1.0, 1.2),
     "nose_tip_projection_scale": (1.0, 1.08),
     "ear_span_scale": (0.94, 1.0),
+    "ear_tip_length_scale": (1.0, 1.8),
+    "ear_point_strength": (0.0, 1.0),
+    "ear_tip_lift": (0.0, 0.04),
 }
 
 
@@ -18,7 +21,8 @@ def apply_components(style, parameters=None):
         raise ValueError("Unknown component calibration")
     values = {}
     for key, (low, high) in LIMITS.items():
-        value = parameters.get(key, 1.0)
+        default = 0.0 if key in ("ear_point_strength", "ear_tip_lift") else 1.0
+        value = parameters.get(key, default)
         if (
             isinstance(value, bool)
             or not isinstance(value, (int, float))
@@ -28,7 +32,10 @@ def apply_components(style, parameters=None):
             raise ValueError("Invalid component calibration: " + key)
         values[key] = float(value)
     result = deepcopy(style)
-    if all(value == 1 for value in values.values()):
+    if all(
+        value == (0.0 if key in ("ear_point_strength", "ear_tip_lift") else 1.0)
+        for key, value in values.items()
+    ):
         return result, None
     c = result["calibration"]
     before = {}
@@ -42,6 +49,15 @@ def apply_components(style, parameters=None):
         before["ear_outward_span"] = c["ear_outward_span"]
         c["ear_outward_span"] *= values["ear_span_scale"]
         after["ear_outward_span"] = c["ear_outward_span"]
+    if (
+        values["ear_tip_length_scale"] != 1
+        or values["ear_point_strength"] != 0
+        or values["ear_tip_lift"] != 0
+    ):
+        for key in ("ear_tip_length_scale", "ear_point_strength", "ear_tip_lift"):
+            before[key] = c.get(key)
+            c[key] = values[key]
+            after[key] = c[key]
     if any(
         values[k] != 1
         for k in (

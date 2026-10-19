@@ -1,0 +1,100 @@
+{
+  "schema_version": 1,
+  "scope": "Independent lateral pointed ear prototype; functional family sample, not final aesthetic acceptance",
+  "candidates": [
+    {
+      "candidate": "combo837",
+      "selection": {
+        "eyes": "downturned",
+        "brows": "soft-arched",
+        "mouth": "retained",
+        "nose": "retained",
+        "ears": "lateral-elf",
+        "face": "narrow-chin"
+      },
+      "fit_policy": "legacy",
+      "composition_sha256": "10cacafb60695c6a1488dc7f8f5ba369647dd1165a7822c0d455ae7e13a2a4bf",
+      "glb_sha256": "0f58cc101a4b7b150775e3f01510a33ddcebf6fc544f74ffdc128091639f7644",
+      "gen_job": "5fdea1c3-7977-4492-9aca-646f55781e61",
+      "sdf_job": "17ebb7a8-2f2d-4c6d-963b-7be22763c823",
+      "eye_captures_verified": 84,
+      "mouth_captures_verified": 18,
+      "manifest_sha256": {
+        "eye": "4cc67a37d9d3102138762fc383921a16d46673f58fde6cefe9b1c3be6f35151e",
+        "mouth": "00c1cc2147f8d587ed98aeb0f05f36d9d210f045f9bf5e7a3bef1b691161b90b"
+      },
+      "upper_junction": {
+        "changed_vertices": 76,
+        "maximum_displacement_m": 0.0011999606849326305,
+        "shared_root_moved_together": true,
+        "topology_unchanged": true,
+        "requested_scale": 1.0,
+        "accepted_scale": 0.25,
+        "attempts": [
+          {
+            "scale": 1.0,
+            "invalid_faces": [
+              5414,
+              5520
+            ]
+          },
+          {
+            "scale": 0.5,
+            "invalid_faces": [
+              5414,
+              5520
+            ]
+          },
+          {
+            "scale": 0.25,
+            "invalid_faces": []
+          }
+        ],
+        "minimum_scale": 0.125
+      },
+      "shared_seams": [
+        {
+          "name": "Ear hollow pinna -1",
+          "shared_manifold_root_edges": 15,
+          "edge_face_usage": [
+            2
+          ]
+        },
+        {
+          "name": "Ear hollow pinna 1",
+          "shared_manifold_root_edges": 15,
+          "edge_face_usage": [
+            2
+          ]
+        }
+      ],
+      "archives": {
+        "model": {
+          "name": "Aster-combo837-model.zip",
+          "bytes": 5500362,
+          "sha256": "0e6b35d3dd856fdb2920e2c38bd5b450f0c84501a3ed580589e3a47fc75d9fd1"
+        },
+        "captures": {
+          "name": "Aster-combo837-captures.zip",
+          "bytes": 29903174,
+          "sha256": "a8b0a87ce494544d706f6edf31825b134772d254425b9f0a16410a44a3331e9b"
+        }
+      }
+    }
+  ],
+  "failed_candidates": [
+    {
+      "candidate": "combo835",
+      "stage": "generation",
+      "reason": "No safe lower-root topology improvement found",
+      "resolution": "Protected proximal and lower construction neighborhood; no gate removed"
+    },
+    {
+      "candidate": "combo836",
+      "stage": "generation",
+      "reason": "Upper-ear junction inverted two symmetric faces",
+      "resolution": "Opt-in common displacement backtracking, same orientation and area guards; 837 accepted scale0.25"
+    }
+  ],
+  "visual_review": "Root reviewed front/oblique/profile render and white/wire. Independent static reviewer also checked three full-mouth views: distinct lateral pointed contour, no obvious new structural blocker in viewed frames. Not every frame visually reviewed; inherited facial shading unevenness remains."
+}

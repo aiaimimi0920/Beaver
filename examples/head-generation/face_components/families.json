@@ -201,17 +201,18 @@
       },
       "lateral-elf": {
         "title": "横展长尖耳",
-        "presets": [],
-        "status": "planned",
+        "presets": [
+          "lateral-elf"
+        ],
+        "status": "implemented_with_historical_samples",
         "sources": [
           "https://frieren-anime.jp/character/chara_group1/1-1/"
         ],
         "missing_controls": [
-          "distal_length",
-          "flare_angle",
-          "tip_taper",
-          "shell_thickness"
-        ]
+          "independent_shell_thickness",
+          "independent_posterior_flare_angle"
+        ],
+        "native_sample": "combo837"
       }
     },
     "face": {

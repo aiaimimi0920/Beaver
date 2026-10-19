@@ -1,0 +1,527 @@
+{
+  "schema_version": 1,
+  "runs": [
+    {
+      "selection": {
+        "eyes": "slender",
+        "brows": "soft-arched",
+        "mouth": "retained",
+        "nose": "retained",
+        "ears": "retained",
+        "face": "wide-jaw"
+      },
+      "fit_policy": "legacy",
+      "prefix": "assets/aster/general_face_eyes_combo830/",
+      "status": "technically_verified",
+      "composition_sha256": "5c3bcf5fed4ee8c02f048c32832cd588f3ccdb91b537c8cef48a0f0ab43e726e",
+      "glb_sha256": "180c88d50e3edbe29fe48241797f313f683acd5cf371650c2241d12a6b8f60ee",
+      "generation_job": "000fc6b4-0f70-43a3-b96f-1fe38a0dc6d0",
+      "sdf_job": "036ea788-60a1-45bb-aeef-23db35c344b9",
+      "captures": {
+        "eye": {
+          "captures_verified": 84,
+          "source_sha256": "180c88d50e3edbe29fe48241797f313f683acd5cf371650c2241d12a6b8f60ee",
+          "camera_size": 0.430432230234146,
+          "scope": "Integrity, expression and view state; not aesthetic acceptance"
+        },
+        "mouth": {
+          "captures_verified": 18,
+          "source_sha256": "180c88d50e3edbe29fe48241797f313f683acd5cf371650c2241d12a6b8f60ee",
+          "camera_size": 0.430432230234146,
+          "scope": "Integrity, expression and view state; not aesthetic acceptance"
+        }
+      },
+      "scope": "Current artifact integrity and recorded native states, not aesthetic approval, current-generator reproducibility or untested combinations"
+    },
+    {
+      "selection": {
+        "eyes": "almond",
+        "brows": "soft-level",
+        "mouth": "wide-neutral",
+        "nose": "defined-bridge",
+        "ears": "compact-human",
+        "face": "wide-face"
+      },
+      "fit_policy": "skin-seated-075",
+      "prefix": "assets/aster/general_face_eyes_combo831/",
+      "status": "technically_verified",
+      "composition_sha256": "7573a1e9dfc07c521fba363e053cc1bbd9149d99b9d0efa8350399b03e83cbcf",
+      "glb_sha256": "4d756b7d63551e41714591bf6a44a67d8886d463fdaf0130c16b8cff46cab46c",
+      "generation_job": "8ecb881d-aa4e-4f27-86b4-936f363b3892",
+      "sdf_job": "47d9a2b2-b653-4b79-966e-e0ac672fd06e",
+      "captures": {
+        "eye": {
+          "captures_verified": 84,
+          "source_sha256": "4d756b7d63551e41714591bf6a44a67d8886d463fdaf0130c16b8cff46cab46c",
+          "camera_size": 0.430432230234146,
+          "scope": "Integrity, expression and view state; not aesthetic acceptance"
+        },
+        "mouth": {
+          "captures_verified": 18,
+          "source_sha256": "4d756b7d63551e41714591bf6a44a67d8886d463fdaf0130c16b8cff46cab46c",
+          "camera_size": 0.430432230234146,
+          "scope": "Integrity, expression and view state; not aesthetic acceptance"
+        }
+      },
+      "scope": "Current artifact integrity and recorded native states, not aesthetic approval, current-generator reproducibility or untested combinations"
+    },
+    {
+      "selection": {
+        "eyes": "downturned",
+        "brows": "angular-peaked",
+        "mouth": "retained",
+        "nose": "retained",
+        "ears": "retained",
+        "face": "narrow-chin"
+      },
+      "fit_policy": "legacy",
+      "prefix": "assets/aster/general_face_eyes_combo832/",
+      "status": "technically_verified",
+      "composition_sha256": "71e09039361639e94926386806892fdbea6c47f0cc205e7fc3938f502f2e76be",
+      "glb_sha256": "412b2fa2e39cc6c846521b83658397f9a7d4808703dcd798983a2be4c50489c8",
+      "generation_job": "c560ed4d-c11a-47fa-9f32-f45899f20122",
+      "sdf_job": "a570b354-9f12-4a97-b057-bd4b28135e46",
+      "captures": {
+        "eye": {
+          "captures_verified": 84,
+          "source_sha256": "412b2fa2e39cc6c846521b83658397f9a7d4808703dcd798983a2be4c50489c8",
+          "camera_size": 0.430432230234146,
+          "scope": "Integrity, expression and view state; not aesthetic acceptance"
+        },
+        "mouth": {
+          "captures_verified": 18,
+          "source_sha256": "412b2fa2e39cc6c846521b83658397f9a7d4808703dcd798983a2be4c50489c8",
+          "camera_size": 0.430432230234146,
+          "scope": "Integrity, expression and view state; not aesthetic acceptance"
+        }
+      },
+      "scope": "Current artifact integrity and recorded native states, not aesthetic approval, current-generator reproducibility or untested combinations"
+    },
+    {
+      "selection": {
+        "eyes": "downturned",
+        "brows": "broad-band",
+        "mouth": "retained",
+        "nose": "retained",
+        "ears": "retained",
+        "face": "narrow-chin"
+      },
+      "fit_policy": "legacy",
+      "prefix": "assets/aster/general_face_eyes_combo833/",
+      "status": "technically_verified",
+      "composition_sha256": "0aa54e7c0d1f3bdb7835c9032a28e4ad0c6842f84356252c4a4c6afd43dac5cf",
+      "glb_sha256": "4c040719aa8739addd29e0a726d50dfd2473b4a914f62412627272268977aa91",
+      "generation_job": "a168862a-153e-4c59-9bd9-b1c624897289",
+      "sdf_job": "591d1da5-5608-4373-8414-4c4a57e1b14a",
+      "captures": {
+        "eye": {
+          "captures_verified": 84,
+          "source_sha256": "4c040719aa8739addd29e0a726d50dfd2473b4a914f62412627272268977aa91",
+          "camera_size": 0.430432230234146,
+          "scope": "Integrity, expression and view state; not aesthetic acceptance"
+        },
+        "mouth": {
+          "captures_verified": 18,
+          "source_sha256": "4c040719aa8739addd29e0a726d50dfd2473b4a914f62412627272268977aa91",
+          "camera_size": 0.430432230234146,
+          "scope": "Integrity, expression and view state; not aesthetic acceptance"
+        }
+      },
+      "scope": "Current artifact integrity and recorded native states, not aesthetic approval, current-generator reproducibility or untested combinations"
+    },
+    {
+      "selection": {
+        "eyes": "downturned",
+        "brows": "soft-arched",
+        "mouth": "retained",
+        "nose": "long-bridge",
+        "ears": "retained",
+        "face": "narrow-chin"
+      },
+      "fit_policy": "legacy",
+      "prefix": "assets/aster/general_face_eyes_combo834/",
+      "status": "technically_verified",
+      "composition_sha256": "22c5853dec4c3a8ec0e41ca587ec22c391ff04bf78a3ee47156b854fbfa64850",
+      "glb_sha256": "cd0c755c52896a1ab72561378c28f05eb194ff56bee1516ac093479b2e375b85",
+      "generation_job": "32104822-da33-45e9-870a-8813708863c4",
+      "sdf_job": "ecf71e81-c5a8-43c2-81cc-a360ee607daa",
+      "captures": {
+        "eye": {
+          "captures_verified": 84,
+          "source_sha256": "cd0c755c52896a1ab72561378c28f05eb194ff56bee1516ac093479b2e375b85",
+          "camera_size": 0.430432230234146,
+          "scope": "Integrity, expression and view state; not aesthetic acceptance"
+        },
+        "mouth": {
+          "captures_verified": 18,
+          "source_sha256": "cd0c755c52896a1ab72561378c28f05eb194ff56bee1516ac093479b2e375b85",
+          "camera_size": 0.430432230234146,
+          "scope": "Integrity, expression and view state; not aesthetic acceptance"
+        }
+      },
+      "scope": "Current artifact integrity and recorded native states, not aesthetic approval, current-generator reproducibility or untested combinations"
+    },
+    {
+      "selection": {
+        "eyes": "downturned",
+        "brows": "soft-arched",
+        "mouth": "retained",
+        "nose": "retained",
+        "ears": "lateral-elf",
+        "face": "narrow-chin"
+      },
+      "fit_policy": "legacy",
+      "prefix": "assets/aster/general_face_eyes_combo837/",
+      "status": "technically_verified",
+      "composition_sha256": "10cacafb60695c6a1488dc7f8f5ba369647dd1165a7822c0d455ae7e13a2a4bf",
+      "glb_sha256": "0f58cc101a4b7b150775e3f01510a33ddcebf6fc544f74ffdc128091639f7644",
+      "generation_job": "5fdea1c3-7977-4492-9aca-646f55781e61",
+      "sdf_job": "17ebb7a8-2f2d-4c6d-963b-7be22763c823",
+      "captures": {
+        "eye": {
+          "captures_verified": 84,
+          "source_sha256": "0f58cc101a4b7b150775e3f01510a33ddcebf6fc544f74ffdc128091639f7644",
+          "camera_size": 0.430432230234146,
+          "scope": "Integrity, expression and view state; not aesthetic acceptance"
+        },
+        "mouth": {
+          "captures_verified": 18,
+          "source_sha256": "0f58cc101a4b7b150775e3f01510a33ddcebf6fc544f74ffdc128091639f7644",
+          "camera_size": 0.430432230234146,
+          "scope": "Integrity, expression and view state; not aesthetic acceptance"
+        }
+      },
+      "scope": "Current artifact integrity and recorded native states, not aesthetic approval, current-generator reproducibility or untested combinations"
+    }
+  ],
+  "technically_verified_runs": 6,
+  "observed_pairs": {
+    "eyes/brows": [
+      [
+        "almond",
+        "soft-level",
+        "skin-seated-075"
+      ],
+      [
+        "downturned",
+        "angular-peaked",
+        "legacy"
+      ],
+      [
+        "downturned",
+        "broad-band",
+        "legacy"
+      ],
+      [
+        "downturned",
+        "soft-arched",
+        "legacy"
+      ],
+      [
+        "slender",
+        "soft-arched",
+        "legacy"
+      ]
+    ],
+    "eyes/mouth": [
+      [
+        "almond",
+        "wide-neutral",
+        "skin-seated-075"
+      ],
+      [
+        "downturned",
+        "retained",
+        "legacy"
+      ],
+      [
+        "slender",
+        "retained",
+        "legacy"
+      ]
+    ],
+    "eyes/nose": [
+      [
+        "almond",
+        "defined-bridge",
+        "skin-seated-075"
+      ],
+      [
+        "downturned",
+        "long-bridge",
+        "legacy"
+      ],
+      [
+        "downturned",
+        "retained",
+        "legacy"
+      ],
+      [
+        "slender",
+        "retained",
+        "legacy"
+      ]
+    ],
+    "eyes/ears": [
+      [
+        "almond",
+        "compact-human",
+        "skin-seated-075"
+      ],
+      [
+        "downturned",
+        "lateral-elf",
+        "legacy"
+      ],
+      [
+        "downturned",
+        "retained",
+        "legacy"
+      ],
+      [
+        "slender",
+        "retained",
+        "legacy"
+      ]
+    ],
+    "eyes/face": [
+      [
+        "almond",
+        "wide-face",
+        "skin-seated-075"
+      ],
+      [
+        "downturned",
+        "narrow-chin",
+        "legacy"
+      ],
+      [
+        "slender",
+        "wide-jaw",
+        "legacy"
+      ]
+    ],
+    "brows/mouth": [
+      [
+        "angular-peaked",
+        "retained",
+        "legacy"
+      ],
+      [
+        "broad-band",
+        "retained",
+        "legacy"
+      ],
+      [
+        "soft-arched",
+        "retained",
+        "legacy"
+      ],
+      [
+        "soft-level",
+        "wide-neutral",
+        "skin-seated-075"
+      ]
+    ],
+    "brows/nose": [
+      [
+        "angular-peaked",
+        "retained",
+        "legacy"
+      ],
+      [
+        "broad-band",
+        "retained",
+        "legacy"
+      ],
+      [
+        "soft-arched",
+        "long-bridge",
+        "legacy"
+      ],
+      [
+        "soft-arched",
+        "retained",
+        "legacy"
+      ],
+      [
+        "soft-level",
+        "defined-bridge",
+        "skin-seated-075"
+      ]
+    ],
+    "brows/ears": [
+      [
+        "angular-peaked",
+        "retained",
+        "legacy"
+      ],
+      [
+        "broad-band",
+        "retained",
+        "legacy"
+      ],
+      [
+        "soft-arched",
+        "lateral-elf",
+        "legacy"
+      ],
+      [
+        "soft-arched",
+        "retained",
+        "legacy"
+      ],
+      [
+        "soft-level",
+        "compact-human",
+        "skin-seated-075"
+      ]
+    ],
+    "brows/face": [
+      [
+        "angular-peaked",
+        "narrow-chin",
+        "legacy"
+      ],
+      [
+        "broad-band",
+        "narrow-chin",
+        "legacy"
+      ],
+      [
+        "soft-arched",
+        "narrow-chin",
+        "legacy"
+      ],
+      [
+        "soft-arched",
+        "wide-jaw",
+        "legacy"
+      ],
+      [
+        "soft-level",
+        "wide-face",
+        "skin-seated-075"
+      ]
+    ],
+    "mouth/nose": [
+      [
+        "retained",
+        "long-bridge",
+        "legacy"
+      ],
+      [
+        "retained",
+        "retained",
+        "legacy"
+      ],
+      [
+        "wide-neutral",
+        "defined-bridge",
+        "skin-seated-075"
+      ]
+    ],
+    "mouth/ears": [
+      [
+        "retained",
+        "lateral-elf",
+        "legacy"
+      ],
+      [
+        "retained",
+        "retained",
+        "legacy"
+      ],
+      [
+        "wide-neutral",
+        "compact-human",
+        "skin-seated-075"
+      ]
+    ],
+    "mouth/face": [
+      [
+        "retained",
+        "narrow-chin",
+        "legacy"
+      ],
+      [
+        "retained",
+        "wide-jaw",
+        "legacy"
+      ],
+      [
+        "wide-neutral",
+        "wide-face",
+        "skin-seated-075"
+      ]
+    ],
+    "nose/ears": [
+      [
+        "defined-bridge",
+        "compact-human",
+        "skin-seated-075"
+      ],
+      [
+        "long-bridge",
+        "retained",
+        "legacy"
+      ],
+      [
+        "retained",
+        "lateral-elf",
+        "legacy"
+      ],
+      [
+        "retained",
+        "retained",
+        "legacy"
+      ]
+    ],
+    "nose/face": [
+      [
+        "defined-bridge",
+        "wide-face",
+        "skin-seated-075"
+      ],
+      [
+        "long-bridge",
+        "narrow-chin",
+        "legacy"
+      ],
+      [
+        "retained",
+        "narrow-chin",
+        "legacy"
+      ],
+      [
+        "retained",
+        "wide-jaw",
+        "legacy"
+      ]
+    ],
+    "ears/face": [
+      [
+        "compact-human",
+        "wide-face",
+        "skin-seated-075"
+      ],
+      [
+        "lateral-elf",
+        "narrow-chin",
+        "legacy"
+      ],
+      [
+        "retained",
+        "narrow-chin",
+        "legacy"
+      ],
+      [
+        "retained",
+        "wide-jaw",
+        "legacy"
+      ]
+    ]
+  },
+  "scope": "Only supplied artifact sets verified. Every omitted combination remains untested. Observed pairs do not certify other full combinations or aesthetics.",
+  "checked_at_utc": "2026-10-19T14:46:00Z"
+}

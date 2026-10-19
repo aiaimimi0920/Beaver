@@ -161,6 +161,23 @@ def depth(x, y):"""
             for path in recipe.iterdir():
                 if path.is_file():
                     (snapshot / path.name).write_bytes(path.read_bytes())
+            from source_ear_profile import adapt_ear_profile
+            from source_ear_join import adapt_upper_join
+
+            (snapshot / "ear_silhouette.py").write_text(
+                adapt_upper_join(
+                    (recipe / "ear_silhouette.py").read_text(),
+                    baseline_style["calibration"].get("ear_point_strength", 0) > 0
+                    or baseline_style["calibration"].get("ear_tip_length_scale", 1) != 1
+                    or baseline_style["calibration"].get("ear_tip_lift", 0) != 0,
+                )
+            )
+
+            (snapshot / "ears.py").write_text(
+                adapt_ear_profile(
+                    (recipe / "ears.py").read_text(), baseline_style["calibration"]
+                )
+            )
             (snapshot / "face_style.json").write_text(
                 json.dumps(baseline_style, indent=2)
             )
@@ -204,9 +221,9 @@ def depth(x, y):"""
         if style_profile in ("emerald_layered", "emerald_illustrated")
         else "Inherited or clean eye art direction"
     )
-    if component_report and component_report["parameters"]["nose_bridge_scale"] != 1:
+    if component_report and "nose_stations" in component_report["after"]:
         profile_scope = profile_scope.replace(
-            "nose geometry unchanged", "nose bridge calibration altered"
+            "nose geometry unchanged", "nose calibration altered"
         )
     if style_profile in ("emerald_layered", "emerald_illustrated"):
         request["code"] += f'report["semantic_eyes"]["scope"] = {profile_scope!r}\n'

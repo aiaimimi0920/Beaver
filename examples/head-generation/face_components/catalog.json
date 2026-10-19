@@ -84,6 +84,11 @@
     "retained": {},
     "compact-human": {
       "ear_span_scale": 0.94
+    },
+    "lateral-elf": {
+      "ear_tip_length_scale": 1.7,
+      "ear_point_strength": 1,
+      "ear_tip_lift": 0.025
     }
   },
   "face": {
