@@ -256,9 +256,41 @@
         }
       },
       "scope": "Current artifact integrity and recorded native states, not aesthetic approval, current-generator reproducibility or untested combinations"
+    },
+    {
+      "selection": {
+        "eyes": "downturned",
+        "brows": "soft-arched",
+        "mouth": "retained",
+        "nose": "retained",
+        "ears": "retained",
+        "face": "narrow-soft-chin"
+      },
+      "fit_policy": "legacy",
+      "prefix": "assets/aster/general_face_eyes_combo840/",
+      "status": "technically_verified",
+      "composition_sha256": "c7f9f29f3fc0688e9a468d21d6c0411a2075abc6b00fd77fb4fbe6afc7a33f68",
+      "glb_sha256": "47ca290819ebf45d99ce64fd15f641e925ca5caa8d80b090f27760e62181a959",
+      "generation_job": "75de3c64-efd9-4d8b-a73a-44873c71a960",
+      "sdf_job": "d588a292-5da4-43f8-9677-916e06e15782",
+      "captures": {
+        "eye": {
+          "captures_verified": 84,
+          "source_sha256": "47ca290819ebf45d99ce64fd15f641e925ca5caa8d80b090f27760e62181a959",
+          "camera_size": 0.430436134338379,
+          "scope": "Integrity, expression and view state; not aesthetic acceptance"
+        },
+        "mouth": {
+          "captures_verified": 18,
+          "source_sha256": "47ca290819ebf45d99ce64fd15f641e925ca5caa8d80b090f27760e62181a959",
+          "camera_size": 0.430436134338379,
+          "scope": "Integrity, expression and view state; not aesthetic acceptance"
+        }
+      },
+      "scope": "Current artifact integrity and recorded native states, not aesthetic approval, current-generator reproducibility or untested combinations"
     }
   ],
-  "technically_verified_runs": 8,
+  "technically_verified_runs": 9,
   "observed_pairs": {
     "eyes/brows": [
       [
@@ -367,6 +399,11 @@
       [
         "downturned",
         "narrow-chin",
+        "legacy"
+      ],
+      [
+        "downturned",
+        "narrow-soft-chin",
         "legacy"
       ],
       [
@@ -479,6 +516,11 @@
       ],
       [
         "soft-arched",
+        "narrow-soft-chin",
+        "legacy"
+      ],
+      [
+        "soft-arched",
         "wide-jaw",
         "legacy"
       ],
@@ -560,6 +602,11 @@
       ],
       [
         "retained",
+        "narrow-soft-chin",
+        "legacy"
+      ],
+      [
+        "retained",
         "wide-jaw",
         "legacy"
       ],
@@ -609,6 +656,11 @@
       ],
       [
         "retained",
+        "narrow-soft-chin",
+        "legacy"
+      ],
+      [
+        "retained",
         "wide-jaw",
         "legacy"
       ]
@@ -631,11 +683,16 @@
       ],
       [
         "retained",
+        "narrow-soft-chin",
+        "legacy"
+      ],
+      [
+        "retained",
         "wide-jaw",
         "legacy"
       ]
     ]
   },
   "scope": "Only supplied artifact sets verified. Every omitted combination remains untested. Observed pairs do not certify other full combinations or aesthetics.",
-  "checked_at_utc": "2026-10-19T15:18:00Z"
+  "checked_at_utc": "2026-10-19T15:36:00Z"
 }

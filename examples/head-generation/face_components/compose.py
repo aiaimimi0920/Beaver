@@ -79,7 +79,7 @@ def resolve(selection, fit_policy="legacy"):
             "ear_point_strength",
             "ear_tip_lift",
         },
-        "face": {"face_width", "jaw_width", "chin_width"},
+        "face": {"face_width", "jaw_width", "chin_width", "chin_softness"},
     }
     for slot, allowed in owned_keys.items():
         values = catalog[slot][selection[slot]]

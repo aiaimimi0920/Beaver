@@ -1,0 +1,62 @@
+{
+  "schema_version": 1,
+  "candidates": [
+    {
+      "candidate": "combo840",
+      "selection": {
+        "eyes": "downturned",
+        "brows": "soft-arched",
+        "mouth": "retained",
+        "nose": "retained",
+        "ears": "retained",
+        "face": "narrow-soft-chin"
+      },
+      "fit_policy": "legacy",
+      "composition_sha256": "c7f9f29f3fc0688e9a468d21d6c0411a2075abc6b00fd77fb4fbe6afc7a33f68",
+      "glb_sha256": "47ca290819ebf45d99ce64fd15f641e925ca5caa8d80b090f27760e62181a959",
+      "gen_job": "75de3c64-efd9-4d8b-a73a-44873c71a960",
+      "sdf_job": "d588a292-5da4-43f8-9677-916e06e15782",
+      "eye_captures_verified": 84,
+      "mouth_captures_verified": 18,
+      "manifest_sha256": {
+        "eye": "58a142335e81000acf9781dc120d1d4e14be9e691e63dd2aecd9505828c84511",
+        "mouth": "ba7ca7fcbdd9881364930792b7f5c9d1a88cbcfa8bfbe49b44af18ba609b2492"
+      },
+      "jaw_boundary_fairing": {
+        "selected_vertices": 14,
+        "maximum_displacement_m": 0.004247999999999989,
+        "proposed_displacement_m": 0.005843641516821883
+      },
+      "final_return_boundary_fairing": {
+        "selected_vertices": 15,
+        "maximum_displacement_m": 0.0018879999999999921,
+        "proposed_displacement_m": 0.0032909438564273706
+      },
+      "oral_clearance": {
+        "scope": "neutral hidden wall vertices against evaluated skin; not a global collision test",
+        "sampled_vertices": 60,
+        "maximum_signed_distance_m": -0.005957178116659634,
+        "rear_cap_planarity_m": 0.0
+      },
+      "archives": {
+        "model": {
+          "name": "Aster-combo840-model.zip",
+          "bytes": 5493324,
+          "sha256": "9ab2e8bcdf99558a4acb4c7422a6ea64fa94be3510f00f31d771fbbb5e0bd7e1"
+        },
+        "captures": {
+          "name": "Aster-combo840-captures.zip",
+          "bytes": 29852222,
+          "sha256": "db2b3b8a5bd57d2249415f20fc6a545a14e8b42f68dd21d1d79e876c843f4bba"
+        }
+      }
+    }
+  ],
+  "scope": "Functional chin-curvature axis, not a distinct face family",
+  "tests": {
+    "facial_surface": 87,
+    "face_components": 39
+  },
+  "visual_review": "Independent static review: modestly blunter lowest chin and shallower45degree transition, same overall retained contour. No obvious new crack/fold in viewed render/white. Root also inspected full-mouth front render,oblique white andwire. Not exhaustive collision/aesthetic acceptance.",
+  "limits": "0.944mm is direct pre-fairing vertical bound only, not final3D. Existing jaw andreturn corrections remain active and report separately. Native camera auto-size differs slightly from827; comparison is not pixel-identical calibration."
+}
