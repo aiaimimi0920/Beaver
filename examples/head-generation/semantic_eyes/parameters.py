@@ -48,6 +48,7 @@ LIMITS = {
     "lateral_aperture_follow": (0.0, 0.0, 1.0),
     "lateral_blink_follow": (0.85, 0.65, 0.85),
     "lateral_guide_inward_power": (0.0, 0.0, 4.0),
+    "lateral_guide_regularization": (1.0, 0.0, 1.0),
 }
 
 
@@ -79,6 +80,13 @@ def validate(request):
         ):
             raise ValueError("Layer control must be numeric zero or one: " + key)
         result[key] = float(value)
+    if (
+        result["lateral_guide_regularization"] != 1
+        and result["lateral_aperture_follow"] != 1
+    ):
+        raise ValueError(
+            "Skin-tethered guide requires aperture-following initial construction"
+        )
     if 0 < result["lateral_guide_inward_power"] < 1:
         raise ValueError("Active lateral guide power must be between 1 and 4")
     if 0 < result["aperture_upper_share"] < 0.2:

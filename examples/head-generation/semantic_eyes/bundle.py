@@ -241,6 +241,11 @@ def build_request(parameters, output_prefix, workspace, *, blink=False):
     sources["lateral_fit.py"] = adapt_lateral_depth(
         sources["lateral_fit.py"], p["lateral_aperture_follow"]
     )
+    from source_lateral_regularization import adapt_regularization
+
+    sources["lateral_fit.py"] = adapt_regularization(
+        sources["lateral_fit.py"], p["lateral_guide_regularization"]
+    )
     sources["eye_accents.py"] = adapt_lateral_rim(
         sources["eye_accents.py"], p["lateral_aperture_follow"]
     )
@@ -346,6 +351,9 @@ def build_request(parameters, output_prefix, workspace, *, blink=False):
                 "source_upper_warp.py": (HERE / "source_upper_warp.py").read_text(),
                 "source_return_order.py": (HERE / "source_return_order.py").read_text(),
                 "source_lateral_rim.py": (HERE / "source_lateral_rim.py").read_text(),
+                "source_lateral_regularization.py": (
+                    HERE / "source_lateral_regularization.py"
+                ).read_text(),
                 "source_angular_samples.py": (
                     HERE / "source_angular_samples.py"
                 ).read_text(),

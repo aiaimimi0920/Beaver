@@ -133,6 +133,8 @@ class SemanticEyeTests(unittest.TestCase):
                     request["lash_contour_follow"] = 1
                 if key == "aperture_upper_share" and bound:
                     request.update(upper_arch=0.7, lower_arch=0.5)
+                if key == "lateral_guide_regularization" and bound != 1:
+                    request["lateral_aperture_follow"] = 1
                 adapt_style(self.style, request)
 
     def test_nasal_spacing_extension_preserves_width_and_local_features(self):

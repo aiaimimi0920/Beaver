@@ -28,7 +28,9 @@ def digest(value):
     ).hexdigest()
 
 
-def resolve(selection):
+def resolve(selection, fit_policy="legacy"):
+    if fit_policy not in ("legacy", "skin-seated-075"):
+        raise ValueError("Unknown explicit fit policy")
     if not isinstance(selection, dict) or set(selection) != set(SLOTS):
         raise ValueError("Choose exactly eyes, brows, mouth, nose, ears and face")
     catalog = json.loads((HERE / "catalog.json").read_text())
@@ -53,6 +55,8 @@ def resolve(selection):
     if set(brow) != BROW_KEYS:
         raise ValueError("Brow preset must own all and only brow parameters")
     parameters.update(brow)
+    if fit_policy == "skin-seated-075":
+        parameters["lateral_guide_regularization"] = 0.75
     owned_keys = {
         "mouth": {
             "mouth_width_scale",
@@ -74,9 +78,23 @@ def resolve(selection):
     }
     if "mouth_width_scale" in mouth:
         components["mouth_width_scale"] = mouth["mouth_width_scale"]
+    intents = json.loads((HERE / "authoring-intents.zh-CN.json").read_text())
+    if set(intents) != set(SLOTS) or any(
+        set(intents[k]) != set(catalog[k]) for k in SLOTS
+    ):
+        raise ValueError("Authoring intents must cover exactly the component catalog")
+    selected_intents = {slot: intents[slot][selection[slot]] for slot in SLOTS}
+    if any(
+        not isinstance(value, str) or not value.strip()
+        for value in selected_intents.values()
+    ):
+        raise ValueError("Each selected component requires a written intent")
     resolved = {
         "schema_version": 1,
         "selection": copy.deepcopy(selection),
+        "fit_policy": fit_policy,
+        "authoring_intents": selected_intents,
+        "intent_catalog_sha256": digest(intents),
         "eye_source_id": eye_id,
         "surface_parameters": spec["surface_parameters"],
         "eye_parameters": parameters,

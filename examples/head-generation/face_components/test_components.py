@@ -74,6 +74,28 @@ class CompositionTests(unittest.TestCase):
         for slot in ("nose", "ears"):
             self.assertEqual(catalog[slot]["retained"], {})
 
+    def test_fit_policy_is_explicit_and_preserves_component_selection(self):
+        legacy = resolve(self.selection)
+        fitted = resolve(self.selection, "skin-seated-075")
+        self.assertEqual(legacy["fit_policy"], "legacy")
+        self.assertNotIn("lateral_guide_regularization", legacy["eye_parameters"])
+        self.assertEqual(fitted["eye_parameters"]["lateral_guide_regularization"], 0.75)
+        self.assertEqual(legacy["selection"], fitted["selection"])
+        with self.assertRaises(ValueError):
+            resolve(self.selection, "automatic")
+
+    def test_selected_intents_are_complete_and_detached(self):
+        result = resolve(self.selection)
+        self.assertEqual(set(result["authoring_intents"]), set(SLOTS))
+        self.assertTrue(all(result["authoring_intents"].values()))
+        other = resolve({**self.selection, "eyes": "almond"})
+        self.assertEqual(
+            result["authoring_intents"]["brows"], other["authoring_intents"]["brows"]
+        )
+        self.assertNotEqual(
+            result["authoring_intents"]["eyes"], other["authoring_intents"]["eyes"]
+        )
+
     def test_catalog_cannot_override_another_slot(self):
         catalog = json.loads((HERE / "catalog.json").read_text())
         catalog["nose"]["retained"] = {"ear_span_scale": 0.94}

@@ -16,12 +16,12 @@ def load_module(path, name):
     return module
 
 
-def build_request(selection, prefix, workspace):
+def build_request(selection, prefix, workspace, fit_policy="legacy"):
     if not re.fullmatch(r"assets/aster/general_face_eyes_combo[a-z0-9_]+/", prefix):
         raise ValueError("Use a fresh general_face_eyes_combo prefix")
     if (Path(workspace) / prefix).exists():
         raise ValueError("Composition must use a fresh directory")
-    snapshot = resolve(selection)
+    snapshot = resolve(selection, fit_policy)
     old_path = sys.path[:]
     sys.path.insert(0, str(SURFACE))
     try:
@@ -53,6 +53,9 @@ def build_request(selection, prefix, workspace):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--selection", type=Path, required=True)
+    parser.add_argument(
+        "--fit-policy", choices=("legacy", "skin-seated-075"), default="legacy"
+    )
     parser.add_argument("--prefix", required=True)
     parser.add_argument("--workspace", type=Path, required=True)
     parser.add_argument("--output", type=Path, required=True)
@@ -63,7 +66,10 @@ if __name__ == "__main__":
     args.output.write_text(
         json.dumps(
             build_request(
-                json.loads(args.selection.read_text()), args.prefix, args.workspace
+                json.loads(args.selection.read_text()),
+                args.prefix,
+                args.workspace,
+                args.fit_policy,
             )
         )
     )
