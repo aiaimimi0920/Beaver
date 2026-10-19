@@ -8,8 +8,17 @@ import struct
 from pathlib import Path
 
 
-def expected_views():
+def expected_views(profile="eye"):
     """The exact 84-view native eye-family schedule, including wireframe views."""
+    if profile == "mouth":
+        return {
+            (yaw, 0, 0, 0, weight, mode)
+            for yaw in (0, -45, 45)
+            for weight in (0.6, 1)
+            for mode in ("render", "white", "edges")
+        }
+    if profile != "eye":
+        raise ValueError("Unknown capture profile")
     rows = set()
     for yaw, pitch in ((0, 0), (-45, 0), (45, 0), (90, 0), (0, -20), (0, 20)):
         for weight in (0, 0.25, 0.5, 0.75, 1):
@@ -26,7 +35,7 @@ def expected_views():
     return rows
 
 
-def verify_capture(workspace, manifest, expected_source=None):
+def verify_capture(workspace, manifest, expected_source=None, profile="eye"):
     root = Path(workspace).resolve()
     data = json.loads(Path(manifest).read_text())
 
@@ -47,8 +56,8 @@ def verify_capture(workspace, manifest, expected_source=None):
     if source != data["source_before"] or source != data["source_after"]:
         raise ValueError("Model source hash mismatch")
     captures = data["captures"]
-    if len(captures) != 84:
-        raise ValueError("Expected all 84 eye-family captures")
+    if len(captures) != len(expected_views(profile)):
+        raise ValueError("Capture count does not match profile")
     actual_schedule = [
         tuple(
             c["requested"][k]
@@ -56,7 +65,7 @@ def verify_capture(workspace, manifest, expected_source=None):
         )
         for c in captures
     ]
-    if set(actual_schedule) != expected_views():
+    if set(actual_schedule) != expected_views(profile):
         raise ValueError("Capture schedule coverage mismatch")
     size = None
     viewport_size = None
@@ -154,7 +163,12 @@ if __name__ == "__main__":
     parser.add_argument("--workspace", type=Path, required=True)
     parser.add_argument("--manifest", type=Path, required=True)
     parser.add_argument("--expected-source", required=True)
+    parser.add_argument("--profile", choices=("eye", "mouth"), default="eye")
     args = parser.parse_args()
     print(
-        json.dumps(verify_capture(args.workspace, args.manifest, args.expected_source))
+        json.dumps(
+            verify_capture(
+                args.workspace, args.manifest, args.expected_source, args.profile
+            )
+        )
     )

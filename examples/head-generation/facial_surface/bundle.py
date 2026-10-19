@@ -34,7 +34,13 @@ def build_request(
     style_profile=None,
     *,
     blink=False,
+    silhouette_parameters=None,
 ):
+    if silhouette_parameters and prefix in {
+        "assets/aster/general_face_eyes_795/",
+        "assets/aster/general_face_eyes_796/",
+    }:
+        raise ValueError("Silhouette experiments must use a fresh output prefix")
     if (
         isinstance(reviewed_support_bound_m, bool)
         or not isinstance(reviewed_support_bound_m, (int, float))
@@ -54,6 +60,11 @@ def build_request(
         recipe = builder.RECIPE
         baseline_style = apply_style_profile(
             json.loads((recipe / "face_style.json").read_text()), style_profile
+        )
+        from source_silhouette import apply_silhouette
+
+        baseline_style, silhouette_report = apply_silhouette(
+            baseline_style, silhouette_parameters
         )
         style = builder.adapt_style(baseline_style, builder.validate(eyes))
         face = (recipe / "face.py").read_text()
@@ -142,6 +153,12 @@ def depth(x, y):"""
             (snapshot / "ear_boundary.py").write_text(
                 adapt_ear_boundary_source((recipe / "ear_boundary.py").read_text())
             )
+            if silhouette_report is not None:
+                from source_silhouette import adapt_ear_envelope
+                (snapshot / "ear_width.py").write_text(adapt_ear_envelope(
+                    (recipe / "ear_width.py").read_text(),
+                    silhouette_report["original_width_stations"],
+                ))
             (snapshot / "pipeline.py").write_text(pipeline)
             (snapshot / "face.py").write_text(face)
             (snapshot / "eye_socket.py").write_text(socket)
@@ -161,6 +178,8 @@ def depth(x, y):"""
     )
     if style_profile in ("emerald_layered", "emerald_illustrated"):
         request["code"] += f'report["semantic_eyes"]["scope"] = {profile_scope!r}\n'
+    if silhouette_report is not None:
+        report["silhouette"] = silhouette_report
     report.update(
         style_profile_scope=profile_scope,
         parameters=data["parameters"],
@@ -238,6 +257,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--parameters", required=True)
     parser.add_argument("--eyes", default="{}")
+    parser.add_argument("--silhouette", default="{}")
     parser.add_argument("--prefix", required=True)
     parser.add_argument("--workspace", type=Path, required=True)
     parser.add_argument("--reviewed-support-bound-m", type=float, required=True)
@@ -260,6 +280,7 @@ if __name__ == "__main__":
                 args.reviewed_support_bound_m,
                 args.style_profile,
                 blink=args.blink,
+                silhouette_parameters=json.loads(args.silhouette),
             )
         )
     )

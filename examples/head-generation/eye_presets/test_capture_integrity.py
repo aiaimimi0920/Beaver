@@ -63,6 +63,26 @@ class CaptureIntegrityTests(unittest.TestCase):
         self.path.write_text(json.dumps(self.data))
         return verify_capture(self.root, self.path)
 
+    def test_mouth_profile_is_explicit_and_complete(self):
+        rows = sorted(expected_views("mouth"))
+        self.data["captures"] = self.data["captures"][: len(rows)]
+        for c, row in zip(self.data["captures"], rows):
+            yaw, pitch, left, right, mouth, mode = row
+            c["requested"] = dict(
+                yaw=yaw, pitch=pitch, left=left, right=right, mouth=mouth, mode=mode
+            )
+            c["actual_weights"] = [left, right, mouth]
+            c["actual_view"].update(yaw=yaw, pitch=pitch, camera_pitch=pitch, mode=mode)
+        self.path.write_text(json.dumps(self.data))
+        result = verify_capture(self.root, self.path, profile="mouth")
+        self.assertEqual(result["captures_verified"], 18)
+        with self.assertRaises(ValueError):
+            verify_capture(self.root, self.path)
+        self.data["captures"].pop()
+        self.path.write_text(json.dumps(self.data))
+        with self.assertRaises(ValueError):
+            verify_capture(self.root, self.path, profile="mouth")
+
     def test_valid_state(self):
         self.assertEqual(self.verify()["captures_verified"], 84)
 
