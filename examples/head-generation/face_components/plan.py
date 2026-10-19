@@ -19,6 +19,7 @@ def evidence_records():
         "nose-variant-evidence.json",
         "ear-family-evidence.json",
         "mouth-variant-evidence.json",
+        "mouth-template-evidence.json",
         "chin-variant-evidence.json",
         "template-pilot-evidence.json",
     ):

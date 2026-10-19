@@ -140,6 +140,12 @@ def raw_without_origin(x, h, c):
         if h.lo < points[0][0] or h.hi > points[-1][0]:
             nose = I(min(0, nose.lo), max(0, nose.hi))
         z += nose
+    lip_h = h
+    if (
+        c.get("mouth_seam_bow_height", 0)
+        and lateral.lo < c["mouth_seam_shoulder_radius_ratio"] * c["mouth_half_width"]
+    ):
+        lip_h = h - I(0, c["mouth_seam_bow_height"])
     for prefix in ("lower_lip", "upper_lip"):
         lateral_shape = (
             -((lateral / c[prefix + "_lateral_width"]) ** c[prefix + "_lateral_power"])
@@ -150,13 +156,13 @@ def raw_without_origin(x, h, c):
             radius = 0.7 * c["mouth_half_width"]
             if lateral.lo < radius:
                 ridge += I(0, c["upper_lip_bow_height"])
-        vertical = (-(((h - ridge) / c[prefix + "_width"]) ** 2)).exp()
+        vertical = (-(((lip_h - ridge) / c[prefix + "_width"]) ** 2)).exp()
         z += H * c[prefix + "_relief"] * lateral_shape * vertical
     z -= (
         H
         * c["mouth_seam_recess"]
         * (-((x / 0.02) ** 4)).exp()
-        * (-(((h - c["mouth_height"]) / c["mouth_seam_width"]) ** 2)).exp()
+        * (-(((lip_h - c["mouth_height"]) / c["mouth_seam_width"]) ** 2)).exp()
     )
     shoulder = 1 - (-((lateral / c["lip_shoulder_center_fade"]) ** 2)).exp()
     shoulder *= (
@@ -167,7 +173,7 @@ def raw_without_origin(x, h, c):
             )
             ** 2
         )
-        - ((h - c["lip_shoulder_height"]) / c["lip_shoulder_height_width"]) ** 2
+        - ((lip_h - c["lip_shoulder_height"]) / c["lip_shoulder_height_width"]) ** 2
     ).exp()
     return z + H * c["lip_shoulder_relief"] * shoulder
 

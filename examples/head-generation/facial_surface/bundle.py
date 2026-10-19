@@ -84,8 +84,16 @@ def build_request(
         retained_width_stations = [
             row[:] for row in baseline_style["calibration"]["width_stations"]
         ]
+        from source_mouth_templates import (
+            split_templates,
+            apply_mouth_template,
+            adapt_mouth_face,
+            adapt_mouth_companions,
+        )
+
+        face_templates, mouth_templates = split_templates(family_templates)
         baseline_style, family_report = apply_family_templates(
-            baseline_style, family_templates, silhouette_parameters
+            baseline_style, face_templates, silhouette_parameters
         )
         from source_components import apply_components
 
@@ -114,10 +122,14 @@ def build_request(
         from source_lips import apply_lip_relief, adapt_lip_source
 
         baseline_style, lip_report = apply_lip_relief(baseline_style, lip_parameters)
+        baseline_style, mouth_template_report = apply_mouth_template(
+            baseline_style, mouth_templates
+        )
         style = builder.adapt_style(baseline_style, builder.validate(eyes))
         face = adapt_lip_source(
             (recipe / "face.py").read_text(), baseline_style["calibration"]
         )
+        face = adapt_mouth_face(face, mouth_template_report is not None)
         from source_upper_warp import adapt_face_source
 
         analysis_face = adapt_face_source(
@@ -192,6 +204,14 @@ def depth(x, y):"""
             for path in recipe.iterdir():
                 if path.is_file():
                     (snapshot / path.name).write_bytes(path.read_bytes())
+            for companion in ("mouth.py", "textures.py", "crease_rules.py"):
+                (snapshot / companion).write_text(
+                    adapt_mouth_companions(
+                        companion,
+                        (recipe / companion).read_text(),
+                        mouth_template_report is not None,
+                    )
+                )
             from source_ear_profile import adapt_ear_profile
             from source_ear_join import adapt_upper_join
 
@@ -276,6 +296,8 @@ def depth(x, y):"""
         )
     if family_report is not None:
         report["family_template"] = family_report
+    if mouth_template_report is not None:
+        report["mouth_template"] = mouth_template_report
     if silhouette_report is not None:
         report["silhouette"] = silhouette_report
     if normal_amount:

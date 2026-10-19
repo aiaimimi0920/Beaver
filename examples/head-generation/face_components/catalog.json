@@ -78,6 +78,9 @@
       "lower_lip_relief_scale": 1.15,
       "upper_lip_bow_height": 0.002,
       "mouth_width_scale": 1.08
+    },
+    "bowed-contour": {
+      "template_id": "bowed-mouth-contour-v1"
     }
   },
   "nose": {

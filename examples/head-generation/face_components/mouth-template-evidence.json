@@ -1,0 +1,109 @@
+{
+  "scope": "Exact native samples only; no extrapolation to untested combinations or final aesthetic approval",
+  "candidates": [
+    {
+      "candidate": "combo847",
+      "selection": {
+        "eyes": "downturned",
+        "brows": "soft-arched",
+        "mouth": "bowed-contour",
+        "nose": "retained",
+        "ears": "retained",
+        "face": "retained"
+      },
+      "composition_sha256": "77819f1f05994d7f7d3d719a2929c31cc88d0b0402117fb578df6da9884ad695",
+      "generation_status": "succeeded",
+      "sdf_status": "succeeded",
+      "generation_job_id": "28e42c83-61d4-40e1-acf2-1e0645545bc3",
+      "sdf_job_id": "250c1dd5-8640-40b6-a161-532f2c220973",
+      "glb_sha256": "a9c3fa167cfe28a3a9cda711f465e37a0e052c792d68d272b49e9feab5634611",
+      "mouth_template": {
+        "template": {
+          "id": "bowed-mouth-contour-v1",
+          "slot": "mouth",
+          "version": 1,
+          "reference_sources": [
+            "https://www.guiltygear.com/ggst/en/character/mll/"
+          ],
+          "seam_bow_height": 0.004,
+          "shoulder_radius_ratio": 0.7,
+          "template_sha256": "7e8def161573f91b513d491f13a579649016f89800ce416f5201575d731f8cbe"
+        },
+        "seam_height_change_bound_m": 0.000944,
+        "seam_slope_change_bound": 0.3277743002071908,
+        "scope": "Authored neutral contour and corresponding lip field shift; not final mesh displacement or collision proof"
+      },
+      "eye_capture_count": 84,
+      "mouth_capture_count": 18,
+      "visual_status": "Shallow neutral bow visible in front/oblique render and white; no obvious leak observed in inspected mouth-open views, not exhaustive intersection proof",
+      "oral_clearance": {
+        "scope": "neutral hidden wall vertices against evaluated skin; not a global collision test",
+        "sampled_vertices": 60,
+        "maximum_signed_distance_m": -0.006298847980360733,
+        "rear_cap_planarity_m": 0.0
+      },
+      "model_library_file_id": "libfile_1e18ba4c3c988191ae853285bd38ac95",
+      "captures_library_file_id": "libfile_bf340966e0a08191abf4c204e255920b",
+      "continuous_orientation": {
+        "triangles": 10980,
+        "minimum_orientation_ratio": 0.03508340078668637,
+        "worst_blink_weight": 1.0,
+        "worst_mouth_weight": 0.0,
+        "worst_triangle": 2529,
+        "scope": "Floating-point analytic quadratic minimum over blink and MouthOpen [0,1]; no triangle couples both eyes. Not an intersection proof."
+      }
+    },
+    {
+      "candidate": "combo848",
+      "selection": {
+        "eyes": "slender",
+        "brows": "soft-arched",
+        "mouth": "bowed-contour",
+        "nose": "retained",
+        "ears": "retained",
+        "face": "root-protected-round-chin"
+      },
+      "composition_sha256": "7c28b3c9a7c71e76b518842ca56228100b26bf0b8f0fc59decb9626137a20f6b",
+      "generation_status": "succeeded",
+      "sdf_status": "succeeded",
+      "generation_job_id": "11ca8abe-9086-4a24-abcb-b8a3167a8c16",
+      "sdf_job_id": "073fa131-4b8f-4f3a-82b3-fc9e3f5756b5",
+      "glb_sha256": "ffba82765011bd777f30e43184b8077b9378dfdcf8d6ba89e84ccd82076a14bf",
+      "mouth_template": {
+        "template": {
+          "id": "bowed-mouth-contour-v1",
+          "slot": "mouth",
+          "version": 1,
+          "reference_sources": [
+            "https://www.guiltygear.com/ggst/en/character/mll/"
+          ],
+          "seam_bow_height": 0.004,
+          "shoulder_radius_ratio": 0.7,
+          "template_sha256": "7e8def161573f91b513d491f13a579649016f89800ce416f5201575d731f8cbe"
+        },
+        "seam_height_change_bound_m": 0.000944,
+        "seam_slope_change_bound": 0.3277743002071908,
+        "scope": "Authored neutral contour and corresponding lip field shift; not final mesh displacement or collision proof"
+      },
+      "eye_capture_count": 84,
+      "mouth_capture_count": 18,
+      "visual_status": "Shallow neutral bow visible in front/oblique render and white; no obvious leak observed in inspected mouth-open views, not exhaustive intersection proof",
+      "oral_clearance": {
+        "scope": "neutral hidden wall vertices against evaluated skin; not a global collision test",
+        "sampled_vertices": 60,
+        "maximum_signed_distance_m": -0.008145106578012928,
+        "rear_cap_planarity_m": 0.0
+      },
+      "model_library_file_id": "libfile_3ef2b2fca2908191810ebba76ca31b6a",
+      "captures_library_file_id": "libfile_faddb863483c8191b25ee5dbf4ebdf4a",
+      "continuous_orientation": {
+        "triangles": 10980,
+        "minimum_orientation_ratio": 0.06245642328605028,
+        "worst_blink_weight": 1.0,
+        "worst_mouth_weight": 0.0,
+        "worst_triangle": 1064,
+        "scope": "Floating-point analytic quadratic minimum over blink and MouthOpen [0,1]; no triangle couples both eyes. Not an intersection proof."
+      }
+    }
+  ]
+}

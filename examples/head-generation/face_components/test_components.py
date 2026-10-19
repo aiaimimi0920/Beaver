@@ -33,6 +33,27 @@ class CompositionTests(unittest.TestCase):
         self.assertNotEqual(a["family_templates"], b["family_templates"])
         self.assertNotIn("family_templates", resolve(self.selection))
 
+    def test_face_and_mouth_templates_compose_independently(self):
+        selection = {
+            **self.selection,
+            "face": "root-protected-round-chin",
+            "mouth": "bowed-contour",
+        }
+        result = resolve(selection)
+        self.assertEqual(
+            [t["slot"] for t in result["family_templates"]], ["face", "mouth"]
+        )
+        self.assertEqual(result["lip_parameters"], {})
+        self.assertEqual(result["silhouette_parameters"], {})
+        original = resolve(self.selection)
+        self.assertEqual(result["eye_parameters"], original["eye_parameters"])
+        self.assertEqual(
+            result["component_parameters"], original["component_parameters"]
+        )
+        changed = resolve({**selection, "mouth": "retained"})
+        self.assertEqual(result["family_templates"][0], changed["family_templates"][0])
+        self.assertEqual(verify_snapshot(result), result)
+
     def test_six_explicit_slots_required(self):
         for slot in SLOTS:
             choice = dict(self.selection)

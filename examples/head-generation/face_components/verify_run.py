@@ -47,6 +47,34 @@ def receipt(path, root, stage):
     return job, outputs
 
 
+def verify_template_reports(snapshot, surface, calibration):
+    templates = snapshot.get("family_templates", [])
+    if not isinstance(templates, list):
+        raise ValueError("Invalid template snapshot")
+    seen = set()
+    fields = {"face": "family_template", "mouth": "mouth_template"}
+    for template in templates:
+        slot = template.get("slot")
+        if slot not in fields or slot in seen:
+            raise ValueError("Duplicate or unknown template slot")
+        seen.add(slot)
+        record = surface.get(fields[slot], {})
+        if record.get("template") != template:
+            raise ValueError("Snapshot/template report mismatch")
+        if slot == "face" and record.get("final_width_stations") != calibration.get(
+            "width_stations"
+        ):
+            raise ValueError("Template/final width calibration mismatch")
+        if slot == "mouth" and (
+            calibration.get("mouth_seam_bow_height") != template["seam_bow_height"]
+            or calibration.get("mouth_seam_shoulder_radius_ratio")
+            != template["shoulder_radius_ratio"]
+        ):
+            raise ValueError("Template/mouth calibration mismatch")
+    if any(field in surface and slot not in seen for slot, field in fields.items()):
+        raise ValueError("Unexpected generated template report")
+
+
 def verify_run(spec):
     root = Path(spec["workspace"]).resolve()
     prefix = spec["prefix"]
@@ -102,6 +130,17 @@ def verify_run(spec):
         raise ValueError("SDF binding differs from generation job")
     report = json.loads(resource(root, prefix + "generation_report.json").read_text())
     snapshot = verify_snapshot(report["face_components"])
+    verify_template_reports(
+        snapshot,
+        report.get("facial_surface", {}),
+        (
+            json.loads(resource(root, prefix + "face_style.json").read_text())[
+                "calibration"
+            ]
+            if snapshot.get("family_templates")
+            else {}
+        ),
+    )
     if (
         snapshot["selection"] != spec["selection"]
         or snapshot.get("fit_policy", "legacy") != spec["fit_policy"]
