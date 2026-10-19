@@ -34,7 +34,9 @@ def bezier_segments(points):
 def validate(parameters):
     if parameters is None:
         parameters = {}
-    if not isinstance(parameters, dict) or set(parameters) - set(AXES):
+    if not isinstance(parameters, dict) or set(parameters) - (
+        set(AXES) | {"chin_softness"}
+    ):
         raise ValueError("Unknown silhouette controls")
     result = {}
     for name, (limit, _) in AXES.items():
@@ -47,6 +49,15 @@ def validate(parameters):
         ):
             raise ValueError("Invalid silhouette control: " + name)
         result[name] = value
+    softness = parameters.get("chin_softness", 0.0)
+    if (
+        isinstance(softness, bool)
+        or not isinstance(softness, (int, float))
+        or not math.isfinite(softness)
+        or not 0 <= softness <= 1
+    ):
+        raise ValueError("Invalid silhouette control: chin_softness")
+    result["chin_softness"] = softness
     return result
 
 
@@ -56,6 +67,13 @@ def apply_silhouette(style, parameters):
     if not any(controls.values()):
         return result, None
     calibration = result["calibration"]
+    chin_before = calibration["chin_return_lift"]
+    if controls["chin_softness"]:
+        if chin_before != 0.008 or calibration["origin_y_m"] != 1.544:
+            raise ValueError("Chin curvature calibration contract changed")
+        calibration["chin_return_lift"] = (
+            chin_before - 0.004 * controls["chin_softness"]
+        )
     old = calibration["width_stations"]
     if tuple(p[0] for p in old) != HEIGHTS:
         raise ValueError("Silhouette station contract changed")
@@ -84,25 +102,32 @@ def apply_silhouette(style, parameters):
     calibration["width_stations"] = new
     return result, {
         "parameters": controls,
+        "chin_return_lift_before": chin_before,
+        "chin_return_lift_after": calibration["chin_return_lift"],
+        "chin_direct_vertical_change_bound_m": height
+        * 0.004
+        * controls["chin_softness"],
+        "chin_bound_scope": "Before downstream fairing, y>=1.544 and |q|<=1; not final 3D displacement. Other supports have exponentially small nonzero influence.",
         "original_width_stations": old,
         "final_width_stations": new,
         "continuous_half_width_change_bound_m": bound,
         "half_width_budget_m": MAX_HALF_WIDTH_CHANGE_M,
-        "scope": "Width interpolant only; native attachment, mouth and ear checks required",
+        "scope": "Width interpolant and opt-in chin vertical curvature; native attachment, mouth and ear checks required",
     }
 
 
 def adapt_ear_envelope(source, original_stations):
     """Carry the opt-in width delta through the inherited ear-under envelope."""
-    old_import = 'from face import H,Y0,Z0'
-    old_target = 'delta=max(-.003,min(.003,w*height-current))'
+    old_import = "from face import H,Y0,Z0"
+    old_target = "delta=max(-.003,min(.003,w*height-current))"
     if source.count(old_import) != 1 or source.count(old_target) != 1:
-        raise ValueError('Inherited ear envelope source contract changed')
-    source = source.replace(old_import, 'from face import H,Y0,Z0,C,curve', 1)
+        raise ValueError("Inherited ear envelope source contract changed")
+    source = source.replace(old_import, "from face import H,Y0,Z0,C,curve", 1)
     replacement = (
-        'v=(p.z+.021-Y0)/H\n'
+        "v=(p.z+.021-Y0)/H\n"
         '        silhouette_delta=H*(curve(v,1,C["width_stations"])-curve(v,1,'
-        + repr(original_stations) + '))\n'
-        '        delta=max(-.003,min(.003,w*height+silhouette_delta-current))'
+        + repr(original_stations)
+        + "))\n"
+        "        delta=max(-.003,min(.003,w*height+silhouette_delta-current))"
     )
     return source.replace(old_target, replacement, 1)

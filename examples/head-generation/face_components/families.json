@@ -224,7 +224,8 @@
           "wide-jaw",
           "narrow-jaw",
           "wide-face",
-          "narrow-chin"
+          "narrow-chin",
+          "narrow-soft-chin"
         ],
         "status": "implemented_with_historical_samples",
         "sources": [

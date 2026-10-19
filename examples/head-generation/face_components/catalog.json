@@ -115,6 +115,10 @@
     },
     "narrow-chin": {
       "chin_width": -0.04
+    },
+    "narrow-soft-chin": {
+      "chin_width": -0.04,
+      "chin_softness": 1
     }
   }
 }

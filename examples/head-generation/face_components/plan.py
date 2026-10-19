@@ -19,6 +19,7 @@ def evidence_records():
         "nose-variant-evidence.json",
         "ear-family-evidence.json",
         "mouth-variant-evidence.json",
+        "chin-variant-evidence.json",
     ):
         for value in json.loads((HERE / name).read_text())["candidates"]:
             records.append({**value, "evidence_file": name})
