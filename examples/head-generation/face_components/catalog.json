@@ -1,0 +1,30 @@
+{
+  "schema_version": 1,
+  "eyes": {
+    "round-open": "baseline-795",
+    "almond": "almond-taper-experiment-803",
+    "slender": "clean-slender-812",
+    "downturned": "clean-downturned-810",
+    "upturned": "sharp-upturned-799",
+    "shallow-upper": "flat-upper-round-lower-800",
+    "rounded-upper": "rounded-arch-shallow-805",
+    "segmented": "clean-angular-811"
+  },
+  "brows": {
+    "soft-level": {"brow_height_offset": -0.006, "brow_rise_offset": -0.022, "brow_thickness": 0.85, "brow_arch": 1.0, "brow_fullness_offset": 0.2, "brow_softness": 0.4, "brow_head_rounding": 1.0},
+    "soft-arched": {"brow_height_offset": -0.006, "brow_rise_offset": -0.018, "brow_thickness": 0.85, "brow_arch": 1.25, "brow_fullness_offset": 0.2, "brow_softness": 0.4, "brow_head_rounding": 1.0}
+  },
+  "mouth": {
+    "retained": {},
+    "soft-upper-transition": {"upper_lip_lateral_power": 2}
+  },
+  "nose": {"retained": {}},
+  "ears": {"retained": {}},
+  "face": {
+    "retained": {},
+    "wide-jaw": {"jaw_width": 0.02},
+    "narrow-jaw": {"jaw_width": -0.02},
+    "wide-face": {"face_width": 0.01},
+    "narrow-chin": {"chin_width": -0.04}
+  }
+}
