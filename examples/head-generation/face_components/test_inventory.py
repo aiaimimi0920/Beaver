@@ -12,8 +12,9 @@ class FamilyInventoryTests(unittest.TestCase):
 
     def test_variants_are_not_families(self):
         result = family_inventory()
-        self.assertEqual(result["mouth"]["selectable_options"], 3)
+        self.assertEqual(result["mouth"]["selectable_options"], 5)
         self.assertEqual(result["mouth"]["implemented_families"], 1)
+        self.assertEqual(result["mouth"]["pending_native_families"], 0)
         self.assertEqual(result["brows"]["selectable_options"], 4)
         self.assertEqual(result["face"]["implemented_families"], 1)
 
@@ -29,7 +30,7 @@ class FamilyInventoryTests(unittest.TestCase):
 
     def test_planned_family_not_executable(self):
         r = copy.deepcopy(self.registry)
-        r["slots"]["ears"]["lateral-elf"]["presets"] = ["compact-human"]
+        r["slots"]["ears"]["lateral-elf"]["status"] = "planned"
         with self.assertRaises(ValueError):
             family_inventory(self.catalog, r)
 

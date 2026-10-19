@@ -32,14 +32,14 @@ class NativeJobFailure(ValueError):
 
 def receipt(path, root, stage):
     job = json.loads(Path(path).read_text())["response"]["result"]["result"]
+    if Path(job["process"]["workspace"]).resolve() != root:
+        raise ValueError("Receipt workspace mismatch")
     if (
         job["status"] != "succeeded"
         or job["result"]["success"] is not True
         or job["result"]["exitCode"] != 0
     ):
         raise NativeJobFailure(stage, job["status"])
-    if Path(job["process"]["workspace"]).resolve() != root:
-        raise ValueError("Receipt workspace mismatch")
     rows = job["result"]["outputs"]
     outputs = {row["path"]: row["sha256"] for row in rows}
     if len(outputs) != len(rows):

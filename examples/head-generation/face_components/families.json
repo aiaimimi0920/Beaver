@@ -137,7 +137,9 @@
         "presets": [
           "retained",
           "soft-upper-transition",
-          "wide-neutral"
+          "wide-neutral",
+          "bowed-volumetric",
+          "bowed-volumetric-wide"
         ],
         "status": "implemented_with_historical_samples",
         "sources": [
@@ -153,10 +155,9 @@
           "https://www.guiltygear.com/ggst/en/character/mll/"
         ],
         "missing_controls": [
-          "independent_upper_lower_fullness",
-          "central_bow",
-          "lip_projection"
-        ]
+          "visually_distinct_upper_lip_outline"
+        ],
+        "prototype_result": "838 shows fuller lower lip but lacks clearly readable paired upper shoulders; retained as minimal-seam variant, not a second family"
       }
     },
     "nose": {
