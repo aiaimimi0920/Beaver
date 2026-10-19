@@ -18,7 +18,10 @@
       "brow_arch": 1.0,
       "brow_fullness_offset": 0.2,
       "brow_softness": 0.4,
-      "brow_head_rounding": 1.0
+      "brow_head_rounding": 1.0,
+      "brow_angularity": 0,
+      "brow_peak_position": 0.5,
+      "brow_band_fullness": 0
     },
     "soft-arched": {
       "brow_height_offset": -0.006,
@@ -27,7 +30,34 @@
       "brow_arch": 1.25,
       "brow_fullness_offset": 0.2,
       "brow_softness": 0.4,
-      "brow_head_rounding": 1.0
+      "brow_head_rounding": 1.0,
+      "brow_angularity": 0,
+      "brow_peak_position": 0.5,
+      "brow_band_fullness": 0
+    },
+    "angular-peaked": {
+      "brow_height_offset": -0.006,
+      "brow_rise_offset": -0.022,
+      "brow_thickness": 0.85,
+      "brow_arch": 1.5,
+      "brow_fullness_offset": 0.2,
+      "brow_softness": 0.4,
+      "brow_head_rounding": 0.5,
+      "brow_angularity": 0.9,
+      "brow_peak_position": 0.65,
+      "brow_band_fullness": 0
+    },
+    "broad-band": {
+      "brow_height_offset": -0.006,
+      "brow_rise_offset": -0.022,
+      "brow_thickness": 1.2,
+      "brow_arch": 0.75,
+      "brow_fullness_offset": 0.2,
+      "brow_softness": 0.2,
+      "brow_head_rounding": 1.0,
+      "brow_angularity": 0,
+      "brow_peak_position": 0.5,
+      "brow_band_fullness": 1
     }
   },
   "mouth": {

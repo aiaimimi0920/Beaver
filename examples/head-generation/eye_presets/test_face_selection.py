@@ -32,10 +32,13 @@ class FaceSelectionTests(unittest.TestCase):
         for name in NAMES:
             spec=packager.load_preset(name)
             # Retained snapshots predate this identity-default control.
-            # Require exactly this one addition; keep all stored parameters frozen.
+            # Require exactly the identity additions; keep stored parameters frozen.
             normalized=validate(spec['eye_parameters'])
-            self.assertEqual(set(normalized)-set(spec['eye_parameters']),{'lateral_guide_regularization'})
+            self.assertEqual(set(normalized)-set(spec['eye_parameters']),{'lateral_guide_regularization','brow_angularity','brow_peak_position','brow_band_fullness'})
             self.assertEqual(normalized.pop('lateral_guide_regularization'),1.0)
+            self.assertEqual(normalized.pop('brow_angularity'),0.0)
+            self.assertEqual(normalized.pop('brow_peak_position'),0.5)
+            self.assertEqual(normalized.pop('brow_band_fullness'),0.0)
             self.assertEqual(normalized,spec['eye_parameters'])
             self.assertEqual(set(spec['silhouette_parameters']),{'face_width','jaw_width','chin_width'})
             self.assertIn('orbit_rim_flattening',spec['surface_parameters'])

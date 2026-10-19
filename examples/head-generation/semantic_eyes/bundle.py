@@ -12,6 +12,7 @@ from source_upper_warp import adapt_upper_sources, HELPERS
 from source_lateral_rim import adapt_lateral_rim, adapt_lateral_depth
 from source_angular_samples import adapt_angular_samples
 from source_return_order import adapt_return_order
+from source_brow_profiles import adapt_brow_profiles
 
 HERE = Path(__file__).resolve().parent
 RECIPE = HERE.parent / "checkpoints/current"
@@ -144,6 +145,12 @@ def build_request(parameters, output_prefix, workspace, *, blink=False):
         }
     )
     sources["face.py"] = adapt_brow_source(sources["face.py"], p["brow_head_rounding"])
+    sources["face.py"] = adapt_brow_profiles(
+        sources["face.py"],
+        p["brow_angularity"],
+        p["brow_peak_position"],
+        p["brow_band_fullness"],
+    )
     if p["layered_lashes"]:
         root_fit = """        delta = target-center
         # Rigid minimax seating preserves the closed six-vertex root section.
@@ -351,6 +358,9 @@ def build_request(parameters, output_prefix, workspace, *, blink=False):
                 "source_upper_warp.py": (HERE / "source_upper_warp.py").read_text(),
                 "source_return_order.py": (HERE / "source_return_order.py").read_text(),
                 "source_lateral_rim.py": (HERE / "source_lateral_rim.py").read_text(),
+                "source_brow_profiles.py": (
+                    HERE / "source_brow_profiles.py"
+                ).read_text(),
                 "source_lateral_regularization.py": (
                     HERE / "source_lateral_regularization.py"
                 ).read_text(),

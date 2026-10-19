@@ -5,6 +5,7 @@ import json
 from pathlib import Path
 
 from compose import HERE, SLOTS, resolve
+from inventory import family_inventory
 
 
 def evidence_records():
@@ -12,9 +13,9 @@ def evidence_records():
     for name in ("native-evidence.json", "component-variants-evidence.json"):
         value = json.loads((HERE / name).read_text())
         records.append({**value, "evidence_file": name})
-    name = "cross-combination-evidence.json"
-    for value in json.loads((HERE / name).read_text())["candidates"]:
-        records.append({**value, "evidence_file": name})
+    for name in ("cross-combination-evidence.json", "brow-family-evidence.json"):
+        for value in json.loads((HERE / name).read_text())["candidates"]:
+            records.append({**value, "evidence_file": name})
     return records
 
 
@@ -55,6 +56,7 @@ def build_plan(selection, fit_policy="legacy", records=None):
     return {
         "schema_version": 1,
         "snapshot": snapshot,
+        "family_inventory": family_inventory(),
         "available_option_counts": {slot: len(catalog[slot]) for slot in SLOTS},
         "count_scope": "Selectable engineering options, not completed research families or tested combinations",
         "recorded_evidence": matches,

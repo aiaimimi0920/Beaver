@@ -17,6 +17,9 @@ BROW_KEYS = {
     "brow_fullness_offset",
     "brow_softness",
     "brow_head_rounding",
+    "brow_angularity",
+    "brow_peak_position",
+    "brow_band_fullness",
 }
 
 

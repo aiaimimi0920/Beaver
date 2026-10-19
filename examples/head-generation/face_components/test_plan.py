@@ -57,7 +57,7 @@ class PlanTests(unittest.TestCase):
             any(x["match"] == "exact_snapshot" for x in result["recorded_evidence"])
         )
 
-    def test_current_831_snapshot_identified(self):
+    def test_831_snapshot_preserved_as_historical_after_catalog_extension(self):
         choice = {
             "eyes": "almond",
             "brows": "soft-level",
@@ -73,8 +73,9 @@ class PlanTests(unittest.TestCase):
                 for x in result["recorded_evidence"]
                 if x["match"] == "exact_snapshot"
             ],
-            ["combo831"],
+            [],
         )
+        self.assertEqual(result["recorded_evidence"][0]["candidate"], "combo831")
 
     def test_invalid_selection_rejected(self):
         with self.assertRaises(ValueError):
@@ -103,3 +104,17 @@ class PlanTests(unittest.TestCase):
         self.assertFalse(
             any(x["candidate"] == "combo829" for x in plan["recorded_evidence"])
         )
+
+    def test_new_brow_families_have_exact_recorded_samples(self):
+        for brow, candidate in (
+            ("angular-peaked", "combo832"),
+            ("broad-band", "combo833"),
+        ):
+            result = build_plan({**self.selection, "brows": brow})
+            matches = [
+                x["candidate"]
+                for x in result["recorded_evidence"]
+                if x["match"] == "exact_snapshot"
+            ]
+            self.assertEqual(matches, [candidate])
+            self.assertEqual(result["current_output_status"], "not_generated")

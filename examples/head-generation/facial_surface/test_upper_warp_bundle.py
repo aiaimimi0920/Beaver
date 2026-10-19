@@ -116,6 +116,7 @@ class UpperWarpBundleTests(unittest.TestCase):
                 "source_angular_samples.py",
                 "source_return_order.py",
                 "source_lateral_regularization.py",
+                    "source_brow_profiles.py",
             },
         )
         self.assertEqual(len(request["outputs"]), 64)
