@@ -139,3 +139,10 @@ class PlanTests(unittest.TestCase):
         row = next(r for r in plan["recorded_evidence"] if r["candidate"] == "combo847")
         self.assertEqual(row["recorded_generation_status"], "succeeded")
         self.assertEqual(plan["current_output_status"], "not_generated")
+
+    def test_nose_template_record_does_not_accept_new_output(self):
+        choice = {**self.selection, "face": "retained", "nose": "short-rounded"}
+        plan = build_plan(choice)
+        row = next(r for r in plan["recorded_evidence"] if r["candidate"] == "combo849")
+        self.assertEqual(row["recorded_generation_status"], "succeeded")
+        self.assertEqual(plan["current_output_status"], "not_generated")

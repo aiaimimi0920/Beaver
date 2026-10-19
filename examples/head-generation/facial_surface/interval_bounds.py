@@ -71,15 +71,15 @@ def outward(lo, hi):
     return I(math.nextafter(lo, -math.inf), math.nextafter(hi, math.inf))
 
 
-def curve(v, axis, points):
+def curve(v, axis, points, flat_endpoints=False):
     v = as_i(v)
     xs = [p[0] for p in points]
     ys = [p[axis] for p in points]
     slopes = [(b - a) / (y - x) for x, y, a, b in zip(xs, xs[1:], ys, ys[1:])]
     ds = (
-        [slopes[0]]
+        [0.0 if flat_endpoints else slopes[0]]
         + [0 if a * b <= 0 else 2 * a * b / (a + b) for a, b in zip(slopes, slopes[1:])]
-        + [slopes[-1]]
+        + [0.0 if flat_endpoints else slopes[-1]]
     )
     lo = max(xs[0], min(xs[-1], v.lo))
     hi = max(xs[0], min(xs[-1], v.hi))
@@ -126,7 +126,9 @@ def raw_without_origin(x, h, c):
     points = c["nose_stations"]
     if h.hi > points[0][0] and h.lo < points[-1][0]:
         active = I(max(h.lo, points[0][0]), min(h.hi, points[-1][0]))
-        nh = H * curve(active, 1, points)
+        nh = H * curve(
+            active, 1, points, c.get("nose_template_mode") == "rounded-quartic"
+        )
         nw = H * curve(active, 2, points)
         t = (x.absolute() / nw).clamp(0, 1)
         blend = (
@@ -137,6 +139,8 @@ def raw_without_origin(x, h, c):
             curve(t, 1, c["nose_lateral_profile"]) * (1 - blend)
             + curve(t, 1, c["nose_basal_profile"]) * blend
         )
+        if c.get("nose_template_mode") == "rounded-quartic":
+            nose = nh * (1 - t**2) ** 2
         if h.lo < points[0][0] or h.hi > points[-1][0]:
             nose = I(min(0, nose.lo), max(0, nose.hi))
         z += nose

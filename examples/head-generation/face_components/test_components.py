@@ -54,6 +54,21 @@ class CompositionTests(unittest.TestCase):
         self.assertEqual(result["family_templates"][0], changed["family_templates"][0])
         self.assertEqual(verify_snapshot(result), result)
 
+    def test_three_independent_template_slots(self):
+        choice = {
+            **self.selection,
+            "face": "root-protected-round-chin",
+            "mouth": "bowed-contour",
+            "nose": "short-rounded",
+        }
+        r = resolve(choice)
+        self.assertEqual(
+            [t["slot"] for t in r["family_templates"]], ["face", "mouth", "nose"]
+        )
+        self.assertNotIn("template_id", r["component_parameters"])
+        self.assertEqual(r["eye_parameters"], resolve(self.selection)["eye_parameters"])
+        self.assertEqual(verify_snapshot(r), r)
+
     def test_six_explicit_slots_required(self):
         for slot in SLOTS:
             choice = dict(self.selection)
