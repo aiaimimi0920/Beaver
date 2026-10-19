@@ -144,7 +144,13 @@ def raw_without_origin(x, h, c):
         lateral_shape = (
             -((lateral / c[prefix + "_lateral_width"]) ** c[prefix + "_lateral_power"])
         ).exp()
-        vertical = (-(((h - c[prefix + "_height"]) / c[prefix + "_width"]) ** 2)).exp()
+        ridge = I(c[prefix + "_height"])
+        if prefix == "upper_lip" and c.get("upper_lip_bow_height", 0):
+            # B(s)=27/4*s^2*(1-s^2)^2 on |s|<1 lies in [0,1].
+            radius = 0.7 * c["mouth_half_width"]
+            if lateral.lo < radius:
+                ridge += I(0, c["upper_lip_bow_height"])
+        vertical = (-(((h - ridge) / c[prefix + "_width"]) ** 2)).exp()
         z += H * c[prefix + "_relief"] * lateral_shape * vertical
     z -= (
         H
@@ -181,7 +187,7 @@ def upper_coordinate_interval(t, c):
     g = c.get("eye_upper_angularity", 0.0)
     if not (a or g):
         return t
-    if not math.isfinite(a) or abs(a) > .25 or not math.isfinite(g) or not 0 <= g <= 1:
+    if not math.isfinite(a) or abs(a) > 0.25 or not math.isfinite(g) or not 0 <= g <= 1:
         raise ValueError("Uncertified upper warp range")
 
     def endpoint(v):
@@ -190,9 +196,13 @@ def upper_coordinate_interval(t, c):
         point = I(v)
         if g:
             u = I(abs(v))
-            q = (I(.30)/.55)*u if abs(v) <= .55 else I(.30)+(I(.70)/.45)*(u-.55)
-            point = ((1-I(g))*u+g*q)*(1 if v >= 0 else -1)
-        return point+a*(1-point*point).clamp(0,1)**3
+            q = (
+                (I(0.30) / 0.55) * u
+                if abs(v) <= 0.55
+                else I(0.30) + (I(0.70) / 0.45) * (u - 0.55)
+            )
+            point = ((1 - I(g)) * u + g * q) * (1 if v >= 0 else -1)
+        return point + a * (1 - point * point).clamp(0, 1) ** 3
 
     lo, hi = endpoint(t.lo), endpoint(t.hi)
     return I(lo.lo, hi.hi)

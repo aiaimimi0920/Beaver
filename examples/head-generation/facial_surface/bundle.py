@@ -82,11 +82,13 @@ def build_request(
         baseline_style, silhouette_report = apply_silhouette(
             baseline_style, silhouette_parameters
         )
-        from source_lips import apply_lip_relief
+        from source_lips import apply_lip_relief, adapt_lip_source
 
         baseline_style, lip_report = apply_lip_relief(baseline_style, lip_parameters)
         style = builder.adapt_style(baseline_style, builder.validate(eyes))
-        face = (recipe / "face.py").read_text()
+        face = adapt_lip_source(
+            (recipe / "face.py").read_text(), baseline_style["calibration"]
+        )
         from source_upper_warp import adapt_face_source
 
         analysis_face = adapt_face_source(

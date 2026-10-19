@@ -192,9 +192,73 @@
         }
       },
       "scope": "Current artifact integrity and recorded native states, not aesthetic approval, current-generator reproducibility or untested combinations"
+    },
+    {
+      "selection": {
+        "eyes": "downturned",
+        "brows": "soft-arched",
+        "mouth": "bowed-volumetric",
+        "nose": "retained",
+        "ears": "retained",
+        "face": "narrow-chin"
+      },
+      "fit_policy": "legacy",
+      "prefix": "assets/aster/general_face_eyes_combo838/",
+      "status": "technically_verified",
+      "composition_sha256": "440ceab4e48c01555ac855ead1692bb26c11dea8354d8600048df12395d6e71f",
+      "glb_sha256": "66aee3eeec86d8a6c4845564844fb8f07b8d80c00e13e641cb0bd2a406fd7f1b",
+      "generation_job": "39fade62-1b16-4701-ac50-bbaa6a0b164a",
+      "sdf_job": "08599886-85f5-4c7b-92a2-ca67df9e334c",
+      "captures": {
+        "eye": {
+          "captures_verified": 84,
+          "source_sha256": "66aee3eeec86d8a6c4845564844fb8f07b8d80c00e13e641cb0bd2a406fd7f1b",
+          "camera_size": 0.430432230234146,
+          "scope": "Integrity, expression and view state; not aesthetic acceptance"
+        },
+        "mouth": {
+          "captures_verified": 18,
+          "source_sha256": "66aee3eeec86d8a6c4845564844fb8f07b8d80c00e13e641cb0bd2a406fd7f1b",
+          "camera_size": 0.430432230234146,
+          "scope": "Integrity, expression and view state; not aesthetic acceptance"
+        }
+      },
+      "scope": "Current artifact integrity and recorded native states, not aesthetic approval, current-generator reproducibility or untested combinations"
+    },
+    {
+      "selection": {
+        "eyes": "downturned",
+        "brows": "soft-arched",
+        "mouth": "bowed-volumetric-wide",
+        "nose": "retained",
+        "ears": "retained",
+        "face": "narrow-chin"
+      },
+      "fit_policy": "legacy",
+      "prefix": "assets/aster/general_face_eyes_combo839/",
+      "status": "technically_verified",
+      "composition_sha256": "41696b46decba2ea5636863aa6316e9ff30260a1ba85014f7bd6f63f175f5ce5",
+      "glb_sha256": "99a66be675e2252cad3c2486cba560718ab57a0ce5d6519f496ee06e3ccefc2b",
+      "generation_job": "954c8043-8cd8-42c2-85a0-04c015fcd173",
+      "sdf_job": "9ad0ba8d-41ec-4c0d-b30a-478ad3c0d957",
+      "captures": {
+        "eye": {
+          "captures_verified": 84,
+          "source_sha256": "99a66be675e2252cad3c2486cba560718ab57a0ce5d6519f496ee06e3ccefc2b",
+          "camera_size": 0.430432230234146,
+          "scope": "Integrity, expression and view state; not aesthetic acceptance"
+        },
+        "mouth": {
+          "captures_verified": 18,
+          "source_sha256": "99a66be675e2252cad3c2486cba560718ab57a0ce5d6519f496ee06e3ccefc2b",
+          "camera_size": 0.430432230234146,
+          "scope": "Integrity, expression and view state; not aesthetic acceptance"
+        }
+      },
+      "scope": "Current artifact integrity and recorded native states, not aesthetic approval, current-generator reproducibility or untested combinations"
     }
   ],
-  "technically_verified_runs": 6,
+  "technically_verified_runs": 8,
   "observed_pairs": {
     "eyes/brows": [
       [
@@ -228,6 +292,16 @@
         "almond",
         "wide-neutral",
         "skin-seated-075"
+      ],
+      [
+        "downturned",
+        "bowed-volumetric",
+        "legacy"
+      ],
+      [
+        "downturned",
+        "bowed-volumetric-wide",
+        "legacy"
       ],
       [
         "downturned",
@@ -310,6 +384,16 @@
       [
         "broad-band",
         "retained",
+        "legacy"
+      ],
+      [
+        "soft-arched",
+        "bowed-volumetric",
+        "legacy"
+      ],
+      [
+        "soft-arched",
+        "bowed-volumetric-wide",
         "legacy"
       ],
       [
@@ -406,6 +490,16 @@
     ],
     "mouth/nose": [
       [
+        "bowed-volumetric",
+        "retained",
+        "legacy"
+      ],
+      [
+        "bowed-volumetric-wide",
+        "retained",
+        "legacy"
+      ],
+      [
         "retained",
         "long-bridge",
         "legacy"
@@ -423,6 +517,16 @@
     ],
     "mouth/ears": [
       [
+        "bowed-volumetric",
+        "retained",
+        "legacy"
+      ],
+      [
+        "bowed-volumetric-wide",
+        "retained",
+        "legacy"
+      ],
+      [
         "retained",
         "lateral-elf",
         "legacy"
@@ -439,6 +543,16 @@
       ]
     ],
     "mouth/face": [
+      [
+        "bowed-volumetric",
+        "narrow-chin",
+        "legacy"
+      ],
+      [
+        "bowed-volumetric-wide",
+        "narrow-chin",
+        "legacy"
+      ],
       [
         "retained",
         "narrow-chin",
@@ -523,5 +637,5 @@
     ]
   },
   "scope": "Only supplied artifact sets verified. Every omitted combination remains untested. Observed pairs do not certify other full combinations or aesthetics.",
-  "checked_at_utc": "2026-10-19T14:46:00Z"
+  "checked_at_utc": "2026-10-19T15:18:00Z"
 }

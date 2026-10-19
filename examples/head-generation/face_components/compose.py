@@ -65,6 +65,8 @@ def resolve(selection, fit_policy="legacy"):
             "mouth_width_scale",
             "upper_lip_relief_scale",
             "upper_lip_lateral_power",
+            "lower_lip_relief_scale",
+            "upper_lip_bow_height",
         },
         "nose": {
             "nose_bridge_scale",

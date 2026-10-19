@@ -22,6 +22,8 @@ def verify_batch(specs, verifier=verify_run):
             result = {"status": error.status, "reason": str(error)}
         except FileNotFoundError as error:
             result = {"status": "incomplete", "reason": str(error)}
+        except OSError as error:
+            result = {"status": "incomplete", "reason": str(error)}
         except (ValueError, KeyError, TypeError) as error:
             result = {"status": "integrity_failed", "reason": str(error)}
         rows.append({**identity, **result})

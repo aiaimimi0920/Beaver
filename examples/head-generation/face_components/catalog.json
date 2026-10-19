@@ -67,6 +67,17 @@
     },
     "wide-neutral": {
       "mouth_width_scale": 1.08
+    },
+    "bowed-volumetric": {
+      "upper_lip_relief_scale": 0.95,
+      "lower_lip_relief_scale": 1.15,
+      "upper_lip_bow_height": 0.002
+    },
+    "bowed-volumetric-wide": {
+      "upper_lip_relief_scale": 0.95,
+      "lower_lip_relief_scale": 1.15,
+      "upper_lip_bow_height": 0.002,
+      "mouth_width_scale": 1.08
     }
   },
   "nose": {

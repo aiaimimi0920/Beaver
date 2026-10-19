@@ -160,6 +160,24 @@ class CoverageTests(unittest.TestCase):
         r = verify_batch([self.spec])
         self.assertEqual(r["runs"][0]["status"], "generation_failed")
 
+    def test_failed_foreign_workspace_is_not_native_failure(self):
+        self.job("gen.json", "gen", {}, "failed")
+        p = self.root / "gen.json"
+        d = json.loads(p.read_text())
+        d["response"]["result"]["result"]["process"]["workspace"] = "/wrong-workspace"
+        p.write_text(json.dumps(d))
+        self.assertEqual(
+            verify_batch([self.spec])["runs"][0]["status"], "integrity_failed"
+        )
+
+    def test_filesystem_error_isolated(self):
+        def fail(spec):
+            raise PermissionError("fixture")
+
+        self.assertEqual(
+            verify_batch([self.spec], fail)["runs"][0]["status"], "incomplete"
+        )
+
     def test_missing(self):
         (self.root / "gen.json").unlink()
         self.assertEqual(verify_batch([self.spec])["runs"][0]["status"], "incomplete")
