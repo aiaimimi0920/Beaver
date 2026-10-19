@@ -105,16 +105,20 @@ class PlanTests(unittest.TestCase):
             any(x["candidate"] == "combo829" for x in plan["recorded_evidence"])
         )
 
-    def test_new_brow_families_have_exact_recorded_samples(self):
+    def test_brow_samples_remain_visible_after_catalog_updates(self):
         for brow, candidate in (
             ("angular-peaked", "combo832"),
             ("broad-band", "combo833"),
         ):
             result = build_plan({**self.selection, "brows": brow})
-            matches = [
-                x["candidate"]
-                for x in result["recorded_evidence"]
-                if x["match"] == "exact_snapshot"
-            ]
-            self.assertEqual(matches, [candidate])
+            records = result["recorded_evidence"]
+            self.assertEqual([r["candidate"] for r in records], [candidate])
+            for record in records:
+                expected = (
+                    "exact_snapshot"
+                    if record["composition_sha256"]
+                    == result["snapshot"]["composition_sha256"]
+                    else "historical_selection_only"
+                )
+                self.assertEqual(record["match"], expected)
             self.assertEqual(result["current_output_status"], "not_generated")

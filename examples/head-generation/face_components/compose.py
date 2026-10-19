@@ -66,7 +66,11 @@ def resolve(selection, fit_policy="legacy"):
             "upper_lip_relief_scale",
             "upper_lip_lateral_power",
         },
-        "nose": {"nose_bridge_scale"},
+        "nose": {
+            "nose_bridge_scale",
+            "nose_bridge_length_scale",
+            "nose_tip_projection_scale",
+        },
         "ears": {"ear_span_scale"},
         "face": {"face_width", "jaw_width", "chin_width"},
     }

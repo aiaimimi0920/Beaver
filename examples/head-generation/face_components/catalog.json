@@ -73,6 +73,11 @@
     "retained": {},
     "defined-bridge": {
       "nose_bridge_scale": 1.2
+    },
+    "long-bridge": {
+      "nose_bridge_scale": 1.2,
+      "nose_bridge_length_scale": 1.2,
+      "nose_tip_projection_scale": 1.08
     }
   },
   "ears": {

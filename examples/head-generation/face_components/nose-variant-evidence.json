@@ -1,0 +1,55 @@
+{
+  "schema_version": 1,
+  "scope": "Bounded nasal geometry axes; candidate remains within compact-wedge family",
+  "candidates": [
+    {
+      "candidate": "combo834",
+      "selection": {
+        "eyes": "downturned",
+        "brows": "soft-arched",
+        "mouth": "retained",
+        "nose": "long-bridge",
+        "ears": "retained",
+        "face": "narrow-chin"
+      },
+      "fit_policy": "legacy",
+      "composition_sha256": "22c5853dec4c3a8ec0e41ca587ec22c391ff04bf78a3ee47156b854fbfa64850",
+      "glb_sha256": "cd0c755c52896a1ab72561378c28f05eb194ff56bee1516ac093479b2e375b85",
+      "gen_job": "32104822-da33-45e9-870a-8813708863c4",
+      "sdf_job": "ecf71e81-c5a8-43c2-81cc-a360ee607daa",
+      "eye_captures_verified": 84,
+      "mouth_captures_verified": 18,
+      "manifest_sha256": {
+        "eye": "90ce57c7274a9e7d996a03bfb417bbf41ac569d60d9d3bf9009392a8523e5984",
+        "mouth": "1f27295aa791f72e7383d832e8d162937b2a4b9afb22ad8c5501eea22c3c6db7"
+      },
+      "apex_depth_delta_from827_m": 0.0019337832927703857,
+      "refine_max_delta_m": 0.0013322169144878884,
+      "fair_max_delta_m": 0.00043454252624304524,
+      "archives": {
+        "model": {
+          "name": "Aster-combo834-model.zip",
+          "bytes": 5495025,
+          "sha256": "1ca16b3ab45fd6749aad4542772548593358760044f42d1caa1724e8dd5f23fc"
+        },
+        "captures": {
+          "name": "Aster-combo834-captures.zip",
+          "bytes": 29855872,
+          "sha256": "76e04304efab1a4417c9806898450d31d38c5c0b451907164d69e16a8308f10a"
+        }
+      }
+    }
+  ],
+  "tests": {
+    "facial_surface": 65,
+    "face_components": 29
+  },
+  "visual_review": "Front,45,90 render and white plus mouth views inspected. Independent static review: modest projection/bridge variant, insufficient distinct contour grammar for second nose family; no obvious new structural defect.",
+  "limitations": [
+    "Not final aesthetic approval",
+    "Not all face combinations tested",
+    "Station width and basal landmarks do not guarantee unchanged interpolated surface",
+    "Inherited white-model shading unevenness remains",
+    "Nose operations are one-pass, not arbitrarily serially composable"
+  ]
+}
