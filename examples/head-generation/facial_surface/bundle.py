@@ -35,8 +35,9 @@ def build_request(
     *,
     blink=False,
     silhouette_parameters=None,
+    lip_parameters=None,
 ):
-    if silhouette_parameters and prefix in {
+    if (silhouette_parameters or lip_parameters) and prefix in {
         "assets/aster/general_face_eyes_795/",
         "assets/aster/general_face_eyes_796/",
     }:
@@ -66,6 +67,9 @@ def build_request(
         baseline_style, silhouette_report = apply_silhouette(
             baseline_style, silhouette_parameters
         )
+        from source_lips import apply_lip_relief
+
+        baseline_style, lip_report = apply_lip_relief(baseline_style, lip_parameters)
         style = builder.adapt_style(baseline_style, builder.validate(eyes))
         face = (recipe / "face.py").read_text()
         from source_upper_warp import adapt_face_source
@@ -85,6 +89,11 @@ def build_request(
             baseline_iris_plane_slope=baseline_style["calibration"]["iris_plane_slope"],
         )
         bound = report["surface"]["conservative_support_displacement_bound_m"]
+        if lip_report is not None:
+            report["surface"]["support_bound_before_lip_relief_m"] = bound
+            bound += lip_report["analytic_depth_change_bound_m"]
+            report["surface"]["conservative_support_displacement_bound_m"] = bound
+            report["lip_relief"] = lip_report
         if bound > reviewed_support_bound_m:
             raise ValueError(
                 f"Conservative support bound {bound:.9g}m exceeds explicitly reviewed {reviewed_support_bound_m:.9g}m"
@@ -258,6 +267,7 @@ if __name__ == "__main__":
     parser.add_argument("--parameters", required=True)
     parser.add_argument("--eyes", default="{}")
     parser.add_argument("--silhouette", default="{}")
+    parser.add_argument("--lips", default="{}")
     parser.add_argument("--prefix", required=True)
     parser.add_argument("--workspace", type=Path, required=True)
     parser.add_argument("--reviewed-support-bound-m", type=float, required=True)
@@ -281,6 +291,7 @@ if __name__ == "__main__":
                 args.style_profile,
                 blink=args.blink,
                 silhouette_parameters=json.loads(args.silhouette),
+                lip_parameters=json.loads(args.lips),
             )
         )
     )
