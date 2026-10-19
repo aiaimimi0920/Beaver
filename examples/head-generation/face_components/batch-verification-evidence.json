@@ -352,9 +352,73 @@
         }
       },
       "scope": "Current artifact integrity and recorded native states, not aesthetic approval, current-generator reproducibility or untested combinations"
+    },
+    {
+      "selection": {
+        "eyes": "downturned",
+        "brows": "soft-arched",
+        "mouth": "bowed-contour",
+        "nose": "retained",
+        "ears": "retained",
+        "face": "retained"
+      },
+      "fit_policy": "legacy",
+      "prefix": "assets/aster/general_face_eyes_combo847/",
+      "status": "technically_verified",
+      "composition_sha256": "77819f1f05994d7f7d3d719a2929c31cc88d0b0402117fb578df6da9884ad695",
+      "glb_sha256": "a9c3fa167cfe28a3a9cda711f465e37a0e052c792d68d272b49e9feab5634611",
+      "generation_job": "28e42c83-61d4-40e1-acf2-1e0645545bc3",
+      "sdf_job": "250c1dd5-8640-40b6-a161-532f2c220973",
+      "captures": {
+        "eye": {
+          "captures_verified": 84,
+          "source_sha256": "a9c3fa167cfe28a3a9cda711f465e37a0e052c792d68d272b49e9feab5634611",
+          "camera_size": 0.430432230234146,
+          "scope": "Integrity, expression and view state; not aesthetic acceptance"
+        },
+        "mouth": {
+          "captures_verified": 18,
+          "source_sha256": "a9c3fa167cfe28a3a9cda711f465e37a0e052c792d68d272b49e9feab5634611",
+          "camera_size": 0.430432230234146,
+          "scope": "Integrity, expression and view state; not aesthetic acceptance"
+        }
+      },
+      "scope": "Current artifact integrity and recorded native states, not aesthetic approval, current-generator reproducibility or untested combinations"
+    },
+    {
+      "selection": {
+        "eyes": "slender",
+        "brows": "soft-arched",
+        "mouth": "bowed-contour",
+        "nose": "retained",
+        "ears": "retained",
+        "face": "root-protected-round-chin"
+      },
+      "fit_policy": "legacy",
+      "prefix": "assets/aster/general_face_eyes_combo848/",
+      "status": "technically_verified",
+      "composition_sha256": "7c28b3c9a7c71e76b518842ca56228100b26bf0b8f0fc59decb9626137a20f6b",
+      "glb_sha256": "ffba82765011bd777f30e43184b8077b9378dfdcf8d6ba89e84ccd82076a14bf",
+      "generation_job": "11ca8abe-9086-4a24-abcb-b8a3167a8c16",
+      "sdf_job": "073fa131-4b8f-4f3a-82b3-fc9e3f5756b5",
+      "captures": {
+        "eye": {
+          "captures_verified": 84,
+          "source_sha256": "ffba82765011bd777f30e43184b8077b9378dfdcf8d6ba89e84ccd82076a14bf",
+          "camera_size": 0.430432230234146,
+          "scope": "Integrity, expression and view state; not aesthetic acceptance"
+        },
+        "mouth": {
+          "captures_verified": 18,
+          "source_sha256": "ffba82765011bd777f30e43184b8077b9378dfdcf8d6ba89e84ccd82076a14bf",
+          "camera_size": 0.430432230234146,
+          "scope": "Integrity, expression and view state; not aesthetic acceptance"
+        }
+      },
+      "scope": "Current artifact integrity and recorded native states, not aesthetic approval, current-generator reproducibility or untested combinations"
     }
   ],
-  "technically_verified_runs": 11,
+  "technically_verified_runs": 13,
   "observed_pairs": {
     "eyes/brows": [
       [
@@ -391,6 +455,11 @@
       ],
       [
         "downturned",
+        "bowed-contour",
+        "legacy"
+      ],
+      [
+        "downturned",
         "bowed-volumetric",
         "legacy"
       ],
@@ -402,6 +471,11 @@
       [
         "downturned",
         "retained",
+        "legacy"
+      ],
+      [
+        "slender",
+        "bowed-contour",
         "legacy"
       ],
       [
@@ -472,6 +546,11 @@
       ],
       [
         "downturned",
+        "retained",
+        "legacy"
+      ],
+      [
+        "downturned",
         "root-protected-round-chin",
         "legacy"
       ],
@@ -495,6 +574,11 @@
       [
         "broad-band",
         "retained",
+        "legacy"
+      ],
+      [
+        "soft-arched",
+        "bowed-contour",
         "legacy"
       ],
       [
@@ -595,6 +679,11 @@
       ],
       [
         "soft-arched",
+        "retained",
+        "legacy"
+      ],
+      [
+        "soft-arched",
         "root-protected-round-chin",
         "legacy"
       ],
@@ -610,6 +699,11 @@
       ]
     ],
     "mouth/nose": [
+      [
+        "bowed-contour",
+        "retained",
+        "legacy"
+      ],
       [
         "bowed-volumetric",
         "retained",
@@ -638,6 +732,11 @@
     ],
     "mouth/ears": [
       [
+        "bowed-contour",
+        "retained",
+        "legacy"
+      ],
+      [
         "bowed-volumetric",
         "retained",
         "legacy"
@@ -664,6 +763,16 @@
       ]
     ],
     "mouth/face": [
+      [
+        "bowed-contour",
+        "retained",
+        "legacy"
+      ],
+      [
+        "bowed-contour",
+        "root-protected-round-chin",
+        "legacy"
+      ],
       [
         "bowed-volumetric",
         "narrow-chin",
@@ -745,6 +854,11 @@
       ],
       [
         "retained",
+        "retained",
+        "legacy"
+      ],
+      [
+        "retained",
         "root-protected-round-chin",
         "legacy"
       ],
@@ -773,6 +887,11 @@
       [
         "retained",
         "narrow-soft-chin",
+        "legacy"
+      ],
+      [
+        "retained",
+        "retained",
         "legacy"
       ],
       [

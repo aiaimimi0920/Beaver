@@ -12,8 +12,8 @@ class FamilyInventoryTests(unittest.TestCase):
 
     def test_variants_are_not_families(self):
         result = family_inventory()
-        self.assertEqual(result["mouth"]["selectable_options"], 5)
-        self.assertEqual(result["mouth"]["implemented_families"], 1)
+        self.assertEqual(result["mouth"]["selectable_options"], 6)
+        self.assertEqual(result["mouth"]["implemented_families"], 2)
         self.assertEqual(result["mouth"]["pending_native_families"], 0)
         self.assertEqual(result["brows"]["selectable_options"], 4)
         self.assertEqual(result["face"]["implemented_families"], 1)

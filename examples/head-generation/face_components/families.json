@@ -155,9 +155,25 @@
           "https://www.guiltygear.com/ggst/en/character/mll/"
         ],
         "missing_controls": [
-          "visually_distinct_upper_lip_outline"
+          "distinct_volumetric_lip_envelope"
         ],
-        "prototype_result": "838 shows fuller lower lip but lacks clearly readable paired upper shoulders; retained as minimal-seam variant, not a second family"
+        "prototype_result": "838 remains a relief variation, not a distinct volumetric family"
+      },
+      "shallow-bowed-neutral-contour": {
+        "title": "浅弓中性口线",
+        "presets": [
+          "bowed-contour"
+        ],
+        "status": "implemented_with_historical_samples",
+        "sources": [
+          "https://www.guiltygear.com/ggst/en/character/mll/"
+        ],
+        "missing_controls": [],
+        "prototype_result": "Distinct shallow neutral bow visible in ordinary front and oblique views. Two full native combinations passed; not a thick volumetric lip family or final aesthetic acceptance",
+        "native_samples": [
+          "combo847",
+          "combo848"
+        ]
       }
     },
     "nose": {

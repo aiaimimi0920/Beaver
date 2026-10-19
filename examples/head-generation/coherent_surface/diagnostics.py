@@ -32,6 +32,8 @@ def scope(source, c, fit, amount):
         if (c.get("eye_upper_asymmetry", 0) or c.get("eye_lower_shoulder", 0) or c.get("eye_upper_angularity", 0))
         else set()
     )
+    if c.get("mouth_seam_bow_height", 0):
+        helpers |= {"mouth_profile_shift", "mouth_rest_seam_y"}
     required = FUNCTIONS | helpers
     nodes = [
         n

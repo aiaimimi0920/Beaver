@@ -67,6 +67,7 @@ def resolve(selection, fit_policy="legacy"):
             "upper_lip_lateral_power",
             "lower_lip_relief_scale",
             "upper_lip_bow_height",
+            "template_id",
         },
         "nose": {
             "nose_bridge_scale",
@@ -123,7 +124,11 @@ def resolve(selection, fit_policy="legacy"):
             for k, v in catalog["face"][selection["face"]].items()
             if k != "template_id"
         },
-        "lip_parameters": {k: v for k, v in mouth.items() if k != "mouth_width_scale"},
+        "lip_parameters": {
+            k: v
+            for k, v in mouth.items()
+            if k not in ("mouth_width_scale", "template_id")
+        },
         "component_parameters": components,
         "style_profile": spec["style_profile"],
         "blink": spec["blink"],
@@ -134,12 +139,16 @@ def resolve(selection, fit_policy="legacy"):
         "scope": "Head only; lashes/iris follow eye family; component alternatives remain experimental",
         "acceptance": "New combination requires native generation, SDF and visual checks",
     }
-    template_id = catalog["face"][selection["face"]].get("template_id")
-    if template_id is not None:
-        registry = json.loads((HERE / "family-templates.json").read_text())
-        if template_id not in registry or registry[template_id]["slot"] != "face":
-            raise ValueError("Unknown face family template")
-        resolved["family_templates"] = [copy.deepcopy(registry[template_id])]
+    templates = []
+    registry = json.loads((HERE / "family-templates.json").read_text())
+    for slot in ("face", "mouth"):
+        template_id = catalog[slot][selection[slot]].get("template_id")
+        if template_id is not None:
+            if template_id not in registry or registry[template_id]["slot"] != slot:
+                raise ValueError("Unknown component template: " + slot)
+            templates.append(copy.deepcopy(registry[template_id]))
+    if templates:
+        resolved["family_templates"] = templates
     return {**resolved, "composition_sha256": digest(resolved)}
 
 

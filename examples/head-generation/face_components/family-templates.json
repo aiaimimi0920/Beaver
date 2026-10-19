@@ -197,5 +197,16 @@
     "attachment_interface": "root-protected-ear-v3",
     "residual_controls": {},
     "template_sha256": "d70909232de52338897f38c46c838c77683dcba6c8497fdf474dfaded0709d61"
+  },
+  "bowed-mouth-contour-v1": {
+    "id": "bowed-mouth-contour-v1",
+    "slot": "mouth",
+    "version": 1,
+    "reference_sources": [
+      "https://www.guiltygear.com/ggst/en/character/mll/"
+    ],
+    "seam_bow_height": 0.004,
+    "shoulder_radius_ratio": 0.7,
+    "template_sha256": "7e8def161573f91b513d491f13a579649016f89800ce416f5201575d731f8cbe"
   }
 }
