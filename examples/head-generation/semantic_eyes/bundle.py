@@ -11,6 +11,7 @@ from parameters import adapt_style, validate, adapt_lower_clearance, adapt_brow_
 from source_upper_warp import adapt_upper_sources, HELPERS
 from source_lateral_rim import adapt_lateral_rim, adapt_lateral_depth
 from source_angular_samples import adapt_angular_samples
+from source_return_order import adapt_return_order
 
 HERE = Path(__file__).resolve().parent
 RECIPE = HERE.parent / "checkpoints/current"
@@ -320,6 +321,7 @@ def build_request(parameters, output_prefix, workspace, *, blink=False):
         from illustrated_art import adapt_sources
 
         sources = adapt_sources(sources)
+    sources["ear_return.py"] = adapt_return_order(sources["ear_return.py"])
     base.OUTPUT_PREFIX = output_prefix
     with tempfile.TemporaryDirectory() as directory:
         snapshot = Path(directory)
@@ -342,6 +344,7 @@ def build_request(parameters, output_prefix, workspace, *, blink=False):
             {
                 "contour_warp.py": HELPERS,
                 "source_upper_warp.py": (HERE / "source_upper_warp.py").read_text(),
+                "source_return_order.py": (HERE / "source_return_order.py").read_text(),
                 "source_lateral_rim.py": (HERE / "source_lateral_rim.py").read_text(),
                 "source_angular_samples.py": (
                     HERE / "source_angular_samples.py"

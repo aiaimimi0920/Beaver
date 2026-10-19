@@ -27,12 +27,19 @@ def load_preset(preset_id):
         "clean-angular-811",
         "clean-downturned-810",
         "clean-slender-812",
+        "face-jaw-wide-817",
+        "face-jaw-narrow-818",
+        "face-wide-819",
+        "face-chin-narrow-820",
     }:
         raise ValueError("Unknown explicit eye preset")
     spec = json.loads((HERE / (preset_id + ".json")).read_text())
     for name, expected in spec["baseline_files_sha256"].items():
         if hashlib.sha256((SURFACE / name).read_bytes()).hexdigest() != expected:
             raise ValueError("Preserved 795 baseline changed: " + name)
+    if preset_id in {"face-jaw-wide-817", "face-jaw-narrow-818", "face-wide-819", "face-chin-narrow-820"}:
+        from face_evidence import validate_fixed_combination
+        validate_fixed_combination(spec)
     return spec
 
 
@@ -59,6 +66,8 @@ def build_request(preset_id, prefix, workspace):
             spec["reviewed_support_bound_m"],
             spec["style_profile"],
             blink=spec["blink"],
+            **({"silhouette_parameters": spec["silhouette_parameters"]}
+               if "silhouette_parameters" in spec else {}),
         )
     finally:
         sys.path[:] = previous_path

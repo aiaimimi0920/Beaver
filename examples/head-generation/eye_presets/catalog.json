@@ -103,6 +103,38 @@
       "file": "clean-slender-812.json",
       "prompt": "clean-slender.zh-CN.md",
       "stage": "self-reviewed-candidate"
+    },
+    {
+      "id": "face-jaw-wide-817",
+      "label": "下颌较宽 · 固定外垂眼",
+      "file": "face-jaw-wide-817.json",
+      "prompt": "face-jaw-wide-817.zh-CN.md",
+      "stage": "fixed-face-combination",
+      "eye_preset_id": "clean-downturned-810"
+    },
+    {
+      "id": "face-jaw-narrow-818",
+      "label": "下颌较窄 · 固定外垂眼",
+      "file": "face-jaw-narrow-818.json",
+      "prompt": "face-jaw-narrow-818.zh-CN.md",
+      "stage": "fixed-face-combination",
+      "eye_preset_id": "clean-downturned-810"
+    },
+    {
+      "id": "face-wide-819",
+      "label": "面颊较宽 · 固定外垂眼",
+      "file": "face-wide-819.json",
+      "prompt": "face-wide-819.zh-CN.md",
+      "stage": "fixed-face-combination",
+      "eye_preset_id": "clean-downturned-810"
+    },
+    {
+      "id": "face-chin-narrow-820",
+      "label": "下巴较窄 · 固定外垂眼",
+      "file": "face-chin-narrow-820.json",
+      "prompt": "face-chin-narrow-820.zh-CN.md",
+      "stage": "fixed-face-combination",
+      "eye_preset_id": "clean-downturned-810"
     }
   ],
   "taxonomy_note": "Composable design presets, not a fixed universal classification. See each preset status and native evidence.",

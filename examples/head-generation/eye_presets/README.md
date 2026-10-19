@@ -199,3 +199,37 @@ Both kept their original aperture families while simplifying the lash ornament.
 812's sampled child roots reached 0.0621 mm; its continuous orientation minimum
 remained positive at .0624564. The three simplified candidates are not applied
 to the richer round-open and sharp-upturned styles.
+
+## Fixed face-and-eye experiments
+
+The explicit preset entry point also accepts `face-jaw-wide-817`,
+`face-jaw-narrow-818`, `face-wide-819`, and `face-chin-narrow-820`.
+Each freezes the full 810 eye configuration together with one tested silhouette
+change. These are complete combinations, not independently interchangeable eye
+and face menus. The original 795 prompt remains unchanged.
+
+Loading checks the complete configuration digest, required width/visual evidence,
+and 84 eye plus 18 mouth capture counts. The digest detects configuration drift;
+it does not rerun native verification or certify a changed generator. Tests also
+compare replayed final calibration with the recorded native calibration digest.
+Every fresh native output still needs its own geometry, SDF, attachment and visual
+checks. Alternate eye combinations, mixed axes and larger amplitudes are new
+experiments. No user aesthetic acceptance or universal-face claim is implied.
+
+
+### Native repeatability
+
+The first full repeat (820 → 821) failed indexed topology equality. The inherited
+posterior return created vertices by iterating a set of BMesh vertex objects.
+Fresh semantic recipes now freeze original vertex indices and sort boundary
+edges and source vertices before adding the return. The historical checkpoint
+and accepted prompt files are unchanged; geometry formulas and safety checks
+are unchanged. See `replay-821-rejected.json` for the failed check.
+
+Two fresh generations (822 and 823) using `face-chin-narrow-820` then matched
+all 10,980 indexed Face polygons and all 6,188 vertices in Basis, MouthOpen,
+blink.L and blink.R exactly. UVs, mesh attributes, material slots, shape-key
+order/relative bases, identity transforms and corner normals also matched.
+This is a same-environment repeat of one fixed configuration, not proof for
+all presets, platforms or material-node contents. Binary file hashes may differ
+because artifacts carry their output paths and metadata.

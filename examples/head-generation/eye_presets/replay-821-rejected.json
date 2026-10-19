@@ -1,0 +1,154 @@
+{
+  "status": "rejected_repeatability_gate",
+  "baseline": 820,
+  "candidate": 821,
+  "fixed_preset": "face-chin-narrow-820",
+  "native_generation_succeeded": true,
+  "sdf_batch_published": false,
+  "failure": "Indexed polygons differ; inherited posterior return used unordered BMVert set to create vertices. Position-by-index deltas are not physical surface movement.",
+  "diagnostic": {
+    "polygon_counts": [
+      10980,
+      10980
+    ],
+    "indexed_polygons_equal": false,
+    "canonical_polygons_equal": false,
+    "first_different_polygons": [
+      [
+        5555,
+        [
+          1277,
+          5818,
+          341
+        ],
+        [
+          1277,
+          5857,
+          341
+        ]
+      ],
+      [
+        5556,
+        [
+          341,
+          5878,
+          1290
+        ],
+        [
+          341,
+          5814,
+          1290
+        ]
+      ],
+      [
+        5557,
+        [
+          354,
+          5878,
+          5822
+        ],
+        [
+          354,
+          5814,
+          5860
+        ]
+      ],
+      [
+        5558,
+        [
+          1924,
+          718,
+          5865
+        ],
+        [
+          1924,
+          718,
+          5874
+        ]
+      ],
+      [
+        5559,
+        [
+          1924,
+          5831,
+          719
+        ],
+        [
+          1924,
+          5839,
+          719
+        ]
+      ],
+      [
+        5560,
+        [
+          719,
+          5868,
+          1926
+        ],
+        [
+          719,
+          5876,
+          1926
+        ]
+      ],
+      [
+        5561,
+        [
+          1926,
+          5833,
+          720
+        ],
+        [
+          1926,
+          5842,
+          720
+        ]
+      ],
+      [
+        5562,
+        [
+          720,
+          5870,
+          1928
+        ],
+        [
+          720,
+          5878,
+          1928
+        ]
+      ]
+    ],
+    "shapes": {
+      "Basis": {
+        "counts": [
+          6188,
+          6188
+        ],
+        "max_index_delta_m": 0.13938971072366432
+      },
+      "MouthOpen": {
+        "counts": [
+          6188,
+          6188
+        ],
+        "max_index_delta_m": 0.13938644858237498
+      },
+      "blink.L": {
+        "counts": [
+          6188,
+          6188
+        ],
+        "max_index_delta_m": 0.13938971072366432
+      },
+      "blink.R": {
+        "counts": [
+          6188,
+          6188
+        ],
+        "max_index_delta_m": 0.13938971072366432
+      }
+    }
+  },
+  "followup": "Stable original vertex/edge index ordering; requires two new native generations and full indexed attribute/shape comparison."
+}
