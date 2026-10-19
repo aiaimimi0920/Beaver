@@ -20,6 +20,7 @@ def evidence_records():
         "ear-family-evidence.json",
         "mouth-variant-evidence.json",
         "chin-variant-evidence.json",
+        "template-pilot-evidence.json",
     ):
         for value in json.loads((HERE / name).read_text())["candidates"]:
             records.append({**value, "evidence_file": name})
@@ -36,6 +37,10 @@ def build_plan(selection, fit_policy="legacy", records=None):
         matches.append(
             {
                 "candidate": record.get("candidate"),
+                "recorded_generation_status": record.get(
+                    "generation_status", "not_recorded"
+                ),
+                "recorded_visual_status": record.get("visual_status", "not_recorded"),
                 "recorded_fit_policy": record.get("fit_policy", "legacy"),
                 "evidence_file": record.get("evidence_file"),
                 "match": "exact_snapshot" if exact else "historical_selection_only",

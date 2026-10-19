@@ -1,0 +1,201 @@
+{
+  "soft-oval-width-v1": {
+    "id": "soft-oval-width-v1",
+    "version": 1,
+    "slot": "face",
+    "reference_sources": [
+      "https://frieren-anime.jp/character/chara_group1/1-1/"
+    ],
+    "width_stations": [
+      [
+        0,
+        0.05
+      ],
+      [
+        0.03,
+        0.125
+      ],
+      [
+        0.07,
+        0.205
+      ],
+      [
+        0.12,
+        0.26
+      ],
+      [
+        0.16,
+        0.285
+      ],
+      [
+        0.2,
+        0.31
+      ],
+      [
+        0.3,
+        0.325
+      ],
+      [
+        0.45,
+        0.37
+      ],
+      [
+        0.6,
+        0.402
+      ],
+      [
+        0.75,
+        0.417
+      ],
+      [
+        0.85,
+        0.407
+      ],
+      [
+        1,
+        0.4
+      ]
+    ],
+    "retained_width_sha256": "4d2b2112dccd8554dbb6f62484d73f4fec00dcf90eef76986da5ca31bc60a818",
+    "max_baseline_width_change_m": 0.012,
+    "attachment_interface": "retained-ear-v1",
+    "template_sha256": "b7121589d3021742bcfe6ac1ac82960a05632cdc7fbe082f41a0764aca8bccd3",
+    "residual_controls": {
+      "chin_width": [
+        -0.04,
+        0.0
+      ]
+    }
+  },
+  "soft-oval-width-v2": {
+    "id": "soft-oval-width-v2",
+    "version": 2,
+    "slot": "face",
+    "reference_sources": [
+      "https://frieren-anime.jp/character/chara_group1/1-1/"
+    ],
+    "width_stations": [
+      [
+        0,
+        0.05
+      ],
+      [
+        0.03,
+        0.125
+      ],
+      [
+        0.07,
+        0.205
+      ],
+      [
+        0.12,
+        0.26
+      ],
+      [
+        0.16,
+        0.285
+      ],
+      [
+        0.2,
+        0.31
+      ],
+      [
+        0.3,
+        0.325
+      ],
+      [
+        0.45,
+        0.37
+      ],
+      [
+        0.6,
+        0.402
+      ],
+      [
+        0.75,
+        0.417
+      ],
+      [
+        0.85,
+        0.407
+      ],
+      [
+        1,
+        0.4
+      ]
+    ],
+    "retained_width_sha256": "4d2b2112dccd8554dbb6f62484d73f4fec00dcf90eef76986da5ca31bc60a818",
+    "max_baseline_width_change_m": 0.012,
+    "attachment_interface": "transported-ear-v2",
+    "residual_controls": {
+      "chin_width": [
+        -0.04,
+        0.0
+      ]
+    },
+    "template_sha256": "52ad0f7b088260263a6737395723bbccebbf02798d69f6dae66db63ca1e0dc90"
+  },
+  "root-protected-round-chin-v1": {
+    "id": "root-protected-round-chin-v1",
+    "version": 3,
+    "slot": "face",
+    "reference_sources": [
+      "https://frieren-anime.jp/character/chara_group1/1-1/"
+    ],
+    "width_stations": [
+      [
+        0,
+        0.05
+      ],
+      [
+        0.03,
+        0.11
+      ],
+      [
+        0.07,
+        0.175
+      ],
+      [
+        0.12,
+        0.244
+      ],
+      [
+        0.16,
+        0.276
+      ],
+      [
+        0.2,
+        0.29
+      ],
+      [
+        0.3,
+        0.325
+      ],
+      [
+        0.45,
+        0.37
+      ],
+      [
+        0.6,
+        0.402
+      ],
+      [
+        0.75,
+        0.417
+      ],
+      [
+        0.85,
+        0.407
+      ],
+      [
+        1,
+        0.4
+      ]
+    ],
+    "retained_width_sha256": "4d2b2112dccd8554dbb6f62484d73f4fec00dcf90eef76986da5ca31bc60a818",
+    "max_baseline_width_change_m": 0.012,
+    "attachment_interface": "root-protected-ear-v3",
+    "residual_controls": {},
+    "template_sha256": "d70909232de52338897f38c46c838c77683dcba6c8497fdf474dfaded0709d61"
+  }
+}

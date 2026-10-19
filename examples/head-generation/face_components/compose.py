@@ -79,7 +79,13 @@ def resolve(selection, fit_policy="legacy"):
             "ear_point_strength",
             "ear_tip_lift",
         },
-        "face": {"face_width", "jaw_width", "chin_width", "chin_softness"},
+        "face": {
+            "face_width",
+            "jaw_width",
+            "chin_width",
+            "chin_softness",
+            "template_id",
+        },
     }
     for slot, allowed in owned_keys.items():
         values = catalog[slot][selection[slot]]
@@ -112,7 +118,11 @@ def resolve(selection, fit_policy="legacy"):
         "eye_source_id": eye_id,
         "surface_parameters": spec["surface_parameters"],
         "eye_parameters": parameters,
-        "silhouette_parameters": catalog["face"][selection["face"]],
+        "silhouette_parameters": {
+            k: v
+            for k, v in catalog["face"][selection["face"]].items()
+            if k != "template_id"
+        },
         "lip_parameters": {k: v for k, v in mouth.items() if k != "mouth_width_scale"},
         "component_parameters": components,
         "style_profile": spec["style_profile"],
@@ -124,6 +134,12 @@ def resolve(selection, fit_policy="legacy"):
         "scope": "Head only; lashes/iris follow eye family; component alternatives remain experimental",
         "acceptance": "New combination requires native generation, SDF and visual checks",
     }
+    template_id = catalog["face"][selection["face"]].get("template_id")
+    if template_id is not None:
+        registry = json.loads((HERE / "family-templates.json").read_text())
+        if template_id not in registry or registry[template_id]["slot"] != "face":
+            raise ValueError("Unknown face family template")
+        resolved["family_templates"] = [copy.deepcopy(registry[template_id])]
     return {**resolved, "composition_sha256": digest(resolved)}
 
 

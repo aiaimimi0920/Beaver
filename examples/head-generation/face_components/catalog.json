@@ -119,6 +119,9 @@
     "narrow-soft-chin": {
       "chin_width": -0.04,
       "chin_softness": 1
+    },
+    "root-protected-round-chin": {
+      "template_id": "root-protected-round-chin-v1"
     }
   }
 }
