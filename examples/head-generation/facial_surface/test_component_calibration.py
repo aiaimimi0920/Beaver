@@ -77,3 +77,59 @@ class ComponentCalibrationTests(unittest.TestCase):
         ):
             serial, _ = apply_components(serial, parameters)
         self.assertEqual(serial, combined)
+
+    def test_long_bridge_has_independent_height_and_projection_controls(self):
+        original = self.style["calibration"]["nose_stations"]
+        result, report = apply_components(
+            self.style,
+            {"nose_bridge_length_scale": 1.2, "nose_tip_projection_scale": 1.08},
+        )
+        stations = result["calibration"]["nose_stations"]
+        self.assertEqual(set(report["before"]), {"nose_stations"})
+        for i in range(5):
+            self.assertEqual(stations[i][0], original[i][0])
+        for i in (0, 1, 5, 6):
+            self.assertEqual(stations[i][1], original[i][1])
+        self.assertEqual([r[2] for r in stations], [r[2] for r in original])
+        self.assertGreater(stations[-1][0], original[-1][0])
+        self.assertLess(stations[-1][0], 0.43)
+        self.assertGreater(stations[3][1], original[3][1])
+        self.assertEqual(stations[0], original[0])
+        self.assertEqual(stations[1], original[1])
+        result["calibration"]["nose_stations"] = original
+        self.assertEqual(result, self.style)
+
+    def test_new_nose_controls_reject_invalid_values(self):
+        for key, high in [
+            ("nose_bridge_length_scale", 1.2),
+            ("nose_tip_projection_scale", 1.08),
+        ]:
+            for value in [True, 0.99, high + 0.001, float("nan"), float("inf")]:
+                with self.assertRaises(ValueError):
+                    apply_components(self.style, {key: value})
+
+    def test_length_only_preserves_station_projections(self):
+        result, _ = apply_components(self.style, {"nose_bridge_length_scale": 1.2})
+        self.assertEqual(
+            [r[1] for r in result["calibration"]["nose_stations"]],
+            [r[1] for r in self.style["calibration"]["nose_stations"]],
+        )
+
+    def test_tip_only_preserves_station_heights(self):
+        result, _ = apply_components(self.style, {"nose_tip_projection_scale": 1.08})
+        self.assertEqual(
+            [r[0] for r in result["calibration"]["nose_stations"]],
+            [r[0] for r in self.style["calibration"]["nose_stations"]],
+        )
+
+    def test_new_identity_controls_preserve_old_bridge_shape(self):
+        a, _ = apply_components(self.style, {"nose_bridge_scale": 1.2})
+        b, _ = apply_components(
+            self.style,
+            {
+                "nose_bridge_scale": 1.2,
+                "nose_bridge_length_scale": 1,
+                "nose_tip_projection_scale": 1,
+            },
+        )
+        self.assertEqual(a, b)

@@ -13,7 +13,12 @@ def evidence_records():
     for name in ("native-evidence.json", "component-variants-evidence.json"):
         value = json.loads((HERE / name).read_text())
         records.append({**value, "evidence_file": name})
-    for name in ("cross-combination-evidence.json", "brow-family-evidence.json"):
+    for name in (
+        "cross-combination-evidence.json",
+        "brow-family-evidence.json",
+        "nose-variant-evidence.json",
+        "ear-family-evidence.json",
+    ):
         for value in json.loads((HERE / name).read_text())["candidates"]:
             records.append({**value, "evidence_file": name})
     return records

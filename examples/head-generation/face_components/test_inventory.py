@@ -39,3 +39,9 @@ class FamilyInventoryTests(unittest.TestCase):
             r["slots"]["mouth"]["minimal-seam"][key] = value
             with self.assertRaises(ValueError):
                 family_inventory(self.catalog, r)
+
+    def test_nose_variant_does_not_inflate_family_count(self):
+        result = family_inventory()["nose"]
+        self.assertEqual(result["selectable_options"], 3)
+        self.assertEqual(result["implemented_families"], 1)
+        self.assertEqual(result["planned_families"], 1)
