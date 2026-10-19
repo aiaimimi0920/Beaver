@@ -69,6 +69,15 @@ class CompositionTests(unittest.TestCase):
         self.assertEqual(r["eye_parameters"], resolve(self.selection)["eye_parameters"])
         self.assertEqual(verify_snapshot(r), r)
 
+    def test_broad_chin_preserves_other_slot_choices(self):
+        original = resolve(self.selection)
+        result = resolve({**self.selection, "face": "broad-blunt-chin"})
+        self.assertEqual(result["family_templates"][0]["id"], "broad-blunt-chin-v3")
+        self.assertEqual(result["silhouette_parameters"], {})
+        for key in ("eye_parameters", "lip_parameters", "component_parameters"):
+            self.assertEqual(result[key], original[key])
+        self.assertEqual(verify_snapshot(result), result)
+
     def test_six_explicit_slots_required(self):
         for slot in SLOTS:
             choice = dict(self.selection)

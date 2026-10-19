@@ -131,7 +131,7 @@ class PlanTests(unittest.TestCase):
         )
         self.assertEqual(record["recorded_generation_status"], "succeeded")
         self.assertEqual(result["current_output_status"], "not_generated")
-        self.assertEqual(result["family_inventory"]["face"]["implemented_families"], 1)
+        self.assertEqual(result["family_inventory"]["face"]["implemented_families"], 2)
 
     def test_mouth_template_record_is_not_fresh_acceptance(self):
         choice = {**self.selection, "face": "retained", "mouth": "bowed-contour"}

@@ -75,6 +75,25 @@ class TemplateTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "not supported"):
             apply_family_templates(self.style, [t], {"chin_width": -0.01})
 
+    def test_broad_chin_retains_root_curve_and_budget(self):
+        from source_silhouette import bezier_segments
+
+        t = json.loads(
+            (HERE.parent / "face_components/family-templates.json").read_text()
+        )["broad-blunt-chin-v3"]
+        original = copy.deepcopy(self.style)
+        result, report = apply_family_templates(self.style, [t])
+        self.assertEqual(self.style, original)
+        self.assertAlmostEqual(report["template_half_width_change_bound_m"], 0.0118)
+        self.assertEqual(report["protected_height_range"], [0.16, 1.0])
+        self.assertEqual(
+            bezier_segments(original["calibration"]["width_stations"])[4:],
+            bezier_segments(result["calibration"]["width_stations"])[4:],
+        )
+        self.assertEqual(result["calibration"]["width_stations"][0], [0, 0.075])
+        with self.assertRaisesRegex(ValueError, "not supported"):
+            apply_family_templates(self.style, [t], {"chin_softness": 1})
+
     def test_legacy_identity(self):
         for templates in (None, []):
             result, report = apply_family_templates(self.style, templates)

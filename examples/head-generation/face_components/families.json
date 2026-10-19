@@ -274,6 +274,19 @@
           "safe_wider_lower_face_attachment_interface"
         ],
         "prototype_result": "841 completed native captures but has bilateral under-ear notches; 843 target transport hit lower-root diagonal optimization assertion. Pending diagnosis, not accepted."
+      },
+      "broad-blunt-lower-contour": {
+        "title": "宽钝下颏轮廓",
+        "presets": [
+          "broad-blunt-chin"
+        ],
+        "status": "implemented_with_historical_samples",
+        "sources": [
+          "https://delicious-in-dungeon.com/",
+          "https://delicious-in-dungeon.com/assets/character/1f.png"
+        ],
+        "missing_controls": [],
+        "reference_scope": "Laios official face views support a broad blunt chin direction only; authored station values are not measured reconstruction and do not imply a full square face."
       }
     }
   }

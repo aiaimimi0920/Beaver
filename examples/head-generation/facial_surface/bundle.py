@@ -272,6 +272,16 @@ def depth(x, y):"""
                 adapt_ear_boundary_source((recipe / "ear_boundary.py").read_text())
             )
             if family_report is not None:
+                from source_outline_trace import instrument_outline
+
+                (snapshot / "shell.py").write_text(
+                    instrument_outline((snapshot / "shell.py").read_text())
+                )
+                if family_report["template"]["id"] == "broad-blunt-chin-v3":
+                    from source_outline_fairing import adapt_outline_fairing
+
+                    shell_path = snapshot / "shell.py"
+                    shell_path.write_text(adapt_outline_fairing(shell_path.read_text()))
                 boundary_path = snapshot / "ear_boundary.py"
                 boundary_source = instrument_ear_constraints(boundary_path.read_text())
                 if (

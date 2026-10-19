@@ -480,11 +480,112 @@
         }
       },
       "scope": "Current artifact integrity and recorded native states, not aesthetic approval, current-generator reproducibility or untested combinations"
+    },
+    {
+      "selection": {
+        "eyes": "downturned",
+        "brows": "soft-arched",
+        "mouth": "retained",
+        "nose": "retained",
+        "ears": "retained",
+        "face": "broad-blunt-chin"
+      },
+      "fit_policy": "legacy",
+      "prefix": "assets/aster/general_face_eyes_combo854/",
+      "status": "technically_verified",
+      "composition_sha256": "ca2670be42d8d5a1edfc722128a6d591483cb310458361ae7d720a64c944914c",
+      "glb_sha256": "0ce448a0f46a41bedfad5f35fe37e7719f28dfa464923d6228ef1ce8d0c10883",
+      "generation_job": "27fcdd4a-a9e4-4d07-8297-a11e6175f07c",
+      "sdf_job": "d9b7b56f-a521-46e9-abba-b7a132c27312",
+      "captures": {
+        "eye": {
+          "captures_verified": 84,
+          "source_sha256": "0ce448a0f46a41bedfad5f35fe37e7719f28dfa464923d6228ef1ce8d0c10883",
+          "camera_size": 0.430432230234146,
+          "scope": "Integrity, expression and view state; not aesthetic acceptance"
+        },
+        "mouth": {
+          "captures_verified": 18,
+          "source_sha256": "0ce448a0f46a41bedfad5f35fe37e7719f28dfa464923d6228ef1ce8d0c10883",
+          "camera_size": 0.430432230234146,
+          "scope": "Integrity, expression and view state; not aesthetic acceptance"
+        }
+      },
+      "scope": "Current artifact integrity and recorded native states, not aesthetic approval, current-generator reproducibility or untested combinations"
+    },
+    {
+      "selection": {
+        "eyes": "slender",
+        "brows": "soft-arched",
+        "mouth": "bowed-contour",
+        "nose": "short-rounded",
+        "ears": "retained",
+        "face": "broad-blunt-chin"
+      },
+      "fit_policy": "legacy",
+      "prefix": "assets/aster/general_face_eyes_combo855/",
+      "status": "technically_verified",
+      "composition_sha256": "70588ab4c674abbe93bd539627003dc8984c77db0b5474e3d513a1eed61fe40f",
+      "glb_sha256": "9af7cb470408842b5b741dc4552df748db2e83d034343af5d4ddd9f1e7258827",
+      "generation_job": "db35def6-d1e2-46ee-9331-5adc8e5535ef",
+      "sdf_job": "5474c599-75a6-45ee-8116-d1ddee6345e0",
+      "captures": {
+        "eye": {
+          "captures_verified": 84,
+          "source_sha256": "9af7cb470408842b5b741dc4552df748db2e83d034343af5d4ddd9f1e7258827",
+          "camera_size": 0.430432230234146,
+          "scope": "Integrity, expression and view state; not aesthetic acceptance"
+        },
+        "mouth": {
+          "captures_verified": 18,
+          "source_sha256": "9af7cb470408842b5b741dc4552df748db2e83d034343af5d4ddd9f1e7258827",
+          "camera_size": 0.430432230234146,
+          "scope": "Integrity, expression and view state; not aesthetic acceptance"
+        }
+      },
+      "scope": "Current artifact integrity and recorded native states, not aesthetic approval, current-generator reproducibility or untested combinations"
+    },
+    {
+      "selection": {
+        "eyes": "almond",
+        "brows": "angular-peaked",
+        "mouth": "bowed-contour",
+        "nose": "short-rounded",
+        "ears": "lateral-elf",
+        "face": "broad-blunt-chin"
+      },
+      "fit_policy": "legacy",
+      "prefix": "assets/aster/general_face_eyes_combo856/",
+      "status": "technically_verified",
+      "composition_sha256": "0529bac9262e03d328c27d9e38f1486ed4db771be9b6458fdd8432d18f85caa3",
+      "glb_sha256": "439ea3963531e3903c96634be67da3285c89bcb144e53e642bd32026bb0ed16c",
+      "generation_job": "225a478f-2a73-4a83-b0e8-97e453cb71ad",
+      "sdf_job": "5a4e5c60-4f21-4442-b671-ca4939e77037",
+      "captures": {
+        "eye": {
+          "captures_verified": 84,
+          "source_sha256": "439ea3963531e3903c96634be67da3285c89bcb144e53e642bd32026bb0ed16c",
+          "camera_size": 0.430432230234146,
+          "scope": "Integrity, expression and view state; not aesthetic acceptance"
+        },
+        "mouth": {
+          "captures_verified": 18,
+          "source_sha256": "439ea3963531e3903c96634be67da3285c89bcb144e53e642bd32026bb0ed16c",
+          "camera_size": 0.430432230234146,
+          "scope": "Integrity, expression and view state; not aesthetic acceptance"
+        }
+      },
+      "scope": "Current artifact integrity and recorded native states, not aesthetic approval, current-generator reproducibility or untested combinations"
     }
   ],
-  "technically_verified_runs": 15,
+  "technically_verified_runs": 18,
   "observed_pairs": {
     "eyes/brows": [
+      [
+        "almond",
+        "angular-peaked",
+        "legacy"
+      ],
       [
         "almond",
         "soft-level",
@@ -512,6 +613,11 @@
       ]
     ],
     "eyes/mouth": [
+      [
+        "almond",
+        "bowed-contour",
+        "legacy"
+      ],
       [
         "almond",
         "wide-neutral",
@@ -555,6 +661,11 @@
         "skin-seated-075"
       ],
       [
+        "almond",
+        "short-rounded",
+        "legacy"
+      ],
+      [
         "downturned",
         "long-bridge",
         "legacy"
@@ -587,6 +698,11 @@
         "skin-seated-075"
       ],
       [
+        "almond",
+        "lateral-elf",
+        "legacy"
+      ],
+      [
         "downturned",
         "lateral-elf",
         "legacy"
@@ -605,8 +721,18 @@
     "eyes/face": [
       [
         "almond",
+        "broad-blunt-chin",
+        "legacy"
+      ],
+      [
+        "almond",
         "wide-face",
         "skin-seated-075"
+      ],
+      [
+        "downturned",
+        "broad-blunt-chin",
+        "legacy"
       ],
       [
         "downturned",
@@ -630,6 +756,11 @@
       ],
       [
         "slender",
+        "broad-blunt-chin",
+        "legacy"
+      ],
+      [
+        "slender",
         "root-protected-round-chin",
         "legacy"
       ],
@@ -640,6 +771,11 @@
       ]
     ],
     "brows/mouth": [
+      [
+        "angular-peaked",
+        "bowed-contour",
+        "legacy"
+      ],
       [
         "angular-peaked",
         "retained",
@@ -683,6 +819,11 @@
         "legacy"
       ],
       [
+        "angular-peaked",
+        "short-rounded",
+        "legacy"
+      ],
+      [
         "broad-band",
         "retained",
         "legacy"
@@ -709,6 +850,11 @@
       ]
     ],
     "brows/ears": [
+      [
+        "angular-peaked",
+        "lateral-elf",
+        "legacy"
+      ],
       [
         "angular-peaked",
         "retained",
@@ -738,12 +884,22 @@
     "brows/face": [
       [
         "angular-peaked",
+        "broad-blunt-chin",
+        "legacy"
+      ],
+      [
+        "angular-peaked",
         "narrow-chin",
         "legacy"
       ],
       [
         "broad-band",
         "narrow-chin",
+        "legacy"
+      ],
+      [
+        "soft-arched",
+        "broad-blunt-chin",
         "legacy"
       ],
       [
@@ -822,6 +978,11 @@
     "mouth/ears": [
       [
         "bowed-contour",
+        "lateral-elf",
+        "legacy"
+      ],
+      [
+        "bowed-contour",
         "retained",
         "legacy"
       ],
@@ -854,6 +1015,11 @@
     "mouth/face": [
       [
         "bowed-contour",
+        "broad-blunt-chin",
+        "legacy"
+      ],
+      [
+        "bowed-contour",
         "retained",
         "legacy"
       ],
@@ -870,6 +1036,11 @@
       [
         "bowed-volumetric-wide",
         "narrow-chin",
+        "legacy"
+      ],
+      [
+        "retained",
+        "broad-blunt-chin",
         "legacy"
       ],
       [
@@ -926,6 +1097,11 @@
       ],
       [
         "short-rounded",
+        "lateral-elf",
+        "legacy"
+      ],
+      [
+        "short-rounded",
         "retained",
         "legacy"
       ]
@@ -939,6 +1115,11 @@
       [
         "long-bridge",
         "narrow-chin",
+        "legacy"
+      ],
+      [
+        "retained",
+        "broad-blunt-chin",
         "legacy"
       ],
       [
@@ -968,6 +1149,11 @@
       ],
       [
         "short-rounded",
+        "broad-blunt-chin",
+        "legacy"
+      ],
+      [
+        "short-rounded",
         "retained",
         "legacy"
       ],
@@ -985,7 +1171,17 @@
       ],
       [
         "lateral-elf",
+        "broad-blunt-chin",
+        "legacy"
+      ],
+      [
+        "lateral-elf",
         "narrow-chin",
+        "legacy"
+      ],
+      [
+        "retained",
+        "broad-blunt-chin",
         "legacy"
       ],
       [

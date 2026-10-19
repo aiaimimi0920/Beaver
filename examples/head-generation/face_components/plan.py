@@ -23,6 +23,7 @@ def evidence_records():
         "mouth-template-evidence.json",
         "chin-variant-evidence.json",
         "template-pilot-evidence.json",
+        "broad-chin-evidence.json",
     ):
         for value in json.loads((HERE / name).read_text())["candidates"]:
             records.append({**value, "evidence_file": name})

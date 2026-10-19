@@ -1,0 +1,1742 @@
+{
+  "scope": "Observed candidates only; no final aesthetic acceptance or exhaustive combinations",
+  "candidates": [
+    {
+      "candidate": "combo851",
+      "selection": {
+        "eyes": "downturned",
+        "brows": "soft-arched",
+        "mouth": "retained",
+        "nose": "retained",
+        "ears": "retained",
+        "face": "broad-blunt-chin"
+      },
+      "composition_sha256": "e012cf0b12dca9b2dc7c85d459626998954b61d2be908b6361108d45191a9ef1",
+      "generation_status": "succeeded",
+      "sdf_status": "succeeded",
+      "generation_job_id": "88e6a92b-2972-4296-ad58-10a74a805974",
+      "sdf_job_id": "34c0813b-dc90-46f2-9bf1-d334a54322f0",
+      "glb_sha256": "c33147c0ee05594d886a8a22ca808db756c9276b6350c43c61d7cfbfd7d09f60",
+      "eye_capture_count": 84,
+      "mouth_capture_count": 18,
+      "family_template": {
+        "template": {
+          "id": "broad-blunt-chin-v1",
+          "version": 3,
+          "slot": "face",
+          "reference_sources": [
+            "https://delicious-in-dungeon.com/",
+            "https://delicious-in-dungeon.com/assets/character/1f.png"
+          ],
+          "width_stations": [
+            [
+              0,
+              0.075
+            ],
+            [
+              0.03,
+              0.135
+            ],
+            [
+              0.07,
+              0.2
+            ],
+            [
+              0.12,
+              0.244
+            ],
+            [
+              0.16,
+              0.276
+            ],
+            [
+              0.2,
+              0.29
+            ],
+            [
+              0.3,
+              0.325
+            ],
+            [
+              0.45,
+              0.37
+            ],
+            [
+              0.6,
+              0.402
+            ],
+            [
+              0.75,
+              0.417
+            ],
+            [
+              0.85,
+              0.407
+            ],
+            [
+              1,
+              0.4
+            ]
+          ],
+          "retained_width_sha256": "4d2b2112dccd8554dbb6f62484d73f4fec00dcf90eef76986da5ca31bc60a818",
+          "max_baseline_width_change_m": 0.012,
+          "attachment_interface": "root-protected-ear-v3",
+          "residual_controls": {},
+          "template_sha256": "91215117a5d47b1bd7b688c3b7c9bf4d845c8a3a0a0bf6573e4f019c509d804b"
+        },
+        "retained_width_stations": [
+          [
+            0,
+            0.025
+          ],
+          [
+            0.03,
+            0.088
+          ],
+          [
+            0.07,
+            0.165
+          ],
+          [
+            0.12,
+            0.244
+          ],
+          [
+            0.16,
+            0.276
+          ],
+          [
+            0.2,
+            0.29
+          ],
+          [
+            0.3,
+            0.325
+          ],
+          [
+            0.45,
+            0.37
+          ],
+          [
+            0.6,
+            0.402
+          ],
+          [
+            0.75,
+            0.417
+          ],
+          [
+            0.85,
+            0.407
+          ],
+          [
+            1,
+            0.4
+          ]
+        ],
+        "template_width_stations": [
+          [
+            0,
+            0.075
+          ],
+          [
+            0.03,
+            0.135
+          ],
+          [
+            0.07,
+            0.2
+          ],
+          [
+            0.12,
+            0.244
+          ],
+          [
+            0.16,
+            0.276
+          ],
+          [
+            0.2,
+            0.29
+          ],
+          [
+            0.3,
+            0.325
+          ],
+          [
+            0.45,
+            0.37
+          ],
+          [
+            0.6,
+            0.402
+          ],
+          [
+            0.75,
+            0.417
+          ],
+          [
+            0.85,
+            0.407
+          ],
+          [
+            1,
+            0.4
+          ]
+        ],
+        "template_half_width_change_bound_m": 0.011799999999999998,
+        "protected_height_range": [
+          0.16,
+          1.0
+        ],
+        "scope": "Authored width-template construction, not recovered dimensions or x-only deformation. Downstream retained ear constraints remain active and require native review.",
+        "final_width_stations": [
+          [
+            0,
+            0.075
+          ],
+          [
+            0.03,
+            0.135
+          ],
+          [
+            0.07,
+            0.2
+          ],
+          [
+            0.12,
+            0.244
+          ],
+          [
+            0.16,
+            0.276
+          ],
+          [
+            0.2,
+            0.29
+          ],
+          [
+            0.3,
+            0.325
+          ],
+          [
+            0.45,
+            0.37
+          ],
+          [
+            0.6,
+            0.402
+          ],
+          [
+            0.75,
+            0.417
+          ],
+          [
+            0.85,
+            0.407
+          ],
+          [
+            1,
+            0.4
+          ]
+        ],
+        "residual_half_width_change_bound_m": 0,
+        "total_half_width_change_bound_m": 0.011799999999999998
+      },
+      "visual_status": "Not accepted: distinct wider blunt chin, but bilateral lower-cheek outline shoulders appeared; investigate construction and return/fairing stages without weakening guards."
+    },
+    {
+      "candidate": "combo852",
+      "selection": {
+        "eyes": "downturned",
+        "brows": "soft-arched",
+        "mouth": "retained",
+        "nose": "retained",
+        "ears": "retained",
+        "face": "broad-blunt-chin"
+      },
+      "composition_sha256": "e012cf0b12dca9b2dc7c85d459626998954b61d2be908b6361108d45191a9ef1",
+      "generation_status": "succeeded",
+      "sdf_status": "not_run",
+      "generation_job_id": "83c71274-5f1d-44eb-b232-05b90c8b6248",
+      "visual_status": "Diagnostic-only repeat of rejected851; records pre-return shoulder and subsequent fairing tangent reversal. No new capture or category acceptance.",
+      "template_outline_trace": {
+        "construction": [
+          {
+            "row": 0,
+            "h": 0.0,
+            "before": [
+              0.017699999999999997,
+              -0.07684397232327607,
+              1.54754
+            ],
+            "after": [
+              0.017699999999999997,
+              -0.07684397232327607,
+              1.54754
+            ]
+          },
+          {
+            "row": 1,
+            "h": 0.0296610169491521,
+            "before": [
+              0.031716179787153055,
+              -0.05894642640136373,
+              1.5521619474087445
+            ],
+            "after": [
+              0.03163228054242607,
+              -0.057846749636864224,
+              1.5521619474087445
+            ]
+          },
+          {
+            "row": 2,
+            "h": 0.0677966101694916,
+            "before": [
+              0.04658393345206636,
+              -0.031572158451138164,
+              1.5603112091882183
+            ],
+            "after": [
+              0.045947336528160895,
+              -0.029366400302184032,
+              1.5603112091882183
+            ]
+          },
+          {
+            "row": 3,
+            "h": 0.11016949152542384,
+            "before": [
+              0.05570105586255684,
+              -0.02077128773936847,
+              1.5700799000777546
+            ],
+            "after": [
+              0.054884113804610155,
+              -0.018122029585681532,
+              1.5700799000777546
+            ]
+          },
+          {
+            "row": 4,
+            "h": 0.15254237288135608,
+            "before": [
+              0.0641028362450285,
+              -0.016747144947131948,
+              1.5800217784122816
+            ],
+            "after": [
+              0.06332879180476342,
+              -0.013518633862038805,
+              1.5800217784122816
+            ]
+          },
+          {
+            "row": 5,
+            "h": 0.1949152542372883,
+            "before": [
+              0.06803823595168805,
+              -0.01358170718133836,
+              1.5900061058018566
+            ],
+            "after": [
+              0.06742647554323808,
+              -0.01002427959854888,
+              1.5900061058018566
+            ]
+          }
+        ],
+        "underside": [
+          {
+            "lift": 0,
+            "spread": 1.15,
+            "base_limit": 0.020354999999999995,
+            "layer_limit": 0.015929999999999996,
+            "selected_width": 0.015929999999999996
+          },
+          {
+            "lift": 0.01,
+            "spread": 1.6,
+            "base_limit": 0.028319999999999998,
+            "layer_limit": 0.02027565517241364,
+            "selected_width": 0.02027565517241364
+          },
+          {
+            "lift": 0.03,
+            "spread": 2.5,
+            "base_limit": 0.04424999999999999,
+            "layer_limit": 0.028673999999999963,
+            "selected_width": 0.028673999999999963
+          },
+          {
+            "lift": 0.05,
+            "spread": 3.7,
+            "base_limit": 0.06548999999999999,
+            "layer_limit": 0.03626877286805704,
+            "selected_width": 0.03626877286805704
+          }
+        ],
+        "vertex_ids": [
+          12,
+          25,
+          38,
+          51,
+          64,
+          77,
+          430,
+          443,
+          456,
+          469
+        ],
+        "before_fairing": [
+          [
+            0.017699999999999997,
+            -0.07684397232327607,
+            1.54754
+          ],
+          [
+            0.03163228054242607,
+            -0.057846749636864224,
+            1.5521619474087445
+          ],
+          [
+            0.045947336528160895,
+            -0.029366400302184032,
+            1.5603112091882183
+          ],
+          [
+            0.054884113804610155,
+            -0.018122029585681532,
+            1.5700799000777546
+          ],
+          [
+            0.06332879180476342,
+            -0.013518633862038805,
+            1.5800217784122816
+          ],
+          [
+            0.06742647554323808,
+            -0.01002427959854888,
+            1.5900061058018566
+          ],
+          [
+            0.015929999999999996,
+            -0.06976397232327607,
+            1.545888
+          ],
+          [
+            0.02027565517241364,
+            -0.05324397232327607,
+            1.548248
+          ],
+          [
+            0.028673999999999963,
+            -0.03200397232327607,
+            1.5529680000000001
+          ],
+          [
+            0.03626877286805704,
+            -0.024215972323276068,
+            1.557688
+          ]
+        ],
+        "after_jaw_fairing": [
+          [
+            0.017699999999999997,
+            -0.07684397232327607,
+            1.54754
+          ],
+          [
+            0.03163228054242607,
+            -0.057846749636864224,
+            1.5521619474087445
+          ],
+          [
+            0.045947336528160895,
+            -0.029366400302184032,
+            1.5603112091882183
+          ],
+          [
+            0.054884113804610155,
+            -0.018122029585681532,
+            1.5700799000777546
+          ],
+          [
+            0.06332879180476342,
+            -0.012695277159460219,
+            1.5839899023025805
+          ],
+          [
+            0.06742647554323808,
+            -0.010103710239420938,
+            1.590509801947425
+          ],
+          [
+            0.015929999999999996,
+            -0.06976397232327607,
+            1.545888
+          ],
+          [
+            0.02027565517241364,
+            -0.05324397232327607,
+            1.548248
+          ],
+          [
+            0.028673999999999963,
+            -0.03200397232327607,
+            1.5529680000000001
+          ],
+          [
+            0.03626877286805704,
+            -0.02345001777326137,
+            1.5596266477803786
+          ]
+        ],
+        "after_final_fairing": [
+          [
+            0.017699999999999997,
+            -0.07684397232327607,
+            1.54754
+          ],
+          [
+            0.03163228054242607,
+            -0.057846749636864224,
+            1.5521619474087445
+          ],
+          [
+            0.045947336528160895,
+            -0.029366400302184032,
+            1.5603112091882183
+          ],
+          [
+            0.054884113804610155,
+            -0.018122029585681532,
+            1.5700799000777546
+          ],
+          [
+            0.06332879180476342,
+            -0.012333358192928872,
+            1.5858428887196017
+          ],
+          [
+            0.06742647554323808,
+            -0.010185105516521067,
+            1.5914083849348808
+          ],
+          [
+            0.015929999999999996,
+            -0.06976397232327607,
+            1.545888
+          ],
+          [
+            0.02027565517241364,
+            -0.05324397232327607,
+            1.548248
+          ],
+          [
+            0.028673999999999963,
+            -0.03200397232327607,
+            1.5529680000000001
+          ],
+          [
+            0.03626877286805704,
+            -0.023068350094526232,
+            1.5606257656435683
+          ]
+        ]
+      }
+    },
+    {
+      "candidate": "combo853",
+      "selection": {
+        "eyes": "downturned",
+        "brows": "soft-arched",
+        "mouth": "retained",
+        "nose": "retained",
+        "ears": "retained",
+        "face": "broad-blunt-chin"
+      },
+      "composition_sha256": "5241a4c4a237795673bc78bcb1bb9afa2a7c5790fbcfb877c383e8614ff8d282",
+      "generation_status": "succeeded",
+      "sdf_status": "succeeded",
+      "generation_job_id": "7a81871a-9d89-48b5-8840-2f06a86ef945",
+      "sdf_job_id": "0cfd7d85-5830-434e-b4b2-08296d2b5e7d",
+      "glb_sha256": "b6d38787999fd2713de5c483ddfb4a00cfd64338b0abcd9c35302efaab37496d",
+      "mouth_capture_count": 18,
+      "eye_capture_count": 0,
+      "visual_status": "Not accepted: analytical source shoulder reduced, but native final fairing still adds7.85degree front-chain tangent reversal. Mouth-only captures, not a full validated sample.",
+      "template_outline_trace": {
+        "construction": [
+          {
+            "row": 0,
+            "h": 0.0,
+            "before": [
+              0.017699999999999997,
+              -0.076571824156826,
+              1.54754
+            ],
+            "after": [
+              0.017699999999999997,
+              -0.076571824156826,
+              1.54754
+            ]
+          },
+          {
+            "row": 1,
+            "h": 0.0296610169491521,
+            "before": [
+              0.02937352651794492,
+              -0.058462881114829,
+              1.5521619474087445
+            ],
+            "after": [
+              0.029289627273217933,
+              -0.057363204350329135,
+              1.5521619474087445
+            ]
+          },
+          {
+            "row": 2,
+            "h": 0.0677966101694916,
+            "before": [
+              0.042965293173547005,
+              -0.032572309597634394,
+              1.5603112091882183
+            ],
+            "after": [
+              0.04232869624964154,
+              -0.03036655144868026,
+              1.5603112091882183
+            ]
+          },
+          {
+            "row": 3,
+            "h": 0.11016949152542384,
+            "before": [
+              0.05523714218650969,
+              -0.02123367585051665,
+              1.5700799000777546
+            ],
+            "after": [
+              0.05442020012856301,
+              -0.018584417696829714,
+              1.5700799000777546
+            ]
+          },
+          {
+            "row": 4,
+            "h": 0.15254237288135608,
+            "before": [
+              0.06413365388090213,
+              -0.0167330944285419,
+              1.5800217784122816
+            ],
+            "after": [
+              0.06335960944063705,
+              -0.013504583343448758,
+              1.5800217784122816
+            ]
+          },
+          {
+            "row": 5,
+            "h": 0.1949152542372883,
+            "before": [
+              0.06803823595168805,
+              -0.01358170718133836,
+              1.5900061058018566
+            ],
+            "after": [
+              0.06742647554323808,
+              -0.01002427959854888,
+              1.5900061058018566
+            ]
+          }
+        ],
+        "underside": [
+          {
+            "lift": 0,
+            "spread": 1.15,
+            "base_limit": 0.020354999999999995,
+            "layer_limit": 0.015929999999999996,
+            "selected_width": 0.015929999999999996
+          },
+          {
+            "lift": 0.01,
+            "spread": 1.6,
+            "base_limit": 0.028319999999999998,
+            "layer_limit": 0.019511403508771803,
+            "selected_width": 0.019511403508771803
+          },
+          {
+            "lift": 0.03,
+            "spread": 2.5,
+            "base_limit": 0.04424999999999999,
+            "layer_limit": 0.026549999999999966,
+            "selected_width": 0.026549999999999966
+          },
+          {
+            "lift": 0.05,
+            "spread": 3.7,
+            "base_limit": 0.06548999999999999,
+            "layer_limit": 0.03319605106048708,
+            "selected_width": 0.03319605106048708
+          }
+        ],
+        "vertex_ids": [
+          12,
+          25,
+          38,
+          51,
+          64,
+          77,
+          430,
+          443,
+          456,
+          469
+        ],
+        "before_fairing": [
+          [
+            0.017699999999999997,
+            -0.076571824156826,
+            1.54754
+          ],
+          [
+            0.029289627273217933,
+            -0.057363204350329135,
+            1.5521619474087445
+          ],
+          [
+            0.04232869624964154,
+            -0.03036655144868026,
+            1.5603112091882183
+          ],
+          [
+            0.05442020012856301,
+            -0.018584417696829714,
+            1.5700799000777546
+          ],
+          [
+            0.06335960944063705,
+            -0.013504583343448758,
+            1.5800217784122816
+          ],
+          [
+            0.06742647554323808,
+            -0.01002427959854888,
+            1.5900061058018566
+          ],
+          [
+            0.015929999999999996,
+            -0.06949182415682599,
+            1.545888
+          ],
+          [
+            0.019511403508771803,
+            -0.052971824156826,
+            1.548248
+          ],
+          [
+            0.026549999999999966,
+            -0.031731824156825995,
+            1.5529680000000001
+          ],
+          [
+            0.03319605106048708,
+            -0.023943824156825992,
+            1.557688
+          ]
+        ],
+        "after_jaw_fairing": [
+          [
+            0.017699999999999997,
+            -0.076571824156826,
+            1.54754
+          ],
+          [
+            0.029289627273217933,
+            -0.057363204350329135,
+            1.5521619474087445
+          ],
+          [
+            0.04232869624964154,
+            -0.03036655144868026,
+            1.5603112091882183
+          ],
+          [
+            0.05442020012856301,
+            -0.018584417696829714,
+            1.5700799000777546
+          ],
+          [
+            0.06335960944063705,
+            -0.012517335172751411,
+            1.5841534663300043
+          ],
+          [
+            0.06742647554323808,
+            -0.010052243073378677,
+            1.5905094035067275
+          ],
+          [
+            0.015929999999999996,
+            -0.06949182415682599,
+            1.545888
+          ],
+          [
+            0.019511403508771803,
+            -0.052971824156826,
+            1.548248
+          ],
+          [
+            0.026549999999999966,
+            -0.031731824156825995,
+            1.5529680000000001
+          ],
+          [
+            0.03319605106048708,
+            -0.023456725327071166,
+            1.55921614813851
+          ]
+        ],
+        "after_final_fairing": [
+          [
+            0.017699999999999997,
+            -0.076571824156826,
+            1.54754
+          ],
+          [
+            0.029289627273217933,
+            -0.057363204350329135,
+            1.5521619474087445
+          ],
+          [
+            0.04232869624964154,
+            -0.03036655144868026,
+            1.5603112091882183
+          ],
+          [
+            0.05442020012856301,
+            -0.018584417696829714,
+            1.5700799000777546
+          ],
+          [
+            0.06335960944063705,
+            -0.012130940619488524,
+            1.586001504005272
+          ],
+          [
+            0.06742647554323808,
+            -0.010081202712778067,
+            1.5913672113136674
+          ],
+          [
+            0.015929999999999996,
+            -0.06949182415682599,
+            1.545888
+          ],
+          [
+            0.019511403508771803,
+            -0.052971824156826,
+            1.548248
+          ],
+          [
+            0.026549999999999966,
+            -0.031731824156825995,
+            1.5529680000000001
+          ],
+          [
+            0.03319605106048708,
+            -0.023180524474501144,
+            1.5600189286076616
+          ]
+        ]
+      }
+    },
+    {
+      "candidate": "combo854",
+      "selection": {
+        "eyes": "downturned",
+        "brows": "soft-arched",
+        "mouth": "retained",
+        "nose": "retained",
+        "ears": "retained",
+        "face": "broad-blunt-chin"
+      },
+      "composition_sha256": "ca2670be42d8d5a1edfc722128a6d591483cb310458361ae7d720a64c944914c",
+      "generation_status": "succeeded",
+      "sdf_status": "succeeded",
+      "generation_job_id": "27fcdd4a-a9e4-4d07-8297-a11e6175f07c",
+      "sdf_job_id": "d9b7b56f-a521-46e9-abba-b7a132c27312",
+      "glb_sha256": "0ce448a0f46a41bedfad5f35fe37e7719f28dfa464923d6228ef1ce8d0c10883",
+      "eye_capture_count": 84,
+      "mouth_capture_count": 18,
+      "family_template": {
+        "template": {
+          "id": "broad-blunt-chin-v3",
+          "version": 3,
+          "slot": "face",
+          "reference_sources": [
+            "https://delicious-in-dungeon.com/",
+            "https://delicious-in-dungeon.com/assets/character/1f.png"
+          ],
+          "width_stations": [
+            [
+              0,
+              0.075
+            ],
+            [
+              0.03,
+              0.125
+            ],
+            [
+              0.07,
+              0.185
+            ],
+            [
+              0.12,
+              0.244
+            ],
+            [
+              0.16,
+              0.276
+            ],
+            [
+              0.2,
+              0.29
+            ],
+            [
+              0.3,
+              0.325
+            ],
+            [
+              0.45,
+              0.37
+            ],
+            [
+              0.6,
+              0.402
+            ],
+            [
+              0.75,
+              0.417
+            ],
+            [
+              0.85,
+              0.407
+            ],
+            [
+              1,
+              0.4
+            ]
+          ],
+          "retained_width_sha256": "4d2b2112dccd8554dbb6f62484d73f4fec00dcf90eef76986da5ca31bc60a818",
+          "max_baseline_width_change_m": 0.012,
+          "attachment_interface": "root-protected-ear-v3",
+          "residual_controls": {},
+          "template_sha256": "38a76c79874d63388f55c3166f5462d99d416943636ad5950ca7c5911b92d70f"
+        },
+        "retained_width_stations": [
+          [
+            0,
+            0.025
+          ],
+          [
+            0.03,
+            0.088
+          ],
+          [
+            0.07,
+            0.165
+          ],
+          [
+            0.12,
+            0.244
+          ],
+          [
+            0.16,
+            0.276
+          ],
+          [
+            0.2,
+            0.29
+          ],
+          [
+            0.3,
+            0.325
+          ],
+          [
+            0.45,
+            0.37
+          ],
+          [
+            0.6,
+            0.402
+          ],
+          [
+            0.75,
+            0.417
+          ],
+          [
+            0.85,
+            0.407
+          ],
+          [
+            1,
+            0.4
+          ]
+        ],
+        "template_width_stations": [
+          [
+            0,
+            0.075
+          ],
+          [
+            0.03,
+            0.125
+          ],
+          [
+            0.07,
+            0.185
+          ],
+          [
+            0.12,
+            0.244
+          ],
+          [
+            0.16,
+            0.276
+          ],
+          [
+            0.2,
+            0.29
+          ],
+          [
+            0.3,
+            0.325
+          ],
+          [
+            0.45,
+            0.37
+          ],
+          [
+            0.6,
+            0.402
+          ],
+          [
+            0.75,
+            0.417
+          ],
+          [
+            0.85,
+            0.407
+          ],
+          [
+            1,
+            0.4
+          ]
+        ],
+        "template_half_width_change_bound_m": 0.011799999999999998,
+        "protected_height_range": [
+          0.16,
+          1.0
+        ],
+        "scope": "Authored width-template construction, not recovered dimensions or x-only deformation. Downstream retained ear constraints remain active and require native review.",
+        "final_width_stations": [
+          [
+            0,
+            0.075
+          ],
+          [
+            0.03,
+            0.125
+          ],
+          [
+            0.07,
+            0.185
+          ],
+          [
+            0.12,
+            0.244
+          ],
+          [
+            0.16,
+            0.276
+          ],
+          [
+            0.2,
+            0.29
+          ],
+          [
+            0.3,
+            0.325
+          ],
+          [
+            0.45,
+            0.37
+          ],
+          [
+            0.6,
+            0.402
+          ],
+          [
+            0.75,
+            0.417
+          ],
+          [
+            0.85,
+            0.407
+          ],
+          [
+            1,
+            0.4
+          ]
+        ],
+        "residual_half_width_change_bound_m": 0,
+        "total_half_width_change_bound_m": 0.011799999999999998
+      },
+      "jaw_boundary_fairing": {
+        "selected_vertices": 15,
+        "maximum_displacement_m": 0.0021240000000001522,
+        "proposed_displacement_m": 0.00454398998865264,
+        "outline_backtracking_factor": 0.5,
+        "outline_fairing_status": "applied",
+        "outline_turns_radians": [
+          -0.17911892554998787,
+          -0.12094703662453288,
+          -0.25130500471551065,
+          -0.1780896749354648
+        ],
+        "rejected_outline_steps": [
+          {
+            "factor": 1.0,
+            "turn_indices": [
+              3
+            ]
+          }
+        ],
+        "reference_turn_limits_radians": [
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "scope": "Front outer-row projection only; all downstream native guards remain required"
+      },
+      "final_return_boundary_fairing": {
+        "selected_vertices": 16,
+        "maximum_displacement_m": 0.0018880000000000752,
+        "proposed_displacement_m": 0.003436027086616523,
+        "outline_backtracking_factor": 1.0,
+        "outline_fairing_status": "applied",
+        "outline_turns_radians": [
+          -0.17911892554998787,
+          -0.12094703662453288,
+          -0.31804058359004683,
+          -0.031422527795637145
+        ],
+        "rejected_outline_steps": [],
+        "reference_turn_limits_radians": [
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "scope": "Front outer-row projection only; all downstream native guards remain required"
+      },
+      "visual_status": "Broad blunt lower contour distinct from845; bilateral shoulders materially reduced versus851; inspected neutral and open front/oblique views show no obvious equivalent structural gap. Functional category only, not full square face or final art acceptance.",
+      "model_library_file_id": "libfile_2e7b2187ba108191a02b4f7e80e9a18d",
+      "captures_library_file_id": "libfile_f5f65813799c8191a753b4b92df0f94f"
+    },
+    {
+      "candidate": "combo855",
+      "selection": {
+        "eyes": "slender",
+        "brows": "soft-arched",
+        "mouth": "bowed-contour",
+        "nose": "short-rounded",
+        "ears": "retained",
+        "face": "broad-blunt-chin"
+      },
+      "composition_sha256": "70588ab4c674abbe93bd539627003dc8984c77db0b5474e3d513a1eed61fe40f",
+      "generation_status": "succeeded",
+      "sdf_status": "succeeded",
+      "generation_job_id": "db35def6-d1e2-46ee-9331-5adc8e5535ef",
+      "sdf_job_id": "5474c599-75a6-45ee-8116-d1ddee6345e0",
+      "glb_sha256": "9af7cb470408842b5b741dc4552df748db2e83d034343af5d4ddd9f1e7258827",
+      "eye_capture_count": 84,
+      "mouth_capture_count": 18,
+      "family_template": {
+        "template": {
+          "id": "broad-blunt-chin-v3",
+          "version": 3,
+          "slot": "face",
+          "reference_sources": [
+            "https://delicious-in-dungeon.com/",
+            "https://delicious-in-dungeon.com/assets/character/1f.png"
+          ],
+          "width_stations": [
+            [
+              0,
+              0.075
+            ],
+            [
+              0.03,
+              0.125
+            ],
+            [
+              0.07,
+              0.185
+            ],
+            [
+              0.12,
+              0.244
+            ],
+            [
+              0.16,
+              0.276
+            ],
+            [
+              0.2,
+              0.29
+            ],
+            [
+              0.3,
+              0.325
+            ],
+            [
+              0.45,
+              0.37
+            ],
+            [
+              0.6,
+              0.402
+            ],
+            [
+              0.75,
+              0.417
+            ],
+            [
+              0.85,
+              0.407
+            ],
+            [
+              1,
+              0.4
+            ]
+          ],
+          "retained_width_sha256": "4d2b2112dccd8554dbb6f62484d73f4fec00dcf90eef76986da5ca31bc60a818",
+          "max_baseline_width_change_m": 0.012,
+          "attachment_interface": "root-protected-ear-v3",
+          "residual_controls": {},
+          "template_sha256": "38a76c79874d63388f55c3166f5462d99d416943636ad5950ca7c5911b92d70f"
+        },
+        "retained_width_stations": [
+          [
+            0,
+            0.025
+          ],
+          [
+            0.03,
+            0.088
+          ],
+          [
+            0.07,
+            0.165
+          ],
+          [
+            0.12,
+            0.244
+          ],
+          [
+            0.16,
+            0.276
+          ],
+          [
+            0.2,
+            0.29
+          ],
+          [
+            0.3,
+            0.325
+          ],
+          [
+            0.45,
+            0.37
+          ],
+          [
+            0.6,
+            0.402
+          ],
+          [
+            0.75,
+            0.417
+          ],
+          [
+            0.85,
+            0.407
+          ],
+          [
+            1,
+            0.4
+          ]
+        ],
+        "template_width_stations": [
+          [
+            0,
+            0.075
+          ],
+          [
+            0.03,
+            0.125
+          ],
+          [
+            0.07,
+            0.185
+          ],
+          [
+            0.12,
+            0.244
+          ],
+          [
+            0.16,
+            0.276
+          ],
+          [
+            0.2,
+            0.29
+          ],
+          [
+            0.3,
+            0.325
+          ],
+          [
+            0.45,
+            0.37
+          ],
+          [
+            0.6,
+            0.402
+          ],
+          [
+            0.75,
+            0.417
+          ],
+          [
+            0.85,
+            0.407
+          ],
+          [
+            1,
+            0.4
+          ]
+        ],
+        "template_half_width_change_bound_m": 0.011799999999999998,
+        "protected_height_range": [
+          0.16,
+          1.0
+        ],
+        "scope": "Authored width-template construction, not recovered dimensions or x-only deformation. Downstream retained ear constraints remain active and require native review.",
+        "final_width_stations": [
+          [
+            0,
+            0.075
+          ],
+          [
+            0.03,
+            0.125
+          ],
+          [
+            0.07,
+            0.185
+          ],
+          [
+            0.12,
+            0.244
+          ],
+          [
+            0.16,
+            0.276
+          ],
+          [
+            0.2,
+            0.29
+          ],
+          [
+            0.3,
+            0.325
+          ],
+          [
+            0.45,
+            0.37
+          ],
+          [
+            0.6,
+            0.402
+          ],
+          [
+            0.75,
+            0.417
+          ],
+          [
+            0.85,
+            0.407
+          ],
+          [
+            1,
+            0.4
+          ]
+        ],
+        "residual_half_width_change_bound_m": 0,
+        "total_half_width_change_bound_m": 0.011799999999999998
+      },
+      "jaw_boundary_fairing": {
+        "selected_vertices": 15,
+        "maximum_displacement_m": 0.002123999999999959,
+        "proposed_displacement_m": 0.004543989988596922,
+        "outline_backtracking_factor": 0.5,
+        "outline_fairing_status": "applied",
+        "outline_turns_radians": [
+          -0.17911892554998787,
+          -0.12094703662453288,
+          -0.25130500471297734,
+          -0.17808967493387817
+        ],
+        "rejected_outline_steps": [
+          {
+            "factor": 1.0,
+            "turn_indices": [
+              3
+            ]
+          }
+        ],
+        "reference_turn_limits_radians": [
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "scope": "Front outer-row projection only; all downstream native guards remain required"
+      },
+      "final_return_boundary_fairing": {
+        "selected_vertices": 16,
+        "maximum_displacement_m": 0.0018880000000001016,
+        "proposed_displacement_m": 0.003436027086085664,
+        "outline_backtracking_factor": 1.0,
+        "outline_fairing_status": "applied",
+        "outline_turns_radians": [
+          -0.17911892554998787,
+          -0.12094703662453288,
+          -0.3180405835667338,
+          -0.03142252772649401
+        ],
+        "rejected_outline_steps": [],
+        "reference_turn_limits_radians": [
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "scope": "Front outer-row projection only; all downstream native guards remain required"
+      },
+      "visual_status": "Broad lower contour retained with slender eyes, bowed mouth and rounded nose; inspected front/oblique neutral and open views show no obvious new gap or shoulder. Functional composition sample, not final aesthetic acceptance.",
+      "model_library_file_id": "libfile_03ba48effc3481918483392d8912dbbd",
+      "captures_library_file_id": "libfile_48094e2e5bd0819193a276f337ee5a46"
+    },
+    {
+      "candidate": "combo856",
+      "selection": {
+        "eyes": "almond",
+        "brows": "angular-peaked",
+        "mouth": "bowed-contour",
+        "nose": "short-rounded",
+        "ears": "lateral-elf",
+        "face": "broad-blunt-chin"
+      },
+      "composition_sha256": "0529bac9262e03d328c27d9e38f1486ed4db771be9b6458fdd8432d18f85caa3",
+      "generation_status": "succeeded",
+      "sdf_status": "succeeded",
+      "generation_job_id": "225a478f-2a73-4a83-b0e8-97e453cb71ad",
+      "sdf_job_id": "5a4e5c60-4f21-4442-b671-ca4939e77037",
+      "glb_sha256": "439ea3963531e3903c96634be67da3285c89bcb144e53e642bd32026bb0ed16c",
+      "eye_capture_count": 84,
+      "mouth_capture_count": 18,
+      "family_template": {
+        "template": {
+          "id": "broad-blunt-chin-v3",
+          "version": 3,
+          "slot": "face",
+          "reference_sources": [
+            "https://delicious-in-dungeon.com/",
+            "https://delicious-in-dungeon.com/assets/character/1f.png"
+          ],
+          "width_stations": [
+            [
+              0,
+              0.075
+            ],
+            [
+              0.03,
+              0.125
+            ],
+            [
+              0.07,
+              0.185
+            ],
+            [
+              0.12,
+              0.244
+            ],
+            [
+              0.16,
+              0.276
+            ],
+            [
+              0.2,
+              0.29
+            ],
+            [
+              0.3,
+              0.325
+            ],
+            [
+              0.45,
+              0.37
+            ],
+            [
+              0.6,
+              0.402
+            ],
+            [
+              0.75,
+              0.417
+            ],
+            [
+              0.85,
+              0.407
+            ],
+            [
+              1,
+              0.4
+            ]
+          ],
+          "retained_width_sha256": "4d2b2112dccd8554dbb6f62484d73f4fec00dcf90eef76986da5ca31bc60a818",
+          "max_baseline_width_change_m": 0.012,
+          "attachment_interface": "root-protected-ear-v3",
+          "residual_controls": {},
+          "template_sha256": "38a76c79874d63388f55c3166f5462d99d416943636ad5950ca7c5911b92d70f"
+        },
+        "retained_width_stations": [
+          [
+            0,
+            0.025
+          ],
+          [
+            0.03,
+            0.088
+          ],
+          [
+            0.07,
+            0.165
+          ],
+          [
+            0.12,
+            0.244
+          ],
+          [
+            0.16,
+            0.276
+          ],
+          [
+            0.2,
+            0.29
+          ],
+          [
+            0.3,
+            0.325
+          ],
+          [
+            0.45,
+            0.37
+          ],
+          [
+            0.6,
+            0.402
+          ],
+          [
+            0.75,
+            0.417
+          ],
+          [
+            0.85,
+            0.407
+          ],
+          [
+            1,
+            0.4
+          ]
+        ],
+        "template_width_stations": [
+          [
+            0,
+            0.075
+          ],
+          [
+            0.03,
+            0.125
+          ],
+          [
+            0.07,
+            0.185
+          ],
+          [
+            0.12,
+            0.244
+          ],
+          [
+            0.16,
+            0.276
+          ],
+          [
+            0.2,
+            0.29
+          ],
+          [
+            0.3,
+            0.325
+          ],
+          [
+            0.45,
+            0.37
+          ],
+          [
+            0.6,
+            0.402
+          ],
+          [
+            0.75,
+            0.417
+          ],
+          [
+            0.85,
+            0.407
+          ],
+          [
+            1,
+            0.4
+          ]
+        ],
+        "template_half_width_change_bound_m": 0.011799999999999998,
+        "protected_height_range": [
+          0.16,
+          1.0
+        ],
+        "scope": "Authored width-template construction, not recovered dimensions or x-only deformation. Downstream retained ear constraints remain active and require native review.",
+        "final_width_stations": [
+          [
+            0,
+            0.075
+          ],
+          [
+            0.03,
+            0.125
+          ],
+          [
+            0.07,
+            0.185
+          ],
+          [
+            0.12,
+            0.244
+          ],
+          [
+            0.16,
+            0.276
+          ],
+          [
+            0.2,
+            0.29
+          ],
+          [
+            0.3,
+            0.325
+          ],
+          [
+            0.45,
+            0.37
+          ],
+          [
+            0.6,
+            0.402
+          ],
+          [
+            0.75,
+            0.417
+          ],
+          [
+            0.85,
+            0.407
+          ],
+          [
+            1,
+            0.4
+          ]
+        ],
+        "residual_half_width_change_bound_m": 0,
+        "total_half_width_change_bound_m": 0.011799999999999998
+      },
+      "jaw_boundary_fairing": {
+        "selected_vertices": 15,
+        "maximum_displacement_m": 0.0021240000000000364,
+        "proposed_displacement_m": 0.004543991253019719,
+        "outline_backtracking_factor": 0.5,
+        "outline_fairing_status": "applied",
+        "outline_turns_radians": [
+          -0.17911892554998787,
+          -0.12094703662453288,
+          -0.25130507103548594,
+          -0.17808968844079132
+        ],
+        "rejected_outline_steps": [
+          {
+            "factor": 1.0,
+            "turn_indices": [
+              3
+            ]
+          }
+        ],
+        "reference_turn_limits_radians": [
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "scope": "Front outer-row projection only; all downstream native guards remain required"
+      },
+      "final_return_boundary_fairing": {
+        "selected_vertices": 16,
+        "maximum_displacement_m": 0.0018879999999999492,
+        "proposed_displacement_m": 0.003436028558914832,
+        "outline_backtracking_factor": 1.0,
+        "outline_fairing_status": "applied",
+        "outline_turns_radians": [
+          -0.17911892554998787,
+          -0.12094703662453288,
+          -0.3180407166366179,
+          -0.031422595951890786
+        ],
+        "rejected_outline_steps": [],
+        "reference_turn_limits_radians": [
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "scope": "Front outer-row projection only; all downstream native guards remain required"
+      },
+      "visual_status": "Six nonretained slot choices compose without obvious new mouth seam break, ear detachment or lower-cheek regression in inspected neutral/open views. Dense spiky lashes and local white-material undulations remain aesthetic limitations. Technical integration sample only, not final art acceptance.",
+      "model_library_file_id": "libfile_89db45a9ce348191b18894bb4e3f7acb",
+      "captures_library_file_id": "libfile_11ed908fec8081919a1744ae1a31adb5"
+    }
+  ]
+}
