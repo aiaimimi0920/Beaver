@@ -1,0 +1,212 @@
+{
+  "scope": "Depth and support-shape transfer, not frontal silhouette diversity",
+  "candidates": [
+    {
+      "version": 813,
+      "baseline_version": 810,
+      "eye_preset": "clean-downturned-810",
+      "surface_parameters": {
+        "axial_smoothing": 0.35,
+        "cheek_roundness": 0.02,
+        "orbit_shallowing": 0.1,
+        "orbit_rim_flattening": 0
+      },
+      "eyes": {
+        "eye_spacing": 0.94,
+        "eye_width": 0.94,
+        "upper_arch": 1.15,
+        "lower_arch": 0.72,
+        "corner_slope_offset": -0.026,
+        "eye_height_offset": 0,
+        "iris_width": 0.98,
+        "iris_height": 1.08,
+        "brow_height_offset": -0.006,
+        "brow_rise_offset": -0.022,
+        "brow_thickness": 0.85,
+        "brow_arch": 1,
+        "lash_band_thickness": 0.82,
+        "supplemental_lashes": 0,
+        "lid_fold": 0,
+        "upper_roundness": 1.7,
+        "upper_horizontal_roundness": 0.75,
+        "lash_contour_follow": 1,
+        "iris_vertical_offset": 0,
+        "simple_iris": 1,
+        "short_upper_tuft": 1,
+        "iris_horizontal_offset": 0,
+        "ocular_skin_outline_holdout": 1,
+        "iris_plane_slope_scale": 1,
+        "lower_roundness": 1.25,
+        "upper_asymmetry": 0,
+        "lower_shoulder": 0,
+        "lower_horizontal_roundness": 1.1,
+        "secondary_lash_scale": 0.7,
+        "brow_fullness_offset": 0.2,
+        "brow_softness": 0.4,
+        "brow_head_rounding": 1,
+        "layered_lashes": 0,
+        "upper_lash_layer": 0,
+        "lateral_aperture_follow": 1,
+        "lateral_blink_follow": 0.7,
+        "wing_lift_scale": 1
+      },
+      "status": "native, SDF, 84 captures and visual regression passed",
+      "native_capture": {
+        "source": "res://assets/aster/general_face_eyes_813/aster_head.glb",
+        "source_sha256": "f46f1910449ab135e38bd259290e2022aef6afdab3d1e33dc6ae742ab8b786c2",
+        "capture_count": 84,
+        "profile": "eye84"
+      },
+      "visual_review": {
+        "baseline": 810,
+        "candidate": 813,
+        "result": "visual regression pass",
+        "scope": "Depth/support transfer; no new frontal silhouette family",
+        "findings": [
+          "No obvious new eyelid detachment, gaps, cheek ripples or closed-lid discontinuity in matched front and oblique views",
+          "Inherited block-like white-model shading near eye sockets, nose and mouth remains",
+          "Visible differences are subtle; no claim of significant aesthetic improvement"
+        ]
+      }
+    },
+    {
+      "version": 814,
+      "baseline_version": 812,
+      "eye_preset": "clean-slender-812",
+      "surface_parameters": {
+        "axial_smoothing": 0.65,
+        "cheek_roundness": 0.09,
+        "orbit_shallowing": 0.1,
+        "orbit_rim_flattening": 0
+      },
+      "eyes": {
+        "eye_spacing": 0.94,
+        "eye_width": 0.94,
+        "upper_arch": 0.95,
+        "lower_arch": 0.55,
+        "corner_slope_offset": -0.014,
+        "eye_height_offset": 0,
+        "iris_width": 0.98,
+        "iris_height": 1.08,
+        "brow_height_offset": -0.006,
+        "brow_rise_offset": -0.022,
+        "brow_thickness": 0.85,
+        "brow_arch": 1,
+        "lash_band_thickness": 0.82,
+        "supplemental_lashes": 0,
+        "lid_fold": 0,
+        "upper_roundness": 1.7,
+        "upper_horizontal_roundness": 0.75,
+        "lash_contour_follow": 1,
+        "iris_vertical_offset": 0,
+        "simple_iris": 1,
+        "short_upper_tuft": 1,
+        "iris_horizontal_offset": 0,
+        "ocular_skin_outline_holdout": 1,
+        "iris_plane_slope_scale": 1,
+        "lower_roundness": 1.25,
+        "upper_asymmetry": 0.12,
+        "lower_shoulder": 0.8,
+        "lower_horizontal_roundness": 1.1,
+        "secondary_lash_scale": 0.7,
+        "brow_fullness_offset": 0.2,
+        "brow_softness": 0.4,
+        "brow_head_rounding": 1,
+        "layered_lashes": 0,
+        "upper_lash_layer": 0,
+        "lateral_aperture_follow": 1,
+        "lateral_blink_follow": 0.7,
+        "wing_lift_scale": 1
+      },
+      "status": "native, SDF, 84 captures and visual regression passed",
+      "native_capture": {
+        "source": "res://assets/aster/general_face_eyes_814/aster_head.glb",
+        "source_sha256": "d9d2dddfc70d67d6369ff3445b634386e23ab00dd1724df1c56e9aaab6e52d38",
+        "capture_count": 84,
+        "profile": "eye84"
+      },
+      "visual_review": {
+        "baseline": 812,
+        "candidate": 814,
+        "result": "visual regression pass",
+        "scope": "Depth/support transfer; no new frontal silhouette family",
+        "findings": [
+          "No obvious new eyelid detachment, gaps, cheek ripples or closed-lid discontinuity in matched front and oblique views",
+          "Inherited block-like white-model shading near eye sockets, nose and mouth remains",
+          "Visible differences are subtle; no claim of significant aesthetic improvement"
+        ]
+      }
+    },
+    {
+      "version": 815,
+      "baseline_version": 811,
+      "eye_preset": "clean-angular-811",
+      "surface_parameters": {
+        "axial_smoothing": 0.5,
+        "cheek_roundness": 0.05,
+        "orbit_shallowing": 0.25,
+        "orbit_rim_flattening": 0
+      },
+      "eyes": {
+        "eye_spacing": 0.94,
+        "eye_width": 0.94,
+        "upper_arch": 1.05,
+        "lower_arch": 0.65,
+        "corner_slope_offset": -0.014,
+        "eye_height_offset": 0,
+        "iris_width": 0.98,
+        "iris_height": 1.08,
+        "brow_height_offset": -0.006,
+        "brow_rise_offset": -0.022,
+        "brow_thickness": 0.85,
+        "brow_arch": 1,
+        "lash_band_thickness": 0.82,
+        "supplemental_lashes": 0,
+        "lid_fold": 0,
+        "upper_roundness": 1.7,
+        "upper_horizontal_roundness": 1,
+        "lash_contour_follow": 1,
+        "iris_vertical_offset": 0,
+        "simple_iris": 1,
+        "short_upper_tuft": 1,
+        "iris_horizontal_offset": 0,
+        "ocular_skin_outline_holdout": 1,
+        "iris_plane_slope_scale": 1,
+        "lower_roundness": 1.25,
+        "upper_asymmetry": 0.12,
+        "lower_shoulder": 0,
+        "lower_horizontal_roundness": 1.1,
+        "secondary_lash_scale": 0.7,
+        "brow_fullness_offset": 0.2,
+        "brow_softness": 0.4,
+        "brow_head_rounding": 1,
+        "layered_lashes": 0,
+        "upper_lash_layer": 0,
+        "upper_angularity": 0.65,
+        "lateral_aperture_follow": 1,
+        "lateral_blink_follow": 0.65,
+        "aperture_corner_taper": 1,
+        "lateral_guide_inward_power": 1,
+        "wing_lift_scale": 1
+      },
+      "status": "native, SDF, 84 captures and visual regression passed",
+      "native_capture": {
+        "source": "res://assets/aster/general_face_eyes_815/aster_head.glb",
+        "source_sha256": "a3a35bc27504a954ed1fb67de754c2195ec556791ee1659fcf34e86870bf6d2d",
+        "capture_count": 84,
+        "profile": "eye84"
+      },
+      "visual_review": {
+        "baseline": 811,
+        "candidate": 815,
+        "result": "visual regression pass",
+        "scope": "Depth/support transfer; no new frontal silhouette family",
+        "findings": [
+          "No obvious new eyelid detachment, gaps, cheek ripples or closed-lid discontinuity in matched front and oblique views",
+          "Inherited block-like white-model shading near eye sockets, nose and mouth remains",
+          "Visible differences are subtle; no claim of significant aesthetic improvement"
+        ]
+      }
+    }
+  ]
+}

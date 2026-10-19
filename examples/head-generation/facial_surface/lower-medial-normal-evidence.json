@@ -1,0 +1,422 @@
+{
+  "baseline": 825,
+  "candidate": 826,
+  "status": "retained opt-in diagnostic; slight localized white-shading change, no default promotion",
+  "changed": {
+    "lower_medial_blend": 1,
+    "height_window": [
+      0.05,
+      0.1,
+      0.2,
+      0.23
+    ]
+  },
+  "source_sha256": "b5713263ba8d98b9f8f5344a664a140311452ae6e27a074ee9db9ed28aa04b86",
+  "native_generation_job": "db5d9638-604d-4967-adbe-db316139abb3",
+  "native_sdf_job": "70b4dbd8-539f-4483-9aae-7d88fde5fccf",
+  "eye_captures_verified": 84,
+  "mouth_captures_verified": 18,
+  "mouth_capture_weights": [
+    0.6,
+    1
+  ],
+  "numeric_pose_weights": [
+    0,
+    0.5,
+    1
+  ],
+  "sdf_decoded_pixels_identical_to_825": true,
+  "native_geometry_comparison": {
+    "baseline": 825,
+    "replay": 826,
+    "baseline_blend_sha256": "e6d8d732f8e8ba38c4e411ec267c3a61372927bd5ed2b71a0f88489e9b770aba",
+    "replay_blend_sha256": "883dbe46b85a6fc789c56996a15e0d98361a9c6003eb2356875132c7ec9ee840",
+    "indexed_topology_identical": true,
+    "polygon_count": 10980,
+    "changed_attributes": [
+      "sharp_edge"
+    ],
+    "sharp_edge_changes": [
+      {
+        "edge": 1655,
+        "old": true,
+        "new": false,
+        "positions": [
+          [
+            0.0,
+            -0.09088899940252304,
+            1.558246374130249
+          ],
+          [
+            0.0,
+            -0.09145673364400864,
+            1.556850552558899
+          ]
+        ],
+        "heights": [
+          0.14934904292478346,
+          0.1434345447410966
+        ]
+      },
+      {
+        "edge": 1656,
+        "old": true,
+        "new": false,
+        "positions": [
+          [
+            0.0,
+            -0.09145673364400864,
+            1.556850552558899
+          ],
+          [
+            -1.4551915228366852e-11,
+            -0.09175127744674683,
+            1.5553975105285645
+          ]
+        ],
+        "heights": [
+          0.1434345447410966,
+          0.13727758698544204
+        ]
+      },
+      {
+        "edge": 1743,
+        "old": true,
+        "new": false,
+        "positions": [
+          [
+            0.0,
+            -0.09136642515659332,
+            1.5585532188415527
+          ],
+          [
+            -3.183231456205249e-12,
+            -0.09615570306777954,
+            1.561490535736084
+          ]
+        ],
+        "heights": [
+          0.15064923237946018,
+          0.16309549040713497
+        ]
+      },
+      {
+        "edge": 1744,
+        "old": true,
+        "new": false,
+        "positions": [
+          [
+            -3.183231456205249e-12,
+            -0.09615570306777954,
+            1.561490535736084
+          ],
+          [
+            -1.8189894035458565e-12,
+            -0.09915164113044739,
+            1.5645493268966675
+          ]
+        ],
+        "heights": [
+          0.16309549040713497,
+          0.17605646990113286
+        ]
+      },
+      {
+        "edge": 1745,
+        "old": true,
+        "new": false,
+        "positions": [
+          [
+            -1.4551915228366852e-11,
+            -0.09175127744674683,
+            1.5553975105285645
+          ],
+          [
+            1.8189894035458565e-12,
+            -0.09160664677619934,
+            1.5538476705551147
+          ]
+        ],
+        "heights": [
+          0.13727758698544204,
+          0.1307104684538755
+        ]
+      },
+      {
+        "edge": 1746,
+        "old": true,
+        "new": false,
+        "positions": [
+          [
+            1.8189894035458565e-12,
+            -0.09160664677619934,
+            1.5538476705551147
+          ],
+          [
+            6.366462912410498e-12,
+            -0.09106072783470154,
+            1.5522403717041016
+          ]
+        ],
+        "heights": [
+          0.1307104684538755,
+          0.12389988010212472
+        ]
+      },
+      {
+        "edge": 1805,
+        "old": true,
+        "new": false,
+        "positions": [
+          [
+            -1.8189894035458565e-12,
+            -0.09915164113044739,
+            1.5645493268966675
+          ],
+          [
+            -3.637978807091713e-12,
+            -0.09935393929481506,
+            1.5678108930587769
+          ]
+        ],
+        "heights": [
+          0.17605646990113286,
+          0.18987666550329121
+        ]
+      },
+      {
+        "edge": 1806,
+        "old": true,
+        "new": false,
+        "positions": [
+          [
+            -3.637978807091713e-12,
+            -0.09935393929481506,
+            1.5678108930587769
+          ],
+          [
+            2.7284841053187847e-12,
+            -0.09884750097990036,
+            1.571193814277649
+          ]
+        ],
+        "heights": [
+          0.18987666550329121,
+          0.2042110774476644
+        ]
+      },
+      {
+        "edge": 1807,
+        "old": true,
+        "new": false,
+        "positions": [
+          [
+            -2.2737367544323206e-11,
+            -0.08852585405111313,
+            1.5478874444961548
+          ],
+          [
+            1.0913936421275139e-11,
+            -0.09014620631933212,
+            1.5504837036132812
+          ]
+        ],
+        "heights": [
+          0.10545527328879091,
+          0.11645637124271661
+        ]
+      },
+      {
+        "edge": 1808,
+        "old": true,
+        "new": false,
+        "positions": [
+          [
+            1.0913936421275139e-11,
+            -0.09014620631933212,
+            1.5504837036132812
+          ],
+          [
+            6.366462912410498e-12,
+            -0.09106072783470154,
+            1.5522403717041016
+          ]
+        ],
+        "heights": [
+          0.11645637124271661,
+          0.12389988010212472
+        ]
+      },
+      {
+        "edge": 13353,
+        "old": true,
+        "new": false,
+        "positions": [
+          [
+            0.0012839408591389656,
+            -0.0912708193063736,
+            1.5568492412567139
+          ],
+          [
+            0.0,
+            -0.09088899940252304,
+            1.558246374130249
+          ]
+        ],
+        "heights": [
+          0.14342898837590567,
+          0.14934904292478346
+        ]
+      },
+      {
+        "edge": 14885,
+        "old": true,
+        "new": false,
+        "positions": [
+          [
+            -0.000975326111074537,
+            -0.0959993228316307,
+            1.5614893436431885
+          ],
+          [
+            0.0,
+            -0.09136642515659332,
+            1.5585532188415527
+          ]
+        ],
+        "heights": [
+          0.16309043916605231,
+          0.15064923237946018
+        ]
+      }
+    ],
+    "uv_material_slots_identical": true,
+    "matrix_and_shape_relationships_identical": true,
+    "maximum_corner_normal_difference": 0.30475192956488756,
+    "shapes": {
+      "Basis": {
+        "vertices": 6188,
+        "maximum_position_difference_m": 0.0
+      },
+      "MouthOpen": {
+        "vertices": 6188,
+        "maximum_position_difference_m": 0.0
+      },
+      "blink.L": {
+        "vertices": 6188,
+        "maximum_position_difference_m": 0.0
+      },
+      "blink.R": {
+        "vertices": 6188,
+        "maximum_position_difference_m": 0.0
+      }
+    },
+    "position_tolerance_m": 1e-06,
+    "scope": "Face native mesh and all shape keys; not cross-platform or universal generator proof"
+  },
+  "combined_analytic_support_bound_m": 0.003764812323022785,
+  "default_presets": "Unchanged",
+  "visual_review": "Native neutral, blink and full-mouth rendered comparison is nearly unchanged. White lower-medial shading is slightly softer over a short segment only. No obvious new eye, mouth or silhouette regression in inspected views. Broad stylized SDF boundary persists. Not complete face acceptance.",
+  "glb_audit_summary": {
+    "exact_comparison": {
+      "oriented_triangle_stream_equal": true,
+      "included_fields": [
+        [
+          "COLOR_0",
+          {
+            "componentType": 5121,
+            "type": "VEC4",
+            "normalized": true
+          }
+        ],
+        [
+          "COLOR_1",
+          {
+            "componentType": 5123,
+            "type": "VEC4",
+            "normalized": true
+          }
+        ],
+        [
+          "POSITION",
+          {
+            "componentType": 5126,
+            "type": "VEC3",
+            "normalized": false
+          }
+        ],
+        [
+          "TEXCOORD_0",
+          {
+            "componentType": 5126,
+            "type": "VEC2",
+            "normalized": false
+          }
+        ],
+        [
+          "TEXCOORD_1",
+          {
+            "componentType": 5126,
+            "type": "VEC2",
+            "normalized": false
+          }
+        ],
+        [
+          "TEXCOORD_2",
+          {
+            "componentType": 5126,
+            "type": "VEC2",
+            "normalized": false
+          }
+        ],
+        [
+          "morph0/POSITION",
+          {
+            "componentType": 5126,
+            "type": "VEC3",
+            "normalized": false
+          }
+        ],
+        [
+          "morph1/POSITION",
+          {
+            "componentType": 5126,
+            "type": "VEC3",
+            "normalized": false
+          }
+        ],
+        [
+          "morph2/POSITION",
+          {
+            "componentType": 5126,
+            "type": "VEC3",
+            "normalized": false
+          }
+        ]
+      ],
+      "excluded_fields": [
+        "NORMAL",
+        "TANGENT",
+        "morph NORMAL",
+        "morph TANGENT"
+      ],
+      "materials_equal": true,
+      "node_equal": true,
+      "position_and_all_position_morphs_equal": true,
+      "ambiguous_duplicate_triangle_signatures": 0,
+      "normal_split_vertex_count_change": -2
+    },
+    "findings": [
+      "Rendered geometry, all position morphs, UVs, colors, material definitions and node data match exactly under oriented corner correspondence.",
+      "Neutral normal change is confined to 15 central positions / 84 triangle corners within the requested lower-face/nose-base height window.",
+      "MouthOpen additionally changes two noncentral positions / 11 triangle corners, maximum approximately 0.0214 degrees. Do not claim all noncentral posed normals are unchanged.",
+      "The two small exported morph-normal differences are exactly at the noncentral endpoints of two changed native sharp_edge flags when the native measurement is available. This supports a local normal-fan mechanism but does not prove causality or harmless rounding.",
+      "This is an imported-normal variant audit, not proof that morphed exported normals equal freshly recomputed smooth geometric normals."
+    ],
+    "limitations": [
+      "The 27 sampled poses do not certify the continuous pose cube or collision clearance.",
+      "No aesthetic improvement or rendered appearance is inferred from numeric checks.",
+      "Area-weighted normals and native NormalRegion labels are verified from source, not recovered independently from the GLB."
+    ]
+  }
+}

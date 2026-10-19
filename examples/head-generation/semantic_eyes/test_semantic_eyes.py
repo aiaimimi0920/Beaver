@@ -99,15 +99,47 @@ class SemanticEyeTests(unittest.TestCase):
                 # Single-axis supported endpoints must be valid; combinations
                 # are additionally protected by the geometric envelope guard.
                 request = {key: bound}
+                if (
+                    key in ("layered_lashes", "upper_lash_layer") and bound
+                ) or key == "wing_lift_scale":
+                    request.update(
+                        short_upper_tuft=1,
+                        supplemental_lashes=0,
+                        lash_contour_follow=1,
+                        layered_lashes=1,
+                    )
+                if key == "secondary_lash_scale" and bound != 1:
+                    request.update(
+                        short_upper_tuft=1, supplemental_lashes=0, lash_contour_follow=1
+                    )
                 if key == "short_upper_tuft" and bound:
                     request.update(supplemental_lashes=0, lash_contour_follow=1)
-                if key == "upper_asymmetry" and bound:
-                    request["corner_slope_offset"] = -self.style["calibration"]["eye_corner_slope"]
+                if (
+                    key in ("upper_asymmetry", "lower_shoulder", "upper_angularity")
+                    and bound
+                ):
+                    request["corner_slope_offset"] = -self.style["calibration"][
+                        "eye_corner_slope"
+                    ]
+                if (
+                    key
+                    in (
+                        "upper_angularity",
+                        "aperture_corner_taper",
+                        "aperture_upper_share",
+                    )
+                    and bound
+                ):
+                    request["lash_contour_follow"] = 1
+                if key == "aperture_upper_share" and bound:
+                    request.update(upper_arch=0.7, lower_arch=0.5)
+                if key == "lateral_guide_regularization" and bound != 1:
+                    request["lateral_aperture_follow"] = 1
                 adapt_style(self.style, request)
 
     def test_nasal_spacing_extension_preserves_width_and_local_features(self):
-        old = adapt_style(self.style, {"eye_spacing": .96})
-        new = adapt_style(self.style, {"eye_spacing": .94})
+        old = adapt_style(self.style, {"eye_spacing": 0.96})
+        new = adapt_style(self.style, {"eye_spacing": 0.94})
         a, b = old["calibration"], new["calibration"]
         shift = b["eye_center_x"] - a["eye_center_x"]
         self.assertLess(shift, 0)
@@ -118,16 +150,16 @@ class SemanticEyeTests(unittest.TestCase):
         for key in ("nose_stations", "mouth_height", "eye_corner_y"):
             self.assertEqual(a[key], b[key])
         with self.assertRaises(ValueError):
-            validate({"eye_spacing": .939})
+            validate({"eye_spacing": 0.939})
 
     def test_retained_layout_configs(self):
         root = Path(__file__).resolve().parent.parent / "facial_surface"
         a = json.loads((root / "emerald-narrow-layout-eyes.json").read_text())
         b = json.loads((root / "emerald-balanced-layout-eyes.json").read_text())
-        self.assertEqual(validate(a)["eye_spacing"], .94)
-        self.assertEqual(validate(b)["eye_spacing"], .94)
+        self.assertEqual(validate(a)["eye_spacing"], 0.94)
+        self.assertEqual(validate(b)["eye_spacing"], 0.94)
         self.assertEqual([key for key in a if a[key] != b[key]], ["lower_arch"])
-        self.assertEqual(b["lower_arch"], 1.)
+        self.assertEqual(b["lower_arch"], 1.0)
 
     def test_roundness_tracks_actual_upper_rim(self):
         request = dict(

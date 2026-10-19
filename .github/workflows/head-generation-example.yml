@@ -42,6 +42,8 @@ jobs:
       - run: python -m unittest discover -s examples/head-generation/semantic_eyes -p 'test_*.py'
       - run: python -m unittest discover -s examples/head-generation/coherent_surface -p 'test_*.py'
       - run: python -m unittest discover -s examples/head-generation/facial_surface -p 'test_*.py'
+      - run: python -m unittest discover -s examples/head-generation/eye_presets -p 'test_*.py'
+      - run: python -m unittest discover -s examples/head-generation/face_components -p 'test_*.py'
       - run: python examples/head-generation/general_face/bundle.py --intent '{"preset":"soft_wide"}' --prefix assets/aster/general_face_ci/ --output /tmp/general-face.json
   preview-tests:
     runs-on: ubuntu-latest

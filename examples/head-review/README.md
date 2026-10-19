@@ -85,3 +85,15 @@ input/update restoration and unchanged source geometry. It is an explicit
 temporary native probe; restore the ordinary scene afterward. The legacy GUT
 fixture assertion was updated from four sliders to two, but that private
 head188 fixture was not available for a separate GUT execution in this run.
+
+## Input-isolated eye-family evidence
+
+`tests/eye_family_capture_probe.gd` captures 84 neutral, oblique, white-model,
+wireframe and expression views for an already generated head. It disables the
+known interactive shortcuts and GUI controls while capturing, fixes head-only
+visibility and orthographic size per frame, and records actual display mode,
+viewport size, camera pitch derived from its basis, model yaw and blend weights.
+Use `examples/head-generation/eye_presets/verify_capture.py` with an explicit
+expected model source after native execution. Its checks are evidence integrity
+and state checks; geometry, SDF binding and aesthetic review remain separate.
+The normal interactive head review scene is unaffected.

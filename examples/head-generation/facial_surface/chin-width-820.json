@@ -1,0 +1,329 @@
+{
+  "baseline": 810,
+  "candidate": 820,
+  "style_profile": "emerald_illustrated",
+  "eye_parameters": {
+    "eye_spacing": 0.94,
+    "eye_width": 0.94,
+    "upper_arch": 1.15,
+    "lower_arch": 0.72,
+    "corner_slope_offset": -0.026,
+    "eye_height_offset": 0,
+    "iris_width": 0.98,
+    "iris_height": 1.08,
+    "brow_height_offset": -0.006,
+    "brow_rise_offset": -0.022,
+    "brow_thickness": 0.85,
+    "brow_arch": 1,
+    "lash_band_thickness": 0.82,
+    "supplemental_lashes": 0,
+    "lid_fold": 0,
+    "upper_roundness": 1.7,
+    "upper_horizontal_roundness": 0.75,
+    "lash_contour_follow": 1,
+    "iris_vertical_offset": 0,
+    "simple_iris": 1,
+    "short_upper_tuft": 1,
+    "iris_horizontal_offset": 0,
+    "ocular_skin_outline_holdout": 1,
+    "iris_plane_slope_scale": 1,
+    "lower_roundness": 1.25,
+    "upper_asymmetry": 0,
+    "lower_shoulder": 0,
+    "lower_horizontal_roundness": 1.1,
+    "secondary_lash_scale": 0.7,
+    "brow_fullness_offset": 0.2,
+    "brow_softness": 0.4,
+    "brow_head_rounding": 1,
+    "layered_lashes": 0,
+    "upper_lash_layer": 0,
+    "lateral_aperture_follow": 1,
+    "lateral_blink_follow": 0.7,
+    "wing_lift_scale": 1
+  },
+  "surface_parameters": {
+    "axial_smoothing": 0.5,
+    "cheek_roundness": 0.05,
+    "orbit_shallowing": 0.15
+  },
+  "silhouette_parameters": {
+    "chin_width": -0.04
+  },
+  "status": "Retained experimental preset: native generation, SDF, width gate, eye84 and mouth18 passed",
+  "native_measurement": {
+    "baseline": 810,
+    "candidate": 820,
+    "method": "Runtime neutral shell edge-plane intersections, world coordinates; no image scaling",
+    "rows": [
+      {
+        "height_fraction": 0.03,
+        "baseline_width_m": 0.03370408095973773,
+        "candidate_width_m": 0.03258935381737836,
+        "difference_m": -0.0011147271423593702
+      },
+      {
+        "height_fraction": 0.05,
+        "baseline_width_m": 0.05385272225528029,
+        "candidate_width_m": 0.052723865472134424,
+        "difference_m": -0.0011288567831458651
+      },
+      {
+        "height_fraction": 0.07,
+        "baseline_width_m": 0.07094187833782853,
+        "candidate_width_m": 0.0700479698713973,
+        "difference_m": -0.0008939084664312258
+      },
+      {
+        "height_fraction": 0.095,
+        "baseline_width_m": 0.08875793988538497,
+        "candidate_width_m": 0.08832156054840538,
+        "difference_m": -0.00043637933697958375
+      },
+      {
+        "height_fraction": 0.12,
+        "baseline_width_m": 0.1030262972532821,
+        "candidate_width_m": 0.10297758193411366,
+        "difference_m": -4.87153191684464e-05
+      },
+      {
+        "height_fraction": 0.14,
+        "baseline_width_m": 0.1132059656552451,
+        "candidate_width_m": 0.11322852123989924,
+        "difference_m": 2.2555584654138094e-05
+      },
+      {
+        "height_fraction": 0.16,
+        "baseline_width_m": 0.12154402872688601,
+        "candidate_width_m": 0.12153084500390177,
+        "difference_m": -1.3183722984241864e-05
+      },
+      {
+        "height_fraction": 0.2,
+        "baseline_width_m": 0.13364694348952516,
+        "candidate_width_m": 0.13364036092855455,
+        "difference_m": -6.5825609706082755e-06
+      },
+      {
+        "height_fraction": 0.3,
+        "baseline_width_m": 0.15182002037896652,
+        "candidate_width_m": 0.15182499714218115,
+        "difference_m": 4.976763214620261e-06
+      },
+      {
+        "height_fraction": 0.45,
+        "baseline_width_m": 0.17456902465393137,
+        "candidate_width_m": 0.1745689973208662,
+        "difference_m": -2.733306517233025e-08
+      },
+      {
+        "height_fraction": 0.6,
+        "baseline_width_m": 0.1896400958939662,
+        "candidate_width_m": 0.1896400958939662,
+        "difference_m": 0.0
+      }
+    ],
+    "baseline_sources": {
+      "face_style.json": "a8eb80a23f038a69cdce19e3174f3ce846d56c1ea10f598658d504c261497d09",
+      "generation_report.json": "c69bab6e5cc561b0319f9175570b61261bf11900cf031572653d0e3a067a5360",
+      "aster_head_runtime_morph.blend": "fcca113e50390cf809259ba0c4e765ef510e8dc07c19a00196103a9ce332efe5",
+      "aster_head_editable.blend": "616b72ff49848a9764dc9928049f4ac320d3196727aadd587e7567dfbe45befd"
+    },
+    "candidate_sources": {
+      "face_style.json": "8e6b981a4ce9e6dd5abc6f3cb5ba0e1c1f36e4edfa41bd9939f95d62c87ada16",
+      "generation_report.json": "cb04cb8be7a2ce183092de157f71a2acba27d6ddb7b7b4ad68c8e8fcf202765e",
+      "aster_head_runtime_morph.blend": "567589657968a9d053b85f064faff7b104663e5825815d407666645f53272a20",
+      "aster_head_editable.blend": "c16004483a0a909cfccc59e1f85f116ea71b75ce2685499a565e25d5cba2ba59"
+    },
+    "baseline_sections": [
+      {
+        "height_fraction": 0.03,
+        "world_plane_z_m": 1.53008,
+        "minimum_x_m": -0.016852132542882734,
+        "maximum_x_m": 0.016851948416854997,
+        "full_width_m": 0.03370408095973773
+      },
+      {
+        "height_fraction": 0.05,
+        "world_plane_z_m": 1.5348000000000002,
+        "minimum_x_m": -0.02692616640926065,
+        "maximum_x_m": 0.026926555846019634,
+        "full_width_m": 0.05385272225528029
+      },
+      {
+        "height_fraction": 0.07,
+        "world_plane_z_m": 1.5395200000000002,
+        "minimum_x_m": -0.035471121413483,
+        "maximum_x_m": 0.03547075692434552,
+        "full_width_m": 0.07094187833782853
+      },
+      {
+        "height_fraction": 0.095,
+        "world_plane_z_m": 1.5454200000000002,
+        "minimum_x_m": -0.04437896733619081,
+        "maximum_x_m": 0.04437897254919415,
+        "full_width_m": 0.08875793988538497
+      },
+      {
+        "height_fraction": 0.12,
+        "world_plane_z_m": 1.55132,
+        "minimum_x_m": -0.051513132055710634,
+        "maximum_x_m": 0.051513165197571466,
+        "full_width_m": 0.1030262972532821
+      },
+      {
+        "height_fraction": 0.14,
+        "world_plane_z_m": 1.55604,
+        "minimum_x_m": -0.05660295333654133,
+        "maximum_x_m": 0.056603012318703766,
+        "full_width_m": 0.1132059656552451
+      },
+      {
+        "height_fraction": 0.16,
+        "world_plane_z_m": 1.5607600000000001,
+        "minimum_x_m": -0.06077205706267784,
+        "maximum_x_m": 0.06077197166420817,
+        "full_width_m": 0.12154402872688601
+      },
+      {
+        "height_fraction": 0.2,
+        "world_plane_z_m": 1.5702,
+        "minimum_x_m": -0.06682389509159652,
+        "maximum_x_m": 0.06682304839792866,
+        "full_width_m": 0.13364694348952516
+      },
+      {
+        "height_fraction": 0.3,
+        "world_plane_z_m": 1.5938,
+        "minimum_x_m": -0.07586227451142066,
+        "maximum_x_m": 0.07595774586754588,
+        "full_width_m": 0.15182002037896652
+      },
+      {
+        "height_fraction": 0.45,
+        "world_plane_z_m": 1.6292000000000002,
+        "minimum_x_m": -0.0872844986604331,
+        "maximum_x_m": 0.08728452599349826,
+        "full_width_m": 0.17456902465393137
+      },
+      {
+        "height_fraction": 0.6,
+        "world_plane_z_m": 1.6646,
+        "minimum_x_m": -0.09482004589281796,
+        "maximum_x_m": 0.09482005000114822,
+        "full_width_m": 0.1896400958939662
+      }
+    ],
+    "candidate_sections": [
+      {
+        "height_fraction": 0.03,
+        "world_plane_z_m": 1.53008,
+        "minimum_x_m": -0.016294766700735194,
+        "maximum_x_m": 0.016294587116643163,
+        "full_width_m": 0.03258935381737836
+      },
+      {
+        "height_fraction": 0.05,
+        "world_plane_z_m": 1.5348000000000002,
+        "minimum_x_m": -0.0263619058332091,
+        "maximum_x_m": 0.026361959638925323,
+        "full_width_m": 0.052723865472134424
+      },
+      {
+        "height_fraction": 0.07,
+        "world_plane_z_m": 1.5395200000000002,
+        "minimum_x_m": -0.0350241750001056,
+        "maximum_x_m": 0.035023794871291695,
+        "full_width_m": 0.0700479698713973
+      },
+      {
+        "height_fraction": 0.095,
+        "world_plane_z_m": 1.5454200000000002,
+        "minimum_x_m": -0.044160848934758204,
+        "maximum_x_m": 0.04416071161364718,
+        "full_width_m": 0.08832156054840538
+      },
+      {
+        "height_fraction": 0.12,
+        "world_plane_z_m": 1.55132,
+        "minimum_x_m": -0.05148883871401215,
+        "maximum_x_m": 0.0514887432201015,
+        "full_width_m": 0.10297758193411366
+      },
+      {
+        "height_fraction": 0.14,
+        "world_plane_z_m": 1.55604,
+        "minimum_x_m": -0.056614320499228564,
+        "maximum_x_m": 0.056614200740670674,
+        "full_width_m": 0.11322852123989924
+      },
+      {
+        "height_fraction": 0.16,
+        "world_plane_z_m": 1.5607600000000001,
+        "minimum_x_m": -0.06076559900138032,
+        "maximum_x_m": 0.06076524600252145,
+        "full_width_m": 0.12153084500390177
+      },
+      {
+        "height_fraction": 0.2,
+        "world_plane_z_m": 1.5702,
+        "minimum_x_m": -0.0668206536034707,
+        "maximum_x_m": 0.06681970732508385,
+        "full_width_m": 0.13364036092855455
+      },
+      {
+        "height_fraction": 0.3,
+        "world_plane_z_m": 1.5938,
+        "minimum_x_m": -0.07586426693121096,
+        "maximum_x_m": 0.07596073021097019,
+        "full_width_m": 0.15182499714218115
+      },
+      {
+        "height_fraction": 0.45,
+        "world_plane_z_m": 1.6292000000000002,
+        "minimum_x_m": -0.0872844986604331,
+        "maximum_x_m": 0.0872844986604331,
+        "full_width_m": 0.1745689973208662
+      },
+      {
+        "height_fraction": 0.6,
+        "world_plane_z_m": 1.6646,
+        "minimum_x_m": -0.09482004589281796,
+        "maximum_x_m": 0.09482005000114822,
+        "full_width_m": 0.1896400958939662
+      }
+    ]
+  },
+  "visual_review": {
+    "baseline": 810,
+    "candidate": 820,
+    "result": "static visual regression pass including mouth18",
+    "scope": "Chin width -.04 with fixed810 eyes only",
+    "findings": [
+      "No obvious new chin kink, double tip, local collapse or mouth tear in reviewed front/oblique views",
+      "Closed eye continuity preserved; inherited white-model mouth shading persists"
+    ]
+  },
+  "limitations": [
+    "Limited one-axis sample; not all facial shapes or continuous animation verified",
+    "Inherited uneven white-model mouth shading remains",
+    "2mm bound applies to width interpolant, not whole-mesh displacement"
+  ],
+  "archives": [
+    {
+      "file": "Aster-820-independent-preset.zip",
+      "sha256": "1f8f4b48da004587695e14c4374c477f67af50239ac9fbd4a48eb48df4eaf91f",
+      "bytes": 6345106
+    },
+    {
+      "file": "Aster-820-native-captures.zip",
+      "sha256": "2602ed5e4f70ea4e6e5d358c640586ce576c829a19f94f08483df5f8dfa2196e",
+      "bytes": 23611157
+    },
+    {
+      "file": "Aster-820-mouth-captures.zip",
+      "sha256": "ee49cea5b761a0c39fa028713be63afbeb37ef3ff3f82fb11c1d2f6d9cb4a80e",
+      "bytes": 7135259
+    }
+  ],
+  "archive_dependency": "Aster-workflow-795.zip (unchanged baseline project)"
+}

@@ -125,8 +125,8 @@ class IllustratedArtTests(unittest.TestCase):
         )
         result = adapt_style(dict(base, illustrated_eye_art=True), request)
         self.assertAlmostEqual(result["calibration"]["eye_corner_slope"], 0.0)
-        self.assertAlmostEqual(result["upper_lash_rails"][-1][0], 1.06)
-        self.assertAlmostEqual(result["upper_lash_rails"][-1][1], 0.003)
+        self.assertAlmostEqual(result["upper_lash_rails"][-1][0], 1.025)
+        self.assertAlmostEqual(result["upper_lash_rails"][-1][1], 0.012)
         c = result["calibration"]
         for i, (t, lo, hi) in enumerate(result["upper_lash_rails"]):
             if not 0.75 < t <= 0.96:
@@ -151,9 +151,9 @@ class IllustratedArtTests(unittest.TestCase):
         outer = [row for row in result["upper_lash_rails"] if row[0] > 0.75]
         for lane in (1, 2):
             self.assertTrue(all(a[lane] >= b[lane] for a, b in zip(outer, outer[1:])))
-        for boundary in (-0.018, 0.008):
+        for boundary in (-0.030, 0.008):
             adapt_style(base, dict(request, corner_slope_offset=boundary))
-        for bad in (-0.019, 0.009):
+        for bad in (-0.031, 0.009):
             with self.assertRaises(ValueError):
                 adapt_style(base, dict(request, corner_slope_offset=bad))
 

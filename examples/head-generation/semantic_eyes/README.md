@@ -26,9 +26,34 @@ Multipliers default to 1:
 - eye_spacing .94–1.04; eye_width .92–1.08
 - upper_arch .70–1.40; lower_arch .50–1.12
 - upper_roundness 1–2; upper_horizontal_roundness .70–1
+- lower_roundness 1–1.25; lower_horizontal_roundness 1–1.5
 - iris_width and iris_height .90–1.08
 - brow_thickness .70–1.20; brow_arch .50–1.50
+- brow_fullness_offset 0–.25, default 0: adds inner fullness to the existing
+  eyebrow width profile while retaining its zero-width endpoints.
+- brow_softness 0–1, default 0: lightens only the authored eyebrow RGB by up to
+  12% toward white. It does not change alpha, lashes, or eye shading.
+- brow_head_rounding 0–1, default 0: softens the medial width falloff using
+  a bounded exponent, strongest at the head and fading cubically toward the
+  tail. The existing centerline and closed endpoints remain. This adapts only
+  the eyebrow width function; zero leaves source bytes unchanged.
 - lash_band_thickness .55–1.15
+- secondary_lash_scale .70–1, default 1; requires short_upper_tuft=1.
+  Shrinks only the independent child blade about its embedded root, along the
+  adapted parent midpoint. Primary band, aperture, iris and brows remain fixed.
+  Existing 3D flare/bow/scoop are retained; native views and blink review are
+  required to assess attachment and silhouette.
+
+- layered_lashes 0/1, default 0; requires short_upper_tuft=1.
+  Opts into the restored upper wing, lateral band, thin companion, two lateral
+  children and lower tuft. Moves the small upper tuft medially and shapes a
+  short rising upper leaf above the longer main tail. The retained inventory
+  is seven optional components per eye, not a claim of seven visible tips.
+  Full inherited connection and obstacle checks stay active. Root seating uses
+  a bounded local translation search; it does not guarantee a global optimum.
+  Side accents use 85% of the skin blink field, independently per eye. Review
+  native neutral, oblique and closed-eye views; triangle-orientation checks
+  do not prove absence of every possible intersection.
 
 Offsets default to 0, in fractions of calibrated face height:
 
@@ -37,7 +62,8 @@ Offsets default to 0, in fractions of calibrated face height:
 - iris_horizontal_offset ±.012; negative moves both iris centers toward the nose,
   after the eye-width mapping. Pupil/catchlight geometry follows each iris center;
   aperture, eye spacing, and whole-orbit geometry are unchanged.
-- brow_height_offset and brow_rise_offset ±.012
+- brow_height_offset ±.012; brow_rise_offset −.0255…+.012. The lower endpoint
+  levels the authored .0255 rise; it does not alter aperture corners.
 
 Numeric layer controls accept only 0 or 1. `supplemental_lashes` and `lid_fold`
 default 1. `simple_iris` defaults 0. Booleans, unknown keys, nonfinite values and
@@ -328,3 +354,46 @@ Patch envelope, clearance, attachment and continuous pose-orientation gates
 remain mandatory. Inspect neutral, partial/full blink, oblique and white-model
 views before retaining any nonzero candidate. CPU tests alone establish neither
 native validity nor visual improvement.
+
+## Independent lower contour controls
+
+`lower_shoulder` is optional, default 0, bounded to 0–1. It symmetrically
+raises intermediate lower shoulders while preserving the central bottom and
+both aperture corners. It requires level calibrated eye corners. Its monotone
+coordinate warp is shared by the face, pocket radius, lateral fit, blink and
+conservative support analysis; it is not a post-export mesh edit.
+
+`lower_horizontal_roundness` defaults to 1, bounded to 1–1.5. Increasing it
+flattens and broadens the lower center, with a steeper return near the corners.
+This is distinct from raising the shoulders and can partly counter that change.
+Neither control guarantees a prettier face or a valid combination. Native
+support, topology, attachment and full-blink orientation gates remain mandatory.
+
+The facial-surface preset `emerald-lower-profile-eyes.json` records candidate759,
+which received relative-improvement feedback, not final character acceptance.
+The private authoring baseline is still required. See
+[`lower-profile-native-verification.md`](lower-profile-native-verification.md)
+for the actual checks and limitations.
+
+See [illustrated eye finish verification](eye-finish-native-verification.md) for
+the fixed-camera paint/outline diagnosis and 762–763 native checks.
+
+## Intermediate upper lash layer
+
+`upper_lash_layer` is an opt-in 0/1 control, default 0, requiring
+`layered_lashes=1`. It adds one independent, outward-sweeping thin upper leaf
+per eye between the small upright tuft and the outer wing. It repositions the
+otherwise omitted inner-fork component; it does not add another medial spike.
+The lower and lateral component inventory is unchanged.
+
+Its closed root is seated onto the final main upper band with a displacement
+strictly below 4 mm, smoothly fading to zero at the free tip. Subsequent surface
+clearance and the final 0.8 mm root-point check remain mandatory. This check
+covers the collapsed root point, not the entire attachment region. Validate
+native posed geometry and matched renders before claiming visual improvement.
+
+### Independent eyebrow silhouette profiles
+
+`brow_angularity` (0–1, default 0) blends the smooth arch toward a two-segment peak; `brow_peak_position` (.3–.75, default .5) locates that peak along the brow. The existing 24 segments approximate an off-grid peak. `brow_band_fullness` (0–1, default 0) retains more width toward both ends and removes the pointed-ribbon width bias, closing both endpoint lanes exactly. It does not move the original width midline.
+
+These controls modify only eyebrow construction. Eye aperture, lashes, facial surface and retained preset files are unchanged by the source adapter. Default zero profile changes preserve source bytes exactly. Native clearance, morphology and aesthetic review are still required; a new parameter or family label is not an acceptance certificate.

@@ -1,0 +1,151 @@
+{
+  "schema_version": 1,
+  "baseline": {
+    "version": 795,
+    "prompt": "../facial_surface/face-baseline-795-prompt.zh-CN.md",
+    "parameters": "../facial_surface/emerald-baseline-795-eyes.json"
+  },
+  "presets": [
+    {
+      "id": "almond-balanced-796",
+      "label": "杏仁均衡",
+      "file": "almond-balanced-796.json",
+      "prompt": "almond-balanced.zh-CN.md",
+      "stage": "initial-study"
+    },
+    {
+      "id": "slender-flat-797",
+      "label": "细长平缓",
+      "file": "slender-flat-797.json",
+      "prompt": "slender-flat.zh-CN.md",
+      "stage": "initial-study"
+    },
+    {
+      "id": "soft-downturned-798",
+      "label": "外垂柔和",
+      "file": "soft-downturned-798.json",
+      "prompt": "soft-downturned.zh-CN.md",
+      "stage": "initial-study"
+    },
+    {
+      "id": "sharp-upturned-799",
+      "label": "外挑锐利",
+      "file": "sharp-upturned-799.json",
+      "prompt": "sharp-upturned.zh-CN.md",
+      "stage": "initial-study"
+    },
+    {
+      "id": "flat-upper-round-lower-800",
+      "label": "上平下弧",
+      "file": "flat-upper-round-lower-800.json",
+      "prompt": "flat-upper-round-lower.zh-CN.md",
+      "stage": "initial-study"
+    },
+    {
+      "id": "arched-upper-flat-lower-801",
+      "label": "上拱下平",
+      "file": "arched-upper-flat-lower-801.json",
+      "prompt": "arched-upper-flat-lower.zh-CN.md",
+      "stage": "initial-study"
+    },
+    {
+      "id": "angular-upper-802",
+      "label": "上缘转折",
+      "file": "angular-upper-802.json",
+      "prompt": "angular-upper.zh-CN.md",
+      "stage": "initial-study"
+    },
+    {
+      "id": "almond-taper-experiment-803",
+      "label": "杏仁收角实验",
+      "file": "almond-taper-experiment-803.json",
+      "prompt": "almond-taper-experiment.zh-CN.md",
+      "stage": "reference-refined-candidate"
+    },
+    {
+      "id": "rounded-arch-shallow-805",
+      "label": "圆拱浅下缘",
+      "file": "rounded-arch-shallow-805.json",
+      "prompt": "rounded-arch-shallow.zh-CN.md",
+      "stage": "reference-refined-candidate"
+    },
+    {
+      "id": "asymmetric-angular-807",
+      "label": "非对称分段收角",
+      "file": "asymmetric-angular-807.json",
+      "prompt": "asymmetric-angular.zh-CN.md",
+      "stage": "reference-refined-candidate"
+    },
+    {
+      "id": "soft-wing-downturned-808",
+      "label": "柔和外翼外垂",
+      "file": "soft-wing-downturned-808.json",
+      "prompt": "soft-wing-downturned.zh-CN.md",
+      "stage": "reference-refined-candidate"
+    },
+    {
+      "id": "clean-downturned-810",
+      "label": "简洁柔和外垂",
+      "file": "clean-downturned-810.json",
+      "prompt": "clean-downturned.zh-CN.md",
+      "stage": "self-reviewed-candidate"
+    },
+    {
+      "id": "clean-angular-811",
+      "label": "简洁分段收角",
+      "file": "clean-angular-811.json",
+      "prompt": "clean-angular.zh-CN.md",
+      "stage": "self-reviewed-candidate"
+    },
+    {
+      "id": "clean-slender-812",
+      "label": "简洁细长平缓",
+      "file": "clean-slender-812.json",
+      "prompt": "clean-slender.zh-CN.md",
+      "stage": "self-reviewed-candidate"
+    },
+    {
+      "id": "face-jaw-wide-817",
+      "label": "下颌较宽 · 固定外垂眼",
+      "file": "face-jaw-wide-817.json",
+      "prompt": "face-jaw-wide-817.zh-CN.md",
+      "stage": "fixed-face-combination",
+      "eye_preset_id": "clean-downturned-810"
+    },
+    {
+      "id": "face-jaw-narrow-818",
+      "label": "下颌较窄 · 固定外垂眼",
+      "file": "face-jaw-narrow-818.json",
+      "prompt": "face-jaw-narrow-818.zh-CN.md",
+      "stage": "fixed-face-combination",
+      "eye_preset_id": "clean-downturned-810"
+    },
+    {
+      "id": "face-wide-819",
+      "label": "面颊较宽 · 固定外垂眼",
+      "file": "face-wide-819.json",
+      "prompt": "face-wide-819.zh-CN.md",
+      "stage": "fixed-face-combination",
+      "eye_preset_id": "clean-downturned-810"
+    },
+    {
+      "id": "face-chin-narrow-820",
+      "label": "下巴较窄 · 固定外垂眼",
+      "file": "face-chin-narrow-820.json",
+      "prompt": "face-chin-narrow-820.zh-CN.md",
+      "stage": "fixed-face-combination",
+      "eye_preset_id": "clean-downturned-810"
+    }
+  ],
+  "taxonomy_note": "Composable design presets, not a fixed universal classification. See each preset status and native evidence.",
+  "current_family_choices": {
+    "round-open": "baseline-795",
+    "balanced-almond": "almond-taper-experiment-803",
+    "slender-flat": "clean-slender-812",
+    "soft-downturned": "clean-downturned-810",
+    "sharp-upturned": "sharp-upturned-799",
+    "shallow-upper-round-lower": "flat-upper-round-lower-800",
+    "rounded-upper-shallow-lower": "rounded-arch-shallow-805",
+    "segmented-upper": "clean-angular-811"
+  }
+}

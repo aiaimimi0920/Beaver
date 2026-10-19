@@ -176,19 +176,41 @@ def rim_without_origin(t, c):
 
 
 def upper_coordinate_interval(t, c):
-    # The fixed-scalar warp is globally monotone for |a| <= .25.
-    # Evaluate each endpoint with outward-rounded arithmetic, not raw floats.
+    # Composition of two strictly monotone maps. Endpoint arithmetic is outward rounded.
     a = c.get("eye_upper_asymmetry", 0.0)
-    if not a:
+    g = c.get("eye_upper_angularity", 0.0)
+    if not (a or g):
         return t
-    if not math.isfinite(a) or abs(a) > 0.25:
+    if not math.isfinite(a) or abs(a) > .25 or not math.isfinite(g) or not 0 <= g <= 1:
         raise ValueError("Uncertified upper warp range")
 
     def endpoint(v):
         if abs(v) >= 1:
             return I(v)
         point = I(v)
-        return point + a * (1 - point * point).clamp(0, 1) ** 3
+        if g:
+            u = I(abs(v))
+            q = (I(.30)/.55)*u if abs(v) <= .55 else I(.30)+(I(.70)/.45)*(u-.55)
+            point = ((1-I(g))*u+g*q)*(1 if v >= 0 else -1)
+        return point+a*(1-point*point).clamp(0,1)**3
+
+    lo, hi = endpoint(t.lo), endpoint(t.hi)
+    return I(lo.lo, hi.hi)
+
+
+def lower_coordinate_interval(t, c):
+    # q is monotone for 0<=a<=1; see contour_warp.lower_coordinate proof.
+    a = c.get("eye_lower_shoulder", 0.0)
+    if not a:
+        return t
+    if not math.isfinite(a) or not 0 <= a <= 1:
+        raise ValueError("Uncertified lower shoulder range")
+
+    def endpoint(v):
+        if abs(v) >= 1:
+            return I(v)
+        point = I(v)
+        return point + a * point**3 * (1 - point * point).clamp(0, 1) ** 3
 
     lo, hi = endpoint(t.lo), endpoint(t.hi)
     return I(lo.lo, hi.hi)
@@ -204,7 +226,11 @@ def aperture_gap_bound(c, subdivisions=2048):
                 c["eye_horizontal_power"] if upper else c["eye_lower_horizontal_power"]
             )
             power = c["eye_upper_power"] if upper else c["eye_lower_power"]
-            q = upper_coordinate_interval(t, c) if upper else t
+            q = (
+                upper_coordinate_interval(t, c)
+                if upper
+                else lower_coordinate_interval(t, c)
+            )
             shape = (1 - q.absolute() ** horizontal).clamp(0, 1) ** power
             h = c["eye_corner_y"] + c["eye_corner_slope"] * t + arch * shape
             x = c["height_m"] * (c["eye_center_x"] + c["eye_half_width"] * t)
@@ -239,7 +265,11 @@ def orbital_weight(x, h, c):
         # Both summands are analytically nonnegative; outward rounding at zero
         # may produce a negative subnormal lower endpoint. Intersect that
         # known domain before applying the square root.
-        q = upper_coordinate_interval(t, c) if upper else t
+        q = (
+            upper_coordinate_interval(t, c)
+            if upper
+            else lower_coordinate_interval(t, c)
+        )
         squared = (
             q.absolute() ** horizontal + (vertical / arch).absolute() ** (1 / power)
         ).clamp(0, math.inf)
@@ -253,7 +283,7 @@ def orbital_weight(x, h, c):
     return (w * fade).clamp(0, 1)
 
 
-def surface_motion_bound(c, base_bound, beta, steps=80):
+def surface_motion_bound(c, base_bound, beta, steps=80, *, rim_flattening=0.0):
     """Continuous field bound over 0<=height<=H and 0<=x<=max width."""
     xmax = c["height_m"] * max(row[1] for row in c["width_stations"])
     maximum = 0.0
@@ -266,8 +296,20 @@ def surface_motion_bound(c, base_bound, beta, steps=80):
             gap = raw_without_origin(x, h, c) - rim_without_origin(t, c)
             weighted = gap.absolute().hi * w.hi
             maximum = max(maximum, weighted)
+    # Outside this t interval the existing orbital fade is exactly zero.
+    # Include outward rounding independently of interval subdivision density.
+    slope_endpoint = abs(
+        rim_flattening
+        * (1 - beta)
+        * c["height_m"]
+        * (c["eye_outer_depth"] - c["eye_inner_depth"])
+        / 2
+    )
+    slope_skin = slope_endpoint * (1 + c["orbital_lateral_fade"])
     return dict(
-        maximum_depth_displacement_m=base_bound + beta * maximum + 1e-9,
+        maximum_depth_displacement_m=base_bound + beta * maximum + slope_skin + 1e-9,
+        rim_slope_endpoint_bound_m=slope_endpoint + (1e-12 if rim_flattening else 0),
+        additional_rim_slope_skin_bound_m=slope_skin + (1e-12 if rim_flattening else 0),
         base_component_bound_m=base_bound,
         weighted_orbit_gap_bound_m=maximum,
         domain_blender_x_height_m=[

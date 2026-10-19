@@ -6,6 +6,7 @@ import json
 from pathlib import Path
 import sys
 from hypothesis import validate, base_correction, orbital_support
+from runtime_field import rim_slope_delta
 
 HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE.parent / "coherent_surface"))
@@ -29,7 +30,10 @@ def study(parameters, eyes):
         json.loads((recipe / "face_style.json").read_text()), validate_eyes(eyes)
     )
     c = style["calibration"]
-    source = adapt_face_source(source, bool(c.get("eye_upper_asymmetry", 0)))
+    source = adapt_face_source(
+        source,
+        bool((c.get("eye_upper_asymmetry", 0) or c.get("eye_lower_shoulder", 0) or c.get("eye_upper_angularity", 0))),
+    )
     fit = fit_profile(source, c)
     base = scope(source, c, fit, 0)
     node = next(
@@ -67,6 +71,7 @@ def study(parameters, eyes):
             x, y = base["eye_contour"](1, t, upper)
             oldraw, oldrim = base["base_depth"](x, y), base["rim_depth"](x, y)
             raw, rim = orbital_support(oldraw, oldrim, correction(x, y), p)
+            rim += rim_slope_delta(x, c, {"parameters": p})
             aperture.append(
                 dict(
                     t=t,
@@ -82,7 +87,7 @@ def study(parameters, eyes):
     changed["base_depth"] = lambda x, y: base["base_depth"](x, y) + correction(x, y)
     changed["rim_depth"] = lambda x, y: orbital_support(
         base["base_depth"](x, y), base["rim_depth"](x, y), correction(x, y), p
-    )[1]
+    )[1] + rim_slope_delta(x, c, {"parameters": p})
     cuts = []
     for axis, stations in (
         ("vertical", (0.03, 0.04, 0.05, 0.06)),

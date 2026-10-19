@@ -7,8 +7,12 @@ import json
 from pathlib import Path
 import re
 import tempfile
-from parameters import adapt_style, validate, adapt_lower_clearance
+from parameters import adapt_style, validate, adapt_lower_clearance, adapt_brow_source
 from source_upper_warp import adapt_upper_sources, HELPERS
+from source_lateral_rim import adapt_lateral_rim, adapt_lateral_depth
+from source_angular_samples import adapt_angular_samples
+from source_return_order import adapt_return_order
+from source_brow_profiles import adapt_brow_profiles
 
 HERE = Path(__file__).resolve().parent
 RECIPE = HERE.parent / "checkpoints/current"
@@ -92,14 +96,14 @@ def build_request(parameters, output_prefix, workspace, *, blink=False):
         "        region = part_index + 10",
         "        region = semantic_part_ordinals[part.name]",
     )
-    if p["short_upper_tuft"]:
+    if p["short_upper_tuft"] and not p["layered_lashes"]:
         pipeline = replace_once(
             pipeline,
             'report["eye_accent_connections"] = measure_accent_connections()',
             "from semantic_eye_runtime import validate_retained_tuft_roots\n"
             'report["eye_accent_connections"] = validate_retained_tuft_roots(PARTS)',
         )
-    elif p["supplemental_lashes"] == 0:
+    elif p["supplemental_lashes"] == 0 and not p["layered_lashes"]:
         pipeline = replace_once(
             pipeline,
             'report["eye_accent_connections"] = measure_accent_connections()',
@@ -140,17 +144,136 @@ def build_request(parameters, output_prefix, workspace, *, blink=False):
             "semantic_eye_runtime.py": (HERE / "runtime.py").read_text(),
         }
     )
-    sources["eye_socket.py"] = adapt_lower_clearance(
-        sources["eye_socket.py"], p["lower_roundness"] != 1
+    sources["face.py"] = adapt_brow_source(sources["face.py"], p["brow_head_rounding"])
+    sources["face.py"] = adapt_brow_profiles(
+        sources["face.py"],
+        p["brow_angularity"],
+        p["brow_peak_position"],
+        p["brow_band_fullness"],
     )
-    sources = adapt_upper_sources(sources, p["upper_asymmetry"] != 0)
+    if p["layered_lashes"]:
+        root_fit = """        delta = target-center
+        # Rigid minimax seating preserves the closed six-vertex root section.
+        # The final clearance and 0.8 mm connection checks remain mandatory.
+        def score(move):
+            values = [tree.find_nearest(v.co + move)[3] for v in roots]
+            return (max(values), sum(values))
+        for step in (.0004, .0002, .0001, .00005, .000025):
+            for iteration in range(8):
+                choices = [delta.copy()]
+                for axis in range(2):
+                    for sign in (-1, 1):
+                        candidate = delta.copy()
+                        candidate[axis] += sign * step
+                        if candidate.length < .004:
+                            choices.append(candidate)
+                best = min(choices, key=score)
+                if score(best) >= score(delta):
+                    break
+                delta = best
+"""
+        sources["eye_accents.py"] = replace_once(
+            sources["eye_accents.py"], "        delta = target-center\n", root_fit
+        )
+    if p["layered_lashes"]:
+        seat = "        lateral_curve = regularize_lateral_sections(PARTS, lateral_sections(), STYLE, obstacle_trees[0][1])"
+        slender = """
+        for wing in PARTS:
+            if not wing.name.startswith("Attached outer lash wing "):
+                continue
+            columns = {}
+            for vertex in wing.data.vertices:
+                columns.setdefault(round(abs(vertex.co.x), 8), []).append(vertex)
+            for x, column in columns.items():
+                t = (x / H - C["eye_center_x"]) / C["eye_half_width"]
+                u = max(0.0, min(1.0, (t - 0.65) / 0.2))
+                scale = 1.0 - 0.35 * u*u*(3-2*u)
+                center = min(v.co.z for v in column)
+                for vertex in column:
+                    vertex.co.z = center + (vertex.co.z - center) * scale
+                    tip_u = max(0.0, min(1.0, (t - 1.0) / 0.1))
+                    vertex.co.z += H * 0.012 * STYLE.get("accent_wing_lift_scale", 1.0) * tip_u*tip_u*(3-2*tip_u)
+            wing.data.update()
+"""
+        sources["eye_accents.py"] = replace_once(
+            sources["eye_accents.py"], seat, seat + slender
+        )
+    if p["layered_lashes"]:
+        sources["thin_ribbon.py"] = replace_once(
+            sources["thin_ribbon.py"],
+            '(b[0]-a[0])/STYLE["accent_max_station_gap"]',
+            '(b[0]-a[0])/(min(STYLE["accent_max_station_gap"],0.025) if key == "outer_lash_wing_rails" else STYLE["accent_max_station_gap"])',
+        )
+    if p["upper_lash_layer"]:
+        # The intermediate leaf is rooted on the final upper band, not on
+        # the inherited medial skin support used by the old inner fork.
+        seating = """
+        for side in (-1, 1):
+            parent = next(o for o in PARTS if o.name == "Upper lash " + str(side))
+            leaf = next(o for o in PARTS if o.name == "Inner forked lash blade " + str(side))
+            parent_tree = BVHTree.FromPolygons([v.co.copy() for v in parent.data.vertices], [tuple(p.vertices) for p in parent.data.polygons])
+            root = leaf.data.vertices[0].co.copy()
+            hit = parent_tree.find_nearest(root)[0]
+            assert hit is not None, "Intermediate layer parent missing"
+            delta = hit - root
+            assert delta.length < .004, "Intermediate layer attachment exceeds design bound"
+            lo = min(abs(v.co.x) for v in leaf.data.vertices)
+            hi = max(abs(v.co.x) for v in leaf.data.vertices)
+            for vertex in leaf.data.vertices:
+                u = max(0., min(1., (abs(vertex.co.x)-lo)/(hi-lo)))
+                vertex.co += delta * (1-u*u*(3-2*u))
+            leaf.data.update()
+"""
+        seat_anchor = "        tuft_seating = seat_tuft_roots_on_parent(PARTS)"
+        sources["eye_accents.py"] = replace_once(
+            sources["eye_accents.py"], seat_anchor, seat_anchor + seating
+        )
+    if p["upper_lash_layer"]:
+        anchor = "        maximum = max(distances)"
+        check = """        fork = next(o for o in PARTS if o.name == "Inner forked lash blade "+str(side))
+        fork_distance = tree.find_nearest(fork.data.vertices[0].co)[3]
+        assert fork_distance is not None and fork_distance < .0008, "Intermediate upper layer root disconnected"
+"""
+        sources["eye_accents.py"] = replace_once(
+            sources["eye_accents.py"], anchor, check + anchor
+        )
+    sources["eye_socket.py"] = adapt_lower_clearance(
+        sources["eye_socket.py"],
+        p["aperture_upper_share"] != 0
+        or p["aperture_corner_taper"] != 0
+        or p["lower_roundness"] != 1
+        or p["lower_shoulder"] != 0
+        or p["lower_horizontal_roundness"] != 1,
+    )
+    sources["lateral_fit.py"] = adapt_lateral_depth(
+        sources["lateral_fit.py"], p["lateral_aperture_follow"]
+    )
+    from source_lateral_regularization import adapt_regularization
+
+    sources["lateral_fit.py"] = adapt_regularization(
+        sources["lateral_fit.py"], p["lateral_guide_regularization"]
+    )
+    sources["eye_accents.py"] = adapt_lateral_rim(
+        sources["eye_accents.py"], p["lateral_aperture_follow"]
+    )
+    sources = adapt_upper_sources(
+        sources,
+        p["upper_asymmetry"] != 0
+        or p["lower_shoulder"] != 0
+        or p["upper_angularity"] != 0,
+    )
+    sources = adapt_angular_samples(sources, p["upper_angularity"])
     if blink:
         sources["semantic_eye_runtime.py"] += (
             "\n\n"
-            + (HELPERS if p["upper_asymmetry"] else "")
+            + (
+                HELPERS
+                if p["upper_asymmetry"] or p["lower_shoulder"] or p["upper_angularity"]
+                else ""
+            )
             + (HERE / "blink_runtime.py")
             .read_text()
-            .replace("from contour_warp import upper_shape\n", "")
+            .replace("from contour_warp import upper_shape, lower_shape\n", "")
         )
         sources["pipeline.py"] = replace_once(
             sources["pipeline.py"],
@@ -210,6 +333,7 @@ def build_request(parameters, output_prefix, workspace, *, blink=False):
         from illustrated_art import adapt_sources
 
         sources = adapt_sources(sources)
+    sources["ear_return.py"] = adapt_return_order(sources["ear_return.py"])
     base.OUTPUT_PREFIX = output_prefix
     with tempfile.TemporaryDirectory() as directory:
         snapshot = Path(directory)
@@ -232,6 +356,17 @@ def build_request(parameters, output_prefix, workspace, *, blink=False):
             {
                 "contour_warp.py": HELPERS,
                 "source_upper_warp.py": (HERE / "source_upper_warp.py").read_text(),
+                "source_return_order.py": (HERE / "source_return_order.py").read_text(),
+                "source_lateral_rim.py": (HERE / "source_lateral_rim.py").read_text(),
+                "source_brow_profiles.py": (
+                    HERE / "source_brow_profiles.py"
+                ).read_text(),
+                "source_lateral_regularization.py": (
+                    HERE / "source_lateral_regularization.py"
+                ).read_text(),
+                "source_angular_samples.py": (
+                    HERE / "source_angular_samples.py"
+                ).read_text(),
             }
         )
         + "\n",

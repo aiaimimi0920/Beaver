@@ -1,10 +1,8 @@
 # Original semantic head-generation recipe
 
-For the current experimental face-only workflow, see
-[Face-only creation and visual review](face-only-workflow.md). It documents the
-private baseline inputs, packaging and export contracts, and bounded native
-review evidence. Case709 remains the primary internal candidate; this does not
-replace the separately user-confirmed664 baseline below or imply final approval.
+The current development route is the [six-component face composition workflow](face_components/README.zh-CN.md): explicit eyes, brows, mouth, nose, ears and face selections → retained authoring intents and parameter snapshot → Beaver native generation → receipt-bound SDF → same-camera expression and visual checks. The first native combinations are 827/828; cross-combination evidence is kept separately.
+
+[Face-only creation and visual review](face-only-workflow.md) explains the current priority and retains earlier input/export contracts. Preserve the accepted 795/796 prompts and existing candidates. Earlier 709/664 records below are historical evidence, not the current task queue or a claim of final approval.
 
 Historical review candidate:185. See review-results.md for actual checks and limitations.
 

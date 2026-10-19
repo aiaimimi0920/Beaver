@@ -5,7 +5,20 @@ parameter combination yields an attractive finished character. It covers an
 original NPR face, eyes, lashes, brows, ears and mouth. Hair, body, costume and
 full-character animation are outside this pass.
 
-## A reusable authoring brief
+## Primary route: independent components (2026-10-19)
+
+Use [face_components](face_components/README.zh-CN.md) for new work. Its direct consumer is dot, preparing requests for Beaver's existing native tools; this is not a newly shipped preset-picker UI.
+
+1. Select eyes, brows, mouth, nose, ears and face explicitly. Use the saved per-component authoring intents and supported parameter IDs. Existing eye-family prompts remain intact.
+2. Resolve and save the complete combination. Brows are selected separately; iris and lash ornament currently remain eye-family-coupled. Nose/ear/mouth alternatives are bounded initial variations, not complete researched category libraries.
+3. Generate to a fresh output directory through Beaver, retain the successful receipt, then build matching SDF from the actual generated runtime model and saved composition.
+4. Check front, both oblique sides, side silhouette, render/white/wire, blink and mouth behavior. Do not transfer a single preset's acceptance to a new combination.
+5. If a combination fails a geometry gate, preserve the failure and correct the relevant attachment/construction. Do not raise the gate or silently change the selected family. An explicit fit policy and fresh output are required for such a retry.
+6. Retain the selection, authoring text, source hashes, receipts, model and view evidence. Prioritize closing this whole workflow and extending missing component families. Local polishing is for a concrete blocker or visible regression, not an indefinite replacement for the six-library task.
+
+Current counts and limitations are documented in the component catalog and research index. A Cartesian product of options is not a count of validated attractive models.
+
+## Historical single-face authoring brief
 
 > Create an original anime-game face from explicit proportions and procedural
 > controls. First establish a clear front and three-quarter silhouette. Shape
@@ -32,7 +45,7 @@ A character name or a reference picture is visual direction, not an executable
 model specification. Extract proportions, curves and layering choices; do not
 copy reference mesh coordinates, textures or UVs into the generated Face.
 
-## Reproduce the reviewed starting point
+## Earlier reviewed starting point
 
 Use the retained numeric file
 [`facial_surface/emerald-layered-eyes.json`](facial_surface/emerald-layered-eyes.json)

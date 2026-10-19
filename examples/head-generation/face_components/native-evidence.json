@@ -1,0 +1,35 @@
+{
+  "schema_version": 1,
+  "candidate": "combo827",
+  "selection": {
+    "eyes": "downturned",
+    "brows": "soft-arched",
+    "mouth": "retained",
+    "nose": "retained",
+    "ears": "retained",
+    "face": "narrow-chin"
+  },
+  "composition_sha256": "0c2a67a9076089bfdd53a632c3d4f1c9088a07976b4d755f9595dfc48e66f63b",
+  "glb_sha256": "6ba9d3d84641720b599d1bc59e3a60a35e322ee3aeee1837fee1825b392dfff5",
+  "generation_job": "f90db73f-95e2-4124-b6b8-0f3be9ff0488",
+  "sdf_job": "51ef1073-a37f-48e3-ac5d-0d5b1c8eba78",
+  "generation_script_sha256": "c8feefcde7dbaf739405316258c0469e87e7d50fdfb32fb7f87edab506df2c96",
+  "captures_verified": 84,
+  "capture_manifest_sha256": "c0b5626365bd2dd7b7dcaffae4a2c1c393929b304efe537b23e596577648e9a1",
+  "self_review": "Front and +/-45 render/white, closed eyes and mixed blink/MouthOpen .6 inspected; no blocking new connection or expression defect observed. Existing white-model surface unevenness remains. Workflow sample, not final aesthetics or all-combinations acceptance.",
+  "scope": "One native composition. Nose/ears retained-only; lashes/iris still eye-family coupled.",
+  "tests": 11,
+  "formatter": "Black 26.10.1",
+  "effective_line_check": "Local official checker unavailable: cargo not found; remote check pending",
+  "archive_library_id": "libfile_3f438578c5148191b250588848ba687f",
+  "archive_sha256": "7dd028706712d73254bb10436a6ca0645ad02b7becab71ea02f5f67980d3711a",
+  "ci": {
+    "commit": "92bbb9507ede165e7971f1cdc4b4403b38ad1c24",
+    "status": "all three successful",
+    "runs": [
+      39239648681,
+      39239648793,
+      39239648819
+    ]
+  }
+}

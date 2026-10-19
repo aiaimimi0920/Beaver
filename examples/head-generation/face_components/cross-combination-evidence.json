@@ -1,0 +1,152 @@
+{
+  "schema_version": 1,
+  "scope": "Six-slot native composition compatibility, not exhaustive family coverage or aesthetic acceptance",
+  "tested_on": "2026-10-19",
+  "failed_candidate": {
+    "candidate": "combo829",
+    "generation_job": "050c5347-b120-43ea-8855-70e417601db4",
+    "reason": "Legacy almond + wide-face guide displacement 0.0040874569974635325 m exceeds unchanged 0.004 m limit",
+    "replacement": "combo831 with explicitly selected skin-seated-075 fit policy",
+    "selection": {
+      "eyes": "almond",
+      "brows": "soft-level",
+      "mouth": "wide-neutral",
+      "nose": "defined-bridge",
+      "ears": "compact-human",
+      "face": "wide-face"
+    },
+    "fit_policy": "legacy"
+  },
+  "candidates": [
+    {
+      "candidate": "combo830",
+      "selection": {
+        "eyes": "slender",
+        "brows": "soft-arched",
+        "mouth": "retained",
+        "nose": "retained",
+        "ears": "retained",
+        "face": "wide-jaw"
+      },
+      "fit_policy": "legacy",
+      "composition_sha256": "5c3bcf5fed4ee8c02f048c32832cd588f3ccdb91b537c8cef48a0f0ab43e726e",
+      "glb_sha256": "180c88d50e3edbe29fe48241797f313f683acd5cf371650c2241d12a6b8f60ee",
+      "captures": {
+        "eye": {
+          "captures_verified": 84,
+          "source_sha256": "180c88d50e3edbe29fe48241797f313f683acd5cf371650c2241d12a6b8f60ee",
+          "camera_size": 0.430432230234146,
+          "scope": "Integrity, expression and view state; not aesthetic acceptance",
+          "manifest_sha256": "a4d06203e2711cc25bba7111c2aa7e9345455b81fbf1fdd1b55b8d4a7abb803d"
+        },
+        "mouth": {
+          "captures_verified": 18,
+          "source_sha256": "180c88d50e3edbe29fe48241797f313f683acd5cf371650c2241d12a6b8f60ee",
+          "camera_size": 0.430432230234146,
+          "scope": "Integrity, expression and view state; not aesthetic acceptance",
+          "manifest_sha256": "c549738b9d2c2785186cc901b180d3e83c8d9293627115a434c0639cd319a189"
+        }
+      },
+      "visual_review": "Front, oblique, closed/wink and full-mouth render views inspected; no obvious new floating seam or mouth breakthrough; inherited styling limitations remain",
+      "gen_job": "000fc6b4-0f70-43a3-b96f-1fe38a0dc6d0",
+      "sdf_job": "036ea788-60a1-45bb-aeef-23db35c344b9",
+      "model_archive": {
+        "name": "Aster-combo830-model.zip",
+        "bytes": 5494549,
+        "sha256": "6da6e6973fbac5add1990f29e69d5975f1fb24fb18b3b8a8151776aae8999650"
+      },
+      "captures_archive": {
+        "name": "Aster-combo830-captures.zip",
+        "bytes": 29773130,
+        "sha256": "6fe205a73f6ecd0bc90f99e04f818c2293da70ea7912efa0c1d22cb074c5d5ce"
+      }
+    },
+    {
+      "candidate": "combo831",
+      "selection": {
+        "eyes": "almond",
+        "brows": "soft-level",
+        "mouth": "wide-neutral",
+        "nose": "defined-bridge",
+        "ears": "compact-human",
+        "face": "wide-face"
+      },
+      "fit_policy": "skin-seated-075",
+      "composition_sha256": "7573a1e9dfc07c521fba363e053cc1bbd9149d99b9d0efa8350399b03e83cbcf",
+      "glb_sha256": "4d756b7d63551e41714591bf6a44a67d8886d463fdaf0130c16b8cff46cab46c",
+      "captures": {
+        "eye": {
+          "captures_verified": 84,
+          "source_sha256": "4d756b7d63551e41714591bf6a44a67d8886d463fdaf0130c16b8cff46cab46c",
+          "camera_size": 0.430432230234146,
+          "scope": "Integrity, expression and view state; not aesthetic acceptance",
+          "manifest_sha256": "9647539fadd64faaaa62d35179c824273380013951f779141fd52c1dc35d0d95"
+        },
+        "mouth": {
+          "captures_verified": 18,
+          "source_sha256": "4d756b7d63551e41714591bf6a44a67d8886d463fdaf0130c16b8cff46cab46c",
+          "camera_size": 0.430432230234146,
+          "scope": "Integrity, expression and view state; not aesthetic acceptance",
+          "manifest_sha256": "45c783d5a0c15a29e87712f2ffea6a9ddb4bc9c79f8a4d58debfeb6ab21bb3d1"
+        }
+      },
+      "visual_review": "Front, oblique, closed/wink and full-mouth render views inspected; no obvious new floating seam or mouth breakthrough; inherited styling limitations remain",
+      "gen_job": "8ecb881d-aa4e-4f27-86b4-936f363b3892",
+      "sdf_job": "47d9a2b2-b653-4b79-966e-e0ac672fd06e",
+      "lateral_final_curve": {
+        "-1": {
+          "guide_regularization": 0.75,
+          "maximum_unweighted_endpoint_guide_m": 0.0040874569974635325,
+          "maximum_companion_parent_pairing_m": 0.0033632914616229382,
+          "initial_chord_shaping_applied": false,
+          "maximum_section_shift_m": 0.0,
+          "root_preserved": true,
+          "maximum_frame_correction_degrees": 99.12310422099769,
+          "maximum_support_seating_m": 0.001114314357479202,
+          "cross_section_preserved": true,
+          "maximum_final_guide_correction_m": 0.0036456778803171485,
+          "maximum_section_rotation_degrees": 114.9631042209977
+        },
+        "1": {
+          "guide_regularization": 0.75,
+          "maximum_unweighted_endpoint_guide_m": 0.004087305184504524,
+          "maximum_companion_parent_pairing_m": 0.0033632956961269734,
+          "initial_chord_shaping_applied": false,
+          "maximum_section_shift_m": 0.0,
+          "root_preserved": true,
+          "maximum_frame_correction_degrees": 99.1254959306115,
+          "maximum_support_seating_m": 0.0011141713122694988,
+          "cross_section_preserved": true,
+          "maximum_final_guide_correction_m": 0.003645601863214226,
+          "maximum_section_rotation_degrees": 114.96549593061152
+        }
+      },
+      "previous_attempt": {
+        "job": "3054b6d6-0d94-408d-85c9-f5d27530b605",
+        "status": "cancelled on prior run expiry; not counted as generation success"
+      },
+      "model_archive": {
+        "name": "Aster-combo831-model.zip",
+        "bytes": 5911937,
+        "sha256": "9cbc9c65bc8f9610ca0311573bacc5b2565d023b9a23387002bd83f9b5b4e8d3"
+      },
+      "captures_archive": {
+        "name": "Aster-combo831-captures.zip",
+        "bytes": 29896973,
+        "sha256": "69c6447b9c51352f8fcede0b0108e9e26d26107854d580cd74cf5834716eed9c"
+      }
+    }
+  ],
+  "local_tests": {
+    "semantic_eyes": 170,
+    "facial_surface": 60,
+    "face_components": 14
+  },
+  "limitations": [
+    "Only these recorded combinations tested, not all Cartesian products",
+    "Brow, nose, ear and mouth choices are bounded engineering variants; full researched family libraries remain incomplete",
+    "Lash styling remains coupled to eye family; almond lashes are visually busy",
+    "Existing white-model surface unevenness remains",
+    "No final aesthetic or product acceptance; no hair or body scope"
+  ]
+}

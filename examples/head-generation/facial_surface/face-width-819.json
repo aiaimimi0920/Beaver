@@ -1,0 +1,410 @@
+{
+  "baseline": 810,
+  "candidate": 819,
+  "style_profile": "emerald_illustrated",
+  "eye_parameters": {
+    "eye_spacing": 0.94,
+    "eye_width": 0.94,
+    "upper_arch": 1.15,
+    "lower_arch": 0.72,
+    "corner_slope_offset": -0.026,
+    "eye_height_offset": 0,
+    "iris_width": 0.98,
+    "iris_height": 1.08,
+    "brow_height_offset": -0.006,
+    "brow_rise_offset": -0.022,
+    "brow_thickness": 0.85,
+    "brow_arch": 1,
+    "lash_band_thickness": 0.82,
+    "supplemental_lashes": 0,
+    "lid_fold": 0,
+    "upper_roundness": 1.7,
+    "upper_horizontal_roundness": 0.75,
+    "lash_contour_follow": 1,
+    "iris_vertical_offset": 0,
+    "simple_iris": 1,
+    "short_upper_tuft": 1,
+    "iris_horizontal_offset": 0,
+    "ocular_skin_outline_holdout": 1,
+    "iris_plane_slope_scale": 1,
+    "lower_roundness": 1.25,
+    "upper_asymmetry": 0,
+    "lower_shoulder": 0,
+    "lower_horizontal_roundness": 1.1,
+    "secondary_lash_scale": 0.7,
+    "brow_fullness_offset": 0.2,
+    "brow_softness": 0.4,
+    "brow_head_rounding": 1,
+    "layered_lashes": 0,
+    "upper_lash_layer": 0,
+    "lateral_aperture_follow": 1,
+    "lateral_blink_follow": 0.7,
+    "wing_lift_scale": 1
+  },
+  "surface_parameters": {
+    "axial_smoothing": 0.5,
+    "cheek_roundness": 0.05,
+    "orbit_shallowing": 0.15
+  },
+  "silhouette_parameters": {
+    "face_width": 0.01
+  },
+  "status": "Retained experimental preset: native generation, SDF, width gate, eye84 and mouth18 passed",
+  "native_measurement": {
+    "baseline": 810,
+    "candidate": 819,
+    "method": "Runtime neutral shell edge-plane intersections, world coordinates; no image scaling",
+    "rows": [
+      {
+        "height_fraction": 0.03,
+        "baseline_width_m": 0.03370408095973773,
+        "candidate_width_m": 0.03370408095973773,
+        "difference_m": 0.0
+      },
+      {
+        "height_fraction": 0.07,
+        "baseline_width_m": 0.07094187833782853,
+        "candidate_width_m": 0.07094949325231581,
+        "difference_m": 7.614914487280577e-06
+      },
+      {
+        "height_fraction": 0.12,
+        "baseline_width_m": 0.1030262972532821,
+        "candidate_width_m": 0.10301593422882237,
+        "difference_m": -1.0363024459739134e-05
+      },
+      {
+        "height_fraction": 0.16,
+        "baseline_width_m": 0.12154402872688601,
+        "candidate_width_m": 0.12161197526911806,
+        "difference_m": 6.794654223205021e-05
+      },
+      {
+        "height_fraction": 0.2,
+        "baseline_width_m": 0.13364694348952516,
+        "candidate_width_m": 0.13399205790877702,
+        "difference_m": 0.0003451144192518629
+      },
+      {
+        "height_fraction": 0.3,
+        "baseline_width_m": 0.15182002037896652,
+        "candidate_width_m": 0.15261076615826394,
+        "difference_m": 0.0007907457792974137
+      },
+      {
+        "height_fraction": 0.375,
+        "baseline_width_m": 0.16374673312851823,
+        "candidate_width_m": 0.16519711280463104,
+        "difference_m": 0.0014503796761128063
+      },
+      {
+        "height_fraction": 0.45,
+        "baseline_width_m": 0.17456902465393137,
+        "candidate_width_m": 0.17631819888910516,
+        "difference_m": 0.0017491742351737893
+      },
+      {
+        "height_fraction": 0.525,
+        "baseline_width_m": 0.18480462037865159,
+        "candidate_width_m": 0.18677615971248662,
+        "difference_m": 0.0019715393338350373
+      },
+      {
+        "height_fraction": 0.6,
+        "baseline_width_m": 0.1896400958939662,
+        "candidate_width_m": 0.19149666752088226,
+        "difference_m": 0.001856571626916076
+      },
+      {
+        "height_fraction": 0.675,
+        "baseline_width_m": 0.19446388552310667,
+        "candidate_width_m": 0.19579989691795568,
+        "difference_m": 0.0013360113948490127
+      },
+      {
+        "height_fraction": 0.75,
+        "baseline_width_m": 0.19416732502277045,
+        "candidate_width_m": 0.1951034218873195,
+        "difference_m": 0.0009360968645490408
+      },
+      {
+        "height_fraction": 0.8,
+        "baseline_width_m": 0.18821944368608798,
+        "candidate_width_m": 0.18882271528822375,
+        "difference_m": 0.0006032716021357742
+      },
+      {
+        "height_fraction": 0.85,
+        "baseline_width_m": 0.17949207078332852,
+        "candidate_width_m": 0.1797473097435079,
+        "difference_m": 0.0002552389601793714
+      },
+      {
+        "height_fraction": 0.925,
+        "baseline_width_m": 0.1570045535193161,
+        "candidate_width_m": 0.15697981514112302,
+        "difference_m": -2.473837819308433e-05
+      }
+    ],
+    "baseline_sources": {
+      "face_style.json": "a8eb80a23f038a69cdce19e3174f3ce846d56c1ea10f598658d504c261497d09",
+      "generation_report.json": "c69bab6e5cc561b0319f9175570b61261bf11900cf031572653d0e3a067a5360",
+      "aster_head_runtime_morph.blend": "fcca113e50390cf809259ba0c4e765ef510e8dc07c19a00196103a9ce332efe5",
+      "aster_head_editable.blend": "616b72ff49848a9764dc9928049f4ac320d3196727aadd587e7567dfbe45befd"
+    },
+    "candidate_sources": {
+      "face_style.json": "aff7ea985fed2d8e8104e4a06f101a81f168cdcca391cd2a11e0e7668d82ce67",
+      "generation_report.json": "3c1fd9bd931a5d013b0fdda6fc48eecf2e7a612f1b9a1df38d8dde09a0c6ad3f",
+      "aster_head_runtime_morph.blend": "bbace68bfbde0420a15d8991f2ec6078c8d9e95aad6c020ba0ea87e32954413b",
+      "aster_head_editable.blend": "94b1c146f21403e440151bb348c7e29f310f50b209fd1e3009651be8163918f6"
+    },
+    "baseline_sections": [
+      {
+        "height_fraction": 0.03,
+        "world_plane_z_m": 1.53008,
+        "minimum_x_m": -0.016852132542882734,
+        "maximum_x_m": 0.016851948416854997,
+        "full_width_m": 0.03370408095973773
+      },
+      {
+        "height_fraction": 0.07,
+        "world_plane_z_m": 1.5395200000000002,
+        "minimum_x_m": -0.035471121413483,
+        "maximum_x_m": 0.03547075692434552,
+        "full_width_m": 0.07094187833782853
+      },
+      {
+        "height_fraction": 0.12,
+        "world_plane_z_m": 1.55132,
+        "minimum_x_m": -0.051513132055710634,
+        "maximum_x_m": 0.051513165197571466,
+        "full_width_m": 0.1030262972532821
+      },
+      {
+        "height_fraction": 0.16,
+        "world_plane_z_m": 1.5607600000000001,
+        "minimum_x_m": -0.06077205706267784,
+        "maximum_x_m": 0.06077197166420817,
+        "full_width_m": 0.12154402872688601
+      },
+      {
+        "height_fraction": 0.2,
+        "world_plane_z_m": 1.5702,
+        "minimum_x_m": -0.06682389509159652,
+        "maximum_x_m": 0.06682304839792866,
+        "full_width_m": 0.13364694348952516
+      },
+      {
+        "height_fraction": 0.3,
+        "world_plane_z_m": 1.5938,
+        "minimum_x_m": -0.07586227451142066,
+        "maximum_x_m": 0.07595774586754588,
+        "full_width_m": 0.15182002037896652
+      },
+      {
+        "height_fraction": 0.375,
+        "world_plane_z_m": 1.6115000000000002,
+        "minimum_x_m": -0.08185229247014905,
+        "maximum_x_m": 0.08189444065836916,
+        "full_width_m": 0.16374673312851823
+      },
+      {
+        "height_fraction": 0.45,
+        "world_plane_z_m": 1.6292000000000002,
+        "minimum_x_m": -0.0872844986604331,
+        "maximum_x_m": 0.08728452599349826,
+        "full_width_m": 0.17456902465393137
+      },
+      {
+        "height_fraction": 0.525,
+        "world_plane_z_m": 1.6469,
+        "minimum_x_m": -0.09240231995823822,
+        "maximum_x_m": 0.09240230042041336,
+        "full_width_m": 0.18480462037865159
+      },
+      {
+        "height_fraction": 0.6,
+        "world_plane_z_m": 1.6646,
+        "minimum_x_m": -0.09482004589281796,
+        "maximum_x_m": 0.09482005000114822,
+        "full_width_m": 0.1896400958939662
+      },
+      {
+        "height_fraction": 0.675,
+        "world_plane_z_m": 1.6823000000000001,
+        "minimum_x_m": -0.09723194278672097,
+        "maximum_x_m": 0.0972319427363857,
+        "full_width_m": 0.19446388552310667
+      },
+      {
+        "height_fraction": 0.75,
+        "world_plane_z_m": 1.7000000000000002,
+        "minimum_x_m": -0.09708365837801596,
+        "maximum_x_m": 0.0970836666447545,
+        "full_width_m": 0.19416732502277045
+      },
+      {
+        "height_fraction": 0.8,
+        "world_plane_z_m": 1.7118000000000002,
+        "minimum_x_m": -0.09410972184304399,
+        "maximum_x_m": 0.09410972184304399,
+        "full_width_m": 0.18821944368608798
+      },
+      {
+        "height_fraction": 0.85,
+        "world_plane_z_m": 1.7236,
+        "minimum_x_m": -0.08974603539166426,
+        "maximum_x_m": 0.08974603539166426,
+        "full_width_m": 0.17949207078332852
+      },
+      {
+        "height_fraction": 0.925,
+        "world_plane_z_m": 1.7413,
+        "minimum_x_m": -0.07850213977891803,
+        "maximum_x_m": 0.07850241374039808,
+        "full_width_m": 0.1570045535193161
+      }
+    ],
+    "candidate_sections": [
+      {
+        "height_fraction": 0.03,
+        "world_plane_z_m": 1.53008,
+        "minimum_x_m": -0.016852132542882734,
+        "maximum_x_m": 0.016851948416854997,
+        "full_width_m": 0.03370408095973773
+      },
+      {
+        "height_fraction": 0.07,
+        "world_plane_z_m": 1.5395200000000002,
+        "minimum_x_m": -0.03547493231121371,
+        "maximum_x_m": 0.03547456094110211,
+        "full_width_m": 0.07094949325231581
+      },
+      {
+        "height_fraction": 0.12,
+        "world_plane_z_m": 1.55132,
+        "minimum_x_m": -0.05150792280463393,
+        "maximum_x_m": 0.05150801142418844,
+        "full_width_m": 0.10301593422882237
+      },
+      {
+        "height_fraction": 0.16,
+        "world_plane_z_m": 1.5607600000000001,
+        "minimum_x_m": -0.06080609796001037,
+        "maximum_x_m": 0.060805877309107685,
+        "full_width_m": 0.12161197526911806
+      },
+      {
+        "height_fraction": 0.2,
+        "world_plane_z_m": 1.5702,
+        "minimum_x_m": -0.06699651373467941,
+        "maximum_x_m": 0.06699554417409762,
+        "full_width_m": 0.13399205790877702
+      },
+      {
+        "height_fraction": 0.3,
+        "world_plane_z_m": 1.5938,
+        "minimum_x_m": -0.07625907206889963,
+        "maximum_x_m": 0.0763516940893643,
+        "full_width_m": 0.15261076615826394
+      },
+      {
+        "height_fraction": 0.375,
+        "world_plane_z_m": 1.6115000000000002,
+        "minimum_x_m": -0.08257747454068551,
+        "maximum_x_m": 0.08261963826394553,
+        "full_width_m": 0.16519711280463104
+      },
+      {
+        "height_fraction": 0.45,
+        "world_plane_z_m": 1.6292000000000002,
+        "minimum_x_m": -0.08815908863463079,
+        "maximum_x_m": 0.08815911025447438,
+        "full_width_m": 0.17631819888910516
+      },
+      {
+        "height_fraction": 0.525,
+        "world_plane_z_m": 1.6469,
+        "minimum_x_m": -0.09338807985624331,
+        "maximum_x_m": 0.09338807985624331,
+        "full_width_m": 0.18677615971248662
+      },
+      {
+        "height_fraction": 0.6,
+        "world_plane_z_m": 1.6646,
+        "minimum_x_m": -0.09574833185738695,
+        "maximum_x_m": 0.09574833566349532,
+        "full_width_m": 0.19149666752088226
+      },
+      {
+        "height_fraction": 0.675,
+        "world_plane_z_m": 1.6823000000000001,
+        "minimum_x_m": -0.09789994475885518,
+        "maximum_x_m": 0.09789995215910051,
+        "full_width_m": 0.19579989691795568
+      },
+      {
+        "height_fraction": 0.75,
+        "world_plane_z_m": 1.7000000000000002,
+        "minimum_x_m": -0.09755169937068539,
+        "maximum_x_m": 0.0975517225166341,
+        "full_width_m": 0.1951034218873195
+      },
+      {
+        "height_fraction": 0.8,
+        "world_plane_z_m": 1.7118000000000002,
+        "minimum_x_m": -0.09441135391882158,
+        "maximum_x_m": 0.09441136136940217,
+        "full_width_m": 0.18882271528822375
+      },
+      {
+        "height_fraction": 0.85,
+        "world_plane_z_m": 1.7236,
+        "minimum_x_m": -0.08987365355207065,
+        "maximum_x_m": 0.08987365619143722,
+        "full_width_m": 0.1797473097435079
+      },
+      {
+        "height_fraction": 0.925,
+        "world_plane_z_m": 1.7413,
+        "minimum_x_m": -0.07848977143074422,
+        "maximum_x_m": 0.0784900437103788,
+        "full_width_m": 0.15697981514112302
+      }
+    ]
+  },
+  "visual_review": {
+    "baseline": 810,
+    "candidate": 819,
+    "result": "static visual regression pass including mouth18",
+    "scope": "Face width +.01 with fixed 810 eye configuration only",
+    "findings": [
+      "No obvious new orbital, brow or lash detachment; ear roots continuous",
+      "Closed eyelids and full mouth remain continuous in viewed front/oblique images",
+      "Inherited uneven white-model mouth shading persists"
+    ]
+  },
+  "limitations": [
+    "Limited one-axis sample; not all facial shapes or continuous animation verified",
+    "Inherited uneven white-model mouth shading remains",
+    "2mm bound applies to width interpolant, not whole-mesh displacement"
+  ],
+  "archives": [
+    {
+      "file": "Aster-819-independent-preset.zip",
+      "sha256": "1a36feb9d2f50ecf29fc50150b019e1848fee8dadde19e0676eb0118cb215842",
+      "bytes": 6330664
+    },
+    {
+      "file": "Aster-819-native-captures.zip",
+      "sha256": "230c046a3a2e89fac86cd418c423f9bd1527fe77e0d5590a84e399ad371f016c",
+      "bytes": 23670856
+    },
+    {
+      "file": "Aster-819-mouth-captures.zip",
+      "sha256": "579a626c420bd2ef31848cea0b0c06c022dacc3e96005b2e6f9fdcd86526b599",
+      "bytes": 7142646
+    }
+  ],
+  "archive_dependency": "Aster-workflow-795.zip (unchanged baseline project)"
+}

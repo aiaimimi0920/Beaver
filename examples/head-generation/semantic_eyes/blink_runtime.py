@@ -1,9 +1,13 @@
 """Experimental local eyelid closure; neutral mesh and non-eye geometry stay fixed."""
 
-from contour_warp import upper_shape
+from contour_warp import upper_shape, lower_shape
 
 
 def closure_delta(x, y, kind, c):
+    if kind == "lateral":
+        # Side sheets follow the surrounding skin with a softer closure field.
+        # Full skin compression can fold the narrow closed return.
+        return c.get("lateral_blink_follow", 0.85) * closure_delta(x, y, "skin", c)
     h = c["height_m"]
     t = (abs(x) / h - c["eye_center_x"]) / c["eye_half_width"]
     if abs(t) >= 1.0:
@@ -15,7 +19,7 @@ def closure_delta(x, y, kind, c):
         * c["eye_upper_arch"]
         * max(0, 1 - abs(t) ** c["eye_horizontal_power"]) ** c["eye_upper_power"]
     )
-    if c.get("eye_upper_asymmetry", 0):
+    if c.get("eye_upper_asymmetry", 0) or c.get("eye_upper_angularity", 0):
         upper = center + h * c["eye_upper_arch"] * upper_shape(t, c)
     lower = (
         center
@@ -23,6 +27,8 @@ def closure_delta(x, y, kind, c):
         * c["eye_lower_arch"]
         * max(0, 1 - abs(t) ** c["eye_lower_horizontal_power"]) ** c["eye_lower_power"]
     )
+    if c.get("eye_lower_shoulder", 0):
+        lower = center - h * c["eye_lower_arch"] * lower_shape(t, c)
     seam = center - 0.0015 * (1 - t * t)
     if kind == "upper_ink":
         # y is the final generated column floor, not the analytic aperture.
@@ -56,11 +62,27 @@ def build_blink_shapes(obj, ordinals, calibration, ink_floor_closure=False):
         if ink_floor_closure and name.startswith("Upper lash "):
             tags[ordinal] = "upper_ink"
         elif name.startswith(
-            ("Upper lash ", "Upper skin lid ", "Upper swept lash tuft ")
+            (
+                "Upper lash ",
+                "Upper skin lid ",
+                "Upper swept lash tuft ",
+                "Attached outer lash wing ",
+                "Inner forked lash blade ",
+            )
         ):
             tags[ordinal] = "upper"
-        elif name.startswith(("Lower lash ", "Lower skin lid ")):
+        elif name.startswith(
+            ("Lower lash ", "Lower skin lid ", "Lower outer lash tuft ")
+        ):
             tags[ordinal] = "lower"
+        elif name.startswith(
+            (
+                "Outer lateral eye liner ",
+                "Outer companion lash ",
+                "Embedded lateral child ",
+            )
+        ):
+            tags[ordinal] = "lateral"
     memberships = [set() for _ in data.vertices]
     for polygon in data.polygons:
         region = regions.data[polygon.index].value
@@ -90,7 +112,11 @@ def build_blink_shapes(obj, ordinals, calibration, ink_floor_closure=False):
                 else (
                     "upper"
                     if "upper" in kinds
-                    else "lower" if "lower" in kinds else "skin"
+                    else (
+                        "lower"
+                        if "lower" in kinds
+                        else "lateral" if "lateral" in kinds else "skin"
+                    )
                 )
             )
             height = (

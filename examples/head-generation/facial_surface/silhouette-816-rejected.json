@@ -1,0 +1,182 @@
+{
+  "rows": [
+    {
+      "height_fraction": 0.03,
+      "baseline_width_m": 0.03370408095973773,
+      "candidate_width_m": 0.03374482849657341,
+      "difference_m": 4.0747536835680775e-05
+    },
+    {
+      "height_fraction": 0.07,
+      "baseline_width_m": 0.07094187833782853,
+      "candidate_width_m": 0.071364147550777,
+      "difference_m": 0.0004222692129484673
+    },
+    {
+      "height_fraction": 0.12,
+      "baseline_width_m": 0.1030262972532821,
+      "candidate_width_m": 0.10317755042524893,
+      "difference_m": 0.00015125317196681975
+    },
+    {
+      "height_fraction": 0.16,
+      "baseline_width_m": 0.12154402872688601,
+      "candidate_width_m": 0.1215514906247172,
+      "difference_m": 7.4618978311985495e-06
+    },
+    {
+      "height_fraction": 0.2,
+      "baseline_width_m": 0.13364694348952516,
+      "candidate_width_m": 0.13360432187432242,
+      "difference_m": -4.2621615202742547e-05
+    },
+    {
+      "height_fraction": 0.3,
+      "baseline_width_m": 0.15182002037896652,
+      "candidate_width_m": 0.15254014597992988,
+      "difference_m": 0.0007201256009633505
+    },
+    {
+      "height_fraction": 0.45,
+      "baseline_width_m": 0.17456902465393137,
+      "candidate_width_m": 0.17457852824457584,
+      "difference_m": 9.503590644471815e-06
+    },
+    {
+      "height_fraction": 0.6,
+      "baseline_width_m": 0.1896400958939662,
+      "candidate_width_m": 0.18963704816770052,
+      "difference_m": -3.047726265664741e-06
+    }
+  ],
+  "baseline_sections": [
+    {
+      "height_fraction": 0.03,
+      "world_plane_z_m": 1.53008,
+      "minimum_x_m": -0.016852132542882734,
+      "maximum_x_m": 0.016851948416854997,
+      "full_width_m": 0.03370408095973773
+    },
+    {
+      "height_fraction": 0.07,
+      "world_plane_z_m": 1.5395200000000002,
+      "minimum_x_m": -0.035471121413483,
+      "maximum_x_m": 0.03547075692434552,
+      "full_width_m": 0.07094187833782853
+    },
+    {
+      "height_fraction": 0.12,
+      "world_plane_z_m": 1.55132,
+      "minimum_x_m": -0.051513132055710634,
+      "maximum_x_m": 0.051513165197571466,
+      "full_width_m": 0.1030262972532821
+    },
+    {
+      "height_fraction": 0.16,
+      "world_plane_z_m": 1.5607600000000001,
+      "minimum_x_m": -0.06077205706267784,
+      "maximum_x_m": 0.06077197166420817,
+      "full_width_m": 0.12154402872688601
+    },
+    {
+      "height_fraction": 0.2,
+      "world_plane_z_m": 1.5702,
+      "minimum_x_m": -0.06682389509159652,
+      "maximum_x_m": 0.06682304839792866,
+      "full_width_m": 0.13364694348952516
+    },
+    {
+      "height_fraction": 0.3,
+      "world_plane_z_m": 1.5938,
+      "minimum_x_m": -0.07586227451142066,
+      "maximum_x_m": 0.07595774586754588,
+      "full_width_m": 0.15182002037896652
+    },
+    {
+      "height_fraction": 0.45,
+      "world_plane_z_m": 1.6292000000000002,
+      "minimum_x_m": -0.0872844986604331,
+      "maximum_x_m": 0.08728452599349826,
+      "full_width_m": 0.17456902465393137
+    },
+    {
+      "height_fraction": 0.6,
+      "world_plane_z_m": 1.6646,
+      "minimum_x_m": -0.09482004589281796,
+      "maximum_x_m": 0.09482005000114822,
+      "full_width_m": 0.1896400958939662
+    }
+  ],
+  "candidate_sections": [
+    {
+      "height_fraction": 0.03,
+      "world_plane_z_m": 1.53008,
+      "minimum_x_m": -0.016872504930335836,
+      "maximum_x_m": 0.01687232356623758,
+      "full_width_m": 0.03374482849657341
+    },
+    {
+      "height_fraction": 0.07,
+      "world_plane_z_m": 1.5395200000000002,
+      "minimum_x_m": -0.03568226089607733,
+      "maximum_x_m": 0.035681886654699665,
+      "full_width_m": 0.071364147550777
+    },
+    {
+      "height_fraction": 0.12,
+      "world_plane_z_m": 1.55132,
+      "minimum_x_m": -0.05158875386253141,
+      "maximum_x_m": 0.051588796562717525,
+      "full_width_m": 0.10317755042524893
+    },
+    {
+      "height_fraction": 0.16,
+      "world_plane_z_m": 1.5607600000000001,
+      "minimum_x_m": -0.06077578467603336,
+      "maximum_x_m": 0.06077570594868384,
+      "full_width_m": 0.1215514906247172
+    },
+    {
+      "height_fraction": 0.2,
+      "world_plane_z_m": 1.5702,
+      "minimum_x_m": -0.0668022325802367,
+      "maximum_x_m": 0.06680208929408574,
+      "full_width_m": 0.13360432187432242
+    },
+    {
+      "height_fraction": 0.3,
+      "world_plane_z_m": 1.5938,
+      "minimum_x_m": -0.07622653006085826,
+      "maximum_x_m": 0.07631361591907163,
+      "full_width_m": 0.15254014597992988
+    },
+    {
+      "height_fraction": 0.45,
+      "world_plane_z_m": 1.6292000000000002,
+      "minimum_x_m": -0.0872892615220099,
+      "maximum_x_m": 0.08728926672256594,
+      "full_width_m": 0.17457852824457584
+    },
+    {
+      "height_fraction": 0.6,
+      "world_plane_z_m": 1.6646,
+      "minimum_x_m": -0.09481852202540554,
+      "maximum_x_m": 0.09481852614229498,
+      "full_width_m": 0.18963704816770052
+    }
+  ],
+  "baseline_sources": {
+    "face_style.json": "a8eb80a23f038a69cdce19e3174f3ce846d56c1ea10f598658d504c261497d09",
+    "generation_report.json": "c69bab6e5cc561b0319f9175570b61261bf11900cf031572653d0e3a067a5360",
+    "aster_head_runtime_morph.blend": "fcca113e50390cf809259ba0c4e765ef510e8dc07c19a00196103a9ce332efe5",
+    "aster_head_editable.blend": "616b72ff49848a9764dc9928049f4ac320d3196727aadd587e7567dfbe45befd"
+  },
+  "candidate_sources": {
+    "face_style.json": "0fb3f50532ff01236301aa42ef713df14a84d5d79fd62c1d28d4dc9c15023ca3",
+    "generation_report.json": "e276a9dc4016e98dc5c3a62d258b4c2314976aadfd240b18261d9b4977a722c1",
+    "aster_head_runtime_morph.blend": "059dec52df30dff9a4a7ffde4afb7f3c7d06d0cd05ba91c45cb9a15938d3bd0a",
+    "aster_head_editable.blend": "f9af72218e3cc9b77e24c92ae3ae12537f1d7cf22b8680e9d232cd41f53180ed"
+  },
+  "acceptance_pass": false,
+  "conclusion": "Rejected: final jaw width did not retain requested silhouette delta; legacy ear envelope target identified as correction point. Do not count as accepted preset."
+}

@@ -107,7 +107,18 @@ class UpperWarpBundleTests(unittest.TestCase):
                 for t in n.targets
             )
         )
-        self.assertEqual(set(embedded), {"contour_warp.py", "source_upper_warp.py"})
+        self.assertEqual(
+            set(embedded),
+            {
+                "contour_warp.py",
+                "source_upper_warp.py",
+                "source_lateral_rim.py",
+                "source_angular_samples.py",
+                "source_return_order.py",
+                "source_lateral_regularization.py",
+                    "source_brow_profiles.py",
+            },
+        )
         self.assertEqual(len(request["outputs"]), 64)
         self.assertLessEqual(len(request["code"].encode()), 1024 * 1024)
 

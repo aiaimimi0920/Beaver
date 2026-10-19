@@ -1,0 +1,270 @@
+{
+  "baseline": 810,
+  "candidate": 817,
+  "style_profile": "emerald_illustrated",
+  "eye_parameters": {
+    "eye_spacing": 0.94,
+    "eye_width": 0.94,
+    "upper_arch": 1.15,
+    "lower_arch": 0.72,
+    "corner_slope_offset": -0.026,
+    "eye_height_offset": 0,
+    "iris_width": 0.98,
+    "iris_height": 1.08,
+    "brow_height_offset": -0.006,
+    "brow_rise_offset": -0.022,
+    "brow_thickness": 0.85,
+    "brow_arch": 1,
+    "lash_band_thickness": 0.82,
+    "supplemental_lashes": 0,
+    "lid_fold": 0,
+    "upper_roundness": 1.7,
+    "upper_horizontal_roundness": 0.75,
+    "lash_contour_follow": 1,
+    "iris_vertical_offset": 0,
+    "simple_iris": 1,
+    "short_upper_tuft": 1,
+    "iris_horizontal_offset": 0,
+    "ocular_skin_outline_holdout": 1,
+    "iris_plane_slope_scale": 1,
+    "lower_roundness": 1.25,
+    "upper_asymmetry": 0,
+    "lower_shoulder": 0,
+    "lower_horizontal_roundness": 1.1,
+    "secondary_lash_scale": 0.7,
+    "brow_fullness_offset": 0.2,
+    "brow_softness": 0.4,
+    "brow_head_rounding": 1,
+    "layered_lashes": 0,
+    "upper_lash_layer": 0,
+    "lateral_aperture_follow": 1,
+    "lateral_blink_follow": 0.7,
+    "wing_lift_scale": 1
+  },
+  "surface_parameters": {
+    "axial_smoothing": 0.5,
+    "cheek_roundness": 0.05,
+    "orbit_shallowing": 0.15
+  },
+  "silhouette_parameters": {
+    "jaw_width": 0.02
+  },
+  "status": "Retained experimental preset: native generation, SDF, width gate, eye84 and mouth18 passed",
+  "native_measurement": {
+    "baseline": 810,
+    "candidate": 817,
+    "method": "Runtime neutral shell edge-plane intersections, world coordinates; no image scaling",
+    "rows": [
+      {
+        "height_fraction": 0.03,
+        "baseline_width_m": 0.03370408095973773,
+        "candidate_width_m": 0.03374482849657341,
+        "difference_m": 4.0747536835680775e-05
+      },
+      {
+        "height_fraction": 0.07,
+        "baseline_width_m": 0.07094187833782853,
+        "candidate_width_m": 0.071364147550777,
+        "difference_m": 0.0004222692129484673
+      },
+      {
+        "height_fraction": 0.12,
+        "baseline_width_m": 0.1030262972532821,
+        "candidate_width_m": 0.10473124934066635,
+        "difference_m": 0.0017049520873842483
+      },
+      {
+        "height_fraction": 0.16,
+        "baseline_width_m": 0.12154402872688601,
+        "candidate_width_m": 0.12336445448736705,
+        "difference_m": 0.0018204257604810398
+      },
+      {
+        "height_fraction": 0.2,
+        "baseline_width_m": 0.13364694348952516,
+        "candidate_width_m": 0.13585551392807493,
+        "difference_m": 0.002208570438549773
+      },
+      {
+        "height_fraction": 0.3,
+        "baseline_width_m": 0.15182002037896652,
+        "candidate_width_m": 0.15238641128881342,
+        "difference_m": 0.0005663909098468922
+      },
+      {
+        "height_fraction": 0.45,
+        "baseline_width_m": 0.17456902465393137,
+        "candidate_width_m": 0.17457852824457584,
+        "difference_m": 9.503590644471815e-06
+      },
+      {
+        "height_fraction": 0.6,
+        "baseline_width_m": 0.1896400958939662,
+        "candidate_width_m": 0.18963704816770052,
+        "difference_m": -3.047726265664741e-06
+      }
+    ],
+    "baseline_sources": {
+      "face_style.json": "a8eb80a23f038a69cdce19e3174f3ce846d56c1ea10f598658d504c261497d09",
+      "generation_report.json": "c69bab6e5cc561b0319f9175570b61261bf11900cf031572653d0e3a067a5360",
+      "aster_head_runtime_morph.blend": "fcca113e50390cf809259ba0c4e765ef510e8dc07c19a00196103a9ce332efe5",
+      "aster_head_editable.blend": "616b72ff49848a9764dc9928049f4ac320d3196727aadd587e7567dfbe45befd"
+    },
+    "candidate_sources": {
+      "face_style.json": "0fb3f50532ff01236301aa42ef713df14a84d5d79fd62c1d28d4dc9c15023ca3",
+      "generation_report.json": "623c2794d34041646b1d2730a4820edfe8e88755cc3a5267e9fdbcc1bd4e0e26",
+      "aster_head_runtime_morph.blend": "d003563d26ddc08db9149709671fabc2d8eadbd86dac4d5d97929748d7a194a0",
+      "aster_head_editable.blend": "0350429dd9a6d9b918537e903a9cccf3ccf3fe6eb81a552c149c85345759e7d9"
+    },
+    "baseline_sections": [
+      {
+        "height_fraction": 0.03,
+        "world_plane_z_m": 1.53008,
+        "minimum_x_m": -0.016852132542882734,
+        "maximum_x_m": 0.016851948416854997,
+        "full_width_m": 0.03370408095973773
+      },
+      {
+        "height_fraction": 0.07,
+        "world_plane_z_m": 1.5395200000000002,
+        "minimum_x_m": -0.035471121413483,
+        "maximum_x_m": 0.03547075692434552,
+        "full_width_m": 0.07094187833782853
+      },
+      {
+        "height_fraction": 0.12,
+        "world_plane_z_m": 1.55132,
+        "minimum_x_m": -0.051513132055710634,
+        "maximum_x_m": 0.051513165197571466,
+        "full_width_m": 0.1030262972532821
+      },
+      {
+        "height_fraction": 0.16,
+        "world_plane_z_m": 1.5607600000000001,
+        "minimum_x_m": -0.06077205706267784,
+        "maximum_x_m": 0.06077197166420817,
+        "full_width_m": 0.12154402872688601
+      },
+      {
+        "height_fraction": 0.2,
+        "world_plane_z_m": 1.5702,
+        "minimum_x_m": -0.06682389509159652,
+        "maximum_x_m": 0.06682304839792866,
+        "full_width_m": 0.13364694348952516
+      },
+      {
+        "height_fraction": 0.3,
+        "world_plane_z_m": 1.5938,
+        "minimum_x_m": -0.07586227451142066,
+        "maximum_x_m": 0.07595774586754588,
+        "full_width_m": 0.15182002037896652
+      },
+      {
+        "height_fraction": 0.45,
+        "world_plane_z_m": 1.6292000000000002,
+        "minimum_x_m": -0.0872844986604331,
+        "maximum_x_m": 0.08728452599349826,
+        "full_width_m": 0.17456902465393137
+      },
+      {
+        "height_fraction": 0.6,
+        "world_plane_z_m": 1.6646,
+        "minimum_x_m": -0.09482004589281796,
+        "maximum_x_m": 0.09482005000114822,
+        "full_width_m": 0.1896400958939662
+      }
+    ],
+    "candidate_sections": [
+      {
+        "height_fraction": 0.03,
+        "world_plane_z_m": 1.53008,
+        "minimum_x_m": -0.016872504930335836,
+        "maximum_x_m": 0.01687232356623758,
+        "full_width_m": 0.03374482849657341
+      },
+      {
+        "height_fraction": 0.07,
+        "world_plane_z_m": 1.5395200000000002,
+        "minimum_x_m": -0.03568226089607733,
+        "maximum_x_m": 0.035681886654699665,
+        "full_width_m": 0.071364147550777
+      },
+      {
+        "height_fraction": 0.12,
+        "world_plane_z_m": 1.55132,
+        "minimum_x_m": -0.05236560783386118,
+        "maximum_x_m": 0.05236564150680517,
+        "full_width_m": 0.10473124934066635
+      },
+      {
+        "height_fraction": 0.16,
+        "world_plane_z_m": 1.5607600000000001,
+        "minimum_x_m": -0.06168227326684551,
+        "maximum_x_m": 0.06168218122052154,
+        "full_width_m": 0.12336445448736705
+      },
+      {
+        "height_fraction": 0.2,
+        "world_plane_z_m": 1.5702,
+        "minimum_x_m": -0.06792806618703941,
+        "maximum_x_m": 0.06792744774103551,
+        "full_width_m": 0.13585551392807493
+      },
+      {
+        "height_fraction": 0.3,
+        "world_plane_z_m": 1.5938,
+        "minimum_x_m": -0.07614820847934982,
+        "maximum_x_m": 0.07623820280946361,
+        "full_width_m": 0.15238641128881342
+      },
+      {
+        "height_fraction": 0.45,
+        "world_plane_z_m": 1.6292000000000002,
+        "minimum_x_m": -0.0872892615220099,
+        "maximum_x_m": 0.08728926672256594,
+        "full_width_m": 0.17457852824457584
+      },
+      {
+        "height_fraction": 0.6,
+        "world_plane_z_m": 1.6646,
+        "minimum_x_m": -0.09481852202540554,
+        "maximum_x_m": 0.09481852614229498,
+        "full_width_m": 0.18963704816770052
+      }
+    ]
+  },
+  "visual_review": {
+    "baseline": 810,
+    "candidate": 817,
+    "result": "static visual regression pass including mouth18",
+    "findings": [
+      "Light jaw widening preserved in native mesh; no obvious new cheek/jaw kink or ear seam gap in matched front/oblique views",
+      "Eye contour and closed eyelid continuity preserved",
+      "Inherited nonuniform white-model shading near mouth/jaw persists; no claim of major aesthetic improvement",
+      "Full mouth at 0 and +/-45 degrees: no clear new mouth-corner tear, jaw kink or ear-root disconnection; inherited mouth shading and cavity angularity remain"
+    ]
+  },
+  "limitations": [
+    "Limited one-axis sample; not all facial shapes or continuous animation verified",
+    "Inherited uneven white-model mouth shading remains",
+    "2mm bound applies to width interpolant, not whole-mesh displacement"
+  ],
+  "archives": [
+    {
+      "file": "Aster-817-independent-preset.zip",
+      "sha256": "dcca4c72d4f36a9e0356c8ab50a5cfb8598f4aee742c11c09e72894e705cb4b7",
+      "bytes": 6335575
+    },
+    {
+      "file": "Aster-817-native-captures.zip",
+      "sha256": "dbb60c2ea929e7f78d945091b9d0b52c956fef1d1ed985c259b77c43f3d949d0",
+      "bytes": 23663013
+    },
+    {
+      "file": "Aster-810-817-mouth-captures.zip",
+      "sha256": "290176a65cc4f2870c6a4cbc10ac0bb4c38d4733d98ad5648ecd8a588940aa86",
+      "bytes": 13322326
+    }
+  ],
+  "archive_dependency": "Aster-workflow-795.zip (unchanged baseline project)"
+}

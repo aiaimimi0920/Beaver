@@ -1,0 +1,237 @@
+{
+  "schema_version": 1,
+  "scope": "Engineering morphology families, not an exhaustive or scientifically universal taxonomy. Native status belongs to exact candidates, never whole families.",
+  "slots": {
+    "eyes": {
+      "round-open": {
+        "title": "round-open",
+        "presets": [
+          "round-open"
+        ],
+        "status": "implemented_with_historical_samples",
+        "sources": [
+          "../eye_presets/README.md"
+        ],
+        "missing_controls": []
+      },
+      "almond": {
+        "title": "almond",
+        "presets": [
+          "almond"
+        ],
+        "status": "implemented_with_historical_samples",
+        "sources": [
+          "../eye_presets/README.md"
+        ],
+        "missing_controls": []
+      },
+      "slender": {
+        "title": "slender",
+        "presets": [
+          "slender"
+        ],
+        "status": "implemented_with_historical_samples",
+        "sources": [
+          "../eye_presets/README.md"
+        ],
+        "missing_controls": []
+      },
+      "downturned": {
+        "title": "downturned",
+        "presets": [
+          "downturned"
+        ],
+        "status": "implemented_with_historical_samples",
+        "sources": [
+          "../eye_presets/README.md"
+        ],
+        "missing_controls": []
+      },
+      "upturned": {
+        "title": "upturned",
+        "presets": [
+          "upturned"
+        ],
+        "status": "implemented_with_historical_samples",
+        "sources": [
+          "../eye_presets/README.md"
+        ],
+        "missing_controls": []
+      },
+      "shallow-upper": {
+        "title": "shallow-upper",
+        "presets": [
+          "shallow-upper"
+        ],
+        "status": "implemented_with_historical_samples",
+        "sources": [
+          "../eye_presets/README.md"
+        ],
+        "missing_controls": []
+      },
+      "rounded-upper": {
+        "title": "rounded-upper",
+        "presets": [
+          "rounded-upper"
+        ],
+        "status": "implemented_with_historical_samples",
+        "sources": [
+          "../eye_presets/README.md"
+        ],
+        "missing_controls": []
+      },
+      "segmented": {
+        "title": "segmented",
+        "presets": [
+          "segmented"
+        ],
+        "status": "implemented_with_historical_samples",
+        "sources": [
+          "../eye_presets/README.md"
+        ],
+        "missing_controls": []
+      }
+    },
+    "brows": {
+      "smooth-tapered-ribbon": {
+        "title": "柔顺收尖眉",
+        "presets": [
+          "soft-level",
+          "soft-arched"
+        ],
+        "status": "implemented_with_historical_samples",
+        "sources": [
+          "https://frieren-anime.jp/character/chara_group1/1-5/",
+          "https://frieren-anime.jp/character/chara_group1/1-1/"
+        ],
+        "missing_controls": []
+      },
+      "angular-peaked-wedge": {
+        "title": "折锋眉",
+        "presets": [
+          "angular-peaked"
+        ],
+        "status": "implemented_with_historical_samples",
+        "sources": [
+          "https://www.guiltygear.com/ggst/en/character/kyk/"
+        ],
+        "missing_controls": [],
+        "native_sample": "combo832"
+      },
+      "broad-rounded-band": {
+        "title": "浓带眉",
+        "presets": [
+          "broad-band"
+        ],
+        "status": "implemented_with_historical_samples",
+        "sources": [
+          "https://naruto-official.com/en/news/01_1652"
+        ],
+        "missing_controls": [],
+        "native_sample": "combo833"
+      }
+    },
+    "mouth": {
+      "minimal-seam": {
+        "title": "简线薄口",
+        "presets": [
+          "retained",
+          "soft-upper-transition",
+          "wide-neutral"
+        ],
+        "status": "implemented_with_historical_samples",
+        "sources": [
+          "https://frieren-anime.jp/character/chara_group1/1-5/"
+        ],
+        "missing_controls": []
+      },
+      "bowed-volumetric": {
+        "title": "弓形实体唇",
+        "presets": [],
+        "status": "planned",
+        "sources": [
+          "https://www.guiltygear.com/ggst/en/character/mll/"
+        ],
+        "missing_controls": [
+          "independent_upper_lower_fullness",
+          "central_bow",
+          "lip_projection"
+        ]
+      }
+    },
+    "nose": {
+      "compact-wedge": {
+        "title": "紧凑楔鼻",
+        "presets": [
+          "retained",
+          "defined-bridge"
+        ],
+        "status": "implemented_with_historical_samples",
+        "sources": [
+          "https://frieren-anime.jp/character/chara_group1/1-6/"
+        ],
+        "missing_controls": []
+      },
+      "elongated-defined-bridge": {
+        "title": "长直鼻梁",
+        "presets": [],
+        "status": "planned",
+        "sources": [
+          "https://frieren-anime.jp/character/chara_group1/1-3/"
+        ],
+        "missing_controls": [
+          "bridge_length",
+          "tip_projection",
+          "tip_width"
+        ]
+      }
+    },
+    "ears": {
+      "rounded-human": {
+        "title": "圆廓人耳",
+        "presets": [
+          "retained",
+          "compact-human"
+        ],
+        "status": "implemented_with_historical_samples",
+        "sources": [
+          "https://frieren-anime.jp/character/chara_group1/1-3/"
+        ],
+        "missing_controls": []
+      },
+      "lateral-elf": {
+        "title": "横展长尖耳",
+        "presets": [],
+        "status": "planned",
+        "sources": [
+          "https://frieren-anime.jp/character/chara_group1/1-1/"
+        ],
+        "missing_controls": [
+          "distal_length",
+          "flare_angle",
+          "tip_taper",
+          "shell_thickness"
+        ]
+      }
+    },
+    "face": {
+      "retained-soft-contour": {
+        "title": "当前柔和轮廓",
+        "presets": [
+          "retained",
+          "wide-jaw",
+          "narrow-jaw",
+          "wide-face",
+          "narrow-chin"
+        ],
+        "status": "implemented_with_historical_samples",
+        "sources": [
+          "../eye_presets/README.md"
+        ],
+        "missing_controls": [
+          "independent_outline_family_research"
+        ]
+      }
+    }
+  }
+}

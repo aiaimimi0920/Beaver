@@ -1,0 +1,84 @@
+{
+  "schema_version": 1,
+  "scope": "Independent brow grammar functional samples; not full aesthetics or all face combinations",
+  "candidates": [
+    {
+      "candidate": "combo832",
+      "selection": {
+        "eyes": "downturned",
+        "brows": "angular-peaked",
+        "mouth": "retained",
+        "nose": "retained",
+        "ears": "retained",
+        "face": "narrow-chin"
+      },
+      "fit_policy": "legacy",
+      "composition_sha256": "71e09039361639e94926386806892fdbea6c47f0cc205e7fc3938f502f2e76be",
+      "glb_sha256": "412b2fa2e39cc6c846521b83658397f9a7d4808703dcd798983a2be4c50489c8",
+      "eye_captures_verified": 84,
+      "mouth_captures_verified": 18,
+      "capture_manifest_sha256": {
+        "eye": "0cd72e1d3b610fd0918283bcc06d8f19cf6c3e6105ced9acb05e506d7752157b",
+        "mouth": "a9be8661d4fa6753de06321d50abdd20f4a595549a1e13a409133d3134d2f800"
+      },
+      "visual_review": "Root inspected front/oblique render, white model, closure and mouth. Independent reviewer found distinct brow grammar and no obvious new structural blocker in front/45 static views. Functional sample only.",
+      "gen_job": "c560ed4d-c11a-47fa-9f32-f45899f20122",
+      "sdf_job": "a570b354-9f12-4a97-b057-bd4b28135e46",
+      "model_archive": {
+        "name": "Aster-combo832-model.zip",
+        "bytes": 5493357,
+        "sha256": "8ac8ffd85ef00455576221a8898668cc2dfe9c4e25288db1a61877431ced17b7"
+      },
+      "captures_archive": {
+        "name": "Aster-combo832-captures.zip",
+        "bytes": 29863781,
+        "sha256": "daabcc4e25a1a29b47cbc5043d4142a376784e6a0b0aa2edfee6db34e76d7134"
+      }
+    },
+    {
+      "candidate": "combo833",
+      "selection": {
+        "eyes": "downturned",
+        "brows": "broad-band",
+        "mouth": "retained",
+        "nose": "retained",
+        "ears": "retained",
+        "face": "narrow-chin"
+      },
+      "fit_policy": "legacy",
+      "composition_sha256": "0aa54e7c0d1f3bdb7835c9032a28e4ad0c6842f84356252c4a4c6afd43dac5cf",
+      "glb_sha256": "4c040719aa8739addd29e0a726d50dfd2473b4a914f62412627272268977aa91",
+      "eye_captures_verified": 84,
+      "mouth_captures_verified": 18,
+      "capture_manifest_sha256": {
+        "eye": "d6ffb43c7dbc9ff9d03544c8a62f4f6319639b99e2c020a5a03e35e1c9818e0d",
+        "mouth": "bdedd6c5fae2c85d1d81d12a0c4b15cfb5f7a8adf35b1d58ed665c8ea7ae300e"
+      },
+      "visual_review": "Root inspected front/oblique render, white model, closure and mouth. Independent reviewer found distinct brow grammar and no obvious new structural blocker in front/45 static views. Functional sample only.",
+      "gen_job": "a168862a-153e-4c59-9bd9-b1c624897289",
+      "sdf_job": "591d1da5-5608-4373-8414-4c4a57e1b14a",
+      "model_archive": {
+        "name": "Aster-combo833-model.zip",
+        "bytes": 5492073,
+        "sha256": "58364937ef52a8200f7d97727248ef7a9d69f6ea025259f6950cf46eddab04bf"
+      },
+      "captures_archive": {
+        "name": "Aster-combo833-captures.zip",
+        "bytes": 29810997,
+        "sha256": "e45dd725754326c44cf73b637b6bc3b927347d512e119c7499bab739e3de4fbb"
+      }
+    }
+  ],
+  "tests": {
+    "semantic_eyes": 175,
+    "facial_surface": 60,
+    "eye_presets": 32,
+    "face_components": 28
+  },
+  "limitations": [
+    "Angular peak .65 approximated by 24 segment sampling",
+    "Broad ends remain slightly tapered, not perfectly flat cut",
+    "Existing white-model surface unevenness remains",
+    "Only downturned eyes plus narrow chin combination tested for these new brows"
+  ]
+}

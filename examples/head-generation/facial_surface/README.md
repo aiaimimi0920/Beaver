@@ -5,7 +5,8 @@ No likeness, smoothness, continuous bound, or final attachment acceptance is
 claimed.
 
 Strict numeric controls (all default0): axial_smoothing0–1,
-cheek_roundness0–.15, orbit_shallowing0–.5. They respectively broaden the axial
+cheek_roundness0–.15, orbit_shallowing0–.5, and orbit_rim_flattening0–.15.
+The first three respectively broaden the axial
 profile correction, add a low-order transverse component, and contract the
 base-to-rim support gap. No identity selector or final mesh restoration exists.
 
@@ -393,3 +394,36 @@ tangents. White-mode shading bands and final user aesthetic acceptance remain
 open. Sampled static captures do not certify all models, distances or continuous
 temporal motion. The focused NPR fix is tracked in
 [PR 10](https://github.com/aiaimimi0920/NPRCharacterFrame/pull/10).
+
+## Experimental eye-rim slope control
+
+`orbit_rim_flattening` defaults to zero and is limited to [0, 0.15]. It reduces
+the authored inner-to-outer rim depth slope about its mean without changing the
+frontal aperture x/y coordinates, eye centers, face width, or vertical rim bulge.
+Both inner and outer depths move; this is not an outer-corner-only adjustment.
+The original calibration remains the reference for every displacement budget.
+
+For original rim R, base B, base correction D and shallowing beta, the native rim
+is R + D + beta*(B-R) + (1-beta)*deltaR. The last term is shared by CPU preflight,
+the native wrapper and study diagnostics. The ocular plane is refitted from the
+complete rim displacement, so iris, pupil and highlights follow together.
+
+The added skin bound uses the existing orbital fade domain |t| <= 1+fade; the
+aperture bound uses |t| <= 1. Rim extrapolation outside the endpoints is not
+clamped or claimed to be endpoint-bounded: actual attachment calls still reject
+a total displacement beyond REVIEWED_BOUND. The overall reviewed budget is not
+increased. Zero control preserves the previous geometric calculation.
+
+This is a shape experiment, not evidence of better-looking eyes. The eye-pocket
+back wall follows its inherited minimum-rim-depth construction rather than a
+rigid rotation; main lash planes rely on existing attachment fitting. Native
+clearance, posed-triangle guards and matched multi-angle visual review remain
+mandatory before retaining any candidate.
+
+## Provisionally accepted face baseline 795
+
+The [consolidated Chinese production prompt](face-baseline-795-prompt.zh-CN.md),
+[eye controls](emerald-baseline-795-eyes.json), and
+[replay metadata](face-baseline-795.json) record the owner's temporary visual
+acceptance on 2026-10-18. Replay requires the retained inputs and pinned recipe.
+This baseline does not prescribe every future character's eye shape.

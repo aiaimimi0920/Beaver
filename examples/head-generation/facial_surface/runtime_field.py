@@ -82,3 +82,26 @@ def blend_medial_normal(normal, smooth_normal, region, side, z, calibration, dat
     height = (z + 0.021 - calibration["origin_y_m"]) / calibration["height_m"]
     weight = ease((height - 0.4) / 0.15) * amount
     return normal.lerp(smooth_normal, weight).normalized()
+
+
+def rim_slope_delta(x, calibration, data):
+    """Pivot the authored rim slope about its center, before shallowing.
+
+    This intentionally extrapolates like the inherited rim. Actual attachment
+    calls remain subject to the reviewed bound; skin has its orbital fade.
+    """
+    p = data["parameters"]
+    amount = p.get("orbit_rim_flattening", 0.0)
+    if amount == 0:
+        return 0.0
+    c = calibration
+    t = (abs(x) / c["height_m"] - c["eye_center_x"]) / c["eye_half_width"]
+    return (
+        -amount * (1 - p["orbit_shallowing"]) * c["height_m"]
+        * (c["eye_outer_depth"] - c["eye_inner_depth"]) * t / 2
+    )
+
+
+def lower_medial_normal_weight(height, amount):
+    """C2 height window, zero outside lower face; no geometry displacement."""
+    return amount * ease((height - 0.05) / 0.05) * ease((0.23 - height) / 0.03)

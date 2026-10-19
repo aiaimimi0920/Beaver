@@ -1,0 +1,42 @@
+{
+  "baseline": 822,
+  "replay": 823,
+  "baseline_blend_sha256": "0a22379257d884e9652571ed9e86bd1b393244d2aa8d5756b7a75ce20c47ba8f",
+  "replay_blend_sha256": "c5aa05873d51a7c21f5baa7d7bbb8cd462a6267082aff0fbffe0c039d1dcf4f2",
+  "indexed_topology_identical": true,
+  "polygon_count": 10980,
+  "attributes_uv_material_slots_identical": true,
+  "matrix_and_shape_relationships_identical": true,
+  "maximum_corner_normal_difference": 0.0,
+  "shapes": {
+    "Basis": {
+      "vertices": 6188,
+      "maximum_position_difference_m": 0.0
+    },
+    "MouthOpen": {
+      "vertices": 6188,
+      "maximum_position_difference_m": 0.0
+    },
+    "blink.L": {
+      "vertices": 6188,
+      "maximum_position_difference_m": 0.0
+    },
+    "blink.R": {
+      "vertices": 6188,
+      "maximum_position_difference_m": 0.0
+    }
+  },
+  "position_tolerance_m": 1e-06,
+  "scope": "Face native mesh and all shape keys; not cross-platform or universal generator proof",
+  "preset": "face-chin-narrow-820",
+  "native_generation_receipt_sha256": {
+    "822": "af93f05dd6415d398824fa3d740307b6040957e0b5cda337c225c49f609b1767",
+    "823": "4f031416a2debe63bcec276af43d5151ad18a9e81f525dd5d1329500bb8ca32f"
+  },
+  "native_sdf_receipt_sha256": "f1442285894905c34ce85368bc34741ce97cd265b7ae24fd16155fa344b6ebb0",
+  "visual_self_review": "passed limited regression: neutral, blink, mouth, render/white/wire views; inherited white-model mouth shading remains",
+  "captures_verified": 84,
+  "capture_manifest_sha256": "8c23775b4f9485fbbe8a3a4810a0c1f921d6a331b45fbe4539058a57d7b07e6e",
+  "mouth_captures_verified": 18,
+  "mouth_manifest_sha256": "440ea71a54a705b835906659810094b90792f97b3506983468798609da98da0f"
+}

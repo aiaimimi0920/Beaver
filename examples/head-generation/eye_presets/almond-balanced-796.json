@@ -1,0 +1,69 @@
+{
+  "id": "almond-balanced-796",
+  "label": "杏仁均衡",
+  "status": "native experiment captured; owner visual acceptance pending",
+  "baseline": "795",
+  "recipe_commit": "eed2bbf39162a3ee738bd95ec89280c379bb6bf4",
+  "prompt_file": "almond-balanced.zh-CN.md",
+  "surface_parameters": {
+    "axial_smoothing": 0.5,
+    "cheek_roundness": 0.05,
+    "orbit_shallowing": 0.15
+  },
+  "eye_parameters": {
+    "eye_spacing": 0.94,
+    "eye_width": 0.94,
+    "upper_arch": 1.0,
+    "lower_arch": 0.68,
+    "corner_slope_offset": -0.014,
+    "eye_height_offset": 0,
+    "iris_width": 0.98,
+    "iris_height": 1.08,
+    "brow_height_offset": -0.006,
+    "brow_rise_offset": -0.022,
+    "brow_thickness": 0.85,
+    "brow_arch": 1,
+    "lash_band_thickness": 1.05,
+    "supplemental_lashes": 0,
+    "lid_fold": 0,
+    "upper_roundness": 1.5,
+    "upper_horizontal_roundness": 0.8,
+    "lash_contour_follow": 1,
+    "iris_vertical_offset": 0,
+    "simple_iris": 1,
+    "short_upper_tuft": 1,
+    "iris_horizontal_offset": 0,
+    "ocular_skin_outline_holdout": 1,
+    "iris_plane_slope_scale": 1,
+    "lower_roundness": 1.25,
+    "upper_asymmetry": 0.18,
+    "lower_shoulder": 0.5,
+    "lower_horizontal_roundness": 1.15,
+    "secondary_lash_scale": 0.7,
+    "brow_fullness_offset": 0.2,
+    "brow_softness": 0.4,
+    "brow_head_rounding": 1,
+    "layered_lashes": 1,
+    "upper_lash_layer": 1
+  },
+  "style_profile": "emerald_illustrated",
+  "blink": true,
+  "shading_policy": "smooth_proxy",
+  "reviewed_support_bound_m": 0.0042,
+  "baseline_files_sha256": {
+    "face-baseline-795-prompt.zh-CN.md": "fb7b075b581424b116286a743858b7003425afdf81f109565a790cb68a960f9d",
+    "emerald-baseline-795-eyes.json": "5ef9d0893d43b156f21ad9e8be1562c6bf51139efd55ce41abe6a04b39c3d19e",
+    "face-baseline-795.json": "35a75adcfb909dcaf3759aa2bfcddf2ea0827a5b1d358b20c1f9594dd791a806"
+  },
+  "evidence": {
+    "native_capture_id": "blink-1792324668-78924",
+    "captures_verified": 84,
+    "runtime_blend_sha256": "3c1a4036a50086b839a47381a0c8da31a90db29be484275a4ef6223ec7965019",
+    "cpu_tests": {
+      "semantic_eyes": 136,
+      "facial_surface": 35,
+      "preset_selector": 5
+    },
+    "visual_review": "Shallower aperture and stronger horizontal impression versus795; subtle almond candidate. Outer lash styling remains a possible refinement. Not owner accepted."
+  }
+}

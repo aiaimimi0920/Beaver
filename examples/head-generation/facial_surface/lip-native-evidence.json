@@ -1,0 +1,90 @@
+{
+  "date": "2026-10-19",
+  "experiments": [
+    {
+      "baseline": 823,
+      "candidate": 824,
+      "status": "diagnostic only; not promoted; no meaningful overall aesthetic gain",
+      "changed": {
+        "upper_lip_relief_scale": 0.9
+      },
+      "source_sha256": "8c34724bb51ca4a14a85f55d412837fc126f4cfc60e627f34dd7b27150ab8eb4",
+      "native_generation_job": "878b3b45-0d0e-4a95-b236-b483bb229cf8",
+      "native_sdf_job": "8be13b79-3d4d-44e4-889c-2d4e64b4979c",
+      "eye_captures_verified": 84,
+      "mouth_captures_verified": 18,
+      "shell_checks": {
+        "zero_area_faces": 0,
+        "reversed_front_faces": 0,
+        "reversed_chin_underside_faces": 0,
+        "reversed_chin_side_faces": 0,
+        "finite_vertices": true
+      },
+      "oral_clearance": {
+        "scope": "neutral hidden wall vertices against evaluated skin; not a global collision test",
+        "sampled_vertices": 60,
+        "maximum_signed_distance_m": -0.0058254283176211175,
+        "rear_cap_planarity_m": 0.0
+      },
+      "lip_report": {
+        "parameters": {
+          "upper_lip_relief_scale": 0.9
+        },
+        "before": 0.031,
+        "after": 0.0279,
+        "analytic_depth_change_bound_m": 0.0007316009999999998,
+        "scope": "Upper-lip Gaussian relief only; native neutral and mouth poses require review"
+      },
+      "visual_review": "Slightly softer upper-lip projection at minus45 degrees; broad ridge and stepped lighting persist. No obvious new eye or mouth-opening regression in inspected views. Not a global collision certificate.",
+      "normal_ab": "12 matched captures per823/824; imported versus derivative triangle normals. Ridge remains in geometry-normal view; geometry and shading both need consideration."
+    },
+    {
+      "baseline": 823,
+      "candidate": 825,
+      "status": "retained opt-in experiment; modest local transition improvement, not final face acceptance",
+      "changed": {
+        "upper_lip_lateral_power": 2
+      },
+      "source_sha256": "c5141245730a9bd1a0a83a12a02dd07455044b3e04ab3709ba5b1c15c259fbc3",
+      "native_generation_job": "b3daa42d-5fc2-4d9b-9604-e803c9b6e318",
+      "native_sdf_job": "f5e444f3-4a8a-4b44-956c-9b976805d09e",
+      "eye_captures_verified": 84,
+      "mouth_captures_verified": 18,
+      "shell_checks": {
+        "zero_area_faces": 0,
+        "reversed_front_faces": 0,
+        "reversed_chin_underside_faces": 0,
+        "reversed_chin_side_faces": 0,
+        "finite_vertices": true
+      },
+      "oral_clearance": {
+        "scope": "neutral hidden wall vertices against evaluated skin; not a global collision test",
+        "sampled_vertices": 60,
+        "maximum_signed_distance_m": -0.005805306715046754,
+        "rear_cap_planarity_m": 0.0
+      },
+      "lip_report": {
+        "parameters": {
+          "upper_lip_relief_scale": 1.0,
+          "upper_lip_lateral_power": 2
+        },
+        "before": 0.031,
+        "after": 0.031,
+        "lateral_power_before": 4,
+        "lateral_power_after": 2,
+        "lateral_factor_bound": 0.1825331370340957,
+        "analytic_depth_change_bound_m": 0.001335413430541444,
+        "scope": "Upper-lip analytic relief only; native neutral and mouth poses require review"
+      },
+      "combined_analytic_support_bound_m": 0.003764812323022785,
+      "visual_review": "Upper-lip-to-cheek ledge slightly softer in neutral and full-mouth oblique white views. Rendered appearance nearly unchanged at matched scale. No obvious eye/closure/opening regression in inspected views. Central normal/light division and broader lower-cheek shadow persist. Not a global collision or aesthetic certificate.",
+      "default_presets": "795/796 and four fixed face presets remain unchanged; new control opt-in only"
+    }
+  ],
+  "local_tests": 52,
+  "normal_ab_captures_per_model": 12,
+  "normal_ab_models": [
+    823,
+    824
+  ]
+}

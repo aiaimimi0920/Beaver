@@ -17,13 +17,19 @@ SUPPLEMENTAL_PREFIXES = (
 def select_components(parts, parameters):
     removed = []
     for obj in list(parts):
-        omit = parameters["supplemental_lashes"] == 0 and obj.name.startswith(
-            SUPPLEMENTAL_PREFIXES
-        )
+        omit = (
+            parameters["supplemental_lashes"] == 0
+            and not parameters.get("layered_lashes", 0)
+        ) and obj.name.startswith(SUPPLEMENTAL_PREFIXES)
         if parameters.get("short_upper_tuft", 0) and obj.name.startswith(
             "Upper swept lash tuft "
         ):
             omit = False
+        omit = omit or (
+            parameters.get("layered_lashes", 0)
+            and not parameters.get("upper_lash_layer", 0)
+            and obj.name.startswith("Inner forked lash blade ")
+        )
         omit = omit or (
             parameters["lid_fold"] == 0
             and obj.name.startswith("Tapered upper eyelid fold ")
@@ -36,7 +42,9 @@ def select_components(parts, parameters):
             removed.append(obj.name)
             parts.remove(obj)
             bpy.data.objects.remove(obj, do_unlink=True)
-    if parameters["supplemental_lashes"] == 0:
+    if parameters["supplemental_lashes"] == 0 and not parameters.get(
+        "layered_lashes", 0
+    ):
         assert not any(
             obj.name.startswith(SUPPLEMENTAL_PREFIXES)
             and not (
@@ -55,6 +63,9 @@ def select_components(parts, parameters):
             assert attr.domain == "POINT" and len(attr.data) == len(obj.data.vertices)
     return {
         "removed_components": removed,
+        "retained_lash_components": [
+            o.name for o in parts if o.name.startswith(SUPPLEMENTAL_PREFIXES)
+        ],
         "selection_stage": "after retained-part attachment checks; before atlas and normal regions",
         "preselection_checks_are_not_final_component_counts": True,
     }

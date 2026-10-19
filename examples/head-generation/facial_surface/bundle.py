@@ -34,7 +34,21 @@ def build_request(
     style_profile=None,
     *,
     blink=False,
+    silhouette_parameters=None,
+    lip_parameters=None,
+    normal_parameters=None,
+    component_parameters=None,
 ):
+    if (
+        silhouette_parameters
+        or lip_parameters
+        or normal_parameters
+        or component_parameters
+    ) and prefix in {
+        "assets/aster/general_face_eyes_795/",
+        "assets/aster/general_face_eyes_796/",
+    }:
+        raise ValueError("Silhouette experiments must use a fresh output prefix")
     if (
         isinstance(reviewed_support_bound_m, bool)
         or not isinstance(reviewed_support_bound_m, (int, float))
@@ -44,6 +58,9 @@ def build_request(
         raise ValueError(
             "Supply the explicitly reviewed positive support bound in meters"
         )
+    from source_normals import validate as validate_normals, adapt_pipeline
+
+    normal_amount = validate_normals(normal_parameters)
     sys.path.insert(0, str(EYES))
     try:
         spec = importlib.util.spec_from_file_location(
@@ -55,12 +72,30 @@ def build_request(
         baseline_style = apply_style_profile(
             json.loads((recipe / "face_style.json").read_text()), style_profile
         )
+        from source_components import apply_components
+
+        baseline_style, component_report = apply_components(
+            baseline_style, component_parameters
+        )
+        from source_silhouette import apply_silhouette
+
+        baseline_style, silhouette_report = apply_silhouette(
+            baseline_style, silhouette_parameters
+        )
+        from source_lips import apply_lip_relief
+
+        baseline_style, lip_report = apply_lip_relief(baseline_style, lip_parameters)
         style = builder.adapt_style(baseline_style, builder.validate(eyes))
         face = (recipe / "face.py").read_text()
         from source_upper_warp import adapt_face_source
 
         analysis_face = adapt_face_source(
-            face, bool(style["calibration"].get("eye_upper_asymmetry", 0))
+            face,
+            bool(
+                style["calibration"].get("eye_upper_asymmetry", 0)
+                or style["calibration"].get("eye_upper_angularity", 0)
+                or style["calibration"].get("eye_lower_shoulder", 0)
+            ),
         )
         data, report = prepare(
             analysis_face,
@@ -69,6 +104,11 @@ def build_request(
             baseline_iris_plane_slope=baseline_style["calibration"]["iris_plane_slope"],
         )
         bound = report["surface"]["conservative_support_displacement_bound_m"]
+        if lip_report is not None:
+            report["surface"]["support_bound_before_lip_relief_m"] = bound
+            bound += lip_report["analytic_depth_change_bound_m"]
+            report["surface"]["conservative_support_displacement_bound_m"] = bound
+            report["lip_relief"] = lip_report
         if bound > reviewed_support_bound_m:
             raise ValueError(
                 f"Conservative support bound {bound:.9g}m exceeds explicitly reviewed {reviewed_support_bound_m:.9g}m"
@@ -84,6 +124,7 @@ def rim_depth(x, y, check_support=True):
     old = inherited_rim_depth(x, y)
     move = base_delta(x, y, C, curve, DATA)
     move += DATA['parameters']['orbit_shallowing'] * (inherited_base_depth(x, y) - old)
+    move += rim_slope_delta(x, C, DATA)
     if check_support and abs(move) > REVIEWED_BOUND:
         raise ValueError('Actual rim/support call exceeds reviewed displacement bound')
     return old + move
@@ -101,7 +142,7 @@ def depth(x, y):"""
             "    return result",
         )
         face = (
-            "from facial_surface_runtime import base_delta, ocular_delta, DATA, REVIEWED_BOUND, blend_medial_normal\n"
+            "from facial_surface_runtime import base_delta, ocular_delta, DATA, REVIEWED_BOUND, blend_medial_normal, rim_slope_delta\n"
             + face
         )
         socket = (recipe / "eye_socket.py").read_text()
@@ -136,6 +177,16 @@ def depth(x, y):"""
             (snapshot / "ear_boundary.py").write_text(
                 adapt_ear_boundary_source((recipe / "ear_boundary.py").read_text())
             )
+            if silhouette_report is not None:
+                from source_silhouette import adapt_ear_envelope
+
+                (snapshot / "ear_width.py").write_text(
+                    adapt_ear_envelope(
+                        (recipe / "ear_width.py").read_text(),
+                        silhouette_report["original_width_stations"],
+                    )
+                )
+            pipeline = adapt_pipeline(pipeline, normal_amount)
             (snapshot / "pipeline.py").write_text(pipeline)
             (snapshot / "face.py").write_text(face)
             (snapshot / "eye_socket.py").write_text(socket)
@@ -153,8 +204,28 @@ def depth(x, y):"""
         if style_profile in ("emerald_layered", "emerald_illustrated")
         else "Inherited or clean eye art direction"
     )
+    if component_report and component_report["parameters"]["nose_bridge_scale"] != 1:
+        profile_scope = profile_scope.replace(
+            "nose geometry unchanged", "nose bridge calibration altered"
+        )
     if style_profile in ("emerald_layered", "emerald_illustrated"):
         request["code"] += f'report["semantic_eyes"]["scope"] = {profile_scope!r}\n'
+    if component_report is not None:
+        report["component_calibration"] = component_report
+        profile_scope += (
+            "; explicit component calibration changes are recorded separately"
+        )
+    if silhouette_report is not None:
+        report["silhouette"] = silhouette_report
+    if normal_amount:
+        report["lower_medial_normals"] = dict(
+            amount=normal_amount,
+            height_window=[0.05, 0.10, 0.20, 0.23],
+            regions=[1, 2],
+            scope="Center vertices only, same-region area-weighted normals",
+            geometry_displacement_m=0.0,
+            validation="Native posed shading not yet verified",
+        )
     report.update(
         style_profile_scope=profile_scope,
         parameters=data["parameters"],
@@ -232,6 +303,9 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--parameters", required=True)
     parser.add_argument("--eyes", default="{}")
+    parser.add_argument("--silhouette", default="{}")
+    parser.add_argument("--lips", default="{}")
+    parser.add_argument("--normals", default="{}")
     parser.add_argument("--prefix", required=True)
     parser.add_argument("--workspace", type=Path, required=True)
     parser.add_argument("--reviewed-support-bound-m", type=float, required=True)
@@ -254,6 +328,9 @@ if __name__ == "__main__":
                 args.reviewed_support_bound_m,
                 args.style_profile,
                 blink=args.blink,
+                silhouette_parameters=json.loads(args.silhouette),
+                lip_parameters=json.loads(args.lips),
+                normal_parameters=json.loads(args.normals),
             )
         )
     )

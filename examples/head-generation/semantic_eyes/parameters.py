@@ -9,12 +9,18 @@ LIMITS = {
     "eye_spacing": (1.0, 0.94, 1.04),
     "eye_width": (1.0, 0.92, 1.08),
     "upper_arch": (1.0, 0.70, 1.40),
+    "aperture_corner_taper": (0.0, 0.0, 1.0),
+    "aperture_upper_share": (0.0, 0.0, 0.8),
+    "upper_corner_softness": (0.0, 0.0, 1.0),
     "upper_asymmetry": (0.0, -0.25, 0.25),
+    "upper_angularity": (0.0, 0.0, 1.0),
     "lower_arch": (1.0, 0.50, 1.12),
     "lower_roundness": (1.0, 1.0, 1.25),
+    "lower_horizontal_roundness": (1.0, 1.0, 1.5),
+    "lower_shoulder": (0.0, 0.0, 1.0),
     "upper_roundness": (1.0, 1.0, 2.0),
     "upper_horizontal_roundness": (1.0, 0.70, 1.0),
-    "corner_slope_offset": (0.0, -0.018, 0.008),
+    "corner_slope_offset": (0.0, -0.030, 0.008),
     "eye_height_offset": (0.0, -0.006, 0.006),
     "iris_width": (1.0, 0.90, 1.08),
     "iris_height": (1.0, 0.90, 1.08),
@@ -24,14 +30,28 @@ LIMITS = {
     "ocular_skin_outline_holdout": (0.0, 0.0, 1.0),
     "simple_iris": (0.0, 0.0, 1.0),
     "short_upper_tuft": (0.0, 0.0, 1.0),
+    "secondary_lash_scale": (1.0, 0.70, 1.0),
     "brow_height_offset": (0.0, -0.012, 0.012),
-    "brow_rise_offset": (0.0, -0.012, 0.012),
+    "brow_rise_offset": (0.0, -0.0255, 0.012),
     "brow_thickness": (1.0, 0.70, 1.20),
     "brow_arch": (1.0, 0.5, 1.5),
+    "brow_fullness_offset": (0.0, 0.0, 0.25),
+    "brow_softness": (0.0, 0.0, 1.0),
+    "brow_head_rounding": (0.0, 0.0, 1.0),
+    "brow_angularity": (0.0, 0.0, 1.0),
+    "brow_peak_position": (0.5, 0.3, 0.75),
+    "brow_band_fullness": (0.0, 0.0, 1.0),
     "lash_band_thickness": (1.0, 0.55, 1.15),
     "lash_contour_follow": (0.0, 0.0, 1.0),
     "supplemental_lashes": (1.0, 0.0, 1.0),
+    "layered_lashes": (0.0, 0.0, 1.0),
+    "upper_lash_layer": (0.0, 0.0, 1.0),
+    "wing_lift_scale": (1.0, 0.0, 1.0),
     "lid_fold": (1.0, 0.0, 1.0),
+    "lateral_aperture_follow": (0.0, 0.0, 1.0),
+    "lateral_blink_follow": (0.85, 0.65, 0.85),
+    "lateral_guide_inward_power": (0.0, 0.0, 4.0),
+    "lateral_guide_regularization": (1.0, 0.0, 1.0),
 }
 
 
@@ -50,7 +70,10 @@ def validate(request):
             raise ValueError("Outside bounded eye-family range: " + key)
         if key in (
             "supplemental_lashes",
+            "layered_lashes",
+            "upper_lash_layer",
             "lid_fold",
+            "lateral_aperture_follow",
             "simple_iris",
             "short_upper_tuft",
             "ocular_skin_outline_holdout",
@@ -60,12 +83,37 @@ def validate(request):
         ):
             raise ValueError("Layer control must be numeric zero or one: " + key)
         result[key] = float(value)
+    if (
+        result["lateral_guide_regularization"] != 1
+        and result["lateral_aperture_follow"] != 1
+    ):
+        raise ValueError(
+            "Skin-tethered guide requires aperture-following initial construction"
+        )
+    if 0 < result["lateral_guide_inward_power"] < 1:
+        raise ValueError("Active lateral guide power must be between 1 and 4")
+    if 0 < result["aperture_upper_share"] < 0.2:
+        raise ValueError("Active upper share must be between .2 and .8")
+    if result["aperture_upper_share"] and result["lash_contour_follow"] != 1:
+        raise ValueError("Upper share requires full lash contour following")
+    if result["aperture_corner_taper"] and result["lash_contour_follow"] != 1:
+        raise ValueError("Corner taper requires full lash contour following")
+    if result["upper_angularity"] and result["lash_contour_follow"] != 1:
+        raise ValueError("Angular upper contour requires full lash contour following")
     if result["short_upper_tuft"] and (
         result["supplemental_lashes"] != 0 or result["lash_contour_follow"] != 1
     ):
         raise ValueError(
             "Short upper tuft requires isolated layers and full contour following"
         )
+    if result["layered_lashes"] and not result["short_upper_tuft"]:
+        raise ValueError("Layered lashes require the calibrated short upper tuft")
+    if result["wing_lift_scale"] != 1 and not result["layered_lashes"]:
+        raise ValueError("Wing lift control requires layered lashes")
+    if result["upper_lash_layer"] and not result["layered_lashes"]:
+        raise ValueError("Upper lash layer requires the calibrated layered lashes")
+    if result["secondary_lash_scale"] != 1 and not result["short_upper_tuft"]:
+        raise ValueError("Secondary lash scale requires the isolated short upper tuft")
     return result
 
 
@@ -74,32 +122,59 @@ def upper_change(t, calibration, parameters):
         max(0.0, 1 - abs(t) ** calibration["eye_horizontal_power"])
         ** calibration["eye_upper_power"]
     )
-    new_arch = max(
-        0.0,
-        1
-        - abs(t)
-        ** (
-            calibration["eye_horizontal_power"]
-            * parameters["upper_horizontal_roundness"]
-        ),
-    ) ** (calibration["eye_upper_power"] * parameters["upper_roundness"])
-    if parameters["upper_asymmetry"]:
+    taper = parameters["aperture_corner_taper"]
+    upper_power = calibration["eye_upper_power"] * parameters["upper_roundness"]
+    upper_power = ((1 - taper) * upper_power + taper) * (
+        1 - 0.3 * parameters["upper_corner_softness"]
+    )
+    new_arch = (
+        max(
+            0.0,
+            1
+            - abs(t)
+            ** (
+                calibration["eye_horizontal_power"]
+                * parameters["upper_horizontal_roundness"]
+            ),
+        )
+        ** upper_power
+    )
+    if parameters["upper_asymmetry"] or parameters["upper_angularity"]:
         shaped = dict(
             calibration,
             eye_horizontal_power=calibration["eye_horizontal_power"]
             * parameters["upper_horizontal_roundness"],
-            eye_upper_power=calibration["eye_upper_power"]
-            * parameters["upper_roundness"],
+            eye_upper_power=upper_power,
             eye_upper_asymmetry=parameters["upper_asymmetry"],
+            eye_upper_angularity=parameters["upper_angularity"],
         )
         new_arch = upper_shape(t, shaped)
-    return calibration["eye_upper_arch"] * (parameters["upper_arch"] * new_arch - arch)
+    upper_height = calibration["eye_upper_arch"] * parameters["upper_arch"]
+    if parameters["aperture_upper_share"]:
+        total = upper_height + calibration["eye_lower_arch"] * parameters["lower_arch"]
+        upper_height = total * parameters["aperture_upper_share"]
+    return upper_height * new_arch - calibration["eye_upper_arch"] * arch
 
 
 def adapt_style(original, request):
     p = validate(request)
     style = copy.deepcopy(original)
     c, old = style["calibration"], original["calibration"]
+    if p["lateral_blink_follow"] != 0.85:
+        c["lateral_blink_follow"] = p["lateral_blink_follow"]
+    if p["lateral_aperture_follow"]:
+        # New presets retain the face-derived depth instead of an endpoint chord.
+        style["accent_lateral_depth_blend"] = 0.0
+    if p["aperture_corner_taper"]:
+        taper = p["aperture_corner_taper"]
+        style["accent_lateral_guide_inward_power"] = (1 - taper) * style[
+            "accent_lateral_guide_inward_power"
+        ] + taper
+        style["accent_lateral_guide_bow_fraction"] = (1 - taper) * style[
+            "accent_lateral_guide_bow_fraction"
+        ] + taper
+    if p["lateral_guide_inward_power"]:
+        style["accent_lateral_guide_inward_power"] = p["lateral_guide_inward_power"]
     if p["ocular_skin_outline_holdout"]:
         style["ocular_skin_outline_holdout"] = True
     else:
@@ -112,17 +187,35 @@ def adapt_style(original, request):
     c["eye_half_width"] *= p["eye_width"]
     c["eye_corner_y"] += p["eye_height_offset"]
     c["eye_corner_slope"] += p["corner_slope_offset"]
-    if p["upper_asymmetry"]:
+    if p["upper_asymmetry"] or p["upper_angularity"]:
         if abs(c["eye_corner_slope"]) > 1e-12:
             raise ValueError(
                 "Upper asymmetry requires level eye corners for the outer inverse"
             )
         c["eye_upper_asymmetry"] = p["upper_asymmetry"]
+        if p["upper_angularity"]:
+            c["eye_upper_angularity"] = p["upper_angularity"]
     c["eye_upper_arch"] *= p["upper_arch"]
     c["eye_upper_power"] *= p["upper_roundness"]
     c["eye_horizontal_power"] *= p["upper_horizontal_roundness"]
     c["eye_lower_arch"] *= p["lower_arch"]
+    aperture_center_shift = 0.0
+    if p["aperture_upper_share"]:
+        total = c["eye_upper_arch"] + c["eye_lower_arch"]
+        new_upper = total * p["aperture_upper_share"]
+        aperture_center_shift = new_upper - c["eye_upper_arch"]
+        c["eye_upper_arch"], c["eye_lower_arch"] = new_upper, total - new_upper
     c["eye_lower_power"] *= p["lower_roundness"]
+    if p["aperture_corner_taper"]:
+        taper = p["aperture_corner_taper"]
+        for key in ("eye_upper_power", "eye_lower_power"):
+            c[key] = (1 - taper) * c[key] + taper
+    c["eye_upper_power"] *= 1 - 0.3 * p["upper_corner_softness"]
+    c["eye_lower_horizontal_power"] *= p["lower_horizontal_roundness"]
+    if p["lower_shoulder"]:
+        if abs(c["eye_corner_slope"]) > 1e-12:
+            raise ValueError("Lower shoulder requires level eye corners")
+        c["eye_lower_shoulder"] = p["lower_shoulder"]
     if p["simple_iris"]:
         style["iris_graphic_disc_strength"] = 0.0
         style["iris_accent_strength"] = 0.0
@@ -136,13 +229,24 @@ def adapt_style(original, request):
     c["iris_center_x"] += p["iris_horizontal_offset"]
     # Pivot only the authored horizontal support plane about the iris center.
     c["iris_plane_slope"] *= p["iris_plane_slope_scale"]
-    c["iris_center_y"] += p["eye_height_offset"] + p["iris_vertical_offset"]
+    c["iris_center_y"] += (
+        p["eye_height_offset"] + p["iris_vertical_offset"] + aperture_center_shift
+    )
     c["iris_half_width"] *= p["iris_width"]
     c["iris_half_height"] *= p["iris_height"]
     c["brow_height"] += p["eye_height_offset"] + p["brow_height_offset"]
     c["brow_rise"] += p["brow_rise_offset"]
     c["brow_thickness"] *= p["brow_thickness"]
     style["brow_arch_m"] *= p["brow_arch"]
+    c["brow_inner_fullness"] += p["brow_fullness_offset"]
+    if p["brow_head_rounding"]:
+        c["brow_head_rounding"] = p["brow_head_rounding"]
+    if p["brow_softness"]:
+        # Keep the authored hue; lighten the independent eyebrow only.
+        amount = 0.12 * p["brow_softness"]
+        style["brow_rgb"] = [
+            value + (1 - value) * amount for value in style["brow_rgb"]
+        ]
     for field, key in [
         ("eye_center_x_m", "eye_center_x"),
         ("eye_half_width_m", "eye_half_width"),
@@ -176,9 +280,13 @@ def adapt_style(original, request):
     # the original unrelated hand-authored rise profile. Blend zero is identity.
     if p["lash_contour_follow"]:
         rails = []
-        tail_end = 1.06 if style.get("illustrated_eye_art", False) else 1.12
+        tail_end = (
+            1.18
+            if p["layered_lashes"]
+            else 1.025 if style.get("illustrated_eye_art", False) else 1.12
+        )
         for i in range(21):
-            rail_span = 2.04 if style.get("illustrated_eye_art", False) else 2.10
+            rail_span = tail_end + 0.98
             t = -0.98 + rail_span * i / 20
             q = i / 20
             join_t = 0.96 if style.get("illustrated_eye_art", False) else 0.75
@@ -187,13 +295,13 @@ def adapt_style(original, request):
                 max(0.0, 1 - abs(tc) ** c["eye_horizontal_power"])
                 ** c["eye_upper_power"]
             )
-            if p["upper_asymmetry"]:
+            if p["upper_asymmetry"] or p["upper_angularity"]:
                 arch = upper_shape(tc, c)
             center = c["eye_upper_arch"] * arch + c["eye_corner_slope"] * tc * (
                 1 - style["accent_trajectory_slope_scale"]
             )
             if t > join_t:
-                span = 0.10 if style.get("illustrated_eye_art", False) else 0.37
+                span = tail_end - join_t
                 u = (t - join_t) / span
                 h = c["eye_horizontal_power"]
                 v = c["eye_upper_power"]
@@ -202,11 +310,11 @@ def adapt_style(original, request):
                 ) ** (v - 1) + c["eye_corner_slope"] * (
                     1 - style["accent_trajectory_slope_scale"]
                 )
-                if p["upper_asymmetry"]:
+                if p["upper_asymmetry"] or p["upper_angularity"]:
                     slope = c["eye_upper_arch"] * upper_shape_derivative(join_t, c) + c[
                         "eye_corner_slope"
                     ] * (1 - style["accent_trajectory_slope_scale"])
-                tail_lift = 0.003 if style.get("illustrated_eye_art", False) else 0.020
+                tail_lift = 0.012 if style.get("illustrated_eye_art", False) else 0.020
                 end = tail_lift + c["eye_corner_slope"] * tail_end * (
                     1 - style["accent_trajectory_slope_scale"]
                 )
@@ -239,6 +347,21 @@ def adapt_style(original, request):
                     q = (t - a[0]) / (b[0] - a[0])
                     return a[lane] * (1 - q) + b[lane] * q
 
+        if p["upper_angularity"]:
+            # Preserve the two authored shoulders in the primary ink guide.
+            for t in (-0.55, 0.55):
+                q = (t + 0.98) / (tail_end + 0.98)
+                center = c["eye_upper_arch"] * upper_shape(t, c) - 0.002 * math.sin(
+                    math.pi * q
+                )
+                width = (
+                    0.018
+                    * p["lash_band_thickness"]
+                    * math.sin(math.pi * q) ** 0.8
+                    * (0.45 + 0.90 * q)
+                )
+                rails.append([t, center - width * 0.55, center + width * 0.45])
+            rails.sort(key=lambda row: row[0])
         old_rails = style["upper_lash_rails"]
         amount = p["lash_contour_follow"]
         style["upper_lash_rails"] = [
@@ -299,6 +422,83 @@ def adapt_style(original, request):
                 [0.81, middle(0.81)],
                 [0.60, middle(0.60) - 0.001],
             ]
+    if p["short_upper_tuft"] and p["secondary_lash_scale"] != 1:
+        # Scale the child blade about its embedded root in the parent frame.
+        # Keep the full primary band and the eye aperture unchanged.
+        amount = p["secondary_lash_scale"]
+        rails = style["upper_lash_rails"]
+
+        def parent_mid(t):
+            return (sample(rails, t, 1) + sample(rails, t, 2)) / 2
+
+        root = style["upper_swept_tuft_outline"][0][0]
+        style["upper_swept_tuft_outline"] = [
+            [
+                root + (t - root) * amount,
+                parent_mid(root + (t - root) * amount) + (y - parent_mid(t)) * amount,
+            ]
+            for t, y in style["upper_swept_tuft_outline"]
+        ]
+    if p["wing_lift_scale"] != 1:
+        style["accent_wing_lift_scale"] = p["wing_lift_scale"]
+    if p["layered_lashes"]:
+        # Keep the lower side accent subordinate to the primary lateral leaf.
+        style["lateral_accent_profile"][6][1] *= 0.45
+        style["accent_lower_tip_t"] = 0.40
+        rails = style["upper_lash_rails"]
+
+        def lash_mid(t):
+            return (sample(rails, t, 1) + sample(rails, t, 2)) / 2
+
+        if p["upper_lash_layer"]:
+            # A swept intermediate sheet between the micro tip and outer fork.
+            # Reuse its independent mesh, not its former medial placement.
+            upper, lower = [], []
+            for index in range(17):
+                u = index / 16
+                t = 0.36 + 0.40 * u
+                center = sample(rails, t, 2) + 0.0185 * u * u - 0.006 * (1 - u) ** 2
+                half_width = 0.004 * math.sin(math.pi * u)
+                upper.append([t, center + half_width])
+                lower.append([t, center - half_width])
+            # Smooth, narrow lens with closed endpoints; do not widen its root
+            # into another dark block on the central upper eyelid.
+            style["inner_lash_fork_outline"] = upper + list(reversed(lower[1:-1]))
+
+        # Distribute the small upper blade medially; reserve the outer fork
+        # for the independent wing rather than stacking all tips at one corner.
+        style["upper_swept_tuft_outline"] = [
+            [t - 0.55, lash_mid(t - 0.55) + y - lash_mid(t)]
+            for t, y in style["upper_swept_tuft_outline"]
+        ]
+        if p["upper_lash_layer"]:
+            # The middle tuft is subordinate; progressively stronger outward
+            # accents should not read as equally tall inserted spikes.
+            outline = style["upper_swept_tuft_outline"]
+            root = min(t for t, _ in outline)
+            style["upper_swept_tuft_outline"] = [
+                [
+                    root + (t - root) * 0.75 + 0.14,
+                    lash_mid(root + (t - root) * 0.75 + 0.14)
+                    + (rise - lash_mid(t)) * 0.82,
+                ]
+                for t, rise in outline
+            ]
+        wing = style["outer_lash_wing_rails"]
+        start, end = wing[0][0], wing[-1][0]
+        shift = lash_mid(start) - wing[0][1]
+        for row in wing:
+            weight = (1 - (row[0] - start) / (end - start)) ** 2
+            row[1] += shift * weight
+            row[2] += shift * weight
+        # Shorter rising upper leaf above the longer parent tail.
+        for row in wing:
+            u = (row[0] - start) / (end - start)
+            row[0] = start + (1.10 - start) * u
+            lift = 0.022 * p["wing_lift_scale"] * u * u * (3 - 2 * u)
+            center = (row[1] + row[2]) * 0.5 + lift
+            half_width = (row[2] - row[1]) * 0.5
+            row[1], row[2] = center - half_width, center + half_width
     # Geometry must remain within the fixed inherited feature-patch footprint.
     low = c["origin_y_m"] + c["height_m"] * (
         c["eye_corner_y"] - abs(c["eye_corner_slope"]) - c["eye_lower_arch"]
@@ -320,4 +520,15 @@ def adapt_lower_clearance(source, enabled):
     new = "+ abs((y - cy) / (H * arch)) ** (1.0 / power if y < cy else 1.0)"
     if source.count(old) != 1:
         raise ValueError("Inherited pocket clearance radius contract changed")
+    return source.replace(old, new, 1)
+
+
+def adapt_brow_source(source, amount):
+    """Round the medial cap without moving the existing eyebrow centerline."""
+    if amount == 0:
+        return source
+    old = "    return original * 0.5 + (lane - 0.5) * original * factor"
+    new = '    width = H * C["brow_thickness"] * sin(pi * t) ** (\n        0.7 - 0.3 * C["brow_head_rounding"] * (1 - t) ** 3\n    )\n    return original * 0.5 + (lane - 0.5) * width * factor'
+    if source.count(old) != 1:
+        raise ValueError("Inherited eyebrow width contract changed")
     return source.replace(old, new, 1)
