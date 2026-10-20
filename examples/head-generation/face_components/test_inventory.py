@@ -48,3 +48,21 @@ class FamilyInventoryTests(unittest.TestCase):
         self.assertEqual(result["selectable_options"], 4)
         self.assertEqual(result["implemented_families"], 2)
         self.assertEqual(result["planned_families"], 1)
+
+    def test_researched_brow_evidence_is_an_exact_preset_partition(self):
+        root = HERE / "../brow_library"
+        presets = json.loads((root / "presets.json").read_text())
+        evidence = json.loads((root / "native-evidence.json").read_text())
+        covered = [
+            sample["selection"]["brows"].removeprefix("research-")
+            for sample in evidence["samples"]
+        ]
+        pending = evidence["pending_presets"]
+        self.assertEqual(len(covered), len(set(covered)))
+        self.assertEqual(len(pending), len(set(pending)))
+        self.assertFalse(set(covered) & set(pending))
+        self.assertEqual(set(covered) | set(pending), set(presets))
+        for sample in evidence["samples"]:
+            self.assertEqual(sample["status"], "technically_verified")
+            self.assertEqual(sample["captures"]["eye"]["captures_verified"], 84)
+            self.assertEqual(sample["captures"]["mouth"]["captures_verified"], 18)

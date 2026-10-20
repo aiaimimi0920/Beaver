@@ -27,6 +27,9 @@ def evidence_records():
     ):
         for value in json.loads((HERE / name).read_text())["candidates"]:
             records.append({**value, "evidence_file": name})
+    name = "../brow_library/native-evidence.json"
+    for value in json.loads((HERE / name).read_text())["samples"]:
+        records.append({**value, "evidence_file": name})
     return records
 
 
@@ -44,6 +47,8 @@ def build_plan(selection, fit_policy="legacy", records=None):
                     "generation_status", "not_recorded"
                 ),
                 "recorded_visual_status": record.get("visual_status", "not_recorded"),
+                "recorded_sample_status": record.get("status", "not_recorded"),
+                "recorded_scope": record.get("scope", "not_recorded"),
                 "recorded_fit_policy": record.get("fit_policy", "legacy"),
                 "evidence_file": record.get("evidence_file"),
                 "match": "exact_snapshot" if exact else "historical_selection_only",

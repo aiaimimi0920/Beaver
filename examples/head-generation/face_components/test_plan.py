@@ -17,6 +17,20 @@ class PlanTests(unittest.TestCase):
         self.assertEqual(plan["recorded_evidence"], [])
         self.assertEqual(len(plan["available_option_counts"]), 6)
 
+    def test_researched_brow_samples_are_not_fresh_acceptance(self):
+        evidence = json.loads(
+            (HERE / "../brow_library/native-evidence.json").read_text()
+        )["samples"][0]
+        result = build_plan(evidence["selection"], evidence["fit_policy"])
+        record = next(
+            item for item in result["recorded_evidence"]
+            if item["candidate"] == evidence["candidate"]
+        )
+        self.assertEqual(record["recorded_sample_status"], evidence["status"])
+        self.assertEqual(record["recorded_scope"], evidence["scope"])
+        self.assertEqual(result["current_output_status"], "not_generated")
+        self.assertTrue(all(step["status"] == "pending" for step in result["steps"]))
+
     def test_exact_snapshot_remains_recorded_not_current_acceptance(self):
         snap = resolve(self.selection)
         record = {**snap, "candidate": "test-only"}
