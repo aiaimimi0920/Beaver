@@ -8,6 +8,7 @@ import re
 
 from compose import HERE, verify_snapshot
 from verify_outline import verify_outline_guard
+from brow_evidence import verify_brow_artifacts
 
 
 def sha(path):
@@ -140,6 +141,7 @@ def verify_run(spec):
         raise ValueError("SDF binding differs from generation job")
     report = json.loads(resource(root, prefix + "generation_report.json").read_text())
     snapshot = verify_snapshot(report["face_components"])
+    verify_brow_artifacts(snapshot, report, root, prefix, generated)
     verify_outline_guard(snapshot, report)
     verify_template_reports(
         snapshot,

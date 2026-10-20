@@ -15,7 +15,9 @@ class FamilyInventoryTests(unittest.TestCase):
         self.assertEqual(result["mouth"]["selectable_options"], 6)
         self.assertEqual(result["mouth"]["implemented_families"], 2)
         self.assertEqual(result["mouth"]["pending_native_families"], 0)
-        self.assertEqual(result["brows"]["selectable_options"], 4)
+        self.assertEqual(result["brows"]["selectable_options"], 15)
+        self.assertEqual(result["brows"]["implemented_families"], 3)
+        self.assertEqual(result["brows"]["pending_native_families"], 9)
         self.assertEqual(result["face"]["implemented_families"], 2)
 
     def test_duplicate_or_missing_preset_rejected(self):

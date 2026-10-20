@@ -2,6 +2,7 @@
 
 import copy
 import hashlib
+import importlib.util
 import json
 from pathlib import Path
 
@@ -31,7 +32,26 @@ def digest(value):
     ).hexdigest()
 
 
-def resolve(selection, fit_policy="legacy"):
+def resolved_brow_design(preset, overrides):
+    design = preset.get("design")
+    if design is None:
+        if overrides is not None:
+            raise ValueError("Brow controls require an explicit researched preset")
+        return None
+    if isinstance(design, str):
+        designs = json.loads((HERE.parent / "brow_library/presets.json").read_text())
+        if design not in designs:
+            raise ValueError("Unknown researched brow design reference")
+        design = designs[design]
+    spec = importlib.util.spec_from_file_location("component_brow_design", HERE.parent / "brow_library/brow_design.py")
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    if overrides is not None and (not isinstance(overrides, dict) or set(overrides) - set(module.LIMITS)):
+        raise ValueError("Brow controls may only override bounded geometry parameters")
+    return module.validate({**design, **(overrides or {})})
+
+
+def resolve(selection, fit_policy="legacy", brow_overrides=None):
     if fit_policy not in ("legacy", "skin-seated-075"):
         raise ValueError("Unknown explicit fit policy")
     if not isinstance(selection, dict) or set(selection) != set(SLOTS):
@@ -55,9 +75,10 @@ def resolve(selection, fit_policy="legacy"):
             raise ValueError("Preserved baseline changed: " + name)
     parameters = copy.deepcopy(spec["eye_parameters"])
     brow = catalog["brows"][selection["brows"]]
-    if set(brow) != BROW_KEYS:
+    if set(brow) - {"design"} != BROW_KEYS:
         raise ValueError("Brow preset must own all and only brow parameters")
-    parameters.update(brow)
+    design = resolved_brow_design(brow, brow_overrides)
+    parameters.update({k: v for k, v in brow.items() if k != "design"})
     if fit_policy == "skin-seated-075":
         parameters["lateral_guide_regularization"] = 0.75
     owned_keys = {
@@ -154,6 +175,14 @@ def resolve(selection, fit_policy="legacy"):
             templates.append(copy.deepcopy(registry[template_id]))
     if templates:
         resolved["family_templates"] = templates
+    if design is not None:
+        resolved["brow_design"] = design
+        resolved["brow_source_sha256"] = {
+            name: hashlib.sha256(
+                (HERE.parent / "brow_library" / name).read_text(encoding="utf-8").encode("utf-8")
+            ).hexdigest()
+            for name in ("brow_design.py", "brow_shapes.py", "brow_mesh.py", "brow_source.py")
+        }
     return {**resolved, "composition_sha256": digest(resolved)}
 
 

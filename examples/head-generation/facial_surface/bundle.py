@@ -39,6 +39,7 @@ def build_request(
     normal_parameters=None,
     component_parameters=None,
     family_templates=None,
+    brow_design=None,
 ):
     if (
         silhouette_parameters
@@ -46,6 +47,7 @@ def build_request(
         or normal_parameters
         or component_parameters
         or family_templates
+        or brow_design
     ) and prefix in {
         "assets/aster/general_face_eyes_795/",
         "assets/aster/general_face_eyes_796/",
@@ -306,7 +308,7 @@ def depth(x, y):"""
             (snapshot / "face.py").write_text(face)
             (snapshot / "eye_socket.py").write_text(socket)
             builder.RECIPE = snapshot
-            request = builder.build_request(eyes, prefix, workspace, blink=blink)
+            request = builder.build_request(eyes, prefix, workspace, blink=blink, brow_design=brow_design)
     finally:
         sys.path.remove(str(EYES))
     module = (HERE / "runtime_field.py").read_text()

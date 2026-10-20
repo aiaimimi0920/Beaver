@@ -129,6 +129,107 @@
         ],
         "missing_controls": [],
         "native_sample": "combo833"
+      },
+      "research-straight": {
+        "title": "研究驱动眉形几何：straight",
+        "presets": [
+          "research-linear-fine",
+          "research-linear-wedge"
+        ],
+        "status": "native_validation_pending",
+        "sources": [
+          "../brow_library/RESEARCH-AND-IMPLEMENTATION.zh-CN.md"
+        ],
+        "missing_controls": []
+      },
+      "research-arc": {
+        "title": "研究驱动眉形几何：arc",
+        "presets": [
+          "research-arc-fine",
+          "research-arc-medium"
+        ],
+        "status": "native_validation_pending",
+        "sources": [
+          "../brow_library/RESEARCH-AND-IMPLEMENTATION.zh-CN.md"
+        ],
+        "missing_controls": []
+      },
+      "research-angled": {
+        "title": "研究驱动眉形几何：angled",
+        "presets": [
+          "research-angled"
+        ],
+        "status": "native_validation_pending",
+        "sources": [
+          "../brow_library/RESEARCH-AND-IMPLEMENTATION.zh-CN.md"
+        ],
+        "missing_controls": []
+      },
+      "research-leaf": {
+        "title": "研究驱动眉形几何：leaf",
+        "presets": [
+          "research-compact-leaf"
+        ],
+        "status": "native_validation_pending",
+        "sources": [
+          "../brow_library/RESEARCH-AND-IMPLEMENTATION.zh-CN.md"
+        ],
+        "missing_controls": []
+      },
+      "research-oval": {
+        "title": "研究驱动眉形几何：oval",
+        "presets": [
+          "research-compact-round"
+        ],
+        "status": "native_validation_pending",
+        "sources": [
+          "../brow_library/RESEARCH-AND-IMPLEMENTATION.zh-CN.md"
+        ],
+        "missing_controls": []
+      },
+      "research-curl": {
+        "title": "研究驱动眉形几何：curl",
+        "presets": [
+          "research-curl"
+        ],
+        "status": "native_validation_pending",
+        "sources": [
+          "../brow_library/RESEARCH-AND-IMPLEMENTATION.zh-CN.md"
+        ],
+        "missing_controls": []
+      },
+      "research-multipoint": {
+        "title": "研究驱动眉形几何：multipoint",
+        "presets": [
+          "research-multipoint"
+        ],
+        "status": "native_validation_pending",
+        "sources": [
+          "../brow_library/RESEARCH-AND-IMPLEMENTATION.zh-CN.md"
+        ],
+        "missing_controls": []
+      },
+      "research-fringe": {
+        "title": "研究驱动眉形几何：fringe",
+        "presets": [
+          "research-fringe"
+        ],
+        "status": "native_validation_pending",
+        "sources": [
+          "../brow_library/RESEARCH-AND-IMPLEMENTATION.zh-CN.md"
+        ],
+        "missing_controls": []
+      },
+      "research-symbols": {
+        "title": "研究驱动眉形几何：symbols",
+        "presets": [
+          "research-symbols"
+        ],
+        "status": "native_validation_pending",
+        "sources": [
+          "../brow_library/RESEARCH-AND-IMPLEMENTATION.zh-CN.md"
+        ],
+        "missing_controls": []
       }
     },
     "mouth": {

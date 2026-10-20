@@ -6,6 +6,7 @@ import importlib.util
 import json
 from pathlib import Path
 import re
+import sys
 import tempfile
 from parameters import adapt_style, validate, adapt_lower_clearance, adapt_brow_source
 from source_upper_warp import adapt_upper_sources, HELPERS
@@ -15,6 +16,14 @@ from source_return_order import adapt_return_order
 from source_brow_profiles import adapt_brow_profiles
 
 HERE = Path(__file__).resolve().parent
+sys.path.insert(0, str(HERE.parent / "brow_library"))
+try:
+    from brow_design import validate as validate_brow_design
+    from brow_source import adapt as adapt_brow_design, retained_sources as retained_brow_sources, provenance as brow_provenance
+    from brow_source import validate_geometry_style
+    from brow_source import runtime_source as brow_runtime_source
+finally:
+    sys.path.pop(0)
 RECIPE = HERE.parent / "checkpoints/current"
 REQUIRED = ["project.godot", "authoring/head_generation_guide.md"] + [
     "assets/aster/head_recovery_49/" + name
@@ -34,8 +43,9 @@ def replace_once(source, old, new):
     return source.replace(old, new, 1)
 
 
-def build_request(parameters, output_prefix, workspace, *, blink=False):
+def build_request(parameters, output_prefix, workspace, *, blink=False, brow_design=None):
     p = validate(parameters)
+    brow_design = validate_brow_design(brow_design)
     if type(blink) is not bool:
         raise ValueError("blink must be a boolean")
     if blink and (
@@ -49,6 +59,11 @@ def build_request(parameters, output_prefix, workspace, *, blink=False):
     if not re.fullmatch(r"assets/aster/general_face_eyes_[a-z0-9_]+/", output_prefix):
         raise ValueError("Use assets/aster/general_face_eyes_<case>/")
     root = Path(workspace)
+    if brow_design is not None and (
+        output_prefix in {"assets/aster/general_face_eyes_795/", "assets/aster/general_face_eyes_796/"}
+        or (root / output_prefix).exists()
+    ):
+        raise ValueError("Researched brows require a fresh non-baseline output directory")
     missing = [name for name in REQUIRED if not (root / name).is_file()]
     if missing:
         raise ValueError("Missing fresh recipe inputs: " + ", ".join(missing))
@@ -58,6 +73,9 @@ def build_request(parameters, output_prefix, workspace, *, blink=False):
     base = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(base)
     style = adapt_style(json.loads((RECIPE / "face_style.json").read_text()), p)
+    if brow_design is not None:
+        style["brow_design"] = brow_design
+        validate_geometry_style(brow_design, style)
     # This recipe does not restore coordinates from any accepted final head.
     base.MODULES = [
         m for m in base.MODULES if m not in ("preserve_accepted", "eye_rim_refine")
@@ -151,6 +169,7 @@ def build_request(parameters, output_prefix, workspace, *, blink=False):
         p["brow_peak_position"],
         p["brow_band_fullness"],
     )
+    sources["face.py"] = adapt_brow_design(sources["face.py"], brow_design)
     if p["layered_lashes"]:
         root_fit = """        delta = target-center
         # Rigid minimax seating preserves the closed six-vertex root section.
@@ -384,6 +403,13 @@ def build_request(parameters, output_prefix, workspace, *, blink=False):
             indent=2,
         ),
     }
+    if brow_design is not None:
+        retained["semantic_bundle.py"] += "\nRETAINED_BROW_DESIGN_SOURCES = " + repr(retained_brow_sources()) + "\n"
+        preamble = 'import types, sys\n_brow_runtime = types.ModuleType("researched_brow_runtime")\nsys.modules["researched_brow_runtime"] = _brow_runtime\n'
+        preamble += f'exec(compile({brow_runtime_source()!r}, "researched_brow_runtime", "exec"), _brow_runtime.__dict__)\n'
+        request["code"] = preamble + request["code"]
+        request["code"] += f'report["brow_design"] = {{"parameters": {brow_design!r}, "source_sha256": {brow_provenance()!r}, "sides": _brow_runtime.BROW_GEOMETRY_REPORT}}\n'
+        request["code"] += f'Path(beaver_output({output_prefix + "generation_report.json"!r})).write_text(json.dumps(report, indent=2))\n'
     for name, source in retained.items():
         request[
             "code"
