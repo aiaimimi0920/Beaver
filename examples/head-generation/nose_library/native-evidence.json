@@ -140,12 +140,221 @@
       "eye_manifest_sha256": "c7591d6118bd65dcea38e25ca9a4f84690f8f7c346439426ce92bc7555b2830e",
       "mouth_manifest_sha256": "0e8a6b8f9261eeb3ad76c793aa5e98717aea50f184d0739dec681738cf15a657",
       "self_review": "Reviewed 84-eye/18-mouth sheets and full-resolution 90-degree white view. Flat triangulated structure and closed sidewalls visibly retained; no obvious attachment detachment in reviewed poses. Deliberately angular projecting module, not approved final character styling. Existing cheek shading unevenness remains; SDF excludes module normals."
+    },
+    {
+      "candidate": "combo879",
+      "status": "technically_verified",
+      "selection": {
+        "eyes": "downturned",
+        "brows": "soft-arched",
+        "mouth": "retained",
+        "nose": "research-compact",
+        "ears": "retained",
+        "face": "narrow-chin"
+      },
+      "fit_policy": "legacy",
+      "composition_sha256": "8dee9beffbd4761ac5e8ef927912a5375cc74110b1db9f6bcf4939f57c2ac170",
+      "glb_sha256": "5f2653bfa8437b8ac3fc75e1ff609884c5094ff86408c43d564814af3b3dccbc",
+      "generation_job": "f19c1faf-4154-458d-8ce7-57722cebdd50",
+      "sdf_job": "38b55831-5c0d-45d5-8f51-67e71e8e4f5a",
+      "captures": {
+        "eye": {
+          "captures_verified": 84,
+          "source_sha256": "5f2653bfa8437b8ac3fc75e1ff609884c5094ff86408c43d564814af3b3dccbc",
+          "camera_size": 0.430432230234146,
+          "scope": "Integrity, expression and view state; not aesthetic acceptance"
+        },
+        "mouth": {
+          "captures_verified": 18,
+          "source_sha256": "5f2653bfa8437b8ac3fc75e1ff609884c5094ff86408c43d564814af3b3dccbc",
+          "camera_size": 0.430432230234146,
+          "scope": "Integrity, expression and view state; not aesthetic acceptance"
+        }
+      },
+      "scope": "Current artifact integrity and recorded native states, not aesthetic approval, current-generator reproducibility or untested combinations",
+      "nose_geometry": {
+        "parameters": {
+          "version": 1,
+          "kind": "fused",
+          "root_height": 0.37,
+          "tip_height": 0.285,
+          "projection": 0.06,
+          "half_width": 0.047,
+          "roundness": 0.8
+        },
+        "source_sha256": {
+          "nose_design.py": "85a00a769b9521b044aa5e75fc46301afe2bcb4aef3ee2768370c74401f9599c",
+          "nose_field.py": "6d847c41dd20c92929a2a3bc0cd38affc94c27668e009b7d3370b0fa2027fe77",
+          "nose_mesh.py": "57b51cf7767b35ff962c185c4526fa2c4d495de8619724156bfc696c171a5b0d",
+          "nose_source.py": "d50fa3f1c831a685fb204884b2e80f8cc04542527a8507db1a08ea4392244faf"
+        },
+        "attachments": []
+      },
+      "eye_manifest_sha256": "30907b82bdd40240d38ed1220ebc37c3827fa80b495cff64461bb941fbb063dc",
+      "mouth_manifest_sha256": "9c6d772b5b9a9c33a634247b24a4f168fe3185c79a12e6ebe43af028c704648a",
+      "self_review": "Reviewed native 84-eye and 18-mouth contact sheets: compact fused nose retains front/oblique/profile continuity across shown eye and mouth states; no obvious new nasal opening or detached component. Existing cheek white-shading unevenness remains; not all-parameter or final aesthetic approval."
+    },
+    {
+      "candidate": "combo880",
+      "status": "technically_verified",
+      "selection": {
+        "eyes": "downturned",
+        "brows": "soft-arched",
+        "mouth": "retained",
+        "nose": "research-balanced",
+        "ears": "retained",
+        "face": "narrow-chin"
+      },
+      "fit_policy": "legacy",
+      "composition_sha256": "3681286742fb8c75511f10f24036999bedaa289850bb55afd330b4957c00a4af",
+      "glb_sha256": "6af828b1255fe8941332f59a33b93d5309d2137515e30bc4cd4a05dcb6f359a1",
+      "generation_job": "72b8e2a1-cb5d-4dfa-85ad-57ff002097f4",
+      "sdf_job": "76a153e5-4782-40fa-a455-07c8b8090851",
+      "captures": {
+        "eye": {
+          "captures_verified": 84,
+          "source_sha256": "6af828b1255fe8941332f59a33b93d5309d2137515e30bc4cd4a05dcb6f359a1",
+          "camera_size": 0.430432230234146,
+          "scope": "Integrity, expression and view state; not aesthetic acceptance"
+        },
+        "mouth": {
+          "captures_verified": 18,
+          "source_sha256": "6af828b1255fe8941332f59a33b93d5309d2137515e30bc4cd4a05dcb6f359a1",
+          "camera_size": 0.430432230234146,
+          "scope": "Integrity, expression and view state; not aesthetic acceptance"
+        }
+      },
+      "scope": "Current artifact integrity and recorded native states, not aesthetic approval, current-generator reproducibility or untested combinations",
+      "nose_geometry": {
+        "parameters": {
+          "version": 1,
+          "kind": "fused",
+          "root_height": 0.4,
+          "tip_height": 0.286,
+          "projection": 0.085,
+          "half_width": 0.056,
+          "roundness": 0.55
+        },
+        "source_sha256": {
+          "nose_design.py": "85a00a769b9521b044aa5e75fc46301afe2bcb4aef3ee2768370c74401f9599c",
+          "nose_field.py": "6d847c41dd20c92929a2a3bc0cd38affc94c27668e009b7d3370b0fa2027fe77",
+          "nose_mesh.py": "57b51cf7767b35ff962c185c4526fa2c4d495de8619724156bfc696c171a5b0d",
+          "nose_source.py": "d50fa3f1c831a685fb204884b2e80f8cc04542527a8507db1a08ea4392244faf"
+        },
+        "attachments": []
+      },
+      "eye_manifest_sha256": "c2b54cd261d913418c36bdec0e06b29ddbba8f00dcf1421b1594dae7a16ea36f",
+      "mouth_manifest_sha256": "4c5b5fb906afd61979da5e6cefe05c356d118772a6261ad6a540c67ab267c613",
+      "self_review": "Reviewed 84-eye and 18-mouth native sheets: balanced fused nose shows continuous oblique/profile form across recorded poses; no obvious new nasal opening. White cheek shading remains uneven as in the retained head. Selected sample only, not universal fit or aesthetic approval."
+    },
+    {
+      "candidate": "combo881",
+      "status": "technically_verified",
+      "selection": {
+        "eyes": "downturned",
+        "brows": "soft-arched",
+        "mouth": "retained",
+        "nose": "research-elongated",
+        "ears": "retained",
+        "face": "narrow-chin"
+      },
+      "fit_policy": "legacy",
+      "composition_sha256": "1d8f4890e741a7e331f6848097bb0abd38fdbecbf2dc8c6ee77e4dbd191fe3ca",
+      "glb_sha256": "b0e14dd91af2c423bb428a82a346d80a8cc0d8619a7dbc5724d31e265f2c7fec",
+      "generation_job": "0677862e-9b43-4337-8b1a-59e545c50655",
+      "sdf_job": "0b01908d-d957-4bf7-915e-cbefc45a8d94",
+      "captures": {
+        "eye": {
+          "captures_verified": 84,
+          "source_sha256": "b0e14dd91af2c423bb428a82a346d80a8cc0d8619a7dbc5724d31e265f2c7fec",
+          "camera_size": 0.430432230234146,
+          "scope": "Integrity, expression and view state; not aesthetic acceptance"
+        },
+        "mouth": {
+          "captures_verified": 18,
+          "source_sha256": "b0e14dd91af2c423bb428a82a346d80a8cc0d8619a7dbc5724d31e265f2c7fec",
+          "camera_size": 0.430432230234146,
+          "scope": "Integrity, expression and view state; not aesthetic acceptance"
+        }
+      },
+      "scope": "Current artifact integrity and recorded native states, not aesthetic approval, current-generator reproducibility or untested combinations",
+      "nose_geometry": {
+        "parameters": {
+          "version": 1,
+          "kind": "fused",
+          "root_height": 0.425,
+          "tip_height": 0.276,
+          "projection": 0.108,
+          "half_width": 0.055,
+          "roundness": 0.2
+        },
+        "source_sha256": {
+          "nose_design.py": "85a00a769b9521b044aa5e75fc46301afe2bcb4aef3ee2768370c74401f9599c",
+          "nose_field.py": "6d847c41dd20c92929a2a3bc0cd38affc94c27668e009b7d3370b0fa2027fe77",
+          "nose_mesh.py": "57b51cf7767b35ff962c185c4526fa2c4d495de8619724156bfc696c171a5b0d",
+          "nose_source.py": "d50fa3f1c831a685fb204884b2e80f8cc04542527a8507db1a08ea4392244faf"
+        },
+        "attachments": []
+      },
+      "eye_manifest_sha256": "7c4e79dc98b131770bbdff07237cfe67bf0f5b8413a839df156e1106bf37b1c1",
+      "mouth_manifest_sha256": "926202aa133800c5221f4790d1352bdd93493404d3dce938449bf9ef2d0f88fd",
+      "self_review": "Root reviewed both native contact sheets: 84 eye and 18 mouth captures, including front, oblique and eye-profile views. Elongated continuous nasal contour remains attached in these reviewed states; no obvious new opening or detachment. Existing cheek/face white-shading unevenness remains. Contact-sheet review is not exhaustive collision or aesthetic acceptance."
     }
   ],
-  "cross_combinations": [],
-  "pending_presets": [
-    "compact",
-    "balanced",
-    "elongated"
-  ]
+  "cross_combinations": [
+    {
+      "candidate": "combo882",
+      "status": "technically_verified",
+      "selection": {
+        "eyes": "almond",
+        "brows": "research-linear-wedge",
+        "mouth": "bowed-contour",
+        "nose": "research-balanced",
+        "ears": "lateral-elf",
+        "face": "broad-blunt-chin"
+      },
+      "fit_policy": "legacy",
+      "composition_sha256": "b2d3e79e4a63fb4346151dad37dd01f41305fc089b2cd86d9c48753ab45cef8f",
+      "glb_sha256": "d24a7d945c0c4f319425370944b26c5dcda9b97c1d49f8d56c88606fe5c6d126",
+      "generation_job": "f888b899-55da-4e04-bfd3-3cd338a76252",
+      "sdf_job": "c7a0db71-9c71-4615-8dd3-42af6c3bbcfc",
+      "captures": {
+        "eye": {
+          "captures_verified": 84,
+          "source_sha256": "d24a7d945c0c4f319425370944b26c5dcda9b97c1d49f8d56c88606fe5c6d126",
+          "camera_size": 0.430432230234146,
+          "scope": "Integrity, expression and view state; not aesthetic acceptance"
+        },
+        "mouth": {
+          "captures_verified": 18,
+          "source_sha256": "d24a7d945c0c4f319425370944b26c5dcda9b97c1d49f8d56c88606fe5c6d126",
+          "camera_size": 0.430432230234146,
+          "scope": "Integrity, expression and view state; not aesthetic acceptance"
+        }
+      },
+      "scope": "Current artifact integrity and recorded native states, not aesthetic approval, current-generator reproducibility or untested combinations",
+      "nose_geometry": {
+        "parameters": {
+          "version": 1,
+          "kind": "fused",
+          "root_height": 0.4,
+          "tip_height": 0.286,
+          "projection": 0.085,
+          "half_width": 0.056,
+          "roundness": 0.55
+        },
+        "source_sha256": {
+          "nose_design.py": "85a00a769b9521b044aa5e75fc46301afe2bcb4aef3ee2768370c74401f9599c",
+          "nose_field.py": "6d847c41dd20c92929a2a3bc0cd38affc94c27668e009b7d3370b0fa2027fe77",
+          "nose_mesh.py": "57b51cf7767b35ff962c185c4526fa2c4d495de8619724156bfc696c171a5b0d",
+          "nose_source.py": "d50fa3f1c831a685fb204884b2e80f8cc04542527a8507db1a08ea4392244faf"
+        },
+        "attachments": []
+      },
+      "eye_manifest_sha256": "aaef2b4d465c80c05725bbbdb34f6cb5cdcf3914012e572937dd9575550f82d2",
+      "mouth_manifest_sha256": "b7a52bd957b82b0f16e0a4b7d112d3f7c3b3484b37f21698b5286eef684e4013",
+      "self_review": "Root reviewed 84 eye and 18 mouth native contact-sheet frames. Balanced nose remains continuous with broad blunt chin, almond eyes, linear wedge brows, bowed mouth and lateral elf ears in the sampled states; no obvious new nasal opening or detachment. Existing white cheek shading irregularity remains. This single cross combination is not exhaustive control-domain or aesthetic acceptance."
+    }
+  ],
+  "pending_presets": []
 }

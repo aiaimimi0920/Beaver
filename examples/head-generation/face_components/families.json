@@ -349,13 +349,18 @@
           "research-balanced",
           "research-elongated"
         ],
-        "status": "native_validation_pending",
+        "status": "implemented_with_historical_samples",
         "sources": [
           "https://arxiv.org/abs/2209.02600",
           "https://sites.google.com/view/referencearchive/archive"
         ],
         "missing_controls": [],
-        "scope": "Original authored geometry; corpus-informed direction, not reference asset copying or fit acceptance."
+        "scope": "Original authored geometry; corpus-informed direction, not reference asset copying or fit acceptance.",
+        "native_samples": [
+          "combo879",
+          "combo880",
+          "combo881"
+        ]
       },
       "research-pad-muzzle": {
         "title": "调研鼻垫与上吻部实验",
