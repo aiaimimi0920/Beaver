@@ -140,10 +140,24 @@ def raw_without_origin(x, h, c):
             + curve(t, 1, c["nose_basal_profile"]) * blend
         )
         if c.get("nose_template_mode") == "rounded-quartic":
-            nose = nh * (1 - t**2) ** 2
+            q = ((1 - t**2).clamp(0, 1)) ** 2
+            nose = nh * q
+            if c.get("nose_design"):
+                r = c["nose_design"]["roundness"]
+                nose = nh * ((1 - r) * q * q + r * q)
         if h.lo < points[0][0] or h.hi > points[-1][0]:
             nose = I(min(0, nose.lo), max(0, nose.hi))
         z += nose
+    design = c.get("nose_design")
+    if (
+        design
+        and design["kind"] == "pad-muzzle"
+        and h.hi > 0.17
+        and h.lo < 0.36
+        and x.absolute().lo < H * design["muzzle_width"]
+    ):
+        # Both compact polynomial factors are in [0,1]; conservative product hull.
+        z += I(0, H * design["muzzle_projection"])
     lip_h = h
     if (
         c.get("mouth_seam_bow_height", 0)

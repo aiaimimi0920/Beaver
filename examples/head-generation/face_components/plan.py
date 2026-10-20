@@ -30,11 +30,15 @@ def evidence_records():
     name = "../brow_library/native-evidence.json"
     for value in json.loads((HERE / name).read_text())["samples"]:
         records.append({**value, "evidence_file": name})
+    name = "../nose_library/native-evidence.json"
+    noses = json.loads((HERE / name).read_text())
+    for value in noses["samples"] + noses["cross_combinations"]:
+        records.append({**value, "evidence_file": name})
     return records
 
 
-def build_plan(selection, fit_policy="legacy", records=None):
-    snapshot = resolve(selection, fit_policy)
+def build_plan(selection, fit_policy="legacy", records=None, nose_overrides=None):
+    snapshot = resolve(selection, fit_policy, nose_overrides=nose_overrides)
     matches = []
     for record in evidence_records() if records is None else records:
         if record.get("selection") != selection:
@@ -121,10 +125,21 @@ if __name__ == "__main__":
     parser.add_argument(
         "--fit-policy", choices=("legacy", "skin-seated-075"), default="legacy"
     )
+    parser.add_argument(
+        "--nose-controls", type=Path, help="Bounded researched-nose overrides JSON"
+    )
     args = parser.parse_args()
     print(
         json.dumps(
-            build_plan(json.loads(args.selection.read_text()), args.fit_policy),
+            build_plan(
+                json.loads(args.selection.read_text()),
+                args.fit_policy,
+                nose_overrides=(
+                    json.loads(args.nose_controls.read_text())
+                    if args.nose_controls
+                    else None
+                ),
+            ),
             ensure_ascii=False,
             indent=2,
         )

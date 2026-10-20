@@ -9,6 +9,21 @@ import re
 from compose import HERE, verify_snapshot
 from verify_outline import verify_outline_guard
 from brow_evidence import verify_brow_artifacts
+from nose_evidence import verify_nose_artifacts
+
+
+def verify_requested_composition(snapshot, spec):
+    """Bind adjustable designs to the saved pre-launch composition, not a label."""
+    if (
+        snapshot["selection"] != spec["selection"]
+        or snapshot.get("fit_policy", "legacy") != spec["fit_policy"]
+    ):
+        raise ValueError("Requested selection or fit policy mismatch")
+    expected = spec.get("composition_sha256")
+    if snapshot.get("nose_design") is not None and expected is None:
+        raise ValueError("Researched nose requires requested composition identity")
+    if expected is not None and expected != snapshot.get("composition_sha256"):
+        raise ValueError("Requested composition identity mismatch")
 
 
 def sha(path):
@@ -142,6 +157,7 @@ def verify_run(spec):
     report = json.loads(resource(root, prefix + "generation_report.json").read_text())
     snapshot = verify_snapshot(report["face_components"])
     verify_brow_artifacts(snapshot, report, root, prefix, generated)
+    verify_nose_artifacts(snapshot, report, root, prefix, generated)
     verify_outline_guard(snapshot, report)
     verify_template_reports(
         snapshot,
@@ -154,11 +170,7 @@ def verify_run(spec):
             else {}
         ),
     )
-    if (
-        snapshot["selection"] != spec["selection"]
-        or snapshot.get("fit_policy", "legacy") != spec["fit_policy"]
-    ):
-        raise ValueError("Requested selection or fit policy mismatch")
+    verify_requested_composition(snapshot, spec)
     parameters = json.loads(
         resource(root, prefix + "semantic_parameters.json").read_text()
     )

@@ -1,0 +1,151 @@
+{
+  "schema_version": 1,
+  "scope": "Historical native samples only; no current output or untested controls/combination is accepted by this registry.",
+  "samples": [
+    {
+      "candidate": "combo883",
+      "status": "technically_verified",
+      "selection": {
+        "eyes": "downturned",
+        "brows": "soft-arched",
+        "mouth": "retained",
+        "nose": "research-pad-muzzle",
+        "ears": "retained",
+        "face": "narrow-chin"
+      },
+      "fit_policy": "legacy",
+      "composition_sha256": "24fc9ae5b8ec10439e2dcdbafc4bbfcc1741950513866758731b9d353b43f5e9",
+      "glb_sha256": "6917f91b032c998bc84d23cc20d2cc9b0b7c6f4d51e5006ab55542a200cf2207",
+      "generation_job": "33d5ad10-6c32-48cd-81db-6f240cb1bcc5",
+      "sdf_job": "2ae14af1-b31f-4e65-9218-593b54128358",
+      "captures": {
+        "eye": {
+          "captures_verified": 84,
+          "source_sha256": "6917f91b032c998bc84d23cc20d2cc9b0b7c6f4d51e5006ab55542a200cf2207",
+          "camera_size": 0.430432230234146,
+          "scope": "Integrity, expression and view state; not aesthetic acceptance"
+        },
+        "mouth": {
+          "captures_verified": 18,
+          "source_sha256": "6917f91b032c998bc84d23cc20d2cc9b0b7c6f4d51e5006ab55542a200cf2207",
+          "camera_size": 0.430432230234146,
+          "scope": "Integrity, expression and view state; not aesthetic acceptance"
+        }
+      },
+      "scope": "Current artifact integrity and recorded native states, not aesthetic approval, current-generator reproducibility or untested combinations",
+      "nose_geometry": {
+        "parameters": {
+          "version": 1,
+          "kind": "pad-muzzle",
+          "root_height": 0.38,
+          "tip_height": 0.278,
+          "projection": 0.065,
+          "half_width": 0.068,
+          "roundness": 0.9,
+          "muzzle_width": 0.115,
+          "muzzle_projection": 0.028,
+          "pad_width": 0.043,
+          "pad_height": 0.025,
+          "pad_projection": 0.018
+        },
+        "source_sha256": {
+          "nose_design.py": "85a00a769b9521b044aa5e75fc46301afe2bcb4aef3ee2768370c74401f9599c",
+          "nose_field.py": "6d847c41dd20c92929a2a3bc0cd38affc94c27668e009b7d3370b0fa2027fe77",
+          "nose_mesh.py": "57b51cf7767b35ff962c185c4526fa2c4d495de8619724156bfc696c171a5b0d",
+          "nose_source.py": "d50fa3f1c831a685fb204884b2e80f8cc04542527a8507db1a08ea4392244faf"
+        },
+        "attachments": [
+          {
+            "name": "Researched nasal pad",
+            "kind": "pad-muzzle",
+            "vertices": 258,
+            "triangles": 512,
+            "signed_volume_m3": 6.309477148906622e-07,
+            "closed_two_manifold": true,
+            "flat_faces": 0,
+            "attachment_policy": "Back cap embedded1mm; pad perimeter embedded0.2mm",
+            "topology_policy": "Separate closed component, not boolean union",
+            "support_source": "Evaluated neutral facial shell before final regional fairing",
+            "scope": "Original authored approximation, not reconstructed reference mesh; final surface attachment and poses require native view checks"
+          }
+        ]
+      },
+      "eye_manifest_sha256": "fd2016b42ea64bd1c1b55bb0c610256717b4600a78261a668c6a7e68a7c4fb04",
+      "mouth_manifest_sha256": "0cdc1718759c5ec5dde232a0a311ec28ea573cee3e3fc3c18c4c5cdc47075b43",
+      "self_review": "Reviewed native front/45 render and 90 white; reviewed 84-eye and 18-mouth contact sheets, plus full-resolution maximal-open 45 white. No obvious nasal detachment in reviewed frames. Existing cheek shading unevenness remains. Not a full animal muzzle or universal pose/intersection acceptance."
+    },
+    {
+      "candidate": "combo878",
+      "status": "technically_verified",
+      "selection": {
+        "eyes": "downturned",
+        "brows": "soft-arched",
+        "mouth": "retained",
+        "nose": "research-faceted",
+        "ears": "retained",
+        "face": "narrow-chin"
+      },
+      "fit_policy": "legacy",
+      "composition_sha256": "9829cc402a11b86ae0eb304292610729f717bcb475918092479d1bcbdcb5be6a",
+      "glb_sha256": "ec9cf4a4ccd10f0e96bafbae0d6ba98ca06305a26afa2f84a2f6a1b5d028cf3a",
+      "generation_job": "71530e5e-54e7-4561-bc79-cc9a6917bdd4",
+      "sdf_job": "16fe7960-a59b-456b-aafa-a6e53a1bcde6",
+      "captures": {
+        "eye": {
+          "captures_verified": 84,
+          "source_sha256": "ec9cf4a4ccd10f0e96bafbae0d6ba98ca06305a26afa2f84a2f6a1b5d028cf3a",
+          "camera_size": 0.430432230234146,
+          "scope": "Integrity, expression and view state; not aesthetic acceptance"
+        },
+        "mouth": {
+          "captures_verified": 18,
+          "source_sha256": "ec9cf4a4ccd10f0e96bafbae0d6ba98ca06305a26afa2f84a2f6a1b5d028cf3a",
+          "camera_size": 0.430432230234146,
+          "scope": "Integrity, expression and view state; not aesthetic acceptance"
+        }
+      },
+      "scope": "Current artifact integrity and recorded native states, not aesthetic approval, current-generator reproducibility or untested combinations",
+      "nose_geometry": {
+        "parameters": {
+          "version": 1,
+          "kind": "faceted-candidate",
+          "root_height": 0.415,
+          "tip_height": 0.28,
+          "projection": 0.1,
+          "half_width": 0.058,
+          "roundness": 0.3
+        },
+        "source_sha256": {
+          "nose_design.py": "85a00a769b9521b044aa5e75fc46301afe2bcb4aef3ee2768370c74401f9599c",
+          "nose_field.py": "6d847c41dd20c92929a2a3bc0cd38affc94c27668e009b7d3370b0fa2027fe77",
+          "nose_mesh.py": "57b51cf7767b35ff962c185c4526fa2c4d495de8619724156bfc696c171a5b0d",
+          "nose_source.py": "d50fa3f1c831a685fb204884b2e80f8cc04542527a8507db1a08ea4392244faf"
+        },
+        "attachments": [
+          {
+            "name": "Researched faceted nasal module",
+            "kind": "faceted-candidate",
+            "vertices": 30,
+            "triangles": 56,
+            "signed_volume_m3": 7.553057601287587e-06,
+            "closed_two_manifold": true,
+            "flat_faces": 56,
+            "attachment_policy": "Back cap embedded1mm; exposed peripheral facet ridges joined by closed sidewalls",
+            "topology_policy": "Separate closed component, not boolean union",
+            "support_source": "Evaluated neutral facial shell before final regional fairing",
+            "scope": "Original authored approximation, not reconstructed reference mesh; final surface attachment and poses require native view checks"
+          }
+        ]
+      },
+      "eye_manifest_sha256": "c7591d6118bd65dcea38e25ca9a4f84690f8f7c346439426ce92bc7555b2830e",
+      "mouth_manifest_sha256": "0e8a6b8f9261eeb3ad76c793aa5e98717aea50f184d0739dec681738cf15a657",
+      "self_review": "Reviewed 84-eye/18-mouth sheets and full-resolution 90-degree white view. Flat triangulated structure and closed sidewalls visibly retained; no obvious attachment detachment in reviewed poses. Deliberately angular projecting module, not approved final character styling. Existing cheek shading unevenness remains; SDF excludes module normals."
+    }
+  ],
+  "cross_combinations": [],
+  "pending_presets": [
+    "compact",
+    "balanced",
+    "elongated"
+  ]
+}

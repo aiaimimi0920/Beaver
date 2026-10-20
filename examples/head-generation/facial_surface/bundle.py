@@ -40,6 +40,7 @@ def build_request(
     component_parameters=None,
     family_templates=None,
     brow_design=None,
+    nose_design=None,
 ):
     if (
         silhouette_parameters
@@ -48,6 +49,7 @@ def build_request(
         or component_parameters
         or family_templates
         or brow_design
+        or nose_design
     ) and prefix in {
         "assets/aster/general_face_eyes_795/",
         "assets/aster/general_face_eyes_796/",
@@ -119,6 +121,11 @@ def build_request(
         baseline_style, nose_template_report = apply_nose_template(
             baseline_style, nose_templates
         )
+        import source_nose_design as nose_adapter
+
+        baseline_style, nose_design_report = nose_adapter.apply(
+            baseline_style, nose_design, component_parameters, nose_templates
+        )
         from source_silhouette import apply_silhouette
 
         baseline_style, silhouette_report = apply_silhouette(
@@ -150,6 +157,7 @@ def build_request(
         )
         face = adapt_mouth_face(face, mouth_template_report is not None)
         face = adapt_nose_face(face, nose_template_report is not None)
+        face = nose_adapter.module().adapt_face(face, nose_design)
         from source_upper_warp import adapt_face_source
 
         analysis_face = adapt_face_source(
@@ -234,10 +242,14 @@ def depth(x, y):"""
                 )
             for companion in ("nose_refine.py", "nose_fair.py"):
                 (snapshot / companion).write_text(
-                    adapt_nose_companion(
+                    nose_adapter.module().companion(
                         companion,
-                        (recipe / companion).read_text(),
-                        nose_template_report is not None,
+                        adapt_nose_companion(
+                            companion,
+                            (recipe / companion).read_text(),
+                            nose_template_report is not None,
+                        ),
+                        nose_design,
                     )
                 )
             from source_ear_profile import adapt_ear_profile
@@ -304,27 +316,36 @@ def depth(x, y):"""
                     )
                 )
             pipeline = adapt_pipeline(pipeline, normal_amount)
+            pipeline = nose_adapter.module().adapt_pipeline(pipeline, nose_design)
             (snapshot / "pipeline.py").write_text(pipeline)
             (snapshot / "face.py").write_text(face)
             (snapshot / "eye_socket.py").write_text(socket)
             builder.RECIPE = snapshot
-            request = builder.build_request(eyes, prefix, workspace, blink=blink, brow_design=brow_design)
+            request = builder.build_request(
+                eyes, prefix, workspace, blink=blink, brow_design=brow_design
+            )
     finally:
         sys.path.remove(str(EYES))
     module = (HERE / "runtime_field.py").read_text()
     preamble = 'import types, sys\n_facial = types.ModuleType("facial_surface_runtime")\nsys.modules["facial_surface_runtime"] = _facial\n'
     preamble += f'exec(compile({module!r}, "facial_surface_runtime.py", "exec"), _facial.__dict__)\n'
     preamble += f"_facial.DATA = {data!r}\n_facial.REVIEWED_BOUND = {reviewed_support_bound_m!r}\n"
-    request["code"] = preamble + request["code"]
+    request["code"] = nose_adapter.preamble(nose_design) + preamble + request["code"]
     profile_scope = (
         "Layered eye art direction plus reduced nose-plane pigment; nose geometry unchanged"
         if style_profile in ("emerald_layered", "emerald_illustrated")
         else "Inherited or clean eye art direction"
     )
-    if component_report and "nose_stations" in component_report["after"]:
+    if (
+        nose_design_report
+        or nose_template_report
+        or (component_report and "nose_stations" in component_report["after"])
+    ):
         profile_scope = profile_scope.replace(
             "nose geometry unchanged", "nose calibration altered"
         )
+    if nose_design_report is not None:
+        profile_scope += "; researched nasal geometry active; separate attachment normals excluded from current face SDF"
     if style_profile in ("emerald_layered", "emerald_illustrated"):
         request["code"] += f'report["semantic_eyes"]["scope"] = {profile_scope!r}\n'
     if component_report is not None:
@@ -338,6 +359,11 @@ def depth(x, y):"""
         report["mouth_template"] = mouth_template_report
     if nose_template_report is not None:
         report["nose_template"] = nose_template_report
+    if nose_design_report is not None:
+        report["nose_design"] = nose_design_report
+        request[
+            "code"
+        ] += f'report["nose_design"] = {{"parameters": {nose_design!r}, "source_sha256": {nose_design_report["source_sha256"]!r}, "attachments": _nose_runtime.NOSE_MESH_REPORT}}\n'
     if silhouette_report is not None:
         report["silhouette"] = silhouette_report
     if normal_amount:
@@ -385,6 +411,7 @@ def depth(x, y):"""
         dict(
             data=data,
             report=report,
+            nose_library_sources=nose_adapter.retained(nose_design),
             packager_helpers={
                 **{path.name: path.read_text() for path in HERE.glob("source_*.py")},
                 "semantic_illustrated_art.py": (

@@ -9,6 +9,7 @@ from pathlib import Path
 import sys
 from compose import HERE, verify_snapshot
 from brow_evidence import verify_brow_artifacts
+from nose_evidence import verify_nose_artifacts
 
 
 def load_module(path, name):
@@ -43,6 +44,7 @@ def build_request(prefix, workspace, receipt):
     generation = json.loads(Path(receipt).read_text())["response"]["result"]["result"]
     generated = {row["path"]: row["sha256"] for row in generation["result"]["outputs"]}
     verify_brow_artifacts(snapshot, report, root, prefix, generated)
+    verify_nose_artifacts(snapshot, report, root, prefix, generated)
     surface = report["facial_surface"]
     for key in ("style_profile", "reviewed_support_bound_m"):
         if surface[key] != snapshot[key]:

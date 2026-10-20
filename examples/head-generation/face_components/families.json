@@ -327,19 +327,8 @@
         "sources": [
           "https://frieren-anime.jp/character/chara_group1/1-6/"
         ],
-        "missing_controls": []
-      },
-      "elongated-defined-bridge": {
-        "title": "长直鼻梁",
-        "presets": [],
-        "status": "planned",
-        "sources": [
-          "https://frieren-anime.jp/character/chara_group1/1-3/"
-        ],
-        "missing_controls": [
-          "distinct_upper_profile_grammar",
-          "independent_tip_width"
-        ]
+        "missing_controls": [],
+        "research_scope": "Legacy engineering construction retained; not a new corpus-derived family."
       },
       "short-rounded": {
         "title": "圆钝低投影鼻",
@@ -350,7 +339,55 @@
         "sources": [
           "https://frieren-anime.jp/character/chara_group1/1-6/"
         ],
-        "missing_controls": []
+        "missing_controls": [],
+        "research_scope": "Legacy engineering construction retained; not a new corpus-derived family."
+      },
+      "research-fused-core": {
+        "title": "调研共享融合鼻核心",
+        "presets": [
+          "research-compact",
+          "research-balanced",
+          "research-elongated"
+        ],
+        "status": "native_validation_pending",
+        "sources": [
+          "https://arxiv.org/abs/2209.02600",
+          "https://sites.google.com/view/referencearchive/archive"
+        ],
+        "missing_controls": [],
+        "scope": "Original authored geometry; corpus-informed direction, not reference asset copying or fit acceptance."
+      },
+      "research-pad-muzzle": {
+        "title": "调研鼻垫与上吻部实验",
+        "presets": [
+          "research-pad-muzzle"
+        ],
+        "status": "implemented_with_historical_samples",
+        "sources": [
+          "https://arxiv.org/abs/2209.02600",
+          "https://sites.google.com/view/referencearchive/archive"
+        ],
+        "missing_controls": [],
+        "scope": "Original authored geometry; corpus-informed direction, not reference asset copying or fit acceptance.",
+        "native_samples": [
+          "combo883"
+        ]
+      },
+      "research-faceted-candidate": {
+        "title": "调研棱面模块单例候选",
+        "presets": [
+          "research-faceted"
+        ],
+        "status": "implemented_with_historical_samples",
+        "sources": [
+          "https://arxiv.org/abs/2209.02600",
+          "https://sites.google.com/view/referencearchive/archive"
+        ],
+        "missing_controls": [],
+        "scope": "Original authored geometry; corpus-informed direction, not reference asset copying or fit acceptance.",
+        "native_samples": [
+          "combo878"
+        ]
       }
     },
     "ears": {

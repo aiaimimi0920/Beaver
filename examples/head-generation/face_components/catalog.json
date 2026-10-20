@@ -238,6 +238,21 @@
     },
     "short-rounded": {
       "template_id": "short-rounded-nose-v1"
+    },
+    "research-compact": {
+      "design": "compact"
+    },
+    "research-balanced": {
+      "design": "balanced"
+    },
+    "research-elongated": {
+      "design": "elongated"
+    },
+    "research-pad-muzzle": {
+      "design": "pad-muzzle"
+    },
+    "research-faceted": {
+      "design": "faceted-candidate"
     }
   },
   "ears": {
