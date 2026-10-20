@@ -43,3 +43,7 @@ NativeJob 仍限64个输出和1MiB代码。新运行时通过请求内模块载�
 阶段检查（2026-10-20 UTC）：864 细直眉原生生成和绑定 SDF 成功，已实际查看正面、左 45 度渲染及左 45 度白模；完整姿态检查仍进行中。865 宽楔眉搭配杏仁眼原生生成成功，其 SDF 与渲染仍待验证。其他新预设保持 native_validation_pending，不继承 864 的结果。
 
 本地通过：brow_library 8 项、face_components 58 项（含 CRLF 源码指纹回归）、facial_surface bundle 8 项；另有既有眉部、源中性和睫毛眨眼专项回归。已将新几何测试加入 CI。当前环境无 cargo 和 prettier，尝试官方有效行数与格式命令未能启动，因此不声称这些门禁通过；未调整或放宽基线。
+
+864 已补齐 84 张眼部和 18 张嘴部源绑定截图，完整链校验与接触图复核通过，见 native-evidence.json。测试没有证明连续全局无碰撞或最终审美。原生链还发现既有 round-open 配方省略 lateral_aperture_follow / lateral_blink_follow，而生成器补入精确默认值 0 / 0.85；验证器现仅允许这两个精确默认值，非默认漂移仍拒绝，新增正反回归。
+
+首轮远端 CI：Head generation example、Development Quality Reports、Dependency Security 均成功；正式行数 0 violations。质量报告仍记录未修改文件 workflows_upgrade_tests.rs 的既有 rustfmt finding，Prettier 没有执行，不能声称零告警。

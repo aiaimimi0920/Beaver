@@ -129,6 +129,31 @@ class CoverageTests(unittest.TestCase):
     def test_chain(self):
         self.assertEqual(self.verify()["status"], "technically_verified")
 
+    def test_retained_lateral_defaults_are_exact_not_any_value(self):
+        for blink, should_pass in ((0.85, True), (0.70, False)):
+            values = {"lateral_aperture_follow": 0.0, "lateral_blink_follow": blink}
+            self.write("semantic_parameters.json", values)
+            self.generated[self.prefix + "semantic_parameters.json"] = sha(
+                self.folder / "semantic_parameters.json"
+            )
+            self.job("gen.json", "gen", self.generated)
+            binding = json.loads((self.folder / "sdf/generation_binding.json").read_text())
+            binding["receipt_sha256"] = sha(self.root / "gen.json")
+            binding["immutable_outputs"][self.prefix + "semantic_parameters.json"] = (
+                self.generated[self.prefix + "semantic_parameters.json"]
+            )
+            self.write("sdf/generation_binding.json", binding)
+            self.write("sdf/input_hashes.json", self.generated)
+            self.report["semantic_eyes"]["parameters"] = values
+            self.report["semantic_eyes"]["sdf"]["generation_binding"] = binding
+            self.write("generation_report.json", self.report)
+            self.refresh_sdf()
+            if should_pass:
+                self.assertEqual(self.verify()["status"], "technically_verified")
+            else:
+                with self.assertRaisesRegex(ValueError, "parameter mismatch"):
+                    self.verify()
+
     def test_changed_input_report(self):
         self.write(
             "sdf/input_hashes.json",

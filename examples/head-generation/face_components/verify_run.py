@@ -168,6 +168,8 @@ def verify_run(spec):
         "upper_corner_softness": 0.0,
         "upper_angularity": 0.0,
         "wing_lift_scale": 1.0,
+        "lateral_aperture_follow": 0.0,
+        "lateral_blink_follow": 0.85,
         "lateral_guide_regularization": 1.0,
         "lateral_guide_inward_power": 0.0,
     }
