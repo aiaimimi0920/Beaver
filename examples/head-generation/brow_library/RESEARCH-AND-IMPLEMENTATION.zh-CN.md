@@ -1,4 +1,4 @@
-# 调研驱动眉形几何 v1（开发中）
+# 调研驱动眉形几何 v1（预设原生样例已验证）
 
 2026-10-20 的图像研究复核 315 个候选，保留 302 个可用视觉样本。样本含第三方参考渲染且存在相邻分类，不能视为行业标准或官方资产核验。本实现原创构造二维轮廓并生成薄实体眉毛，不复制原始模型、图片或纹理。
 
@@ -37,12 +37,14 @@ NativeJob 仍限64个输出和1MiB代码。新运行时通过请求内模块载�
 
 ## 验证状态
 
+11 个新预设各有一份指定参数与指定部位组合的原生样例，共 1122 张绑定截图，已逐份检查联系表。保留 4 个历史预设后共 15 个可选项；registry 的 12 个已有样例工程族包含 3 个历史族及 9 个新增几何分支，不是研究得出的 12 类普适眉形。
+
 逐样例状态与待验证预设以 native-evidence.json 为准。每份 technically_verified 记录只覆盖其中指定的参数、部位组合和产物，包含 Beaver 生成、绑定 SDF、84 张眼部与 18 张嘴部截图校验，以及人工联系表检查；不证明其他参数、其他组合、连续全局无碰撞或最终审美。face_components/plan.py 可展示这些历史记录，但新输出仍为 not_generated，各执行阶段仍为 pending。
 
 首次 862 暴露 Blender 三角化返回索引而非向量的 API 假设错误，已修正；863 为成功生成的原型，但早于贴合采样和完整绑定加强，不作为最终验收。872 因旧任务运行中断而取消，没有发布产物；同一任务恢复后使用新目录 875 重做，取消记录不计成功。
 
 原生链还发现既有 round-open 配方省略 lateral_aperture_follow / lateral_blink_follow，而生成器补入精确默认值 0 / 0.85；验证器仅允许这两个精确默认值，非默认漂移仍拒绝，已有正反回归。
 
-本地通过：brow_library 8 项、face_components 61 项（含 CRLF 指纹、原生证据分区和历史证据不继承为新输出通过的回归）、facial_surface bundle 8 项；另有既有眉部、源中性和睫毛眨眼专项回归。新几何测试已加入 CI。当前本地环境无 cargo 和 prettier，官方有效行数与格式命令未能在本地启动，未调整或放宽基线。
+本地通过：brow_library 8 项、face_components 62 项（含 CRLF 指纹、原生证据分区和历史证据不继承为新输出通过的回归）、facial_surface bundle 8 项；另有既有眉部、源中性和睫毛眨眼专项回归。新几何测试已加入 CI。当前本地环境无 cargo 和 prettier，官方有效行数与格式命令未能在本地启动，未调整或放宽基线。
 
 已有提交的远端 Head generation example、Development Quality Reports、Dependency Security 均成功，正式行数 0 violations。质量报告仍记录未修改文件 workflows_upgrade_tests.rs 的既有 rustfmt finding，依赖扫描仍有 12 条告警（开发期报告策略不阻断），Prettier 没有执行，不能声称零告警。每次新提交仍需检查其自身 CI，不能沿用旧提交的结论。

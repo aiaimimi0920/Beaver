@@ -136,11 +136,16 @@
           "research-linear-fine",
           "research-linear-wedge"
         ],
-        "status": "native_validation_pending",
+        "status": "implemented_with_historical_samples",
         "sources": [
-          "../brow_library/RESEARCH-AND-IMPLEMENTATION.zh-CN.md"
+          "../brow_library/RESEARCH-AND-IMPLEMENTATION.zh-CN.md",
+          "../brow_library/native-evidence.json"
         ],
-        "missing_controls": []
+        "missing_controls": [],
+        "native_samples": [
+          "combo864",
+          "combo865"
+        ]
       },
       "research-arc": {
         "title": "研究驱动眉形几何：arc",
@@ -148,88 +153,121 @@
           "research-arc-fine",
           "research-arc-medium"
         ],
-        "status": "native_validation_pending",
+        "status": "implemented_with_historical_samples",
         "sources": [
-          "../brow_library/RESEARCH-AND-IMPLEMENTATION.zh-CN.md"
+          "../brow_library/RESEARCH-AND-IMPLEMENTATION.zh-CN.md",
+          "../brow_library/native-evidence.json"
         ],
-        "missing_controls": []
+        "missing_controls": [],
+        "native_samples": [
+          "combo866",
+          "combo867"
+        ]
       },
       "research-angled": {
         "title": "研究驱动眉形几何：angled",
         "presets": [
           "research-angled"
         ],
-        "status": "native_validation_pending",
+        "status": "implemented_with_historical_samples",
         "sources": [
-          "../brow_library/RESEARCH-AND-IMPLEMENTATION.zh-CN.md"
+          "../brow_library/RESEARCH-AND-IMPLEMENTATION.zh-CN.md",
+          "../brow_library/native-evidence.json"
         ],
-        "missing_controls": []
+        "missing_controls": [],
+        "native_samples": [
+          "combo868"
+        ]
       },
       "research-leaf": {
         "title": "研究驱动眉形几何：leaf",
         "presets": [
           "research-compact-leaf"
         ],
-        "status": "native_validation_pending",
+        "status": "implemented_with_historical_samples",
         "sources": [
-          "../brow_library/RESEARCH-AND-IMPLEMENTATION.zh-CN.md"
+          "../brow_library/RESEARCH-AND-IMPLEMENTATION.zh-CN.md",
+          "../brow_library/native-evidence.json"
         ],
-        "missing_controls": []
+        "missing_controls": [],
+        "native_samples": [
+          "combo869"
+        ]
       },
       "research-oval": {
         "title": "研究驱动眉形几何：oval",
         "presets": [
           "research-compact-round"
         ],
-        "status": "native_validation_pending",
+        "status": "implemented_with_historical_samples",
         "sources": [
-          "../brow_library/RESEARCH-AND-IMPLEMENTATION.zh-CN.md"
+          "../brow_library/RESEARCH-AND-IMPLEMENTATION.zh-CN.md",
+          "../brow_library/native-evidence.json"
         ],
-        "missing_controls": []
+        "missing_controls": [],
+        "native_samples": [
+          "combo870"
+        ]
       },
       "research-curl": {
         "title": "研究驱动眉形几何：curl",
         "presets": [
           "research-curl"
         ],
-        "status": "native_validation_pending",
+        "status": "implemented_with_historical_samples",
         "sources": [
-          "../brow_library/RESEARCH-AND-IMPLEMENTATION.zh-CN.md"
+          "../brow_library/RESEARCH-AND-IMPLEMENTATION.zh-CN.md",
+          "../brow_library/native-evidence.json"
         ],
-        "missing_controls": []
+        "missing_controls": [],
+        "native_samples": [
+          "combo871"
+        ]
       },
       "research-multipoint": {
         "title": "研究驱动眉形几何：multipoint",
         "presets": [
           "research-multipoint"
         ],
-        "status": "native_validation_pending",
+        "status": "implemented_with_historical_samples",
         "sources": [
-          "../brow_library/RESEARCH-AND-IMPLEMENTATION.zh-CN.md"
+          "../brow_library/RESEARCH-AND-IMPLEMENTATION.zh-CN.md",
+          "../brow_library/native-evidence.json"
         ],
-        "missing_controls": []
+        "missing_controls": [],
+        "native_samples": [
+          "combo875"
+        ]
       },
       "research-fringe": {
         "title": "研究驱动眉形几何：fringe",
         "presets": [
           "research-fringe"
         ],
-        "status": "native_validation_pending",
+        "status": "implemented_with_historical_samples",
         "sources": [
-          "../brow_library/RESEARCH-AND-IMPLEMENTATION.zh-CN.md"
+          "../brow_library/RESEARCH-AND-IMPLEMENTATION.zh-CN.md",
+          "../brow_library/native-evidence.json"
         ],
-        "missing_controls": []
+        "missing_controls": [],
+        "native_samples": [
+          "combo873"
+        ]
       },
       "research-symbols": {
         "title": "研究驱动眉形几何：symbols",
         "presets": [
           "research-symbols"
         ],
-        "status": "native_validation_pending",
+        "status": "implemented_with_historical_samples",
         "sources": [
-          "../brow_library/RESEARCH-AND-IMPLEMENTATION.zh-CN.md"
+          "../brow_library/RESEARCH-AND-IMPLEMENTATION.zh-CN.md",
+          "../brow_library/native-evidence.json"
         ],
-        "missing_controls": []
+        "missing_controls": [],
+        "native_samples": [
+          "combo874"
+        ]
       }
     },
     "mouth": {

@@ -16,8 +16,8 @@ class FamilyInventoryTests(unittest.TestCase):
         self.assertEqual(result["mouth"]["implemented_families"], 2)
         self.assertEqual(result["mouth"]["pending_native_families"], 0)
         self.assertEqual(result["brows"]["selectable_options"], 15)
-        self.assertEqual(result["brows"]["implemented_families"], 3)
-        self.assertEqual(result["brows"]["pending_native_families"], 9)
+        self.assertEqual(result["brows"]["implemented_families"], 12)
+        self.assertEqual(result["brows"]["pending_native_families"], 0)
         self.assertEqual(result["face"]["implemented_families"], 2)
 
     def test_duplicate_or_missing_preset_rejected(self):
@@ -66,3 +66,23 @@ class FamilyInventoryTests(unittest.TestCase):
             self.assertEqual(sample["status"], "technically_verified")
             self.assertEqual(sample["captures"]["eye"]["captures_verified"], 84)
             self.assertEqual(sample["captures"]["mouth"]["captures_verified"], 18)
+
+    def test_researched_family_samples_bind_to_their_own_presets(self):
+        evidence = json.loads(
+            (HERE / "../brow_library/native-evidence.json").read_text()
+        )
+        samples = {s["candidate"]: s for s in evidence["samples"]}
+        for name, family in self.registry["slots"]["brows"].items():
+            if not name.startswith("research-"):
+                continue
+            self.assertEqual(
+                family["status"], "implemented_with_historical_samples"
+            )
+            referenced = [samples[key] for key in family["native_samples"]]
+            self.assertEqual(
+                {s["selection"]["brows"] for s in referenced},
+                set(family["presets"]),
+            )
+            self.assertTrue(
+                all(s["status"] == "technically_verified" for s in referenced)
+            )
