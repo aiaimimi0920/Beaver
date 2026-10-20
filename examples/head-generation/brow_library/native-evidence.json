@@ -703,11 +703,207 @@
       "eye_manifest_sha256": "7b67cae963b7c3644b63516d1e9f18d73788018985ae3eace5b767c8da911095",
       "mouth_manifest_sha256": "71766b7630e35857db4dec03abcb227620b2e7b334c80be312319e572a489950",
       "self_review": "Inspected native front and all 84 eye/18 mouth contact-sheet frames. Fine shallow arc remains visible and seated in tested poses and expressions; no new obvious brow penetration seen. Existing white-face unevenness remains. Not all-parameter or continuous collision proof."
+    },
+    {
+      "candidate": "combo867",
+      "status": "technically_verified",
+      "selection": {
+        "eyes": "round-open",
+        "brows": "research-arc-medium",
+        "mouth": "retained",
+        "nose": "retained",
+        "ears": "retained",
+        "face": "retained"
+      },
+      "fit_policy": "legacy",
+      "composition_sha256": "077f4e8381b132908264efef7cf963888914dbb9343c35533e31bfc912c1de39",
+      "glb_sha256": "d1d8d78160c2f63f4b7b1318f214940eba6edaff179f0d9d70ddeb1ed438490f",
+      "generation_job": "fedecd9b-fb8d-460f-bc0a-3c0f40bc939e",
+      "sdf_job": "986e0992-7847-4e77-8c25-60ebadb1e9d3",
+      "captures": {
+        "eye": {
+          "captures_verified": 84,
+          "source_sha256": "d1d8d78160c2f63f4b7b1318f214940eba6edaff179f0d9d70ddeb1ed438490f",
+          "camera_size": 0.430432230234146,
+          "scope": "Integrity, expression and view state; not aesthetic acceptance"
+        },
+        "mouth": {
+          "captures_verified": 18,
+          "source_sha256": "d1d8d78160c2f63f4b7b1318f214940eba6edaff179f0d9d70ddeb1ed438490f",
+          "camera_size": 0.430432230234146,
+          "scope": "Integrity, expression and view state; not aesthetic acceptance"
+        }
+      },
+      "scope": "Current artifact integrity and recorded native states, not aesthetic approval, current-generator reproducibility or untested combinations",
+      "brow_geometry": {
+        "parameters": {
+          "schema_version": 1,
+          "kind": "arc",
+          "length_scale": 1.0,
+          "width_scale": 0.95,
+          "arch_ratio": 0.07,
+          "peak": 0.6,
+          "head_rounding": 0.5,
+          "tail_rounding": 0.0,
+          "detail_count": 3,
+          "detail_amplitude": 0.6,
+          "detail_variation": 0.4,
+          "curl_turns": 1.0,
+          "clearance_m": 0.00065,
+          "thickness_m": 0.0002
+        },
+        "source_sha256": {
+          "brow_design.py": "0a976cf19d6daf1909d4f509e50c8aaeec35abf2c64aa2a7c747e3a7b51eca44",
+          "brow_shapes.py": "4a8e36b8f1e4fff6f1b527ea1b909bf2c64cadf49e94a113f338ce733040f349",
+          "brow_mesh.py": "061784d295fe667022501e15b42355919db1c711dd494fcfa18dc43b4228a9cf",
+          "brow_source.py": "e2659c289af6b9874a38d82efbd73e29424a1cc23f7c1dffe87365a0f713c158"
+        },
+        "sides": [
+          {
+            "side": -1,
+            "kind": "arc",
+            "vertices": 260,
+            "triangles": 516,
+            "islands": 1,
+            "local_areas_m2": [
+              6.13968755915124e-05
+            ],
+            "signed_volume_m3": 1.2279296625657363e-08,
+            "manifold_edges": true,
+            "requested_vertex_depth_clearance_m": 0.00045,
+            "sampled_min_depth_clearance_m": 0.0004478061210479306,
+            "clearance_samples": 642,
+            "cap_refinement_rounds": [
+              0
+            ],
+            "clearance_scope": "back-cap vertices, edge midpoints and centroids; not a continuous global minimum"
+          },
+          {
+            "side": 1,
+            "kind": "arc",
+            "vertices": 260,
+            "triangles": 516,
+            "islands": 1,
+            "local_areas_m2": [
+              6.13968755915124e-05
+            ],
+            "signed_volume_m3": 1.2279367229137746e-08,
+            "manifold_edges": true,
+            "requested_vertex_depth_clearance_m": 0.00045,
+            "sampled_min_depth_clearance_m": 0.0004478061210479306,
+            "clearance_samples": 642,
+            "cap_refinement_rounds": [
+              0
+            ],
+            "clearance_scope": "back-cap vertices, edge midpoints and centroids; not a continuous global minimum"
+          }
+        ]
+      },
+      "eye_manifest_sha256": "85fb977b9204b16e7101b3346db7342e2a28f1363e58f56cd8b13954879c59e3",
+      "mouth_manifest_sha256": "76d4fa556dfc304d12c9508a2e0ccd9c0af39e4b5142da493f66326a3a0dda9c",
+      "self_review": "Inspected native front and all 84 eye/18 mouth contact-sheet frames. Medium-width arc remains seated and visually wider/more arched than the fine shallow-arc preset in native front; no new obvious brow penetration in tested poses. Existing white-face unevenness remains. Not all-parameter or continuous collision proof."
+    },
+    {
+      "candidate": "combo868",
+      "status": "technically_verified",
+      "selection": {
+        "eyes": "round-open",
+        "brows": "research-angled",
+        "mouth": "retained",
+        "nose": "retained",
+        "ears": "retained",
+        "face": "retained"
+      },
+      "fit_policy": "legacy",
+      "composition_sha256": "a8f0038782ebe53ed490e4db32bbb6d08a8ae30dbf392dd81cf4ecdf145da2a2",
+      "glb_sha256": "4a392b0006bb01f5b91b45c063ae93273f7813b94818bec0112cb842d6cb650a",
+      "generation_job": "907b7c1a-0b83-4fd3-bd0b-1c9d37d3a9a7",
+      "sdf_job": "34a75b10-9c30-4408-bdc5-82520222c22c",
+      "captures": {
+        "eye": {
+          "captures_verified": 84,
+          "source_sha256": "4a392b0006bb01f5b91b45c063ae93273f7813b94818bec0112cb842d6cb650a",
+          "camera_size": 0.430432230234146,
+          "scope": "Integrity, expression and view state; not aesthetic acceptance"
+        },
+        "mouth": {
+          "captures_verified": 18,
+          "source_sha256": "4a392b0006bb01f5b91b45c063ae93273f7813b94818bec0112cb842d6cb650a",
+          "camera_size": 0.430432230234146,
+          "scope": "Integrity, expression and view state; not aesthetic acceptance"
+        }
+      },
+      "scope": "Current artifact integrity and recorded native states, not aesthetic approval, current-generator reproducibility or untested combinations",
+      "brow_geometry": {
+        "parameters": {
+          "schema_version": 1,
+          "kind": "angled",
+          "length_scale": 1.0,
+          "width_scale": 1.0,
+          "arch_ratio": 0.1,
+          "peak": 0.62,
+          "head_rounding": 0.5,
+          "tail_rounding": 0.0,
+          "detail_count": 3,
+          "detail_amplitude": 0.6,
+          "detail_variation": 0.4,
+          "curl_turns": 1.0,
+          "clearance_m": 0.00065,
+          "thickness_m": 0.0002
+        },
+        "source_sha256": {
+          "brow_design.py": "0a976cf19d6daf1909d4f509e50c8aaeec35abf2c64aa2a7c747e3a7b51eca44",
+          "brow_shapes.py": "4a8e36b8f1e4fff6f1b527ea1b909bf2c64cadf49e94a113f338ce733040f349",
+          "brow_mesh.py": "061784d295fe667022501e15b42355919db1c711dd494fcfa18dc43b4228a9cf",
+          "brow_source.py": "e2659c289af6b9874a38d82efbd73e29424a1cc23f7c1dffe87365a0f713c158"
+        },
+        "sides": [
+          {
+            "side": -1,
+            "kind": "angled",
+            "vertices": 260,
+            "triangles": 516,
+            "islands": 1,
+            "local_areas_m2": [
+              6.462827637158352e-05
+            ],
+            "signed_volume_m3": 1.2925907829763189e-08,
+            "manifold_edges": true,
+            "requested_vertex_depth_clearance_m": 0.00045,
+            "sampled_min_depth_clearance_m": 0.0004485343912781631,
+            "clearance_samples": 642,
+            "cap_refinement_rounds": [
+              0
+            ],
+            "clearance_scope": "back-cap vertices, edge midpoints and centroids; not a continuous global minimum"
+          },
+          {
+            "side": 1,
+            "kind": "angled",
+            "vertices": 260,
+            "triangles": 516,
+            "islands": 1,
+            "local_areas_m2": [
+              6.462827637158352e-05
+            ],
+            "signed_volume_m3": 1.292557950356594e-08,
+            "manifold_edges": true,
+            "requested_vertex_depth_clearance_m": 0.00045,
+            "sampled_min_depth_clearance_m": 0.0004485343912781631,
+            "clearance_samples": 642,
+            "cap_refinement_rounds": [
+              0
+            ],
+            "clearance_scope": "back-cap vertices, edge midpoints and centroids; not a continuous global minimum"
+          }
+        ]
+      },
+      "eye_manifest_sha256": "acdcbed4bed6823610f6fb81f7d70fa66584067e5e3f20d1056ba64ecdc6a8f3",
+      "mouth_manifest_sha256": "cf10e8cd4ea8dffddd74fc32bfe0c3b6b71da6ddf9d2df5f356d0118efe9ac00",
+      "self_review": "Inspected native front and all 84 eye/18 mouth contact-sheet frames. Angled peak and taper remain visible and seated in tested poses and expressions; no new obvious brow penetration seen. Existing white-face unevenness remains. Not all-parameter or continuous collision proof."
     }
   ],
   "pending_presets": [
-    "arc-medium",
-    "angled",
     "compact-leaf",
     "compact-round"
   ]
