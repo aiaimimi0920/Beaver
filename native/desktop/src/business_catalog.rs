@@ -64,6 +64,7 @@ pub fn tools() -> Vec<Value> {
         ("task.approval", "Set automatic or manual completion approval for a task and its unfinished planned children. Completed children still require explicit task.accept.", "id:s,autoAccept:b", "", false),
         ("task.dialogueRollback", "Create a task to revise or undo prior work through dialogue.", "id:s,text:s", "", false),
         ("task.direction", "Set task direction.", "id:s,direction:s", "", false),
+        ("task.withdrawSupplement", "Withdraw only an unexecuted unchanged integration supplement, retaining history and requiring real integration validation.", "id:s,parentId:s,reason:s", "", false),
         ("task.continue", "Continue a stopped task or steer running work. freshContext starts a new AI session for failed/interrupted tasks while retaining workspace, history and rollback baseline. Poll state/events.", "id:s,text:s", "freshContext:b", false),
         ("task.interrupt", "Interrupt task execution, preserving history and working files.", "id:s", "", false),
         ("task.answer", "Answer pending questions. Optional automatic lists IDs explicitly filled using the current policy and exact recommended labels.", "id:s,questionId:s,answers:o", "automatic:a", false),

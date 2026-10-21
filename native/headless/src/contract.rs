@@ -18,6 +18,7 @@ pub fn validate(method: &str, input: &Value) -> Result<()> {
         "external.submitPlan" | "external.tool" | "external.finish" => ("taskId:s,runId:s,revision:i,requestId:s,arguments:o", ""),
         "task.create" => ("projectId:s,prompt:s", "executionMode:s,title:s,direction:s,stopConditions:s,references:a,maxMinutes:i,capability:s,askRatio:r,decompose:b,autoAccept:b,assetTask:b,objectFramework:o"),
         "task.answer" => ("id:s,questionId:s,answers:o", "automatic:a"),
+        "task.withdrawSupplement" => ("id:s,parentId:s,reason:s", ""),
         "task.continue" => ("id:s,text:s", "freshContext:b"),
         "logs.query" => ("", "after:i,limit:i,taskId:s,projectId:s,method:s"),
         "settings.save" => ("settings:o", "keys:o"),
@@ -76,6 +77,21 @@ pub fn validate(method: &str, input: &Value) -> Result<()> {
 mod upgrade_tests {
     use super::*;
     use serde_json::json;
+
+    #[test]
+    fn withdrawal_requires_explicit_parent_and_reason() -> Result<()> {
+        let valid = json!({"id":"child","parentId":"parent","reason":"Redundant"});
+        validate("task.withdrawSupplement", &valid)?;
+        for key in ["id", "parentId", "reason"] {
+            let mut input = valid.clone();
+            input.as_object_mut().unwrap().remove(key);
+            assert!(validate("task.withdrawSupplement", &input).is_err());
+        }
+        let mut forged = valid;
+        forged["accepted"] = json!(true);
+        assert!(validate("task.withdrawSupplement", &forged).is_err());
+        Ok(())
+    }
 
     #[test]
     fn upgrade_contract_requires_cas_and_explicit_review() -> Result<()> {

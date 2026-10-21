@@ -214,6 +214,9 @@ pub fn eligible(task: &Value, tasks: &[Value]) -> bool {
     if crate::external_run_recovery::blocked(task) {
         return false;
     }
+    if !task["supplementWithdrawal"].is_null() {
+        return false;
+    }
     // Legacy history retained by a partition activation is never scheduled until converted.
     if crate::object_framework::marked(task) || task.get("migrationRetained").is_some() {
         return false;
@@ -316,8 +319,8 @@ pub(crate) fn reconcile_matching(
             && ids.iter().all(|id| {
                 tasks.iter().any(|t| {
                     t["id"] == *id
-                        && t["status"] == "completed"
-                        && t["accepted"] == true
+                        && ((t["status"] == "completed" && t["accepted"] == true)
+                            || crate::task_supplement::withdrawn(t, &parent))
                         && !crate::object_framework::marked(t)
                 })
             })
@@ -329,7 +332,15 @@ pub(crate) fn reconcile_matching(
             } else {
                 parent["status"] = json!("completed");
             }
-            parent["report"] = json!(format!("{}\n\n{} 个子任务已完成合入并通过审批。请检查各子任务的验证报告；这不替代实际试玩。",parent["plan"]["summary"].as_str().unwrap_or(""),ids.len()));
+            let active_count = ids
+                .iter()
+                .filter(|id| {
+                    !tasks
+                        .iter()
+                        .any(|t| t["id"] == **id && crate::task_supplement::withdrawn(t, &parent))
+                })
+                .count();
+            parent["report"] = json!(format!("{}\n\n{} 个子任务已完成合入并通过审批。请检查各子任务的验证报告；这不替代实际试玩。",parent["plan"]["summary"].as_str().unwrap_or(""),active_count));
             let id = parent["id"].as_str().context("任务标识无效")?.to_owned();
             parent["updatedAt"] =
                 json!(chrono::Utc::now().to_rfc3339_opts(chrono::SecondsFormat::Millis, true));

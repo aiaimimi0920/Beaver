@@ -34,6 +34,10 @@ pub fn continue_task(store: &mut Store, id: &str, text: &str, fresh_context: boo
         !crate::workflows::upgrade_blocked(store, project)?,
         "NPR upgrade recovery pending"
     );
+    anyhow::ensure!(
+        task["supplementWithdrawal"].is_null(),
+        "Withdrawn supplement cannot be continued"
+    );
     let status = task["status"].as_str().context("任务状态无效")?;
     if fresh_context {
         anyhow::ensure!(
@@ -65,6 +69,7 @@ pub fn continue_task(store: &mut Store, id: &str, text: &str, fresh_context: boo
         for mut child in store.list::<Value>("task")? {
             if child["parentTaskId"] == id
                 && child["status"] == "interrupted"
+                && child["supplementWithdrawal"].is_null()
                 && child["workspacePrepared"].is_boolean()
                 && !crate::object_framework::marked(&child)
             {
@@ -79,7 +84,7 @@ pub fn continue_task(store: &mut Store, id: &str, text: &str, fresh_context: boo
         return Ok(false);
     }
     if status == "running" {
-        return Ok(true);
+        return Ok(!text.trim().is_empty());
     }
     if status == "awaitingInput" {
         bail!("请先回答待补充的问题");

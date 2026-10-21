@@ -231,6 +231,9 @@ pub mod task_plan;
 mod task_plan_tests;
 pub mod task_relations;
 pub mod task_resources;
+pub mod task_supplement;
+#[cfg(test)]
+mod task_supplement_tests;
 pub mod task_workflows;
 pub mod tool_install;
 pub mod tool_setup;

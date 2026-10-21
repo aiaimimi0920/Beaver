@@ -30,6 +30,22 @@ pub async fn control(host: Arc<Host>, method: &str, input: Value) -> Result<Valu
     let id = input["id"].as_str().unwrap().to_owned();
     let runtime = runtime::task(&host.router, &id)?;
     let handle = runtime.store();
+    if method == "task.withdrawSupplement" {
+        let result = {
+            let mut store = handle
+                .lock()
+                .map_err(|_| anyhow::anyhow!("Project store lock unavailable"))?;
+            beaver_core::task_supplement::withdraw(
+                &mut store,
+                &runtime.files(),
+                &id,
+                input["parentId"].as_str().unwrap(),
+                input["reason"].as_str().unwrap(),
+            )?
+        };
+        host.scheduler.wake().map_err(anyhow::Error::msg)?;
+        return Ok(result);
+    }
     if method == "task.answer" {
         let automatic: Vec<String> =
             serde_json::from_value(input.get("automatic").cloned().unwrap_or_else(|| json!([])))?;

@@ -94,5 +94,49 @@ test("interrupt markup has one button and no stray separator text", () => {
   const section = html.match(/<button id="history">[\s\S]*?<\/section>/)?.[0];
   assert.ok(section);
   const text = section.replace(/<[^>]*>/g, "").replace(/\s/g, "");
-  assert.equal(text, "读取任务历史中止选中任务");
+  assert.equal(text, "读取任务历史中止选中任务撤销未执行补充步骤");
+});
+
+test("resume never silently submits the goal textbox as a new instruction", async () => {
+  const calls: unknown[] = [];
+  const elements = fixture(async (method, args) => {
+    calls.push([method, args]);
+    return null;
+  });
+  elements.get("task").value = "parent";
+  elements.get("goal").value = "Old goal that must not become a supplement";
+  await elements.get("continue").onclick();
+  assert.deepEqual(JSON.parse(JSON.stringify(calls)), [
+    ["task.continue", { id: "parent", text: "" }],
+  ]);
+});
+
+test("withdrawal uses selected child and explicit reason through Core", async () => {
+  const calls: unknown[] = [];
+  const elements = fixture(async (method, args) => {
+    calls.push([method, args]);
+    if (method === "state")
+      return {
+        projects: [],
+        tasks: [
+          {
+            id: "supplement",
+            parentTaskId: "parent",
+            title: "Supplement",
+            status: "failed",
+          },
+        ],
+      };
+    assert.equal(method, "task.withdrawSupplement");
+    return { parentId: "parent", reason: "Redundant" };
+  });
+  await elements.get("refresh").onclick();
+  elements.get("task").value = "supplement";
+  elements.get("withdraw-reason").value = "Redundant";
+  await elements.get("withdraw").onclick();
+  assert.deepEqual(JSON.parse(JSON.stringify(calls[1])), [
+    "task.withdrawSupplement",
+    { id: "supplement", parentId: "parent", reason: "Redundant" },
+  ]);
+  assert.equal(calls.length, 3);
 });

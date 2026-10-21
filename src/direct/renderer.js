@@ -191,9 +191,23 @@ $("continue").onclick = () =>
   action(() =>
     window.beaver.call("task.continue", {
       id: $("task").value,
-      text: $("goal").value,
+      text: "",
     }),
   ).catch(() => {});
+$("withdraw").onclick = () =>
+  action(async () => {
+    const task = state?.tasks.find((item) => item.id === $("task").value);
+    if (!task?.parentTaskId) throw Error("请选择需要撤销的补充子步骤");
+    const reason = $("withdraw-reason").value.trim();
+    if (!reason) throw Error("请填写撤销理由");
+    const result = await window.beaver.call("task.withdrawSupplement", {
+      id: task.id,
+      parentId: task.parentTaskId,
+      reason,
+    });
+    await refresh();
+    return result;
+  }).catch(() => {});
 $("execute").onclick = () =>
   action(() =>
     submit("external.tool", {
@@ -232,7 +246,10 @@ $("file").onchange = async () => {
   if (f) {
     const s = await f.text();
     const value = JSON.parse(s);
-    if (typeof value.userGoal === "string") $("goal").value = value.userGoal;
+    if (typeof value.withdrawReason === "string")
+      $("withdraw-reason").value = value.withdrawReason;
+    else if (typeof value.userGoal === "string")
+      $("goal").value = value.userGoal;
     else if (typeof value.previewDefinition === "string")
       $("preview-definition").value = value.previewDefinition;
     else $("args").value = s;

@@ -10,6 +10,7 @@ import { PagedEditor } from "./PagedEditor";
 import { conversationText, executionStatus } from "../shared/task-conversation";
 import { formatTaskBrief } from "../shared/task-brief";
 import "./task-conversation.css";
+import { SupplementWithdrawal } from "./SupplementWithdrawal";
 
 export function TaskConversation({
   task,
@@ -295,6 +296,7 @@ export function TaskConversation({
           </button>
         ))}
         <span />
+        <SupplementWithdrawal task={task} run={run} />
         {["running", "queued", "waitingChildren"].includes(task.status) && (
           <button
             onClick={() =>
@@ -304,16 +306,17 @@ export function TaskConversation({
             中止
           </button>
         )}
-        {(["interrupted", "failed"].includes(task.status) ||
-          task.status === "waitingChildren") && (
-          <button
-            onClick={() =>
-              void run(() => call("task.continue", { id: task.id, text: "" }))
-            }
-          >
-            {task.status === "waitingChildren" ? "继续子任务" : "继续任务"}
-          </button>
-        )}
+        {!task.supplementWithdrawal &&
+          (["interrupted", "failed"].includes(task.status) ||
+            task.status === "waitingChildren") && (
+            <button
+              onClick={() =>
+                void run(() => call("task.continue", { id: task.id, text: "" }))
+              }
+            >
+              {task.status === "waitingChildren" ? "继续子任务" : "继续任务"}
+            </button>
+          )}
         {typeof window !== "undefined" &&
           "__TAURI__" in window &&
           task.threadId &&

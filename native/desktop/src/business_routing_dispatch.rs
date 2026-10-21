@@ -315,7 +315,7 @@ pub(crate) async fn call(
     }
     if matches!(
         method.as_str(),
-        "task.answer" | "task.continue" | "task.interrupt"
+        "task.answer" | "task.continue" | "task.interrupt" | "task.withdrawSupplement"
     ) {
         return crate::task_control::call(app, state, method, input).await;
     }
