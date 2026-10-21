@@ -11,6 +11,7 @@ from verify_outline import verify_outline_guard
 from brow_evidence import verify_brow_artifacts
 from nose_evidence import verify_nose_artifacts
 from mouth_evidence import verify_mouth_artifacts
+from face_evidence import verify_face_artifacts
 from source_layout_bridge import verify_packaging
 
 
@@ -25,6 +26,7 @@ def verify_requested_composition(snapshot, spec):
     if (
         snapshot.get("nose_design") is not None
         or snapshot.get("mouth_design") is not None
+        or snapshot.get("face_design") is not None
     ) and expected is None:
         raise ValueError("Researched design requires requested composition identity")
     if expected is not None and expected != snapshot.get("composition_sha256"):
@@ -171,6 +173,7 @@ def verify_run(spec):
     verify_brow_artifacts(snapshot, report, root, prefix, generated)
     verify_nose_artifacts(snapshot, report, root, prefix, generated)
     verify_mouth_artifacts(snapshot, report, root, prefix, generated)
+    verify_face_artifacts(snapshot, report, root, prefix, generated)
     verify_outline_guard(snapshot, report)
     verify_template_reports(
         snapshot,

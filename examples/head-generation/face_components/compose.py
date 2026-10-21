@@ -61,6 +61,7 @@ def resolve(
     brow_overrides=None,
     nose_overrides=None,
     mouth_overrides=None,
+    face_overrides=None,
 ):
     if fit_policy not in ("legacy", "skin-seated-075"):
         raise ValueError("Unknown explicit fit policy")
@@ -80,6 +81,9 @@ def resolve(
     mouth_design, mouth_hashes = resolve_mouth(
         catalog["mouth"][selection["mouth"]], mouth_overrides
     )
+    from face_selection import resolve_face
+
+    face_design, face_hashes = resolve_face(catalog["face"][selection["face"]], face_overrides)
     eye_id = catalog["eyes"][selection["eyes"]]
     if eye_id == "baseline-795":
         spec = json.loads((SURFACE / "face-baseline-795.json").read_text())
@@ -125,6 +129,7 @@ def resolve(
             "ear_tip_lift",
         },
         "face": {
+            "design",
             "face_width",
             "jaw_width",
             "chin_width",
@@ -218,6 +223,9 @@ def resolve(
     if mouth_design is not None:
         resolved["mouth_design"] = mouth_design
         resolved["mouth_source_sha256"] = mouth_hashes
+    if face_design is not None:
+        resolved["face_design"] = face_design
+        resolved["face_source_sha256"] = face_hashes
     return {**resolved, "composition_sha256": digest(resolved)}
 
 

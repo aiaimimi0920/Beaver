@@ -25,13 +25,14 @@ def build_raw_request(
     brow_overrides=None,
     nose_overrides=None,
     mouth_overrides=None,
+    face_overrides=None,
 ):
     if not re.fullmatch(r"assets/aster/general_face_eyes_combo[a-z0-9_]+/", prefix):
         raise ValueError("Use a fresh general_face_eyes_combo prefix")
     if (Path(workspace) / prefix).exists():
         raise ValueError("Composition must use a fresh directory")
     snapshot = resolve(
-        selection, fit_policy, brow_overrides, nose_overrides, mouth_overrides
+        selection, fit_policy, brow_overrides, nose_overrides, mouth_overrides, face_overrides
     )
     old_path = sys.path[:]
     sys.path.insert(0, str(SURFACE))
@@ -52,6 +53,7 @@ def build_raw_request(
             brow_design=snapshot.get("brow_design"),
             nose_design=snapshot.get("nose_design"),
             mouth_design=snapshot.get("mouth_design"),
+            face_design=snapshot.get("face_design"),
         )
     finally:
         sys.path[:] = old_path
@@ -93,6 +95,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "--mouth-controls", type=Path, help="Bounded researched-mouth overrides JSON"
     )
+    parser.add_argument("--face-controls", type=Path, help="Bounded researched-face overrides JSON")
     args = parser.parse_args()
     target = args.output.resolve()
     if HERE.parent.resolve() in target.parents:
@@ -105,6 +108,7 @@ if __name__ == "__main__":
         (json.loads(args.brow_controls.read_text()) if args.brow_controls else None),
         (json.loads(args.nose_controls.read_text()) if args.nose_controls else None),
         (json.loads(args.mouth_controls.read_text()) if args.mouth_controls else None),
+        (json.loads(args.face_controls.read_text()) if args.face_controls else None),
     )
     args.output.write_text(json.dumps(plan["generation"]))
     args.output.with_suffix(".source-plan.json").write_text(

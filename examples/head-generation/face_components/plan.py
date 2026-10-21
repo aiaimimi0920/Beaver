@@ -38,6 +38,10 @@ def evidence_records():
     mouths = json.loads((HERE / name).read_text())
     for value in mouths["samples"] + mouths["cross_combinations"]:
         records.append({**value, "evidence_file": name})
+    name = "../face_library/native-evidence.json"
+    faces = json.loads((HERE / name).read_text())
+    for value in faces["samples"] + faces["cross_combinations"]:
+        records.append({**value, "evidence_file": name})
     return records
 
 
@@ -47,12 +51,14 @@ def build_plan(
     records=None,
     nose_overrides=None,
     mouth_overrides=None,
+    face_overrides=None,
 ):
     snapshot = resolve(
         selection,
         fit_policy,
         nose_overrides=nose_overrides,
         mouth_overrides=mouth_overrides,
+        face_overrides=face_overrides,
     )
     matches = []
     for record in evidence_records() if records is None else records:
@@ -152,12 +158,14 @@ if __name__ == "__main__":
     parser.add_argument(
         "--mouth-controls", type=Path, help="Bounded researched-mouth overrides JSON"
     )
+    parser.add_argument("--face-controls", type=Path)
     args = parser.parse_args()
     print(
         json.dumps(
             build_plan(
                 json.loads(args.selection.read_text()),
                 args.fit_policy,
+                face_overrides=(json.loads(args.face_controls.read_text()) if args.face_controls else None),
                 mouth_overrides=(
                     json.loads(args.mouth_controls.read_text())
                     if args.mouth_controls

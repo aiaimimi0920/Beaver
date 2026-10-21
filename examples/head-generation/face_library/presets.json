@@ -1,0 +1,6 @@
+{
+  "compact-rounded": {"version":1,"kind":"compact-rounded","jaw_fullness":0,"chin_roundness":0.9,"chin_projection":-0.002},
+  "soft-tapered": {"version":1,"kind":"soft-tapered","jaw_fullness":0,"chin_roundness":0.6,"chin_projection":0},
+  "straight-tapered": {"version":1,"kind":"straight-tapered","jaw_fullness":0,"chin_roundness":0.2,"chin_projection":0.002},
+  "blunt-chin": {"version":1,"kind":"blunt-chin","jaw_fullness":0,"chin_roundness":0.7,"chin_projection":0.003}
+}

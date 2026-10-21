@@ -11,6 +11,7 @@ from compose import HERE, verify_snapshot
 from brow_evidence import verify_brow_artifacts
 from nose_evidence import verify_nose_artifacts
 from mouth_evidence import verify_mouth_artifacts
+from face_evidence import verify_face_artifacts
 from source_layout_bridge import verify_packaging
 
 
@@ -49,6 +50,7 @@ def build_request(prefix, workspace, receipt, source_packaging_receipt=None):
     verify_brow_artifacts(snapshot, report, root, prefix, generated)
     verify_nose_artifacts(snapshot, report, root, prefix, generated)
     verify_mouth_artifacts(snapshot, report, root, prefix, generated)
+    verify_face_artifacts(snapshot, report, root, prefix, generated)
     surface = report["facial_surface"]
     for key in ("style_profile", "reviewed_support_bound_m"):
         if surface[key] != snapshot[key]:

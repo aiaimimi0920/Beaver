@@ -301,6 +301,18 @@
     },
     "broad-blunt-chin": {
       "template_id": "broad-blunt-chin-v3"
+    },
+    "research-compact-rounded": {
+      "design": "compact-rounded"
+    },
+    "research-soft-tapered": {
+      "design": "soft-tapered"
+    },
+    "research-straight-tapered": {
+      "design": "straight-tapered"
+    },
+    "research-blunt-chin": {
+      "design": "blunt-chin"
     }
   }
 }

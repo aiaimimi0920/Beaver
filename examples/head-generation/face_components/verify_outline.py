@@ -4,7 +4,7 @@ import math
 
 
 def verify_outline_guard(snapshot, report):
-    if not any(
+    if snapshot.get("face_design") is None and not any(
         t.get("id") == "broad-blunt-chin-v3"
         for t in snapshot.get("family_templates", [])
     ):

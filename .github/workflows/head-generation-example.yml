@@ -11,7 +11,7 @@ on:
       - "package.json"
       - "package-lock.json"
   push:
-    branches: [main, "dot/researched-nose-grammar", "dot/researched-mouth-grammar"]
+    branches: [main, "dot/researched-nose-grammar", "dot/researched-mouth-grammar", "dot/researched-face-grammar"]
     paths:
       - "examples/head-generation/**"
       - "resources/packages/npr-characters/addons/npr_character_frame/.ci_script/tools/sdf360/**"
@@ -47,6 +47,7 @@ jobs:
       - run: python -m unittest discover -s examples/head-generation/brow_library -p 'test_*.py'
       - run: python -m unittest discover -s examples/head-generation/nose_library -p 'test_*.py'
       - run: python -m unittest discover -s examples/head-generation/mouth_library -p 'test_*.py'
+      - run: python -m unittest discover -s examples/head-generation/face_library -p 'test_*.py'
       - run: python -m unittest discover -s examples/head-generation/source_layout -p 'test_*.py'
       - run: python examples/head-generation/general_face/bundle.py --intent '{"preset":"soft_wide"}' --prefix assets/aster/general_face_ci/ --output /tmp/general-face.json
   preview-tests:

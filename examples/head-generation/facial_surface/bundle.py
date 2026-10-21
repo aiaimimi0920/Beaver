@@ -42,6 +42,7 @@ def build_request(
     brow_design=None,
     nose_design=None,
     mouth_design=None,
+    face_design=None,
 ):
     if (
         silhouette_parameters
@@ -52,6 +53,7 @@ def build_request(
         or brow_design
         or nose_design
         or mouth_design
+        or face_design
     ) and prefix in {
         "assets/aster/general_face_eyes_795/",
         "assets/aster/general_face_eyes_796/",
@@ -114,6 +116,11 @@ def build_request(
 
         baseline_style, family_report = apply_family_templates(
             baseline_style, face_templates, silhouette_parameters
+        )
+        import source_face_design as face_adapter
+
+        baseline_style, face_design_report = face_adapter.apply(
+            baseline_style, face_design, silhouette_parameters, face_templates
         )
         from source_components import apply_components
 
@@ -325,7 +332,9 @@ def depth(x, y):"""
                         boundary_source, retained_width_stations
                     )
                 boundary_path.write_text(boundary_source)
-            if silhouette_report is not None or family_report is not None:
+            if face_design_report is not None:
+                face_adapter.adapt_sources(snapshot, retained_width_stations)
+            if silhouette_report is not None or family_report is not None or face_design_report is not None:
                 from source_silhouette import adapt_ear_envelope
 
                 (snapshot / "ear_width.py").write_text(
@@ -384,6 +393,9 @@ def depth(x, y):"""
         )
     if family_report is not None:
         report["family_template"] = family_report
+    if face_design_report is not None:
+        report["face_design"] = face_design_report
+        request["code"] += f'report["face_design"] = {face_design_report!r}\n'
     if mouth_template_report is not None:
         report["mouth_template"] = mouth_template_report
     if nose_template_report is not None:
@@ -437,55 +449,16 @@ def depth(x, y):"""
     request[
         "code"
     ] += f'Path(beaver_output({prefix+"generation_report.json"!r})).write_text(json.dumps(report, indent=2))\n'
-    artifacts = {
-        f"facial_surface_{path.name}": path.read_text()
-        for path in HERE.glob("*.py")
-        if not path.name.startswith("test_") and not path.name.startswith("source_")
-    }
-    for name in ("fit.py", "curve_profile.py", "diagnostics.py"):
-        artifacts["coherent_dependency_" + name] = (
-            HERE.parent / "coherent_surface" / name
-        ).read_text()
-    artifacts["facial_surface_preflight.json"] = json.dumps(
-        dict(
-            data=data,
-            report=report,
-            nose_library_sources=nose_adapter.retained(nose_design),
-            mouth_library_sources=(
-                {}
-                if mouth_design is None
-                else mouth_adapter.module().retained_sources()
-            ),
-            packager_helpers={
-                **{path.name: path.read_text() for path in HERE.glob("source_*.py")},
-                "semantic_illustrated_art.py": (
-                    EYES / "illustrated_art.py"
-                ).read_text(),
-            },
-        ),
-        indent=2,
-    )
-    artifacts["facial_surface_source_manifest.json"] = json.dumps(
-        {
-            name: hashlib.sha256(content.encode()).hexdigest()
-            for name, content in artifacts.items()
+    from source_artifacts import append_artifacts
+
+    append_artifacts(
+        request, prefix, workspace, data, report,
+        nose_adapter.retained(nose_design),
+        {} if mouth_design is None else mouth_adapter.module().retained_sources(),
+        {} if face_design is None else {
+            "face_design.py": (HERE.parent / "face_library/face_design.py").read_text()
         },
-        indent=2,
     )
-    for name, content in artifacts.items():
-        path = prefix + name
-        request["code"] += f"Path(beaver_output({path!r})).write_text({content!r})\n"
-        previous = Path(workspace) / path
-        request["outputs"].append(
-            dict(
-                path=path,
-                expectedSha256=(
-                    hashlib.sha256(previous.read_bytes()).hexdigest()
-                    if previous.is_file()
-                    else None
-                ),
-            )
-        )
     paths = [output["path"] for output in request["outputs"]]
     if len(paths) > 64 or len(set(paths)) != len(paths):
         raise ValueError("Native request requires at most 64 unique retained outputs")

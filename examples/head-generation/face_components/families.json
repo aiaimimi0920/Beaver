@@ -518,6 +518,24 @@
         ],
         "missing_controls": [],
         "reference_scope": "Laios official face views support a broad blunt chin direction only; authored station values are not measured reconstruction and do not imply a full square face."
+      },
+      "researched-lower-face": {
+        "title": "调研支持的连续下脸轮廓",
+        "presets": [
+          "research-compact-rounded",
+          "research-soft-tapered",
+          "research-straight-tapered",
+          "research-blunt-chin"
+        ],
+        "status": "native_validation_pending",
+        "sources": [
+          "../face_library/README.zh-CN.md"
+        ],
+        "missing_controls": [
+          "independent vertical face length",
+          "complete skull and forehead shape",
+          "complete animal or mechanical heads"
+        ]
       }
     }
   }
