@@ -24,11 +24,14 @@
 
 ## 运行步骤
 
-1. 复制 example-selection.json，选择部位 ID。
-2. 用 bundle.py --selection SELECTION.json --prefix assets/aster/general_face_eyes_combo827/ --workspace WORKSPACE --output REQUEST.json 准备生成请求。
-3. 通过 Beaver 的 blender.start 执行并轮询，保存成功回执。
-4. 用 sdf_request.py --prefix PREFIX --workspace WORKSPACE --generation-receipt RECEIPT.json --output SDF.json 准备 SDF 请求，通过 Beaver 执行。
-5. 在现有头部展示台打开 PREFIX/aster_definition.tres；检查正面、左右斜侧、白模、眨眼和张嘴，再登记实际结果。
+1. 复制 example-selection.json，选择部位 ID，并选择尚不存在的 combo 前缀。
+2. 用 bundle.py --selection SELECTION.json --prefix PREFIX --workspace WORKSPACE --output REQUEST.json 准备生成请求。保留同时写出的 REQUEST.source-plan.json；使用 Python API 时调用 bundle.build_plan，分别保留 generation 与 source_packaging。
+3. 通过 Beaver 的 blender.start 执行 generation 并轮询，保存成功回执 GENERATION_RECEIPT.json。
+4. 用 ../source_layout/pack_request.py --source-plan REQUEST.source-plan.json --generation-receipt GENERATION_RECEIPT.json --workspace WORKSPACE --output PACK.json 准备源码包装请求，再通过 Beaver 执行并保存独立成功回执 PACK_RECEIPT.json。这一步不再次生成模型。
+5. 用 sdf_request.py --prefix PREFIX --workspace WORKSPACE --generation-receipt GENERATION_RECEIPT.json --source-packaging-receipt PACK_RECEIPT.json --output SDF.json 准备 SDF 请求，通过 Beaver 执行并保存成功回执。
+6. 在现有头部展示台打开 PREFIX/aster_definition.tres；检查正面、左右斜侧、白模、眨眼和张嘴，再登记实际结果。最终 verify_run 的规格中同时提供 generation_receipt、source_packaging_receipt、sdf_receipt 及相应捕获清单。
+
+源码包装是当前生成流程的必需阶段，不能省略第二份回执、改写旧回执或只把文件写进工作区冒充原生包装完成。
 
 SDF入口读取实际生成报告，不重新套用最新目录；报告必须与该次生成回执中的输出摘要一致，
 并继续使用原有运行时 blend、GLB、参数与工作区回执校验。

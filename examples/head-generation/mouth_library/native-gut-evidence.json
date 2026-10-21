@@ -1,0 +1,108 @@
+{
+  "schema_version": 1,
+  "run_id": "e93d419c-6b30-43e5-8794-25fcb4ad8f8a",
+  "snapshot_id": "d216c58ba64fdfda2b24c39b20e56f9ba2980222d60a1cf02fe60a07292ca07d",
+  "engine_version": "4.8.dev.custom_build.38b6ddee7",
+  "tests": 12,
+  "failures": 0,
+  "skipped": 0,
+  "assertions": 354,
+  "mouth_tests": 6,
+  "cases": [
+    {
+      "name": "test_generated_definitions_and_runtime",
+      "assertions": "21",
+      "status": "pass",
+      "classname": "tests/test_acceptance_face.gd",
+      "time": "0.191046"
+    },
+    {
+      "name": "test_head_review_initializes_without_mutating_authoring_definition",
+      "assertions": "15",
+      "status": "pass",
+      "classname": "tests/test_aster_lab.gd",
+      "time": "0.35383"
+    },
+    {
+      "name": "test_head_only_definition_does_not_pass_full_wardrobe_acceptance",
+      "assertions": "5",
+      "status": "pass",
+      "classname": "tests/test_aster_lab.gd",
+      "time": "0.000496"
+    },
+    {
+      "name": "test_close_framing_remains_linked_and_can_reset",
+      "assertions": "12",
+      "status": "pass",
+      "classname": "tests/test_head_compare.gd",
+      "time": "12.34441"
+    },
+    {
+      "name": "test_exact_ten_degree_steps_preserve_other_view_state",
+      "assertions": "109",
+      "status": "pass",
+      "classname": "tests/test_head_compare.gd",
+      "time": "12.506743"
+    },
+    {
+      "name": "test_saved_lash_collision_evidence_matches_runtime_asset",
+      "assertions": "20",
+      "status": "pass",
+      "classname": "tests/test_head_compare.gd",
+      "time": "0.014422"
+    },
+    {
+      "name": "test_combined_state_survives_process_frame",
+      "assertions": "14",
+      "status": "pass",
+      "classname": "tests/test_researched_mouth_controller.gd",
+      "time": "0.502132"
+    },
+    {
+      "name": "test_invalid_values_are_atomic",
+      "assertions": "106",
+      "status": "pass",
+      "classname": "tests/test_researched_mouth_controller.gd",
+      "time": "0.486826"
+    },
+    {
+      "name": "test_slider_signal_preserves_other_channels",
+      "assertions": "14",
+      "status": "pass",
+      "classname": "tests/test_researched_mouth_controller.gd",
+      "time": "0.477832"
+    },
+    {
+      "name": "test_partial_values_clear_omitted_channels",
+      "assertions": "15",
+      "status": "pass",
+      "classname": "tests/test_researched_mouth_controller.gd",
+      "time": "0.477205"
+    },
+    {
+      "name": "test_actual_reset_button_keeps_blinks",
+      "assertions": "19",
+      "status": "pass",
+      "classname": "tests/test_researched_mouth_controller.gd",
+      "time": "0.474742"
+    },
+    {
+      "name": "test_unready_instance_rejects_without_mutation",
+      "assertions": "4",
+      "status": "pass",
+      "classname": "tests/test_researched_mouth_controller.gd",
+      "time": "0.473956"
+    }
+  ],
+  "evidence_sha256": {
+    "gut.xml": "c143006cdeebb8cb78b430fbb96f9df82cad9eeefac68665c77e297b9b16e973",
+    "gut.log": "6243ab5c36d9d02220703411dbc682bd09a7537c343f3d8105d7fb865485554e",
+    "import.log": "9c59abf04c6251f4b124f3aab9d1f6fdfce53c3b34bc29de64cc190a0eb5f8e0"
+  },
+  "warnings": {
+    "deprecated_wait_frames": 9,
+    "reported_total_orphans": 5
+  },
+  "scope": "Actual native import and GUT execution; not zero-warning, final visual approval, full character acceptance, merge or deployment.",
+  "storage_repair": "Removed recoverable historical failure materializations and old diagnostic PNG/import sidecars; latest five model versions, all code/assets/tests and assertions retained. No timeout increase or ignored source directories."
+}

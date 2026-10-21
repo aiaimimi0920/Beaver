@@ -41,6 +41,7 @@ def build_request(
     family_templates=None,
     brow_design=None,
     nose_design=None,
+    mouth_design=None,
 ):
     if (
         silhouette_parameters
@@ -50,6 +51,7 @@ def build_request(
         or family_templates
         or brow_design
         or nose_design
+        or mouth_design
     ) and prefix in {
         "assets/aster/general_face_eyes_795/",
         "assets/aster/general_face_eyes_796/",
@@ -151,11 +153,21 @@ def build_request(
         baseline_style, mouth_template_report = apply_mouth_template(
             baseline_style, mouth_templates
         )
+        import source_mouth_design as mouth_adapter
+
+        baseline_style = mouth_adapter.apply(
+            baseline_style,
+            mouth_design,
+            lip_parameters,
+            component_parameters,
+            mouth_templates,
+        )
         style = builder.adapt_style(baseline_style, builder.validate(eyes))
         face = adapt_lip_source(
             (recipe / "face.py").read_text(), baseline_style["calibration"]
         )
         face = adapt_mouth_face(face, mouth_template_report is not None)
+        face = mouth_adapter.module().adapt_face(face, mouth_design)
         face = adapt_nose_face(face, nose_template_report is not None)
         face = nose_adapter.module().adapt_face(face, nose_design)
         from source_upper_warp import adapt_face_source
@@ -240,6 +252,13 @@ def depth(x, y):"""
                         mouth_template_report is not None,
                     )
                 )
+            for name in ("mouth.py", "textures.py", "crease_rules.py"):
+                path = snapshot / name
+                path.write_text(
+                    mouth_adapter.module().adapt_companion(
+                        name, path.read_text(), mouth_design
+                    )
+                )
             for companion in ("nose_refine.py", "nose_fair.py"):
                 (snapshot / companion).write_text(
                     nose_adapter.module().companion(
@@ -322,7 +341,12 @@ def depth(x, y):"""
             (snapshot / "eye_socket.py").write_text(socket)
             builder.RECIPE = snapshot
             request = builder.build_request(
-                eyes, prefix, workspace, blink=blink, brow_design=brow_design
+                eyes,
+                prefix,
+                workspace,
+                blink=blink,
+                brow_design=brow_design,
+                mouth_design=mouth_design,
             )
     finally:
         sys.path.remove(str(EYES))
@@ -330,7 +354,12 @@ def depth(x, y):"""
     preamble = 'import types, sys\n_facial = types.ModuleType("facial_surface_runtime")\nsys.modules["facial_surface_runtime"] = _facial\n'
     preamble += f'exec(compile({module!r}, "facial_surface_runtime.py", "exec"), _facial.__dict__)\n'
     preamble += f"_facial.DATA = {data!r}\n_facial.REVIEWED_BOUND = {reviewed_support_bound_m!r}\n"
-    request["code"] = nose_adapter.preamble(nose_design) + preamble + request["code"]
+    request["code"] = (
+        mouth_adapter.module().preamble(mouth_design)
+        + nose_adapter.preamble(nose_design)
+        + preamble
+        + request["code"]
+    )
     profile_scope = (
         "Layered eye art direction plus reduced nose-plane pigment; nose geometry unchanged"
         if style_profile in ("emerald_layered", "emerald_illustrated")
@@ -364,6 +393,16 @@ def depth(x, y):"""
         request[
             "code"
         ] += f'report["nose_design"] = {{"parameters": {nose_design!r}, "source_sha256": {nose_design_report["source_sha256"]!r}, "attachments": _nose_runtime.NOSE_MESH_REPORT}}\n'
+    if mouth_design is not None:
+        mouth_record = {
+            "parameters": mouth_design,
+            "source_sha256": mouth_adapter.module().provenance(),
+            "authored_support_envelope_m": style["calibration"]["height_m"]
+            * mouth_design["muzzle_projection"],
+            "scope": "Authored support field envelope; not baseline displacement, collision or speech proof",
+        }
+        report["mouth_design"] = mouth_record
+        request["code"] += f'report["mouth_design"] = {mouth_record!r}\n'
     if silhouette_report is not None:
         report["silhouette"] = silhouette_report
     if normal_amount:
@@ -412,6 +451,11 @@ def depth(x, y):"""
             data=data,
             report=report,
             nose_library_sources=nose_adapter.retained(nose_design),
+            mouth_library_sources=(
+                {}
+                if mouth_design is None
+                else mouth_adapter.module().retained_sources()
+            ),
             packager_helpers={
                 **{path.name: path.read_text() for path in HERE.glob("source_*.py")},
                 "semantic_illustrated_art.py": (

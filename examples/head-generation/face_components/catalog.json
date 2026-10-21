@@ -224,6 +224,18 @@
     },
     "bowed-contour": {
       "template_id": "bowed-mouth-contour-v1"
+    },
+    "research-line": {
+      "design": "line"
+    },
+    "research-lip-band": {
+      "design": "lip-band"
+    },
+    "research-round-muzzle": {
+      "design": "round-muzzle"
+    },
+    "research-short-muzzle": {
+      "design": "short-muzzle"
     }
   },
   "nose": {

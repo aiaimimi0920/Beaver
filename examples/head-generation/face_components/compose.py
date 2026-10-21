@@ -55,7 +55,13 @@ def resolved_brow_design(preset, overrides):
     return module.validate({**design, **(overrides or {})})
 
 
-def resolve(selection, fit_policy="legacy", brow_overrides=None, nose_overrides=None):
+def resolve(
+    selection,
+    fit_policy="legacy",
+    brow_overrides=None,
+    nose_overrides=None,
+    mouth_overrides=None,
+):
     if fit_policy not in ("legacy", "skin-seated-075"):
         raise ValueError("Unknown explicit fit policy")
     if not isinstance(selection, dict) or set(selection) != set(SLOTS):
@@ -68,6 +74,11 @@ def resolve(selection, fit_policy="legacy", brow_overrides=None, nose_overrides=
 
     nose_design, nose_hashes = resolve_nose(
         catalog["nose"][selection["nose"]], nose_overrides
+    )
+    from mouth_selection import resolve_mouth
+
+    mouth_design, mouth_hashes = resolve_mouth(
+        catalog["mouth"][selection["mouth"]], mouth_overrides
     )
     eye_id = catalog["eyes"][selection["eyes"]]
     if eye_id == "baseline-795":
@@ -92,6 +103,7 @@ def resolve(selection, fit_policy="legacy", brow_overrides=None, nose_overrides=
         parameters["lateral_guide_regularization"] = 0.75
     owned_keys = {
         "mouth": {
+            "design",
             "mouth_width_scale",
             "upper_lip_relief_scale",
             "upper_lip_lateral_power",
@@ -163,7 +175,7 @@ def resolve(selection, fit_policy="legacy", brow_overrides=None, nose_overrides=
         "lip_parameters": {
             k: v
             for k, v in mouth.items()
-            if k not in ("mouth_width_scale", "template_id")
+            if k not in ("mouth_width_scale", "template_id", "design")
         },
         "component_parameters": components,
         "style_profile": spec["style_profile"],
@@ -203,6 +215,9 @@ def resolve(selection, fit_policy="legacy", brow_overrides=None, nose_overrides=
     if nose_design is not None:
         resolved["nose_design"] = nose_design
         resolved["nose_source_sha256"] = nose_hashes
+    if mouth_design is not None:
+        resolved["mouth_design"] = mouth_design
+        resolved["mouth_source_sha256"] = mouth_hashes
     return {**resolved, "composition_sha256": digest(resolved)}
 
 

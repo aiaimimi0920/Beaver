@@ -1,0 +1,45 @@
+{
+  "scope": "Five actual native generations after source-layout refactoring reproduce byte-identical exported GLBs. This does not independently execute the retained disk launcher and does not replace source-packaging, SDF, capture or runtime acceptance.",
+  "cases": [
+    {
+      "original_candidate": "combo890",
+      "regenerated_candidate": "combo892",
+      "glb_sha256": "d09ec95a68250e5e7966fd05cee40e20fc2655a5d303b526272582ce5f32ea5c",
+      "native_generation_job": "eb5b669c-876e-43ce-bf77-bddbb38fd225",
+      "native_generation_script_sha256": "3ef5d21ae99470635117dc349c925f54b821b3608758624078764bb0523f410d",
+      "native_generation_receipt_sha256": "b6f4ec3d7e293da54588038eb17a6e065073442d6f88f9c02ee482597b947583"
+    },
+    {
+      "original_candidate": "combo886",
+      "regenerated_candidate": "combo893",
+      "glb_sha256": "05ce1c3b718e1ca1da052bc7db02b9a1f29c3c9051b2cecbccba69a6943eda87",
+      "native_generation_job": "8cbd563f-b052-4cda-9553-49a89baf581b",
+      "native_generation_script_sha256": "726b994d220449d1e67f00fb876dafd4389ad76c5c9b5ecd5960fc231c51b44a",
+      "native_generation_receipt_sha256": "1d244d69bfa49c316197f825f78c7e509265533deb761c69c454922b7f021be3"
+    },
+    {
+      "original_candidate": "combo887",
+      "regenerated_candidate": "combo894",
+      "glb_sha256": "5a052a991c770993f908ce3e0c7441aa107d3a5bd5bff743934ea9f61bcb4cb3",
+      "native_generation_job": "d37fe6e6-62ef-4595-ac86-37e343e0463c",
+      "native_generation_script_sha256": "5d2067d0b4266c885673b8973ae86d7415202b69e4eb9bf35c8223d18439d9d5",
+      "native_generation_receipt_sha256": "94a0dc93aef0ad08e9e7d8f4376886d9ac091cf0c801048228ba06ba743cd03d"
+    },
+    {
+      "original_candidate": "combo891",
+      "regenerated_candidate": "combo895",
+      "glb_sha256": "12e25a0fd83c6dab7e6b5c6902634fed21f4c66744209dfa86f550715d995dc2",
+      "native_generation_job": "a1ae88b1-8589-4a87-9466-c17b58fe25b0",
+      "native_generation_script_sha256": "2aa8e08a39f0506f2fd0eeac4840749c5a841aefd701ab66334ea3511f320306",
+      "native_generation_receipt_sha256": "7c0d6a8dcb020dc0dacb211ef5df12ba96591cf7c5742ddd91f43feeac066c88"
+    },
+    {
+      "original_candidate": "combo889",
+      "regenerated_candidate": "combo896",
+      "glb_sha256": "f38308cb166a56493cf221647895327486b9c9e83807713ab5e89a08812ef78d",
+      "native_generation_job": "9c8b8d8a-a799-4432-9482-698c4ce90cc4",
+      "native_generation_script_sha256": "0c13e3e8f58de310a426965262d2384fff04a954c8e45acd36b1a0fdc07135e6",
+      "native_generation_receipt_sha256": "f848412a269c182421ec79661b677f591eb35f6010c45b87dd801d4ed95c4969"
+    }
+  ]
+}

@@ -36,12 +36,14 @@ def scope(source, c, fit, amount):
         )
         else set()
     )
-    if c.get("mouth_seam_bow_height", 0):
+    if c.get("mouth_seam_bow_height", 0) or c.get("mouth_design"):
         helpers |= {"mouth_profile_shift", "mouth_rest_seam_y"}
     if c.get("nose_template_mode") == "rounded-quartic":
         helpers.add("nasal_projection_curve")
     if c.get("nose_design"):
         helpers.add("researched_muzzle")
+    if c.get("mouth_design"):
+        helpers.add("researched_mouth_support")
     required = FUNCTIONS | helpers
     nodes = [
         n

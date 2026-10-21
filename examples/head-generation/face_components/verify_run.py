@@ -10,6 +10,8 @@ from compose import HERE, verify_snapshot
 from verify_outline import verify_outline_guard
 from brow_evidence import verify_brow_artifacts
 from nose_evidence import verify_nose_artifacts
+from mouth_evidence import verify_mouth_artifacts
+from source_layout_bridge import verify_packaging
 
 
 def verify_requested_composition(snapshot, spec):
@@ -20,8 +22,11 @@ def verify_requested_composition(snapshot, spec):
     ):
         raise ValueError("Requested selection or fit policy mismatch")
     expected = spec.get("composition_sha256")
-    if snapshot.get("nose_design") is not None and expected is None:
-        raise ValueError("Researched nose requires requested composition identity")
+    if (
+        snapshot.get("nose_design") is not None
+        or snapshot.get("mouth_design") is not None
+    ) and expected is None:
+        raise ValueError("Researched design requires requested composition identity")
     if expected is not None and expected != snapshot.get("composition_sha256"):
         raise ValueError("Requested composition identity mismatch")
 
@@ -155,9 +160,17 @@ def verify_run(spec):
     ):
         raise ValueError("SDF binding differs from generation job")
     report = json.loads(resource(root, prefix + "generation_report.json").read_text())
+    verify_packaging(
+        report,
+        root,
+        prefix,
+        spec["generation_receipt"],
+        spec.get("source_packaging_receipt"),
+    )
     snapshot = verify_snapshot(report["face_components"])
     verify_brow_artifacts(snapshot, report, root, prefix, generated)
     verify_nose_artifacts(snapshot, report, root, prefix, generated)
+    verify_mouth_artifacts(snapshot, report, root, prefix, generated)
     verify_outline_guard(snapshot, report)
     verify_template_reports(
         snapshot,
@@ -210,6 +223,19 @@ def verify_run(spec):
         )
         for profile in ("eye", "mouth")
     }
+    if snapshot.get("mouth_design") is not None:
+        import sys
+
+        library = HERE.parent / "mouth_library"
+        sys.path.insert(0, str(library))
+        module_spec = importlib.util.spec_from_file_location(
+            "mouth_motion_capture_verifier", library / "verify_capture.py"
+        )
+        module = importlib.util.module_from_spec(module_spec)
+        module_spec.loader.exec_module(module)
+        captures["mouth_motion"] = module.verify_capture(
+            root, spec["mouth_motion_manifest"], "res://" + prefix + "aster_head.glb"
+        )
     return {
         "status": "technically_verified",
         "selection": spec["selection"],

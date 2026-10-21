@@ -19,7 +19,11 @@ HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE.parent / "brow_library"))
 try:
     from brow_design import validate as validate_brow_design
-    from brow_source import adapt as adapt_brow_design, retained_sources as retained_brow_sources, provenance as brow_provenance
+    from brow_source import (
+        adapt as adapt_brow_design,
+        retained_sources as retained_brow_sources,
+        provenance as brow_provenance,
+    )
     from brow_source import validate_geometry_style
     from brow_source import runtime_source as brow_runtime_source
 finally:
@@ -43,7 +47,15 @@ def replace_once(source, old, new):
     return source.replace(old, new, 1)
 
 
-def build_request(parameters, output_prefix, workspace, *, blink=False, brow_design=None):
+def build_request(
+    parameters,
+    output_prefix,
+    workspace,
+    *,
+    blink=False,
+    brow_design=None,
+    mouth_design=None,
+):
     p = validate(parameters)
     brow_design = validate_brow_design(brow_design)
     if type(blink) is not bool:
@@ -60,10 +72,16 @@ def build_request(parameters, output_prefix, workspace, *, blink=False, brow_des
         raise ValueError("Use assets/aster/general_face_eyes_<case>/")
     root = Path(workspace)
     if brow_design is not None and (
-        output_prefix in {"assets/aster/general_face_eyes_795/", "assets/aster/general_face_eyes_796/"}
+        output_prefix
+        in {
+            "assets/aster/general_face_eyes_795/",
+            "assets/aster/general_face_eyes_796/",
+        }
         or (root / output_prefix).exists()
     ):
-        raise ValueError("Researched brows require a fresh non-baseline output directory")
+        raise ValueError(
+            "Researched brows require a fresh non-baseline output directory"
+        )
     missing = [name for name in REQUIRED if not (root / name).is_file()]
     if missing:
         raise ValueError("Missing fresh recipe inputs: " + ", ".join(missing))
@@ -353,6 +371,15 @@ def build_request(parameters, output_prefix, workspace, *, blink=False, brow_des
 
         sources = adapt_sources(sources)
     sources["ear_return.py"] = adapt_return_order(sources["ear_return.py"])
+    if mouth_design is not None:
+        old_mouth_path = sys.path[:]
+        sys.path.insert(0, str(HERE.parent / "mouth_library"))
+        try:
+            from mouth_source import adapt_export_sources
+
+            sources = adapt_export_sources(sources, mouth_design, blink)
+        finally:
+            sys.path[:] = old_mouth_path
     base.OUTPUT_PREFIX = output_prefix
     with tempfile.TemporaryDirectory() as directory:
         snapshot = Path(directory)
@@ -404,12 +431,18 @@ def build_request(parameters, output_prefix, workspace, *, blink=False, brow_des
         ),
     }
     if brow_design is not None:
-        retained["semantic_bundle.py"] += "\nRETAINED_BROW_DESIGN_SOURCES = " + repr(retained_brow_sources()) + "\n"
+        retained["semantic_bundle.py"] += (
+            "\nRETAINED_BROW_DESIGN_SOURCES = " + repr(retained_brow_sources()) + "\n"
+        )
         preamble = 'import types, sys\n_brow_runtime = types.ModuleType("researched_brow_runtime")\nsys.modules["researched_brow_runtime"] = _brow_runtime\n'
         preamble += f'exec(compile({brow_runtime_source()!r}, "researched_brow_runtime", "exec"), _brow_runtime.__dict__)\n'
         request["code"] = preamble + request["code"]
-        request["code"] += f'report["brow_design"] = {{"parameters": {brow_design!r}, "source_sha256": {brow_provenance()!r}, "sides": _brow_runtime.BROW_GEOMETRY_REPORT}}\n'
-        request["code"] += f'Path(beaver_output({output_prefix + "generation_report.json"!r})).write_text(json.dumps(report, indent=2))\n'
+        request[
+            "code"
+        ] += f'report["brow_design"] = {{"parameters": {brow_design!r}, "source_sha256": {brow_provenance()!r}, "sides": _brow_runtime.BROW_GEOMETRY_REPORT}}\n'
+        request[
+            "code"
+        ] += f'Path(beaver_output({output_prefix + "generation_report.json"!r})).write_text(json.dumps(report, indent=2))\n'
     for name, source in retained.items():
         request[
             "code"

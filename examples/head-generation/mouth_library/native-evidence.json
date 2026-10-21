@@ -1,0 +1,835 @@
+{
+  "schema_version": 1,
+  "scope": "Historical verified native samples only; no automatic acceptance of current output, all controls or untested combinations.",
+  "samples": [
+    {
+      "candidate": "combo893",
+      "status": "technically_verified",
+      "selection": {
+        "eyes": "downturned",
+        "brows": "soft-arched",
+        "mouth": "research-line",
+        "nose": "research-balanced",
+        "ears": "retained",
+        "face": "narrow-chin"
+      },
+      "fit_policy": "legacy",
+      "composition_sha256": "fdd45e8be6a728b5c7fde0828b4d228d9a28d526d4aad72e6972b6f29b7fc682",
+      "glb_sha256": "05ce1c3b718e1ca1da052bc7db02b9a1f29c3c9051b2cecbccba69a6943eda87",
+      "generation_job": "8cbd563f-b052-4cda-9553-49a89baf581b",
+      "sdf_job": "d4c8b5fd-3a9a-4229-a7d0-49eea75d1573",
+      "captures": {
+        "eye": {
+          "captures_verified": 84,
+          "source_sha256": "05ce1c3b718e1ca1da052bc7db02b9a1f29c3c9051b2cecbccba69a6943eda87",
+          "camera_size": 0.430432230234146,
+          "scope": "Integrity, expression and view state; not aesthetic acceptance"
+        },
+        "mouth": {
+          "captures_verified": 18,
+          "source_sha256": "05ce1c3b718e1ca1da052bc7db02b9a1f29c3c9051b2cecbccba69a6943eda87",
+          "camera_size": 0.430432230234146,
+          "scope": "Integrity, expression and view state; not aesthetic acceptance"
+        },
+        "mouth_motion": {
+          "captures_verified": 92,
+          "source_sha256": "05ce1c3b718e1ca1da052bc7db02b9a1f29c3c9051b2cecbccba69a6943eda87",
+          "scope": "Sampled manual controller and image integrity; not aesthetic, speech or continuous collision acceptance"
+        }
+      },
+      "scope": "Current artifact integrity and recorded native states, not aesthetic approval, current-generator reproducibility or untested combinations",
+      "mouth_design": {
+        "parameters": {
+          "version": 1,
+          "kind": "line",
+          "half_width": 0.065,
+          "corner_lift": -0.001,
+          "seam_bow": 0.0,
+          "lip_band_width_m": 0.0003,
+          "lip_strength": 0.62,
+          "muzzle_projection": 0.0,
+          "muzzle_half_width": 0.13
+        },
+        "source_sha256": {
+          "mouth_design.py": "76373dfaeb81897169a54b592bc81aeda7285d09ffc70d7d5dfb0e846bf985ac",
+          "mouth_field.py": "03de0cd0df45f5b618c8e9b12267b2b64958351f2b482f00985b30b857246e3d",
+          "mouth_motion.py": "0df080f89b8f6c4dc520aee143ecca242fea436ee32b77a1d1daf2867acacd09",
+          "mouth_morphs.py": "f8fd0cfaa72a77cbfc3ede55851559da99c44a5ada84f7c8a93caae6468bb655",
+          "mouth_source.py": "7e442676a354210e03755869287844e3f15c2026b22d0ab12d8554d82bb02f82"
+        },
+        "authored_support_envelope_m": 0.0,
+        "scope": "Authored support field envelope; not baseline displacement, collision or speech proof"
+      },
+      "motion_geometry": {
+        "binding_scope": "All triangle-referenced vertices; loose vertices excluded",
+        "target_names": [
+          "MouthOpen",
+          "blink.L",
+          "blink.R",
+          "MouthRound",
+          "MouthSpread",
+          "MouthPucker"
+        ],
+        "new_targets": [
+          "MouthRound",
+          "MouthSpread",
+          "MouthPucker"
+        ],
+        "changed_vertices": {
+          "MouthRound": 724,
+          "MouthSpread": 688,
+          "MouthPucker": 720
+        },
+        "max_displacement_m": {
+          "MouthRound": 0.003358043497563636,
+          "MouthSpread": 0.002426067367196083,
+          "MouthPucker": 0.004247643053531647
+        },
+        "outside_owned_components_unchanged": true,
+        "blink_overlap_vertices": 0,
+        "sampled_combinations": 81,
+        "sampled_triangles": 1482,
+        "minimum_sampled_area_m2": 4.362889469730451e-09,
+        "minimum_sampled_normal_dot": 1.2688594933102975e-16,
+        "scope": "81 sampled open/round/spread/pucker states on affected triangles; no continuous-domain, self-collision, oral-clearance or speech proof"
+      },
+      "native_report_sha256": "19bfd496f656e4285a9baf15ec74227acebaafbc40fe713184d091e2ee2e8a40",
+      "native_surface_vertices": 6096,
+      "native_triangles": 10980,
+      "visual_status": "contact_sheets_reviewed",
+      "visual_scope": "Sampled head-only review, not final character art, speech alignment or global collision acceptance",
+      "source_packaging_job": "4076b8ed-e50e-4740-9651-b6cc02a0d482",
+      "source_packaging_receipt_sha256": "67697c24bc075e400c41873c13bcda43041a25da268f169aa3eaf7514ebc7d18",
+      "source_layout": {
+        "schema_version": 1,
+        "records": [
+          {
+            "path": "pipeline.py",
+            "kind": "pipeline_stages",
+            "prefix": "assets/aster/general_face_eyes_combo893/",
+            "original_sha256": "ddac9808560aeebe4d6b5bb59cf2fdb69e8e98cb6a739a8860ee867ad0a72179",
+            "entry_sha256": "7f097fa767dbbdb7b28499b77ce96d00582557b8ed865087e68a757058587891",
+            "stages": [
+              {
+                "path": "pipeline_geometry.py",
+                "sha256": "e21578e697756157afb7dd7ddb37bb2d6ed3bdc2eb3714d020ae28e94de8b42f"
+              },
+              {
+                "path": "pipeline_assembly.py",
+                "sha256": "c216330cfd728f2cbc4022a01436d7792a160603653560cbbc2ca6747292409b"
+              },
+              {
+                "path": "pipeline_runtime.py",
+                "sha256": "5ed4be1ec187df79547a0e331df0272be4e3ca71e8fcd4443d46fff7c908a8b6"
+              },
+              {
+                "path": "pipeline_export.py",
+                "sha256": "f509e981796659a8801ebd2c3712a13fa324d064092fdee2dbd4d86be1c1ce1a"
+              }
+            ]
+          },
+          {
+            "path": "semantic_parameters.py",
+            "kind": "parameter_curves",
+            "original_sha256": "dda1ae3cd671982de8bfae6874b40065c6c0c2331d863ebcabb6af0bb96019ed",
+            "entry_sha256": "d50b970c64509016f7523c122c03628f6a54616aa623c66d6f39ef196b58c9f9",
+            "helper_sha256": "0e2d8b206324cd1ed1dd358786186c29fab42a92b95f8cba26815aaac6c3eed0",
+            "entry_prefix_bytes": 293,
+            "entry_prefix_sha256": "500d256434653df842a9f5c593efc709e6bc620e9b039493ae8604d0cac9bd04",
+            "exports": [
+              "angular_coordinate",
+              "angular_derivative",
+              "eye_warp",
+              "eye_warp_derivative",
+              "upper_shape",
+              "upper_shape_derivative",
+              "lower_coordinate",
+              "lower_shape"
+            ]
+          }
+        ],
+        "helper_sha256": {
+          "assets/aster/general_face_eyes_combo893/pipeline_geometry.py": "e21578e697756157afb7dd7ddb37bb2d6ed3bdc2eb3714d020ae28e94de8b42f",
+          "assets/aster/general_face_eyes_combo893/pipeline_assembly.py": "c216330cfd728f2cbc4022a01436d7792a160603653560cbbc2ca6747292409b",
+          "assets/aster/general_face_eyes_combo893/pipeline_runtime.py": "5ed4be1ec187df79547a0e331df0272be4e3ca71e8fcd4443d46fff7c908a8b6",
+          "assets/aster/general_face_eyes_combo893/pipeline_export.py": "f509e981796659a8801ebd2c3712a13fa324d064092fdee2dbd4d86be1c1ce1a",
+          "assets/aster/general_face_eyes_combo893/semantic_parameter_curves.py": "0e2d8b206324cd1ed1dd358786186c29fab42a92b95f8cba26815aaac6c3eed0"
+        },
+        "scope": "Ordinary Python source modules, all declared across generation and source-packaging jobs; original recipes unchanged."
+      },
+      "visual_review": {
+        "scope": "All194staticcaptures, not continuouscollision or finalproductacceptance",
+        "review": "No visible blocking regression found. Front and oblique opening changes remain local; both profile silhouettes continuous; eye closure and mouth combinations remain distinct. Bright cavity in white-material mode is expected and not classified as penetration.",
+        "reviewers": "root inspected84eye+18mouth; independent read-only reviewer inspectedall194"
+      }
+    },
+    {
+      "candidate": "combo894",
+      "status": "technically_verified",
+      "selection": {
+        "eyes": "downturned",
+        "brows": "soft-arched",
+        "mouth": "research-lip-band",
+        "nose": "research-balanced",
+        "ears": "retained",
+        "face": "narrow-chin"
+      },
+      "fit_policy": "legacy",
+      "composition_sha256": "e793253c35676826042b47edad3377bbd09ef63de335ca7fc8281a6069967bb5",
+      "glb_sha256": "5a052a991c770993f908ce3e0c7441aa107d3a5bd5bff743934ea9f61bcb4cb3",
+      "generation_job": "d37fe6e6-62ef-4595-ac86-37e343e0463c",
+      "sdf_job": "b625aa30-44cb-4eda-8f92-a412a5441008",
+      "captures": {
+        "eye": {
+          "captures_verified": 84,
+          "source_sha256": "5a052a991c770993f908ce3e0c7441aa107d3a5bd5bff743934ea9f61bcb4cb3",
+          "camera_size": 0.430432230234146,
+          "scope": "Integrity, expression and view state; not aesthetic acceptance"
+        },
+        "mouth": {
+          "captures_verified": 18,
+          "source_sha256": "5a052a991c770993f908ce3e0c7441aa107d3a5bd5bff743934ea9f61bcb4cb3",
+          "camera_size": 0.430432230234146,
+          "scope": "Integrity, expression and view state; not aesthetic acceptance"
+        },
+        "mouth_motion": {
+          "captures_verified": 92,
+          "source_sha256": "5a052a991c770993f908ce3e0c7441aa107d3a5bd5bff743934ea9f61bcb4cb3",
+          "scope": "Sampled manual controller and image integrity; not aesthetic, speech or continuous collision acceptance"
+        }
+      },
+      "scope": "Current artifact integrity and recorded native states, not aesthetic approval, current-generator reproducibility or untested combinations",
+      "mouth_design": {
+        "parameters": {
+          "version": 1,
+          "kind": "lip-band",
+          "half_width": 0.065,
+          "corner_lift": -0.001,
+          "seam_bow": 0.0014,
+          "lip_band_width_m": 0.0012,
+          "lip_strength": 0.5,
+          "muzzle_projection": 0.0,
+          "muzzle_half_width": 0.13
+        },
+        "source_sha256": {
+          "mouth_design.py": "76373dfaeb81897169a54b592bc81aeda7285d09ffc70d7d5dfb0e846bf985ac",
+          "mouth_field.py": "03de0cd0df45f5b618c8e9b12267b2b64958351f2b482f00985b30b857246e3d",
+          "mouth_motion.py": "0df080f89b8f6c4dc520aee143ecca242fea436ee32b77a1d1daf2867acacd09",
+          "mouth_morphs.py": "f8fd0cfaa72a77cbfc3ede55851559da99c44a5ada84f7c8a93caae6468bb655",
+          "mouth_source.py": "7e442676a354210e03755869287844e3f15c2026b22d0ab12d8554d82bb02f82"
+        },
+        "authored_support_envelope_m": 0.0,
+        "scope": "Authored support field envelope; not baseline displacement, collision or speech proof"
+      },
+      "motion_geometry": {
+        "binding_scope": "All triangle-referenced vertices; loose vertices excluded",
+        "target_names": [
+          "MouthOpen",
+          "blink.L",
+          "blink.R",
+          "MouthRound",
+          "MouthSpread",
+          "MouthPucker"
+        ],
+        "new_targets": [
+          "MouthRound",
+          "MouthSpread",
+          "MouthPucker"
+        ],
+        "changed_vertices": {
+          "MouthRound": 724,
+          "MouthSpread": 688,
+          "MouthPucker": 720
+        },
+        "max_displacement_m": {
+          "MouthRound": 0.003358043497563636,
+          "MouthSpread": 0.002426067367196083,
+          "MouthPucker": 0.004247643053531647
+        },
+        "outside_owned_components_unchanged": true,
+        "blink_overlap_vertices": 0,
+        "sampled_combinations": 81,
+        "sampled_triangles": 1482,
+        "minimum_sampled_area_m2": 4.362889469730451e-09,
+        "minimum_sampled_normal_dot": 1.2688594933102975e-16,
+        "scope": "81 sampled open/round/spread/pucker states on affected triangles; no continuous-domain, self-collision, oral-clearance or speech proof"
+      },
+      "native_report_sha256": "d44f835f90dfd3aa3660c0ceb3a9385628646e391b150ffbe84aa5f03da2d798",
+      "native_surface_vertices": 6096,
+      "native_triangles": 10980,
+      "visual_status": "contact_sheets_reviewed",
+      "visual_scope": "Sampled head-only review, not final character art, speech alignment or global collision acceptance",
+      "source_packaging_job": "7b4b2e75-62cb-4bff-9ce6-ccf8f7b33df4",
+      "source_packaging_receipt_sha256": "6d0da04fd74ee42a35cb014263193b83a60efc30184f658713f2f8722b01a0b1",
+      "source_layout": {
+        "schema_version": 1,
+        "records": [
+          {
+            "path": "pipeline.py",
+            "kind": "pipeline_stages",
+            "prefix": "assets/aster/general_face_eyes_combo894/",
+            "original_sha256": "cf58e6116d0d78647dd188b08b9601fc58d16542f10930a144e2c284ee29fe3a",
+            "entry_sha256": "8c69c230eaf51546c4f0481cd0ec0b5b3034e6daf6c03e5232a8613a43600b4a",
+            "stages": [
+              {
+                "path": "pipeline_geometry.py",
+                "sha256": "f99bf27cf7c2c7b66f09005664c236ebb8497ae074076e422af8c0e4958c6296"
+              },
+              {
+                "path": "pipeline_assembly.py",
+                "sha256": "c216330cfd728f2cbc4022a01436d7792a160603653560cbbc2ca6747292409b"
+              },
+              {
+                "path": "pipeline_runtime.py",
+                "sha256": "5ed4be1ec187df79547a0e331df0272be4e3ca71e8fcd4443d46fff7c908a8b6"
+              },
+              {
+                "path": "pipeline_export.py",
+                "sha256": "f509e981796659a8801ebd2c3712a13fa324d064092fdee2dbd4d86be1c1ce1a"
+              }
+            ]
+          },
+          {
+            "path": "semantic_parameters.py",
+            "kind": "parameter_curves",
+            "original_sha256": "dda1ae3cd671982de8bfae6874b40065c6c0c2331d863ebcabb6af0bb96019ed",
+            "entry_sha256": "d50b970c64509016f7523c122c03628f6a54616aa623c66d6f39ef196b58c9f9",
+            "helper_sha256": "0e2d8b206324cd1ed1dd358786186c29fab42a92b95f8cba26815aaac6c3eed0",
+            "entry_prefix_bytes": 293,
+            "entry_prefix_sha256": "500d256434653df842a9f5c593efc709e6bc620e9b039493ae8604d0cac9bd04",
+            "exports": [
+              "angular_coordinate",
+              "angular_derivative",
+              "eye_warp",
+              "eye_warp_derivative",
+              "upper_shape",
+              "upper_shape_derivative",
+              "lower_coordinate",
+              "lower_shape"
+            ]
+          }
+        ],
+        "helper_sha256": {
+          "assets/aster/general_face_eyes_combo894/pipeline_geometry.py": "f99bf27cf7c2c7b66f09005664c236ebb8497ae074076e422af8c0e4958c6296",
+          "assets/aster/general_face_eyes_combo894/pipeline_assembly.py": "c216330cfd728f2cbc4022a01436d7792a160603653560cbbc2ca6747292409b",
+          "assets/aster/general_face_eyes_combo894/pipeline_runtime.py": "5ed4be1ec187df79547a0e331df0272be4e3ca71e8fcd4443d46fff7c908a8b6",
+          "assets/aster/general_face_eyes_combo894/pipeline_export.py": "f509e981796659a8801ebd2c3712a13fa324d064092fdee2dbd4d86be1c1ce1a",
+          "assets/aster/general_face_eyes_combo894/semantic_parameter_curves.py": "0e2d8b206324cd1ed1dd358786186c29fab42a92b95f8cba26815aaac6c3eed0"
+        },
+        "scope": "Ordinary Python source modules, all declared across generation and source-packaging jobs; original recipes unchanged."
+      },
+      "visual_review": {
+        "scope": "All194sampledstaticframes, not continuouscollision/unsampledparameters/finalacceptance",
+        "review": "No visible blocking regression. Frontal, oblique and profile mouth shapes remain local; lip/notch/jaw silhouette continuous; no visible cheek cavity leakage, detached lip pieces, large missing faces or unintended eye coupling.",
+        "reviewers": "Independent read-only visual reviewer inspected all194"
+      }
+    },
+    {
+      "candidate": "combo895",
+      "status": "technically_verified",
+      "selection": {
+        "eyes": "downturned",
+        "brows": "soft-arched",
+        "mouth": "research-round-muzzle",
+        "nose": "research-balanced",
+        "ears": "retained",
+        "face": "narrow-chin"
+      },
+      "fit_policy": "legacy",
+      "composition_sha256": "4502ecf30e24b8008cfeb24fa844b97ba580deb54520245db968fb762f68f4f8",
+      "glb_sha256": "12e25a0fd83c6dab7e6b5c6902634fed21f4c66744209dfa86f550715d995dc2",
+      "generation_job": "a1ae88b1-8589-4a87-9466-c17b58fe25b0",
+      "sdf_job": "cf325cbc-d1e5-4473-bc16-ea72534eaa68",
+      "captures": {
+        "eye": {
+          "captures_verified": 84,
+          "source_sha256": "12e25a0fd83c6dab7e6b5c6902634fed21f4c66744209dfa86f550715d995dc2",
+          "camera_size": 0.430432230234146,
+          "scope": "Integrity, expression and view state; not aesthetic acceptance"
+        },
+        "mouth": {
+          "captures_verified": 18,
+          "source_sha256": "12e25a0fd83c6dab7e6b5c6902634fed21f4c66744209dfa86f550715d995dc2",
+          "camera_size": 0.430432230234146,
+          "scope": "Integrity, expression and view state; not aesthetic acceptance"
+        },
+        "mouth_motion": {
+          "captures_verified": 92,
+          "source_sha256": "12e25a0fd83c6dab7e6b5c6902634fed21f4c66744209dfa86f550715d995dc2",
+          "scope": "Sampled manual controller and image integrity; not aesthetic, speech or continuous collision acceptance"
+        }
+      },
+      "scope": "Current artifact integrity and recorded native states, not aesthetic approval, current-generator reproducibility or untested combinations",
+      "mouth_design": {
+        "parameters": {
+          "version": 1,
+          "kind": "muzzle",
+          "half_width": 0.078,
+          "corner_lift": -0.002,
+          "seam_bow": 0.0,
+          "lip_band_width_m": 0.0003,
+          "lip_strength": 0.62,
+          "muzzle_projection": 0.035,
+          "muzzle_half_width": 0.16
+        },
+        "source_sha256": {
+          "mouth_design.py": "76373dfaeb81897169a54b592bc81aeda7285d09ffc70d7d5dfb0e846bf985ac",
+          "mouth_field.py": "03de0cd0df45f5b618c8e9b12267b2b64958351f2b482f00985b30b857246e3d",
+          "mouth_motion.py": "0df080f89b8f6c4dc520aee143ecca242fea436ee32b77a1d1daf2867acacd09",
+          "mouth_morphs.py": "f8fd0cfaa72a77cbfc3ede55851559da99c44a5ada84f7c8a93caae6468bb655",
+          "mouth_source.py": "7e442676a354210e03755869287844e3f15c2026b22d0ab12d8554d82bb02f82"
+        },
+        "authored_support_envelope_m": 0.00826,
+        "scope": "Authored support field envelope; not baseline displacement, collision or speech proof"
+      },
+      "motion_geometry": {
+        "binding_scope": "All triangle-referenced vertices; loose vertices excluded",
+        "target_names": [
+          "MouthOpen",
+          "blink.L",
+          "blink.R",
+          "MouthRound",
+          "MouthSpread",
+          "MouthPucker"
+        ],
+        "new_targets": [
+          "MouthRound",
+          "MouthSpread",
+          "MouthPucker"
+        ],
+        "changed_vertices": {
+          "MouthRound": 724,
+          "MouthSpread": 688,
+          "MouthPucker": 720
+        },
+        "max_displacement_m": {
+          "MouthRound": 0.003358716523045061,
+          "MouthSpread": 0.002423575147986412,
+          "MouthPucker": 0.004247643053531647
+        },
+        "outside_owned_components_unchanged": true,
+        "blink_overlap_vertices": 0,
+        "sampled_combinations": 81,
+        "sampled_triangles": 1482,
+        "minimum_sampled_area_m2": 4.362889469730451e-09,
+        "minimum_sampled_normal_dot": 1.2688594933102975e-16,
+        "scope": "81 sampled open/round/spread/pucker states on affected triangles; no continuous-domain, self-collision, oral-clearance or speech proof"
+      },
+      "native_report_sha256": "dff890af41ebf5a251f8e59b32426b1d44e9cbfee10d664c44b9728c260b9d29",
+      "native_surface_vertices": 6096,
+      "native_triangles": 10980,
+      "visual_status": "contact_sheets_reviewed",
+      "visual_scope": "Sampled head-only review, not final character art, speech alignment or global collision acceptance",
+      "source_packaging_job": "c69e7c50-b510-4f17-92e4-fd8642b6d3f9",
+      "source_packaging_receipt_sha256": "43ca0ccedd5fbec03a8cfa0dcc8f082ee41727e60c3357a017e90f59c8dd2f0d",
+      "source_layout": {
+        "schema_version": 1,
+        "records": [
+          {
+            "path": "pipeline.py",
+            "kind": "pipeline_stages",
+            "prefix": "assets/aster/general_face_eyes_combo895/",
+            "original_sha256": "64f283c0bcb06a07ad73522b68a78173605de6ef26048efc9d0d1b9a898b63cc",
+            "entry_sha256": "d7e5a77a6d95b9504898bcb16059cee32abf39c54f163b46aa7e70da55824a8e",
+            "stages": [
+              {
+                "path": "pipeline_geometry.py",
+                "sha256": "b7717c555b306db0a6ba73da695f0a63035b5117fff647b3db45dcc515c4687d"
+              },
+              {
+                "path": "pipeline_assembly.py",
+                "sha256": "c216330cfd728f2cbc4022a01436d7792a160603653560cbbc2ca6747292409b"
+              },
+              {
+                "path": "pipeline_runtime.py",
+                "sha256": "5ed4be1ec187df79547a0e331df0272be4e3ca71e8fcd4443d46fff7c908a8b6"
+              },
+              {
+                "path": "pipeline_export.py",
+                "sha256": "f509e981796659a8801ebd2c3712a13fa324d064092fdee2dbd4d86be1c1ce1a"
+              }
+            ]
+          },
+          {
+            "path": "semantic_parameters.py",
+            "kind": "parameter_curves",
+            "original_sha256": "dda1ae3cd671982de8bfae6874b40065c6c0c2331d863ebcabb6af0bb96019ed",
+            "entry_sha256": "d50b970c64509016f7523c122c03628f6a54616aa623c66d6f39ef196b58c9f9",
+            "helper_sha256": "0e2d8b206324cd1ed1dd358786186c29fab42a92b95f8cba26815aaac6c3eed0",
+            "entry_prefix_bytes": 293,
+            "entry_prefix_sha256": "500d256434653df842a9f5c593efc709e6bc620e9b039493ae8604d0cac9bd04",
+            "exports": [
+              "angular_coordinate",
+              "angular_derivative",
+              "eye_warp",
+              "eye_warp_derivative",
+              "upper_shape",
+              "upper_shape_derivative",
+              "lower_coordinate",
+              "lower_shape"
+            ]
+          }
+        ],
+        "helper_sha256": {
+          "assets/aster/general_face_eyes_combo895/pipeline_geometry.py": "b7717c555b306db0a6ba73da695f0a63035b5117fff647b3db45dcc515c4687d",
+          "assets/aster/general_face_eyes_combo895/pipeline_assembly.py": "c216330cfd728f2cbc4022a01436d7792a160603653560cbbc2ca6747292409b",
+          "assets/aster/general_face_eyes_combo895/pipeline_runtime.py": "5ed4be1ec187df79547a0e331df0272be4e3ca71e8fcd4443d46fff7c908a8b6",
+          "assets/aster/general_face_eyes_combo895/pipeline_export.py": "f509e981796659a8801ebd2c3712a13fa324d064092fdee2dbd4d86be1c1ce1a",
+          "assets/aster/general_face_eyes_combo895/semantic_parameter_curves.py": "0e2d8b206324cd1ed1dd358786186c29fab42a92b95f8cba26815aaac6c3eed0"
+        },
+        "scope": "Ordinary Python source modules, all declared across generation and source-packaging jobs; original recipes unchanged."
+      },
+      "visual_review": {
+        "scope": "194static samples only; no continuouscollision or allparameter claim",
+        "review": "No definite visual blocker in reviewed samples. Profile lips protrude more by design and retain a continuous jaw contour. Large-open oblique samples72/74 approach lateral projected silhouette with sharper curvature; not classified as penetration from these images. Eye and mouth combinations remain independently legible.",
+        "reviewers": "Independent reviewer all194;root additionally checks motioncontact2"
+      }
+    },
+    {
+      "candidate": "combo896",
+      "status": "technically_verified",
+      "selection": {
+        "eyes": "downturned",
+        "brows": "soft-arched",
+        "mouth": "research-short-muzzle",
+        "nose": "research-balanced",
+        "ears": "retained",
+        "face": "narrow-chin"
+      },
+      "fit_policy": "legacy",
+      "composition_sha256": "c0f9d8d2e0c867ef1f912f72c3dfe4c842b3afabde2c68aac0adcc0a7448bdb5",
+      "glb_sha256": "f38308cb166a56493cf221647895327486b9c9e83807713ab5e89a08812ef78d",
+      "generation_job": "9c8b8d8a-a799-4432-9482-698c4ce90cc4",
+      "sdf_job": "c83bdb6d-1ef9-4ab8-bb17-43ae96b9cfe8",
+      "captures": {
+        "eye": {
+          "captures_verified": 84,
+          "source_sha256": "f38308cb166a56493cf221647895327486b9c9e83807713ab5e89a08812ef78d",
+          "camera_size": 0.430432230234146,
+          "scope": "Integrity, expression and view state; not aesthetic acceptance"
+        },
+        "mouth": {
+          "captures_verified": 18,
+          "source_sha256": "f38308cb166a56493cf221647895327486b9c9e83807713ab5e89a08812ef78d",
+          "camera_size": 0.430432230234146,
+          "scope": "Integrity, expression and view state; not aesthetic acceptance"
+        },
+        "mouth_motion": {
+          "captures_verified": 92,
+          "source_sha256": "f38308cb166a56493cf221647895327486b9c9e83807713ab5e89a08812ef78d",
+          "scope": "Sampled manual controller and image integrity; not aesthetic, speech or continuous collision acceptance"
+        }
+      },
+      "scope": "Current artifact integrity and recorded native states, not aesthetic approval, current-generator reproducibility or untested combinations",
+      "mouth_design": {
+        "parameters": {
+          "version": 1,
+          "kind": "muzzle",
+          "half_width": 0.07,
+          "corner_lift": -0.001,
+          "seam_bow": 0.002,
+          "lip_band_width_m": 0.0003,
+          "lip_strength": 0.62,
+          "muzzle_projection": 0.018,
+          "muzzle_half_width": 0.12
+        },
+        "source_sha256": {
+          "mouth_design.py": "76373dfaeb81897169a54b592bc81aeda7285d09ffc70d7d5dfb0e846bf985ac",
+          "mouth_field.py": "03de0cd0df45f5b618c8e9b12267b2b64958351f2b482f00985b30b857246e3d",
+          "mouth_motion.py": "0df080f89b8f6c4dc520aee143ecca242fea436ee32b77a1d1daf2867acacd09",
+          "mouth_morphs.py": "f8fd0cfaa72a77cbfc3ede55851559da99c44a5ada84f7c8a93caae6468bb655",
+          "mouth_source.py": "7e442676a354210e03755869287844e3f15c2026b22d0ab12d8554d82bb02f82"
+        },
+        "authored_support_envelope_m": 0.004247999999999999,
+        "scope": "Authored support field envelope; not baseline displacement, collision or speech proof"
+      },
+      "motion_geometry": {
+        "binding_scope": "All triangle-referenced vertices; loose vertices excluded",
+        "target_names": [
+          "MouthOpen",
+          "blink.L",
+          "blink.R",
+          "MouthRound",
+          "MouthSpread",
+          "MouthPucker"
+        ],
+        "new_targets": [
+          "MouthRound",
+          "MouthSpread",
+          "MouthPucker"
+        ],
+        "changed_vertices": {
+          "MouthRound": 724,
+          "MouthSpread": 688,
+          "MouthPucker": 720
+        },
+        "max_displacement_m": {
+          "MouthRound": 0.003358199324257493,
+          "MouthSpread": 0.002425979822874069,
+          "MouthPucker": 0.004247643053531647
+        },
+        "outside_owned_components_unchanged": true,
+        "blink_overlap_vertices": 0,
+        "sampled_combinations": 81,
+        "sampled_triangles": 1482,
+        "minimum_sampled_area_m2": 4.362889469730451e-09,
+        "minimum_sampled_normal_dot": 1.2688594933102975e-16,
+        "scope": "81 sampled open/round/spread/pucker states on affected triangles; no continuous-domain, self-collision, oral-clearance or speech proof"
+      },
+      "native_report_sha256": "da58f396fbe3845918b96868588e68d8bd21d528aa626bf21b81455d6eddd534",
+      "native_surface_vertices": 6096,
+      "native_triangles": 10980,
+      "visual_status": "contact_sheets_reviewed",
+      "visual_scope": "Sampled head-only review, not final character art, speech alignment or global collision acceptance",
+      "source_packaging_job": "b28681d4-b962-4179-89e2-54cf7df10c81",
+      "source_packaging_receipt_sha256": "a032ae3d74cb05cf44e9c250c2e7380b4f0832c4a8ff49222f84bee156f26ccd",
+      "source_layout": {
+        "schema_version": 1,
+        "records": [
+          {
+            "path": "pipeline.py",
+            "kind": "pipeline_stages",
+            "prefix": "assets/aster/general_face_eyes_combo896/",
+            "original_sha256": "f4a6b9770f00c0126845250286400ecd56d49565e76b9be154580849fd4b09a7",
+            "entry_sha256": "8a96219f278372206685bb6dd14e341bb31a3c0ec38bc1e4d9989ae291479208",
+            "stages": [
+              {
+                "path": "pipeline_geometry.py",
+                "sha256": "6be32ff125be1d2fab80bc0ad6ddae42dd020c5091c5ff1b3fab8d36dedc0bbd"
+              },
+              {
+                "path": "pipeline_assembly.py",
+                "sha256": "c216330cfd728f2cbc4022a01436d7792a160603653560cbbc2ca6747292409b"
+              },
+              {
+                "path": "pipeline_runtime.py",
+                "sha256": "5ed4be1ec187df79547a0e331df0272be4e3ca71e8fcd4443d46fff7c908a8b6"
+              },
+              {
+                "path": "pipeline_export.py",
+                "sha256": "f509e981796659a8801ebd2c3712a13fa324d064092fdee2dbd4d86be1c1ce1a"
+              }
+            ]
+          },
+          {
+            "path": "semantic_parameters.py",
+            "kind": "parameter_curves",
+            "original_sha256": "dda1ae3cd671982de8bfae6874b40065c6c0c2331d863ebcabb6af0bb96019ed",
+            "entry_sha256": "d50b970c64509016f7523c122c03628f6a54616aa623c66d6f39ef196b58c9f9",
+            "helper_sha256": "0e2d8b206324cd1ed1dd358786186c29fab42a92b95f8cba26815aaac6c3eed0",
+            "entry_prefix_bytes": 293,
+            "entry_prefix_sha256": "500d256434653df842a9f5c593efc709e6bc620e9b039493ae8604d0cac9bd04",
+            "exports": [
+              "angular_coordinate",
+              "angular_derivative",
+              "eye_warp",
+              "eye_warp_derivative",
+              "upper_shape",
+              "upper_shape_derivative",
+              "lower_coordinate",
+              "lower_shape"
+            ]
+          }
+        ],
+        "helper_sha256": {
+          "assets/aster/general_face_eyes_combo896/pipeline_geometry.py": "6be32ff125be1d2fab80bc0ad6ddae42dd020c5091c5ff1b3fab8d36dedc0bbd",
+          "assets/aster/general_face_eyes_combo896/pipeline_assembly.py": "c216330cfd728f2cbc4022a01436d7792a160603653560cbbc2ca6747292409b",
+          "assets/aster/general_face_eyes_combo896/pipeline_runtime.py": "5ed4be1ec187df79547a0e331df0272be4e3ca71e8fcd4443d46fff7c908a8b6",
+          "assets/aster/general_face_eyes_combo896/pipeline_export.py": "f509e981796659a8801ebd2c3712a13fa324d064092fdee2dbd4d86be1c1ce1a",
+          "assets/aster/general_face_eyes_combo896/semantic_parameter_curves.py": "0e2d8b206324cd1ed1dd358786186c29fab42a92b95f8cba26815aaac6c3eed0"
+        },
+        "scope": "Ordinary Python source modules, all declared across generation and source-packaging jobs; original recipes unchanged."
+      },
+      "visual_review": {
+        "scope": "All194static samples; not continuouscollision/allparameters/finalacceptance",
+        "review": "No clear visual blocker. Frontal, oblique and profile mouth states readable; lip and jaw silhouette continuous; eye closures remain independent.",
+        "reviewers": "Independent read-only reviewer inspected all194"
+      }
+    }
+  ],
+  "cross_combinations": [
+    {
+      "candidate": "combo892",
+      "status": "technically_verified",
+      "selection": {
+        "eyes": "almond",
+        "brows": "research-arc-fine",
+        "mouth": "research-lip-band",
+        "nose": "research-compact",
+        "ears": "retained",
+        "face": "narrow-chin"
+      },
+      "fit_policy": "legacy",
+      "composition_sha256": "2ba85be80b29c6b8ba54dc8a449b79912e26d3f91892a47e9dde5e26280c1c45",
+      "glb_sha256": "d09ec95a68250e5e7966fd05cee40e20fc2655a5d303b526272582ce5f32ea5c",
+      "generation_job": "eb5b669c-876e-43ce-bf77-bddbb38fd225",
+      "sdf_job": "f6c470d1-b0fe-47a9-87a4-e719443aab15",
+      "captures": {
+        "eye": {
+          "captures_verified": 84,
+          "source_sha256": "d09ec95a68250e5e7966fd05cee40e20fc2655a5d303b526272582ce5f32ea5c",
+          "camera_size": 0.430432230234146,
+          "scope": "Integrity, expression and view state; not aesthetic acceptance"
+        },
+        "mouth": {
+          "captures_verified": 18,
+          "source_sha256": "d09ec95a68250e5e7966fd05cee40e20fc2655a5d303b526272582ce5f32ea5c",
+          "camera_size": 0.430432230234146,
+          "scope": "Integrity, expression and view state; not aesthetic acceptance"
+        },
+        "mouth_motion": {
+          "captures_verified": 92,
+          "source_sha256": "d09ec95a68250e5e7966fd05cee40e20fc2655a5d303b526272582ce5f32ea5c",
+          "scope": "Sampled manual controller and image integrity; not aesthetic, speech or continuous collision acceptance"
+        }
+      },
+      "scope": "Current artifact integrity and recorded native states, not aesthetic approval, current-generator reproducibility or untested combinations",
+      "mouth_design": {
+        "parameters": {
+          "version": 1,
+          "kind": "lip-band",
+          "half_width": 0.065,
+          "corner_lift": -0.001,
+          "seam_bow": 0.0014,
+          "lip_band_width_m": 0.0012,
+          "lip_strength": 0.5,
+          "muzzle_projection": 0.0,
+          "muzzle_half_width": 0.13
+        },
+        "source_sha256": {
+          "mouth_design.py": "76373dfaeb81897169a54b592bc81aeda7285d09ffc70d7d5dfb0e846bf985ac",
+          "mouth_field.py": "03de0cd0df45f5b618c8e9b12267b2b64958351f2b482f00985b30b857246e3d",
+          "mouth_motion.py": "0df080f89b8f6c4dc520aee143ecca242fea436ee32b77a1d1daf2867acacd09",
+          "mouth_morphs.py": "f8fd0cfaa72a77cbfc3ede55851559da99c44a5ada84f7c8a93caae6468bb655",
+          "mouth_source.py": "7e442676a354210e03755869287844e3f15c2026b22d0ab12d8554d82bb02f82"
+        },
+        "authored_support_envelope_m": 0.0,
+        "scope": "Authored support field envelope; not baseline displacement, collision or speech proof"
+      },
+      "motion_geometry": {
+        "binding_scope": "All triangle-referenced vertices; loose vertices excluded",
+        "target_names": [
+          "MouthOpen",
+          "blink.L",
+          "blink.R",
+          "MouthRound",
+          "MouthSpread",
+          "MouthPucker"
+        ],
+        "new_targets": [
+          "MouthRound",
+          "MouthSpread",
+          "MouthPucker"
+        ],
+        "changed_vertices": {
+          "MouthRound": 724,
+          "MouthSpread": 686,
+          "MouthPucker": 720
+        },
+        "max_displacement_m": {
+          "MouthRound": 0.003358043497563636,
+          "MouthSpread": 0.002426067367196083,
+          "MouthPucker": 0.004247643053531647
+        },
+        "outside_owned_components_unchanged": true,
+        "blink_overlap_vertices": 0,
+        "sampled_combinations": 81,
+        "sampled_triangles": 1482,
+        "minimum_sampled_area_m2": 4.362889469730451e-09,
+        "minimum_sampled_normal_dot": 1.2688594933102975e-16,
+        "scope": "81 sampled open/round/spread/pucker states on affected triangles; no continuous-domain, self-collision, oral-clearance or speech proof"
+      },
+      "native_report_sha256": "81fc4b9aa6028cd7c02cab2bdf6053fcd96d2196dab38cff605b8615fedd9387",
+      "native_surface_vertices": 7446,
+      "native_triangles": 13716,
+      "visual_status": "contact_sheets_reviewed",
+      "visual_scope": "Sampled head-only review, not final character art, speech alignment or global collision acceptance",
+      "source_packaging_job": "f910a14b-8038-4719-98a9-101da1474193",
+      "source_packaging_receipt_sha256": "6ecb29c51f85dc52c9413703d99b6417d897f42150480b36b0a4d5c43db73e7f",
+      "source_layout": {
+        "schema_version": 1,
+        "records": [
+          {
+            "path": "pipeline.py",
+            "kind": "pipeline_stages",
+            "prefix": "assets/aster/general_face_eyes_combo892/",
+            "original_sha256": "0d3b9e6b7164c299c01c4c0c3d1218111c440b19932c13182206578705e3d538",
+            "entry_sha256": "1387042efb7fc846ce9010c406125e0a9ef5d7857167bc087eb99096698ba0f2",
+            "stages": [
+              {
+                "path": "pipeline_geometry.py",
+                "sha256": "d93d46fc7b69e8e346edd167aa079911629d3c1af0d72b4f2cdc036043f74b42"
+              },
+              {
+                "path": "pipeline_assembly.py",
+                "sha256": "c216330cfd728f2cbc4022a01436d7792a160603653560cbbc2ca6747292409b"
+              },
+              {
+                "path": "pipeline_runtime.py",
+                "sha256": "5ed4be1ec187df79547a0e331df0272be4e3ca71e8fcd4443d46fff7c908a8b6"
+              },
+              {
+                "path": "pipeline_export.py",
+                "sha256": "f509e981796659a8801ebd2c3712a13fa324d064092fdee2dbd4d86be1c1ce1a"
+              }
+            ]
+          },
+          {
+            "path": "semantic_parameters.py",
+            "kind": "parameter_curves",
+            "original_sha256": "dda1ae3cd671982de8bfae6874b40065c6c0c2331d863ebcabb6af0bb96019ed",
+            "entry_sha256": "d50b970c64509016f7523c122c03628f6a54616aa623c66d6f39ef196b58c9f9",
+            "helper_sha256": "0e2d8b206324cd1ed1dd358786186c29fab42a92b95f8cba26815aaac6c3eed0",
+            "entry_prefix_bytes": 293,
+            "entry_prefix_sha256": "500d256434653df842a9f5c593efc709e6bc620e9b039493ae8604d0cac9bd04",
+            "exports": [
+              "angular_coordinate",
+              "angular_derivative",
+              "eye_warp",
+              "eye_warp_derivative",
+              "upper_shape",
+              "upper_shape_derivative",
+              "lower_coordinate",
+              "lower_shape"
+            ]
+          }
+        ],
+        "helper_sha256": {
+          "assets/aster/general_face_eyes_combo892/pipeline_geometry.py": "d93d46fc7b69e8e346edd167aa079911629d3c1af0d72b4f2cdc036043f74b42",
+          "assets/aster/general_face_eyes_combo892/pipeline_assembly.py": "c216330cfd728f2cbc4022a01436d7792a160603653560cbbc2ca6747292409b",
+          "assets/aster/general_face_eyes_combo892/pipeline_runtime.py": "5ed4be1ec187df79547a0e331df0272be4e3ca71e8fcd4443d46fff7c908a8b6",
+          "assets/aster/general_face_eyes_combo892/pipeline_export.py": "f509e981796659a8801ebd2c3712a13fa324d064092fdee2dbd4d86be1c1ce1a",
+          "assets/aster/general_face_eyes_combo892/semantic_parameter_curves.py": "0e2d8b206324cd1ed1dd358786186c29fab42a92b95f8cba26815aaac6c3eed0"
+        },
+        "scope": "Ordinary Python source modules, all declared across generation and source-packaging jobs; original recipes unchanged."
+      }
+    }
+  ],
+  "pending_cases": [],
+  "manual_controller_review": {
+    "candidate": "combo892",
+    "observed_utc": "2026-10-21T04:52:19Z/2026-10-21T04:53:40Z",
+    "method": "Actual native UI clicks observed in screenshots; not programmatic readback of exact float values.",
+    "glb_sha256": "d09ec95a68250e5e7966fd05cee40e20fc2655a5d303b526272582ce5f32ea5c",
+    "controller_sha256": "94362d0f811bb1dfd17438615cd54e519689fde0c3b1079beae8254311753e40",
+    "observations": [
+      "Initial four sliders at zero and visually neutral mouth.",
+      "Clicking Open slider visibly opened mouth.",
+      "Clicking Round, Spread and Pucker preserved Open and combined the four slider settings.",
+      "Switching to left profile preserved all four slider settings and visible open profile.",
+      "Actual Reset button returned all four slider handles to zero and mouth to neutral.",
+      "Switching back to front preserved neutral mouth."
+    ],
+    "scope": "Head-only manual controller interaction, not audio/phonemes/fullcharacter acceptance or numerical GUT assertions.",
+    "retained_neutral_screenshot_sha256": "64b89e3d98faf71dfcba50c91fa5d4fddeca17cd7ed03215ada546d500b776f8"
+  },
+  "rejected_candidates": [
+    {
+      "candidate": "combo888",
+      "stage": "generation",
+      "reason": "Hidden oral wall sample lies outside facial skin",
+      "published_outputs": 0,
+      "resolution": "Hidden rear cavity and tongue depth referenced to original head surface; unchanged containment guard passed for replacement combo891."
+    }
+  ]
+}

@@ -158,6 +158,14 @@ def raw_without_origin(x, h, c):
     ):
         # Both compact polynomial factors are in [0,1]; conservative product hull.
         z += I(0, H * design["muzzle_projection"])
+    mouth_design = c.get("mouth_design")
+    if (
+        mouth_design
+        and h.hi > 0.04
+        and h.lo < 0.24
+        and x.absolute().lo < H * mouth_design["muzzle_half_width"]
+    ):
+        z += I(0, H * mouth_design["muzzle_projection"])
     lip_h = h
     if (
         c.get("mouth_seam_bow_height", 0)

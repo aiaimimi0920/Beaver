@@ -313,6 +313,56 @@
           "combo847",
           "combo848"
         ]
+      },
+      "research-line": {
+        "title": "调研线缝表现",
+        "presets": [
+          "research-line"
+        ],
+        "status": "implemented_with_historical_samples",
+        "sources": [
+          "https://www.jstage.jst.go.jp/article/itetr/40.11/0/40.11_107/_article/-char/en",
+          "https://pmc.ncbi.nlm.nih.gov/articles/PMC6818784/"
+        ],
+        "missing_controls": [],
+        "scope": "Authored appearance/support prototypes, not direct reconstruction or speech acceptance.",
+        "native_samples": [
+          "combo893"
+        ]
+      },
+      "research-lip-band": {
+        "title": "调研唇带表现",
+        "presets": [
+          "research-lip-band"
+        ],
+        "status": "implemented_with_historical_samples",
+        "sources": [
+          "https://www.jstage.jst.go.jp/article/itetr/40.11/0/40.11_107/_article/-char/en",
+          "https://pmc.ncbi.nlm.nih.gov/articles/PMC6818784/"
+        ],
+        "missing_controls": [],
+        "scope": "Authored appearance/support prototypes, not direct reconstruction or speech acceptance.",
+        "native_samples": [
+          "combo894"
+        ]
+      },
+      "research-muzzle": {
+        "title": "调研特殊吻部候选族",
+        "presets": [
+          "research-round-muzzle",
+          "research-short-muzzle"
+        ],
+        "status": "implemented_with_historical_samples",
+        "sources": [
+          "https://www.jstage.jst.go.jp/article/itetr/40.11/0/40.11_107/_article/-char/en",
+          "https://pmc.ncbi.nlm.nih.gov/articles/PMC6818784/"
+        ],
+        "missing_controls": [],
+        "scope": "Authored appearance/support prototypes, not direct reconstruction or speech acceptance.",
+        "native_samples": [
+          "combo895",
+          "combo896"
+        ]
       }
     },
     "nose": {
