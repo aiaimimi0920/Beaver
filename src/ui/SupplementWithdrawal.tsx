@@ -5,6 +5,7 @@ import { call, type Run } from "./api";
 export function SupplementWithdrawal({ task, run }: { task: Task; run: Run }) {
   const [reason, setReason] = useState("");
   if (
+    typeof window === "undefined" ||
     !("__TAURI__" in window) ||
     !task.parentTaskId ||
     task.title !== "落实集成验收期间的补充要求" ||

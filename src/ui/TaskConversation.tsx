@@ -4,13 +4,16 @@ import type { Task, TaskEvent } from "../shared/types";
 import { directions, taskDirection, taskAttention } from "../shared/task-board";
 import { TaskResources } from "./TaskResources";
 import { call, statusNames, type Run } from "./api";
-import { Dialog } from "./components";
 import { PagedText } from "./PagedText";
 import { PagedEditor } from "./PagedEditor";
 import { conversationText, executionStatus } from "../shared/task-conversation";
 import { formatTaskBrief } from "../shared/task-brief";
 import "./task-conversation.css";
-import { SupplementWithdrawal } from "./SupplementWithdrawal";
+import {
+  TaskConversationTabs,
+  TaskConversationFiles,
+  TaskRollbackDialog,
+} from "./TaskConversationControls";
 
 export function TaskConversation({
   task,
@@ -274,85 +277,16 @@ export function TaskConversation({
           {autonomyLabel(task.effectiveAskRatio ?? task.askRatio ?? 100)}
         </span>
       </div>
-      <nav className="conversation-tabs" aria-label="任务视图">
-        {task.parentTaskId && (
-          <button onClick={() => open(task.parentTaskId!)}>原任务</button>
-        )}
-        {[
-          "对话",
-          "资料与素材",
-          "子任务",
-          "文件",
-          "要求",
-          "执行记录",
-          "决策记录",
-        ].map((name) => (
-          <button
-            key={name}
-            aria-pressed={tab === name}
-            onClick={() => setTab(name)}
-          >
-            {name}
-          </button>
-        ))}
-        <span />
-        <SupplementWithdrawal task={task} run={run} />
-        {["running", "queued", "waitingChildren"].includes(task.status) && (
-          <button
-            onClick={() =>
-              void run(() => call("task.interrupt", { id: task.id }))
-            }
-          >
-            中止
-          </button>
-        )}
-        {!task.supplementWithdrawal &&
-          (["interrupted", "failed"].includes(task.status) ||
-            task.status === "waitingChildren") && (
-            <button
-              onClick={() =>
-                void run(() => call("task.continue", { id: task.id, text: "" }))
-              }
-            >
-              {task.status === "waitingChildren" ? "继续子任务" : "继续任务"}
-            </button>
-          )}
-        {typeof window !== "undefined" &&
-          "__TAURI__" in window &&
-          task.threadId &&
-          ["interrupted", "failed"].includes(task.status) && (
-            <button
-              disabled={busy || !!pending}
-              title="保留工作副本、原会话历史和回退基线，用新 AI 会话检查已有进度后继续。"
-              onClick={restartContext}
-            >
-              用新会话继续
-            </button>
-          )}
-        <button
-          disabled={task.workspacePrepared === false}
-          title={
-            task.workspacePrepared === false
-              ? "前置子任务获批后创建工作副本"
-              : undefined
-          }
-          onClick={() => void run(() => call("task.reveal", { id: task.id }))}
-        >
-          工作副本
-        </button>
-        {task.status === "completed" && (
-          <button
-            disabled={task.accepted}
-            onClick={() => void run(() => call("task.accept", { id: task.id }))}
-          >
-            {task.accepted
-              ? task.approvalSource === "automatic"
-                ? "已自动审批"
-                : "已认可"
-              : "认可结果"}
-          </button>
-        )}
-      </nav>
+      <TaskConversationTabs
+        task={task}
+        run={run}
+        open={open}
+        tab={tab}
+        setTab={setTab}
+        busy={busy}
+        pending={!!pending}
+        restartContext={restartContext}
+      />
       <main className="conversation-content">
         {tab === "资料与素材" ? (
           <TaskResources
@@ -383,58 +317,15 @@ export function TaskConversation({
             {!children.length && <small>暂无子任务</small>}
           </div>
         ) : tab === "文件" ? (
-          <div className="conversation-files">
-            {task.changes
-              .slice(currentFilePage * 5, (currentFilePage + 1) * 5)
-              .map((change) => (
-                <label key={change.path} title={change.path}>
-                  <input
-                    type="checkbox"
-                    checked={keep.includes(change.path)}
-                    onChange={(e) =>
-                      setKeep((old) =>
-                        e.target.checked
-                          ? [...old, change.path]
-                          : old.filter((p) => p !== change.path),
-                      )
-                    }
-                  />
-                  <span>{change.path}</span>
-                  <small>
-                    {task.conflicts.includes(change.path)
-                      ? "冲突"
-                      : !change.before
-                        ? "新增"
-                        : !change.after
-                          ? "删除"
-                          : "修改"}
-                  </small>
-                </label>
-              ))}
-            <footer className="page-controls">
-              <button
-                disabled={!currentFilePage}
-                onClick={() => setFilePage(currentFilePage - 1)}
-              >
-                ‹
-              </button>
-              <span>
-                {currentFilePage + 1} / {fileCount} · {task.changes.length}{" "}
-                个文件
-              </span>
-              <button
-                disabled={currentFilePage + 1 >= fileCount}
-                onClick={() => setFilePage(currentFilePage + 1)}
-              >
-                ›
-              </button>
-              {task.status === "completed" && (
-                <button className="danger" onClick={() => setRollback(true)}>
-                  标准回退
-                </button>
-              )}
-            </footer>
-          </div>
+          <TaskConversationFiles
+            task={task}
+            keep={keep}
+            setKeep={setKeep}
+            currentFilePage={currentFilePage}
+            fileCount={fileCount}
+            setFilePage={setFilePage}
+            setRollback={setRollback}
+          />
         ) : (
           <PagedText
             key={`${task.id}-${tab}-${question?.id ?? "history"}`}
@@ -588,26 +479,12 @@ export function TaskConversation({
         </footer>
       </section>
       {rollback && (
-        <Dialog title="标准回退" close={() => setRollback(false)}>
-          <p>
-            撤销此任务的修改，保留勾选的 {keep.length}{" "}
-            个文件。遇到后续修改冲突时停止，不强行覆盖。
-          </p>
-          <footer>
-            <button onClick={() => setRollback(false)}>取消</button>
-            <button
-              className="danger"
-              onClick={() =>
-                void run(async () => {
-                  await call("task.rollback", { id: task.id, keep });
-                  setRollback(false);
-                })
-              }
-            >
-              确认回退
-            </button>
-          </footer>
-        </Dialog>
+        <TaskRollbackDialog
+          task={task}
+          keep={keep}
+          run={run}
+          close={() => setRollback(false)}
+        />
       )}
     </section>
   );
