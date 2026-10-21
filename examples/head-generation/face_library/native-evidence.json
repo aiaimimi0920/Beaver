@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "status": "native_validation_in_progress",
+  "status": "native_face_scope_completed",
   "scope": "Recorded samples only; do not infer acceptance of untested combinations or all controls.",
   "samples": [
     {
@@ -3638,5 +3638,28 @@
     "gut_xml_sha256": "9474309d48b839332f580e31c399287bbc2e6f81db221c4fc026f0f7cafeb006",
     "gut_log_sha256": "68bdbf1ad7c24f6cd42101a6385c4a95f515dc7e7419f0f673772a07fdb7adef",
     "scope": "First four-preset validation only; required GUT tests passed, not zero-warning or final product acceptance. Expanded cross901 test is awaiting its native validation."
+  },
+  "native_parent_integration": {
+    "run_id": "6bbd758b-f6fb-407d-8694-104e235ff4a7",
+    "tests": 15,
+    "passing": 15,
+    "asserts": 577,
+    "deprecated": 44,
+    "orphans_reported_total": 6,
+    "seconds": 37.564,
+    "gut_xml_sha256": "c399b3638dcb25ed374bcaa6411ef96ecaf60322339de8fb2b249f2d2bf5053f",
+    "gut_log_sha256": "5905466a300b733bbfbc4c41705442172d26a71bcd9fd5c19d84947e4cc3d97a",
+    "snapshot_id": "b71ab80ddfbb2b5061665a849b44d41b9e8bf41083d35eec7bfcae59ba9652c8",
+    "scope": "Fresh parent integration GUT passed; not zero-warning or final whole-character acceptance",
+    "task_status": "completed",
+    "accepted": true,
+    "verified_utc": "2026-10-21T18:26:07.127Z"
+  },
+  "recovery": {
+    "withdrawal": "Unexecuted unchanged supplement withdrawn through supported audited API; original history retained",
+    "fresh_validation_required": true,
+    "repair_commit": "6d29f49d944b4531c6cc0b561406bbf80aeee9e8",
+    "repair_ci_run": 39650421221,
+    "scope": "Current face development scope only; no final whole-character, speech or zero-warning claim"
   }
 }
