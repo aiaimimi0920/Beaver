@@ -105,3 +105,10 @@ func test_texture_snapshot_detects_optional_changes_and_reassignment() -> void:
 	materials = _materials()
 	materials.face_base = materials.face_map
 	assert_true(probe._texture_snapshot(materials) != before)
+
+
+func test_capture_rejects_renderer_fallback() -> void:
+	for driver in ["vulkan", "metal", "d3d12"]:
+		assert_true(probe._renderer_supported("forward_plus", driver))
+	for pair in [["gl_compatibility", "opengl3"], ["mobile", "vulkan"], ["forward_plus", "opengl3"], ["forward_plus", ""]]:
+		assert_false(probe._renderer_supported(pair[0], pair[1]))

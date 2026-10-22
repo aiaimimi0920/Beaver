@@ -11,6 +11,7 @@ import re
 import shutil
 import struct
 import sys
+import zlib
 
 MODEL = "ee91af5f00f1b1d267c0ac6a46c5227a7f7ba6fad2390a5f30bac228415551a4"
 COMPOSITION = "8e9e09d6d02c6ddc46de45fc6c19896d1f0dded2d3c727649701a24833b04871"
@@ -103,16 +104,116 @@ def verify_runtime(workspace, bindings):
                 require(bindings.get(key) == sha(path), "Missing runtime dependency: " + key)
 
 
+def verify_contract(data):
+    require(isinstance(data, dict) and type(data.get("schema_version")) is int
+            and data["schema_version"] == 1, "Unsupported manifest schema")
+    require(data.get("rendering_method") == "forward_plus"
+            and data.get("rendering_driver") in ("vulkan", "metal", "d3d12"), "Unsupported capture renderer")
+    require(data.get("speech_aligned") is False and data.get("continuous_animation") is False,
+            "Unsupported capture scope")
+
+
+def frame_path(workspace, manifest, value, index):
+    path = resource_path(workspace, value)
+    require(path == manifest.parent / f"frame_{index:03d}.png", "Image is not the indexed capture frame")
+    return path
+
+
+def verify_png(path):
+    """Fully decode the bounded, noninterlaced 8-bit RGB/RGBA PNGs emitted here."""
+    require(path.stat().st_size <= 64 * 1024 * 1024, "PNG is too large")
+    data = path.read_bytes()
+    require(data[:8] == b"\x89PNG\r\n\x1a\n", "Invalid PNG signature")
+    pos, header, ended, idat_closed, palette = 8, None, False, False, False
+    chunks = []
+    srgb = False
+    while pos < len(data):
+        require(pos + 12 <= len(data), "Truncated PNG chunk")
+        length = struct.unpack(">I", data[pos:pos + 4])[0]
+        kind = data[pos + 4:pos + 8]
+        require(re.fullmatch(b"[A-Za-z]{4}", kind) and 65 <= kind[2] <= 90, "Invalid PNG chunk type")
+        end = pos + 12 + length
+        require(end <= len(data), "Truncated PNG payload")
+        payload = data[pos + 8:end - 4]
+        require(zlib.crc32(kind + payload) & 0xffffffff == struct.unpack(">I", data[end - 4:end])[0],
+                "PNG CRC mismatch")
+        require(header is not None or kind == b"IHDR", "PNG must begin with IHDR")
+        if kind == b"IHDR":
+            require(header is None and pos == 8 and length == 13, "Invalid PNG IHDR")
+            header = struct.unpack(">IIBBBBB", payload)
+            width, height, depth, color, compression, filtering, interlace = header
+            require(0 < width <= 8192 and 0 < height <= 8192 and width * height <= 16777216,
+                    "Invalid PNG dimensions")
+            require(depth == 8 and color in (2, 6) and (compression, filtering, interlace) == (0, 0, 0),
+                    "Unsupported PNG encoding; expected noninterlaced 8-bit RGB/RGBA")
+        elif kind == b"PLTE":
+            require(not palette and not chunks and 0 < length <= 768 and length % 3 == 0, "Invalid PNG palette")
+            palette = True
+        elif kind == b"sRGB":
+            require(not srgb and not palette and not chunks and length == 1 and payload[0] <= 3,
+                    "Invalid PNG sRGB chunk")
+            srgb = True
+        elif kind == b"IDAT":
+            require(not idat_closed, "Noncontiguous PNG IDAT")
+            chunks.append(payload)
+        elif kind == b"IEND":
+            require(length == 0 and chunks and end == len(data), "Invalid PNG ending")
+            ended = True
+        else:
+            raise ValueError("Unsupported PNG chunk in capture output")
+        pos = end
+        if ended:
+            break
+    require(ended and header is not None, "Missing PNG ending")
+    width, height, _, color, *_ = header
+    channels = 3 if color == 2 else 4
+    stride = width * channels
+    expected = (stride + 1) * height
+    decoder = zlib.decompressobj()
+    try:
+        raw = decoder.decompress(b"".join(chunks), expected + 1)
+    except zlib.error as error:
+        raise ValueError("Invalid PNG compressed pixels") from error
+    require(len(raw) == expected and decoder.eof and not decoder.unused_data and not decoder.unconsumed_tail,
+            "Invalid PNG decompressed payload")
+    previous = bytearray(stride)
+    for row_index in range(height):
+        offset = row_index * (stride + 1)
+        method = raw[offset]
+        require(method <= 4, "Invalid PNG row filter")
+        row = bytearray(raw[offset + 1:offset + 1 + stride])
+        if method:
+            for index in range(stride):
+                left = row[index - channels] if index >= channels else 0
+                up = previous[index]
+                corner = previous[index - channels] if index >= channels else 0
+                if method == 1:
+                    predictor = left
+                elif method == 2:
+                    predictor = up
+                elif method == 3:
+                    predictor = (left + up) // 2
+                else:
+                    center = left + up - corner
+                    distances = (abs(center - left), abs(center - up), abs(center - corner))
+                    predictor = (left, up, corner)[distances.index(min(distances))]
+                row[index] = (row[index] + predictor) & 255
+        previous = row
+    return width, height
+
+
 def verify(workspace, manifest):
     workspace = Path(workspace).resolve()
     manifest = Path(manifest).resolve()
     require(manifest.is_relative_to(workspace), "Manifest is outside workspace")
     data = json.loads(manifest.read_text())
+    verify_contract(data)
 
     def resource(value):
         return resource_path(workspace, value)
 
-    require(data["expected"] == len(data["captures"]) == 9, "Expected nine captures")
+    require(type(data.get("expected")) is int and data["expected"] == 9
+            and isinstance(data.get("captures"), list) and len(data["captures"]) == 9, "Expected nine captures")
     for group in ["source", "bindings"]:
         before, after = data[group + "_before"], data[group + "_after"]
         require(before and before == after, "Provenance changed: " + group)
@@ -169,12 +270,12 @@ def verify(workspace, manifest):
         require(actual["size"] == reference["size"] and actual["viewport_size"] == reference["viewport_size"],
                 "Capture framing changed")
         verify_neutral(capture["actual_mouth"], capture["actual_blink"])
-        path = resource(capture["image"])
+        path = frame_path(workspace, manifest, capture["image"], index)
         require(sha(path) == capture["sha256"], "Image digest mismatch")
-        with path.open("rb") as stream:
-            header = stream.read(24)
-        require(header[:8] == b"\x89PNG\r\n\x1a\n" and header[12:16] == b"IHDR", "Invalid PNG header")
-        require(struct.unpack(">II", header[16:24]) == tuple(actual["viewport_size"]), "PNG dimensions mismatch")
+        viewport = actual["viewport_size"]
+        require(isinstance(viewport, list) and len(viewport) == 2
+                and all(type(value) is int and value > 0 for value in viewport), "Invalid viewport dimensions")
+        require(verify_png(path) == tuple(viewport), "PNG dimensions mismatch")
         rows.append({"name": f"{index + 1:02d}_Faye_{mode}_{view}.png", "source": path,
                      "sha256": capture["sha256"]})
     require(len({row["sha256"] for row in rows}) == 9, "Duplicate images")

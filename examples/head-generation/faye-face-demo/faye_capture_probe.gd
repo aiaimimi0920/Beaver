@@ -93,7 +93,16 @@ func _texture_snapshot(materials: Resource) -> Dictionary:
 	return result
 
 
+func _renderer_supported(method: String, driver: String) -> bool:
+	return method == "forward_plus" and driver in ["vulkan", "metal", "d3d12"]
+
+
 func _ready() -> void:
+	var rendering_method := RenderingServer.get_current_rendering_method()
+	var rendering_driver := RenderingServer.get_current_rendering_driver_name()
+	if not _renderer_supported(rendering_method, rendering_driver):
+		push_error("FAYE_CAPTURE_UNSUPPORTED_RENDERER")
+		return
 	super._ready()
 	if not mouth_ready or not is_instance_valid(preview) or not preview.initialized:
 		push_error("FAYE_CAPTURE_NOT_READY")
@@ -197,10 +206,13 @@ func _ready() -> void:
 	var entry_sha_after := FileAccess.get_sha256(entry_scene)
 	if (before != after or textures_before != textures_after or textures_after.is_empty()
 		or bindings != bindings_after or entry_sha != entry_sha_after
-		or engine_sha != FileAccess.get_sha256(OS.get_executable_path())):
+		or engine_sha != FileAccess.get_sha256(OS.get_executable_path())
+		or rendering_method != RenderingServer.get_current_rendering_method()
+		or rendering_driver != RenderingServer.get_current_rendering_driver_name()):
 		push_error("FAYE_CAPTURE_PROVENANCE_CHANGED")
 		return
 	var manifest := {"schema_version": 1, "source": source, "definition": definition,
+		"rendering_method": rendering_method, "rendering_driver": rendering_driver,
 		"entry_scene_at_capture": entry_scene, "entry_scene_sha256": entry_sha_after,
 		"entry_scene_sha256_before": entry_sha, "entry_scene_sha256_after": entry_sha_after,
 		"report": report_path, "atlas": atlas_path, "composition_sha256": EXPECTED_COMPOSITION,
