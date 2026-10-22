@@ -26,20 +26,23 @@ function fixture(call: (method: string, args: unknown) => Promise<unknown>) {
     elements.get(match[1]!),
   );
   elements.get("role").value = "user";
-  vm.runInNewContext(renderer, {
-    document: {
-      createElement: () => ({ value: "", textContent: "" }),
-      getElementById: (id: string) => {
-        assert.ok(elements.has(id), `Missing DOM element ${id}`);
-        return elements.get(id);
+  vm.runInNewContext(
+    readFileSync("src/direct/npr-upgrade.js", "utf8") + "\n" + renderer,
+    {
+      document: {
+        createElement: () => ({ value: "", textContent: "" }),
+        getElementById: (id: string) => {
+          assert.ok(elements.has(id), `Missing DOM element ${id}`);
+          return elements.get(id);
+        },
+        querySelectorAll: (selector: string) => {
+          assert.equal(selector, "button");
+          return buttons;
+        },
       },
-      querySelectorAll: (selector: string) => {
-        assert.equal(selector, "button");
-        return buttons;
-      },
+      window: { beaver: { call } },
     },
-    window: { beaver: { call } },
-  });
+  );
   return elements;
 }
 

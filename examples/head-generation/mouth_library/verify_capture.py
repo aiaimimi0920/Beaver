@@ -6,6 +6,7 @@ import math
 from pathlib import Path
 
 from capture_schedule import schedule
+from capture_bindings import verify_bindings
 from mouth_motion import validate_weights
 
 HERE = Path(__file__).resolve().parent
@@ -23,7 +24,7 @@ def finite(value):
     )
 
 
-def verify_capture(workspace, manifest, expected_source):
+def verify_capture(workspace, manifest, expected_source, probe_profile="mouth"):
     from PIL import Image
 
     root = Path(workspace).resolve()
@@ -42,21 +43,7 @@ def verify_capture(workspace, manifest, expected_source):
     source = digest(resource(expected_source))
     if data["source_before"] != source or data["source_after"] != source:
         raise ValueError("Changed model source")
-    bindings = {
-        "schedule_sha256": (
-            "mouth_capture_schedule.json",
-            "mouth_capture_schedule.json",
-        ),
-        "controller_sha256": ("researched_mouth_review.gd", "mouth_review.gd"),
-        "probe_sha256": ("researched_mouth_probe.gd", "mouth_probe.gd"),
-    }
-    for key, (installed, canonical) in bindings.items():
-        expected = digest(HERE / "runtime" / canonical)
-        if (
-            data.get(key) != expected
-            or digest(root / "showcase_extensions" / installed) != expected
-        ):
-            raise ValueError("Capture implementation identity mismatch: " + key)
+    verify_bindings(root, data, probe_profile)
     rows = data["captures"]
     if (
         data.get("expected") != 92

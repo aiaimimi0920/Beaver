@@ -1,0 +1,136 @@
+[
+  {
+    "yaw": -90,
+    "pitch": 0,
+    "scale": 1.0,
+    "mode": "edges",
+    "mouth": {}
+  },
+  {
+    "yaw": -90,
+    "pitch": 0,
+    "scale": 1.0,
+    "mode": "edges",
+    "mouth": {
+      "MouthOpen": 1.0
+    }
+  },
+  {
+    "yaw": -90,
+    "pitch": 0,
+    "scale": 1.0,
+    "mode": "edges",
+    "mouth": {
+      "MouthPucker": 1.0
+    }
+  },
+  {
+    "yaw": 90,
+    "pitch": 0,
+    "scale": 1.0,
+    "mode": "edges",
+    "mouth": {}
+  },
+  {
+    "yaw": 90,
+    "pitch": 0,
+    "scale": 1.0,
+    "mode": "edges",
+    "mouth": {
+      "MouthOpen": 1.0
+    }
+  },
+  {
+    "yaw": 90,
+    "pitch": 0,
+    "scale": 1.0,
+    "mode": "edges",
+    "mouth": {
+      "MouthPucker": 1.0
+    }
+  },
+  {
+    "yaw": 0,
+    "pitch": 0,
+    "scale": 0.75,
+    "mode": "render",
+    "mouth": {}
+  },
+  {
+    "yaw": 0,
+    "pitch": 0,
+    "scale": 0.75,
+    "mode": "white",
+    "mouth": {}
+  },
+  {
+    "yaw": -45,
+    "pitch": -10,
+    "scale": 0.75,
+    "mode": "render",
+    "mouth": {}
+  },
+  {
+    "yaw": -45,
+    "pitch": -10,
+    "scale": 0.75,
+    "mode": "white",
+    "mouth": {}
+  },
+  {
+    "yaw": 45,
+    "pitch": 10,
+    "scale": 0.75,
+    "mode": "render",
+    "mouth": {}
+  },
+  {
+    "yaw": 45,
+    "pitch": 10,
+    "scale": 0.75,
+    "mode": "white",
+    "mouth": {}
+  },
+  {
+    "yaw": 0,
+    "pitch": 0,
+    "scale": 1.5,
+    "mode": "render",
+    "mouth": {}
+  },
+  {
+    "yaw": 0,
+    "pitch": 0,
+    "scale": 1.5,
+    "mode": "white",
+    "mouth": {}
+  },
+  {
+    "yaw": -45,
+    "pitch": -10,
+    "scale": 1.5,
+    "mode": "render",
+    "mouth": {}
+  },
+  {
+    "yaw": -45,
+    "pitch": -10,
+    "scale": 1.5,
+    "mode": "white",
+    "mouth": {}
+  },
+  {
+    "yaw": 45,
+    "pitch": 10,
+    "scale": 1.5,
+    "mode": "render",
+    "mouth": {}
+  },
+  {
+    "yaw": 45,
+    "pitch": 10,
+    "scale": 1.5,
+    "mode": "white",
+    "mouth": {}
+  }
+]

@@ -4,6 +4,7 @@ let state,
   lastRequest,
   lastJob,
   busy = false;
+let upgradeActions;
 // Bound only the DOM presentation; authoritative receipts and context stay intact.
 function displayCopy(value, depth = 0, budget = { left: 400 }) {
   if (--budget.left < 0) return "[display limit; full receipt retained]";
@@ -115,6 +116,9 @@ function updateRole() {
   $("create").disabled = busy || r !== "user";
   $("plan").disabled = busy || r !== "planner";
   $("finish").disabled = busy || r !== "executor";
+  $("upgrade-inspect").disabled = busy || r !== "user";
+  $("upgrade-apply").disabled =
+    busy || r !== "user" || !upgradeActions?.canUpgrade();
 }
 async function refresh() {
   state = await window.beaver.call("state");
@@ -155,6 +159,23 @@ async function submit(method, args) {
   return r;
 }
 $("role").onchange = updateRole;
+upgradeActions = createNprUpgradeActions(
+  (method, input) => window.beaver.call(method, input),
+  () =>
+    resolveNprUpgradeTarget(state, $("upgrade-target").value, $("task").value),
+);
+$("upgrade-target").onchange = () => {
+  upgradeActions.clear();
+  updateRole();
+};
+$("task").onchange = () => {
+  upgradeActions.clear();
+  updateRole();
+};
+$("upgrade-inspect").onclick = () =>
+  action(() => upgradeActions.inspect()).catch(() => {});
+$("upgrade-apply").onclick = () =>
+  action(() => upgradeActions.upgrade()).catch(() => {});
 updateRole();
 $("setup").onclick = () =>
   action(() => window.beaver.call("recovery.setup")).catch(() => {});

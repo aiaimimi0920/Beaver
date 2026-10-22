@@ -116,10 +116,25 @@
   ><button id="preview-status">读取展示台日志</button
   ><button id="close-preview">关闭展示台</button>
   <h2 id="status">尚未读取</h2>
+  <section>
+    <label
+      >NPR 依赖目标
+      <select id="upgrade-target">
+        <option value="project">当前工程</option>
+        <option value="task">选中任务的工作副本</option>
+      </select></label
+    >
+    <button id="upgrade-inspect">检查固定依赖升级</button>
+    <button id="upgrade-apply" disabled>执行已检查的依赖升级</button>
+    <p class="hint">
+      先中止相关任务。原生主机验证固定包、保留恢复记录；升级不等于模型验收。
+    </p>
+  </section>
   <pre id="result"></pre>
   <details>
     <summary>任务上下文</summary>
     <pre id="details"></pre>
   </details>
+  <script src="npr-upgrade.js"></script>
   <script src="renderer.js"></script>
 </html>

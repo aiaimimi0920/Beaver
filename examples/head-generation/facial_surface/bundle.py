@@ -43,6 +43,7 @@ def build_request(
     nose_design=None,
     mouth_design=None,
     face_design=None,
+    ear_design=None,
 ):
     if (
         silhouette_parameters
@@ -54,6 +55,7 @@ def build_request(
         or nose_design
         or mouth_design
         or face_design
+        or ear_design
     ) and prefix in {
         "assets/aster/general_face_eyes_795/",
         "assets/aster/general_face_eyes_796/",
@@ -126,6 +128,11 @@ def build_request(
 
         baseline_style, component_report = apply_components(
             baseline_style, component_parameters
+        )
+        import source_ear_design as ear_adapter
+
+        baseline_style, ear_design_report = ear_adapter.apply(
+            baseline_style, ear_design, component_parameters
         )
         baseline_style, nose_template_report = apply_nose_template(
             baseline_style, nose_templates
@@ -286,13 +293,17 @@ def depth(x, y):"""
                     (recipe / "ear_silhouette.py").read_text(),
                     baseline_style["calibration"].get("ear_point_strength", 0) > 0
                     or baseline_style["calibration"].get("ear_tip_length_scale", 1) != 1
-                    or baseline_style["calibration"].get("ear_tip_lift", 0) != 0,
+                    or baseline_style["calibration"].get("ear_tip_lift", 0) != 0
+                    or ear_design is not None,
                 )
             )
 
             (snapshot / "ears.py").write_text(
-                adapt_ear_profile(
-                    (recipe / "ears.py").read_text(), baseline_style["calibration"]
+                ear_adapter.adapt(
+                    adapt_ear_profile(
+                        (recipe / "ears.py").read_text(), baseline_style["calibration"]
+                    ),
+                    ear_design,
                 )
             )
             (snapshot / "face_style.json").write_text(
@@ -334,6 +345,15 @@ def depth(x, y):"""
                 boundary_path.write_text(boundary_source)
             if face_design_report is not None:
                 face_adapter.adapt_sources(snapshot, retained_width_stations)
+            if ear_design is not None:
+                boundary_path = snapshot / "ear_boundary.py"
+                boundary_path.write_text(
+                    ear_adapter.adapt_boundary(boundary_path.read_text(), ear_design)
+                )
+                topology_path = snapshot / "ear_topology.py"
+                topology_path.write_text(
+                    ear_adapter.adapt_topology(topology_path.read_text(), ear_design)
+                )
             if silhouette_report is not None or family_report is not None or face_design_report is not None:
                 from source_silhouette import adapt_ear_envelope
 
@@ -396,6 +416,9 @@ def depth(x, y):"""
     if face_design_report is not None:
         report["face_design"] = face_design_report
         request["code"] += f'report["face_design"] = {face_design_report!r}\n'
+    if ear_design_report is not None:
+        report["ear_design"] = ear_design_report
+        request["code"] += f'report["ear_design"] = {ear_design_report!r}\n'
     if mouth_template_report is not None:
         report["mouth_template"] = mouth_template_report
     if nose_template_report is not None:
@@ -457,6 +480,10 @@ def depth(x, y):"""
         {} if mouth_design is None else mouth_adapter.module().retained_sources(),
         {} if face_design is None else {
             "face_design.py": (HERE.parent / "face_library/face_design.py").read_text()
+        },
+        {} if ear_design is None else {
+            name: (HERE.parent / "ear_library" / name).read_text()
+            for name in ("ear_design.py", "ear_profile.py")
         },
     )
     paths = [output["path"] for output in request["outputs"]]

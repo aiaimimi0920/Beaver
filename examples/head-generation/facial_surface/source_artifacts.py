@@ -8,7 +8,7 @@ HERE = Path(__file__).resolve().parent
 EYES = HERE.parent / "semantic_eyes"
 
 
-def append_artifacts(request, prefix, workspace, data, report, nose_sources, mouth_sources, face_sources):
+def append_artifacts(request, prefix, workspace, data, report, nose_sources, mouth_sources, face_sources, ear_sources=None):
     artifacts = {
         f"facial_surface_{path.name}": path.read_text()
         for path in HERE.glob("*.py")
@@ -25,6 +25,7 @@ def append_artifacts(request, prefix, workspace, data, report, nose_sources, mou
             nose_library_sources=nose_sources,
             face_library_sources=face_sources,
             mouth_library_sources=mouth_sources,
+            ear_library_sources=ear_sources or {},
             packager_helpers={
                 **{path.name: path.read_text() for path in HERE.glob("source_*.py")},
                 "semantic_illustrated_art.py": (

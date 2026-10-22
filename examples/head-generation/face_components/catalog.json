@@ -276,6 +276,24 @@
       "ear_tip_length_scale": 1.7,
       "ear_point_strength": 1,
       "ear_tip_lift": 0.025
+    },
+    "research-standard-oval": {
+      "design": "standard-oval"
+    },
+    "research-compact-round": {
+      "design": "compact-round"
+    },
+    "research-slender-oval": {
+      "design": "slender-oval"
+    },
+    "research-short-point": {
+      "design": "short-point"
+    },
+    "research-long-leaf": {
+      "design": "long-leaf"
+    },
+    "research-side-droop": {
+      "design": "side-droop"
     }
   },
   "face": {
