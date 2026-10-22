@@ -1,0 +1,74 @@
+[
+  {
+    "yaw": 0,
+    "pitch": 0,
+    "scale": 0.85,
+    "mode": "render",
+    "mouth": {},
+    "view": "front"
+  },
+  {
+    "yaw": 45,
+    "pitch": 0,
+    "scale": 0.85,
+    "mode": "render",
+    "mouth": {},
+    "view": "right45"
+  },
+  {
+    "yaw": 90,
+    "pitch": 0,
+    "scale": 0.85,
+    "mode": "render",
+    "mouth": {},
+    "view": "right90"
+  },
+  {
+    "yaw": 0,
+    "pitch": 0,
+    "scale": 0.85,
+    "mode": "white",
+    "mouth": {},
+    "view": "front"
+  },
+  {
+    "yaw": 45,
+    "pitch": 0,
+    "scale": 0.85,
+    "mode": "white",
+    "mouth": {},
+    "view": "right45"
+  },
+  {
+    "yaw": 90,
+    "pitch": 0,
+    "scale": 0.85,
+    "mode": "white",
+    "mouth": {},
+    "view": "right90"
+  },
+  {
+    "yaw": 0,
+    "pitch": 0,
+    "scale": 0.85,
+    "mode": "edges",
+    "mouth": {},
+    "view": "front"
+  },
+  {
+    "yaw": 45,
+    "pitch": 0,
+    "scale": 0.85,
+    "mode": "edges",
+    "mouth": {},
+    "view": "right45"
+  },
+  {
+    "yaw": 90,
+    "pitch": 0,
+    "scale": 0.85,
+    "mode": "edges",
+    "mouth": {},
+    "view": "right90"
+  }
+]
