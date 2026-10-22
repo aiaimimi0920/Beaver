@@ -27,7 +27,7 @@ func _report(value: Dictionary) -> String:
 
 
 func _valid_report() -> Dictionary:
-	return {"face_components": {"composition_sha256": CAPTURE.EXPECTED_COMPOSITION},
+	return {"new_glb_sha256": CAPTURE.EXPECTED_MODEL, "face_components": {"composition_sha256": CAPTURE.EXPECTED_COMPOSITION},
 		"semantic_eyes": {"sdf": {"atlas_sha256": ATLAS}}}
 
 
@@ -54,3 +54,19 @@ func test_rejects_wrong_composition_and_missing_report_fields() -> void:
 func test_hash_collection_cannot_be_empty() -> void:
 	assert_false(probe._valid_hashes({}))
 	assert_true(probe._valid_hashes({"model": CAPTURE.EXPECTED_MODEL, "atlas": ATLAS}))
+
+
+func test_rejects_report_bound_to_another_model() -> void:
+	var report := _valid_report()
+	report.new_glb_sha256 = "another-model"
+	assert_false(probe._valid_identity(_report(report),
+		{"model": CAPTURE.EXPECTED_MODEL, "atlas": ATLAS}))
+
+
+func test_binding_includes_renderer_implementation_and_project_settings() -> void:
+	var bindings: Dictionary = probe._bindings()
+	for path in ["res://project.godot", "res://addons/npr_character_frame/npr_character.gd",
+		"res://addons/npr_character_frame/shaders/face/sdf360/sdf_materials.gd",
+		"res://addons/npr_character_frame/shaders/face/sdf360/face_base.gdshader"]:
+		assert_eq(bindings.get(path), FileAccess.get_sha256(path))
+		assert_eq(str(bindings.get(path)).length(), 64)

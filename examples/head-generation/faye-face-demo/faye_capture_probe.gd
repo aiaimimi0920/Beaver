@@ -5,7 +5,9 @@ const CAPTURE_VIEW = preload("res://showcase_extensions/ear_capture_view.gd")
 const EXPECTED_COMPOSITION := "8e9e09d6d02c6ddc46de45fc6c19896d1f0dded2d3c727649701a24833b04871"
 const EXPECTED_MODEL := "ee91af5f00f1b1d267c0ac6a46c5227a7f7ba6fad2390a5f30bac228415551a4"
 const SCHEDULE := "res://showcase_extensions/faye_capture_schedule.json"
+const RUNTIME_ROOTS := ["res://addons/npr_character_frame", "res://showcase_extensions"]
 const BINDINGS := [
+	"res://project.godot",
 	"res://showcase/faye_face_capture.tscn",
 	"res://showcase_extensions/faye_capture_probe.gd", SCHEDULE,
 	"res://showcase_extensions/ear_capture_view.gd",
@@ -23,7 +25,21 @@ func _bindings() -> Dictionary:
 	var result := {}
 	for path in BINDINGS:
 		result[path] = FileAccess.get_sha256(path)
+	for root in RUNTIME_ROOTS:
+		_bind_renderer(root, result)
 	return result
+
+
+func _bind_renderer(directory: String, hashes: Dictionary, depth: int = 0) -> void:
+	var dir := DirAccess.open(directory)
+	if dir == null or depth > 16:
+		hashes[directory] = ""
+		return
+	for name in dir.get_files():
+		var path := directory.path_join(name)
+		hashes[path] = FileAccess.get_sha256(path)
+	for name in dir.get_directories():
+		_bind_renderer(directory.path_join(name), hashes, depth + 1)
 
 
 func _valid_hashes(values: Dictionary) -> bool:
@@ -47,6 +63,7 @@ func _valid_identity(report_path: String, hashes: Dictionary) -> bool:
 		return false
 	return (components.get("composition_sha256") == EXPECTED_COMPOSITION
 		and hashes.get("model") == EXPECTED_MODEL
+		and report.get("new_glb_sha256") == hashes.get("model")
 		and sdf.get("atlas_sha256") == hashes.get("atlas"))
 
 
@@ -58,6 +75,9 @@ func _ready() -> void:
 	var args := OS.get_cmdline_user_args()
 	if args.is_empty() or character_definition.resource_path != args[0]:
 		push_error("FAYE_CAPTURE_EXPLICIT_DEFINITION_REQUIRED")
+		return
+	var engine_sha := FileAccess.get_sha256(OS.get_executable_path())
+	if not _valid_hashes({"engine": engine_sha}):
 		return
 	var entry_scene: String = get_tree().current_scene.scene_file_path
 	var entry_sha := FileAccess.get_sha256(entry_scene)
@@ -144,7 +164,8 @@ func _ready() -> void:
 		"definition": FileAccess.get_sha256(definition), "report": FileAccess.get_sha256(report_path)}
 	var bindings_after := _bindings()
 	var entry_sha_after := FileAccess.get_sha256(entry_scene)
-	if before != after or bindings != bindings_after or entry_sha != entry_sha_after:
+	if (before != after or bindings != bindings_after or entry_sha != entry_sha_after
+		or engine_sha != FileAccess.get_sha256(OS.get_executable_path())):
 		push_error("FAYE_CAPTURE_PROVENANCE_CHANGED")
 		return
 	var manifest := {"schema_version": 1, "source": source, "definition": definition,
@@ -152,6 +173,7 @@ func _ready() -> void:
 		"entry_scene_sha256_before": entry_sha, "entry_scene_sha256_after": entry_sha_after,
 		"report": report_path, "atlas": atlas_path, "composition_sha256": EXPECTED_COMPOSITION,
 		"source_before": before, "source_after": after,
+		"runtime_roots": RUNTIME_ROOTS, "engine_sha256": engine_sha, "engine_version": Engine.get_version_info(),
 		"bindings_before": bindings, "bindings_after": bindings_after, "base_view_size": _head_view_size,
 		"captures": captures, "expected": 9, "speech_aligned": false, "continuous_animation": false}
 	var file := FileAccess.open(folder + "/manifest.json", FileAccess.WRITE)
