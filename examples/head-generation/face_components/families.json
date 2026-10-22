@@ -5,100 +5,65 @@
     "eyes": {
       "round-open": {
         "title": "round-open",
-        "presets": [
-          "round-open"
-        ],
+        "presets": ["round-open"],
         "status": "implemented_with_historical_samples",
-        "sources": [
-          "../eye_presets/README.md"
-        ],
+        "sources": ["../eye_presets/README.md"],
         "missing_controls": []
       },
       "almond": {
         "title": "almond",
-        "presets": [
-          "almond"
-        ],
+        "presets": ["almond"],
         "status": "implemented_with_historical_samples",
-        "sources": [
-          "../eye_presets/README.md"
-        ],
+        "sources": ["../eye_presets/README.md"],
         "missing_controls": []
       },
       "slender": {
         "title": "slender",
-        "presets": [
-          "slender"
-        ],
+        "presets": ["slender"],
         "status": "implemented_with_historical_samples",
-        "sources": [
-          "../eye_presets/README.md"
-        ],
+        "sources": ["../eye_presets/README.md"],
         "missing_controls": []
       },
       "downturned": {
         "title": "downturned",
-        "presets": [
-          "downturned"
-        ],
+        "presets": ["downturned"],
         "status": "implemented_with_historical_samples",
-        "sources": [
-          "../eye_presets/README.md"
-        ],
+        "sources": ["../eye_presets/README.md"],
         "missing_controls": []
       },
       "upturned": {
         "title": "upturned",
-        "presets": [
-          "upturned"
-        ],
+        "presets": ["upturned"],
         "status": "implemented_with_historical_samples",
-        "sources": [
-          "../eye_presets/README.md"
-        ],
+        "sources": ["../eye_presets/README.md"],
         "missing_controls": []
       },
       "shallow-upper": {
         "title": "shallow-upper",
-        "presets": [
-          "shallow-upper"
-        ],
+        "presets": ["shallow-upper"],
         "status": "implemented_with_historical_samples",
-        "sources": [
-          "../eye_presets/README.md"
-        ],
+        "sources": ["../eye_presets/README.md"],
         "missing_controls": []
       },
       "rounded-upper": {
         "title": "rounded-upper",
-        "presets": [
-          "rounded-upper"
-        ],
+        "presets": ["rounded-upper"],
         "status": "implemented_with_historical_samples",
-        "sources": [
-          "../eye_presets/README.md"
-        ],
+        "sources": ["../eye_presets/README.md"],
         "missing_controls": []
       },
       "segmented": {
         "title": "segmented",
-        "presets": [
-          "segmented"
-        ],
+        "presets": ["segmented"],
         "status": "implemented_with_historical_samples",
-        "sources": [
-          "../eye_presets/README.md"
-        ],
+        "sources": ["../eye_presets/README.md"],
         "missing_controls": []
       }
     },
     "brows": {
       "smooth-tapered-ribbon": {
         "title": "柔顺收尖眉",
-        "presets": [
-          "soft-level",
-          "soft-arched"
-        ],
+        "presets": ["soft-level", "soft-arched"],
         "status": "implemented_with_historical_samples",
         "sources": [
           "https://frieren-anime.jp/character/chara_group1/1-5/",
@@ -108,27 +73,118 @@
       },
       "angular-peaked-wedge": {
         "title": "折锋眉",
-        "presets": [
-          "angular-peaked"
-        ],
+        "presets": ["angular-peaked"],
         "status": "implemented_with_historical_samples",
-        "sources": [
-          "https://www.guiltygear.com/ggst/en/character/kyk/"
-        ],
+        "sources": ["https://www.guiltygear.com/ggst/en/character/kyk/"],
         "missing_controls": [],
         "native_sample": "combo832"
       },
       "broad-rounded-band": {
         "title": "浓带眉",
-        "presets": [
-          "broad-band"
-        ],
+        "presets": ["broad-band"],
         "status": "implemented_with_historical_samples",
-        "sources": [
-          "https://naruto-official.com/en/news/01_1652"
-        ],
+        "sources": ["https://naruto-official.com/en/news/01_1652"],
         "missing_controls": [],
         "native_sample": "combo833"
+      },
+      "research-straight": {
+        "title": "研究驱动眉形几何：straight",
+        "presets": ["research-linear-fine", "research-linear-wedge"],
+        "status": "implemented_with_historical_samples",
+        "sources": [
+          "../brow_library/RESEARCH-AND-IMPLEMENTATION.zh-CN.md",
+          "../brow_library/native-evidence.json"
+        ],
+        "missing_controls": [],
+        "native_samples": ["combo864", "combo865"]
+      },
+      "research-arc": {
+        "title": "研究驱动眉形几何：arc",
+        "presets": ["research-arc-fine", "research-arc-medium"],
+        "status": "implemented_with_historical_samples",
+        "sources": [
+          "../brow_library/RESEARCH-AND-IMPLEMENTATION.zh-CN.md",
+          "../brow_library/native-evidence.json"
+        ],
+        "missing_controls": [],
+        "native_samples": ["combo866", "combo867"]
+      },
+      "research-angled": {
+        "title": "研究驱动眉形几何：angled",
+        "presets": ["research-angled"],
+        "status": "implemented_with_historical_samples",
+        "sources": [
+          "../brow_library/RESEARCH-AND-IMPLEMENTATION.zh-CN.md",
+          "../brow_library/native-evidence.json"
+        ],
+        "missing_controls": [],
+        "native_samples": ["combo868"]
+      },
+      "research-leaf": {
+        "title": "研究驱动眉形几何：leaf",
+        "presets": ["research-compact-leaf"],
+        "status": "implemented_with_historical_samples",
+        "sources": [
+          "../brow_library/RESEARCH-AND-IMPLEMENTATION.zh-CN.md",
+          "../brow_library/native-evidence.json"
+        ],
+        "missing_controls": [],
+        "native_samples": ["combo869"]
+      },
+      "research-oval": {
+        "title": "研究驱动眉形几何：oval",
+        "presets": ["research-compact-round"],
+        "status": "implemented_with_historical_samples",
+        "sources": [
+          "../brow_library/RESEARCH-AND-IMPLEMENTATION.zh-CN.md",
+          "../brow_library/native-evidence.json"
+        ],
+        "missing_controls": [],
+        "native_samples": ["combo870"]
+      },
+      "research-curl": {
+        "title": "研究驱动眉形几何：curl",
+        "presets": ["research-curl"],
+        "status": "implemented_with_historical_samples",
+        "sources": [
+          "../brow_library/RESEARCH-AND-IMPLEMENTATION.zh-CN.md",
+          "../brow_library/native-evidence.json"
+        ],
+        "missing_controls": [],
+        "native_samples": ["combo871"]
+      },
+      "research-multipoint": {
+        "title": "研究驱动眉形几何：multipoint",
+        "presets": ["research-multipoint"],
+        "status": "implemented_with_historical_samples",
+        "sources": [
+          "../brow_library/RESEARCH-AND-IMPLEMENTATION.zh-CN.md",
+          "../brow_library/native-evidence.json"
+        ],
+        "missing_controls": [],
+        "native_samples": ["combo875"]
+      },
+      "research-fringe": {
+        "title": "研究驱动眉形几何：fringe",
+        "presets": ["research-fringe"],
+        "status": "implemented_with_historical_samples",
+        "sources": [
+          "../brow_library/RESEARCH-AND-IMPLEMENTATION.zh-CN.md",
+          "../brow_library/native-evidence.json"
+        ],
+        "missing_controls": [],
+        "native_samples": ["combo873"]
+      },
+      "research-symbols": {
+        "title": "研究驱动眉形几何：symbols",
+        "presets": ["research-symbols"],
+        "status": "implemented_with_historical_samples",
+        "sources": [
+          "../brow_library/RESEARCH-AND-IMPLEMENTATION.zh-CN.md",
+          "../brow_library/native-evidence.json"
+        ],
+        "missing_controls": [],
+        "native_samples": ["combo874"]
       }
     },
     "mouth": {
@@ -142,105 +198,158 @@
           "bowed-volumetric-wide"
         ],
         "status": "implemented_with_historical_samples",
-        "sources": [
-          "https://frieren-anime.jp/character/chara_group1/1-5/"
-        ],
+        "sources": ["https://frieren-anime.jp/character/chara_group1/1-5/"],
         "missing_controls": []
       },
       "bowed-volumetric": {
         "title": "弓形实体唇",
         "presets": [],
         "status": "planned",
-        "sources": [
-          "https://www.guiltygear.com/ggst/en/character/mll/"
-        ],
-        "missing_controls": [
-          "distinct_volumetric_lip_envelope"
-        ],
+        "sources": ["https://www.guiltygear.com/ggst/en/character/mll/"],
+        "missing_controls": ["distinct_volumetric_lip_envelope"],
         "prototype_result": "838 remains a relief variation, not a distinct volumetric family"
       },
       "shallow-bowed-neutral-contour": {
         "title": "浅弓中性口线",
-        "presets": [
-          "bowed-contour"
-        ],
+        "presets": ["bowed-contour"],
         "status": "implemented_with_historical_samples",
-        "sources": [
-          "https://www.guiltygear.com/ggst/en/character/mll/"
-        ],
+        "sources": ["https://www.guiltygear.com/ggst/en/character/mll/"],
         "missing_controls": [],
         "prototype_result": "Distinct shallow neutral bow visible in ordinary front and oblique views. Two full native combinations passed; not a thick volumetric lip family or final aesthetic acceptance",
-        "native_samples": [
-          "combo847",
-          "combo848"
-        ]
+        "native_samples": ["combo847", "combo848"]
+      },
+      "research-line": {
+        "title": "调研线缝表现",
+        "presets": ["research-line"],
+        "status": "implemented_with_historical_samples",
+        "sources": [
+          "https://www.jstage.jst.go.jp/article/itetr/40.11/0/40.11_107/_article/-char/en",
+          "https://pmc.ncbi.nlm.nih.gov/articles/PMC6818784/"
+        ],
+        "missing_controls": [],
+        "scope": "Authored appearance/support prototypes, not direct reconstruction or speech acceptance.",
+        "native_samples": ["combo893"]
+      },
+      "research-lip-band": {
+        "title": "调研唇带表现",
+        "presets": ["research-lip-band"],
+        "status": "implemented_with_historical_samples",
+        "sources": [
+          "https://www.jstage.jst.go.jp/article/itetr/40.11/0/40.11_107/_article/-char/en",
+          "https://pmc.ncbi.nlm.nih.gov/articles/PMC6818784/"
+        ],
+        "missing_controls": [],
+        "scope": "Authored appearance/support prototypes, not direct reconstruction or speech acceptance.",
+        "native_samples": ["combo894"]
+      },
+      "research-muzzle": {
+        "title": "调研特殊吻部候选族",
+        "presets": ["research-round-muzzle", "research-short-muzzle"],
+        "status": "implemented_with_historical_samples",
+        "sources": [
+          "https://www.jstage.jst.go.jp/article/itetr/40.11/0/40.11_107/_article/-char/en",
+          "https://pmc.ncbi.nlm.nih.gov/articles/PMC6818784/"
+        ],
+        "missing_controls": [],
+        "scope": "Authored appearance/support prototypes, not direct reconstruction or speech acceptance.",
+        "native_samples": ["combo895", "combo896"]
       }
     },
     "nose": {
       "compact-wedge": {
         "title": "紧凑楔鼻",
-        "presets": [
-          "retained",
-          "defined-bridge",
-          "long-bridge"
-        ],
+        "presets": ["retained", "defined-bridge", "long-bridge"],
         "status": "implemented_with_historical_samples",
-        "sources": [
-          "https://frieren-anime.jp/character/chara_group1/1-6/"
-        ],
-        "missing_controls": []
-      },
-      "elongated-defined-bridge": {
-        "title": "长直鼻梁",
-        "presets": [],
-        "status": "planned",
-        "sources": [
-          "https://frieren-anime.jp/character/chara_group1/1-3/"
-        ],
-        "missing_controls": [
-          "distinct_upper_profile_grammar",
-          "independent_tip_width"
-        ]
+        "sources": ["https://frieren-anime.jp/character/chara_group1/1-6/"],
+        "missing_controls": [],
+        "research_scope": "Legacy engineering construction retained; not a new corpus-derived family."
       },
       "short-rounded": {
         "title": "圆钝低投影鼻",
+        "presets": ["short-rounded"],
+        "status": "implemented_with_historical_samples",
+        "sources": ["https://frieren-anime.jp/character/chara_group1/1-6/"],
+        "missing_controls": [],
+        "research_scope": "Legacy engineering construction retained; not a new corpus-derived family."
+      },
+      "research-fused-core": {
+        "title": "调研共享融合鼻核心",
         "presets": [
-          "short-rounded"
+          "research-compact",
+          "research-balanced",
+          "research-elongated"
         ],
         "status": "implemented_with_historical_samples",
         "sources": [
-          "https://frieren-anime.jp/character/chara_group1/1-6/"
+          "https://arxiv.org/abs/2209.02600",
+          "https://sites.google.com/view/referencearchive/archive"
         ],
-        "missing_controls": []
+        "missing_controls": [],
+        "scope": "Original authored geometry; corpus-informed direction, not reference asset copying or fit acceptance.",
+        "native_samples": ["combo879", "combo880", "combo881"]
+      },
+      "research-pad-muzzle": {
+        "title": "调研鼻垫与上吻部实验",
+        "presets": ["research-pad-muzzle"],
+        "status": "implemented_with_historical_samples",
+        "sources": [
+          "https://arxiv.org/abs/2209.02600",
+          "https://sites.google.com/view/referencearchive/archive"
+        ],
+        "missing_controls": [],
+        "scope": "Original authored geometry; corpus-informed direction, not reference asset copying or fit acceptance.",
+        "native_samples": ["combo883"]
+      },
+      "research-faceted-candidate": {
+        "title": "调研棱面模块单例候选",
+        "presets": ["research-faceted"],
+        "status": "implemented_with_historical_samples",
+        "sources": [
+          "https://arxiv.org/abs/2209.02600",
+          "https://sites.google.com/view/referencearchive/archive"
+        ],
+        "missing_controls": [],
+        "scope": "Original authored geometry; corpus-informed direction, not reference asset copying or fit acceptance.",
+        "native_samples": ["combo878"]
       }
     },
     "ears": {
       "rounded-human": {
         "title": "圆廓人耳",
-        "presets": [
-          "retained",
-          "compact-human"
-        ],
+        "presets": ["retained", "compact-human"],
         "status": "implemented_with_historical_samples",
-        "sources": [
-          "https://frieren-anime.jp/character/chara_group1/1-3/"
-        ],
+        "sources": ["https://frieren-anime.jp/character/chara_group1/1-3/"],
         "missing_controls": []
       },
       "lateral-elf": {
         "title": "横展长尖耳",
-        "presets": [
-          "lateral-elf"
-        ],
+        "presets": ["lateral-elf"],
         "status": "implemented_with_historical_samples",
-        "sources": [
-          "https://frieren-anime.jp/character/chara_group1/1-1/"
-        ],
+        "sources": ["https://frieren-anime.jp/character/chara_group1/1-1/"],
         "missing_controls": [
           "independent_shell_thickness",
           "independent_posterior_flare_angle"
         ],
         "native_sample": "combo837"
+      },
+      "researched-lateral-ear": {
+        "title": "调研支持的侧耳形态库",
+        "presets": [
+          "research-standard-oval",
+          "research-compact-round",
+          "research-slender-oval",
+          "research-short-point",
+          "research-long-leaf",
+          "research-side-droop"
+        ],
+        "status": "native_validation_pending",
+        "sources": ["../ear_library/README.zh-CN.md"],
+        "missing_controls": [
+          "crown attachment",
+          "active ear motion",
+          "independent shell thickness"
+        ],
+        "scope": "Six authored seeds; side-droop is a constrained prototype. Not six universal anatomy classes or native acceptance."
       }
     },
     "face": {
@@ -256,30 +365,20 @@
           "root-protected-round-chin"
         ],
         "status": "implemented_with_historical_samples",
-        "sources": [
-          "../eye_presets/README.md"
-        ],
-        "missing_controls": [
-          "independent_outline_family_research"
-        ]
+        "sources": ["../eye_presets/README.md"],
+        "missing_controls": ["independent_outline_family_research"]
       },
       "soft-oval-template": {
         "title": "卵圆轮廓模板实验",
         "presets": [],
         "status": "planned",
-        "sources": [
-          "https://frieren-anime.jp/character/chara_group1/1-1/"
-        ],
-        "missing_controls": [
-          "safe_wider_lower_face_attachment_interface"
-        ],
+        "sources": ["https://frieren-anime.jp/character/chara_group1/1-1/"],
+        "missing_controls": ["safe_wider_lower_face_attachment_interface"],
         "prototype_result": "841 completed native captures but has bilateral under-ear notches; 843 target transport hit lower-root diagonal optimization assertion. Pending diagnosis, not accepted."
       },
       "broad-blunt-lower-contour": {
         "title": "宽钝下颏轮廓",
-        "presets": [
-          "broad-blunt-chin"
-        ],
+        "presets": ["broad-blunt-chin"],
         "status": "implemented_with_historical_samples",
         "sources": [
           "https://delicious-in-dungeon.com/",
@@ -287,6 +386,22 @@
         ],
         "missing_controls": [],
         "reference_scope": "Laios official face views support a broad blunt chin direction only; authored station values are not measured reconstruction and do not imply a full square face."
+      },
+      "researched-lower-face": {
+        "title": "调研支持的连续下脸轮廓",
+        "presets": [
+          "research-compact-rounded",
+          "research-soft-tapered",
+          "research-straight-tapered",
+          "research-blunt-chin"
+        ],
+        "status": "native_validation_pending",
+        "sources": ["../face_library/README.zh-CN.md"],
+        "missing_controls": [
+          "independent vertical face length",
+          "complete skull and forehead shape",
+          "complete animal or mechanical heads"
+        ]
       }
     }
   }

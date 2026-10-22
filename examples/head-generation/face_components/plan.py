@@ -27,11 +27,41 @@ def evidence_records():
     ):
         for value in json.loads((HERE / name).read_text())["candidates"]:
             records.append({**value, "evidence_file": name})
+    name = "../brow_library/native-evidence.json"
+    for value in json.loads((HERE / name).read_text())["samples"]:
+        records.append({**value, "evidence_file": name})
+    name = "../nose_library/native-evidence.json"
+    noses = json.loads((HERE / name).read_text())
+    for value in noses["samples"] + noses["cross_combinations"]:
+        records.append({**value, "evidence_file": name})
+    name = "../mouth_library/native-evidence.json"
+    mouths = json.loads((HERE / name).read_text())
+    for value in mouths["samples"] + mouths["cross_combinations"]:
+        records.append({**value, "evidence_file": name})
+    name = "../face_library/native-evidence.json"
+    faces = json.loads((HERE / name).read_text())
+    for value in faces["samples"] + faces["cross_combinations"]:
+        records.append({**value, "evidence_file": name})
     return records
 
 
-def build_plan(selection, fit_policy="legacy", records=None):
-    snapshot = resolve(selection, fit_policy)
+def build_plan(
+    selection,
+    fit_policy="legacy",
+    records=None,
+    nose_overrides=None,
+    mouth_overrides=None,
+    face_overrides=None,
+    ear_overrides=None,
+):
+    snapshot = resolve(
+        selection,
+        fit_policy,
+        nose_overrides=nose_overrides,
+        mouth_overrides=mouth_overrides,
+        face_overrides=face_overrides,
+        ear_overrides=ear_overrides,
+    )
     matches = []
     for record in evidence_records() if records is None else records:
         if record.get("selection") != selection:
@@ -44,6 +74,8 @@ def build_plan(selection, fit_policy="legacy", records=None):
                     "generation_status", "not_recorded"
                 ),
                 "recorded_visual_status": record.get("visual_status", "not_recorded"),
+                "recorded_sample_status": record.get("status", "not_recorded"),
+                "recorded_scope": record.get("scope", "not_recorded"),
                 "recorded_fit_policy": record.get("fit_policy", "legacy"),
                 "evidence_file": record.get("evidence_file"),
                 "match": "exact_snapshot" if exact else "historical_selection_only",
@@ -82,19 +114,25 @@ def build_plan(selection, fit_policy="legacy", records=None):
                 "stage": "generate",
                 "status": "pending",
                 "entry": "bundle.py",
-                "required": "Fresh combo prefix and workspace; run resulting request through Beaver blender.start and retain successful receipt",
+                "required": "Fresh combo prefix and workspace; retain companion .source-plan.json; run generation through Beaver blender.start and retain successful receipt",
+            },
+            {
+                "stage": "source_packaging",
+                "status": "pending",
+                "entry": "../source_layout/pack_request.py",
+                "required": "Use the companion source plan and successful generation receipt; execute the packaging request through Beaver and retain its separate successful native receipt",
             },
             {
                 "stage": "sdf",
                 "status": "pending",
                 "entry": "sdf_request.py",
-                "required": "Successful generation receipt bound to exact report and source assets; retain successful SDF receipt",
+                "required": "Successful generation and source-packaging receipts bound to exact report and sources; pass --source-packaging-receipt and retain successful SDF receipt",
             },
             {
                 "stage": "capture",
                 "status": "pending",
                 "entry": "../eye_presets/verify_capture.py",
-                "required": "Native 84-view eye and 18-view mouth manifests with actual poses and unchanged GLB hashes",
+                "required": "Native 84-view eye and 18-view mouth manifests; researched mouth additionally requires the 92-view mouth-motion manifest with actual poses and unchanged GLB hashes",
             },
             {
                 "stage": "review",
@@ -116,10 +154,33 @@ if __name__ == "__main__":
     parser.add_argument(
         "--fit-policy", choices=("legacy", "skin-seated-075"), default="legacy"
     )
+    parser.add_argument(
+        "--nose-controls", type=Path, help="Bounded researched-nose overrides JSON"
+    )
+    parser.add_argument(
+        "--mouth-controls", type=Path, help="Bounded researched-mouth overrides JSON"
+    )
+    parser.add_argument("--face-controls", type=Path)
+    parser.add_argument("--ear-controls", type=Path)
     args = parser.parse_args()
     print(
         json.dumps(
-            build_plan(json.loads(args.selection.read_text()), args.fit_policy),
+            build_plan(
+                json.loads(args.selection.read_text()),
+                args.fit_policy,
+                face_overrides=(json.loads(args.face_controls.read_text()) if args.face_controls else None),
+                ear_overrides=(json.loads(args.ear_controls.read_text()) if args.ear_controls else None),
+                mouth_overrides=(
+                    json.loads(args.mouth_controls.read_text())
+                    if args.mouth_controls
+                    else None
+                ),
+                nose_overrides=(
+                    json.loads(args.nose_controls.read_text())
+                    if args.nose_controls
+                    else None
+                ),
+            ),
             ensure_ascii=False,
             indent=2,
         )

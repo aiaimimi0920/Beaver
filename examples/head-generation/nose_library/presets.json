@@ -1,0 +1,52 @@
+{
+  "compact": {
+    "version": 1,
+    "kind": "fused",
+    "root_height": 0.37,
+    "tip_height": 0.285,
+    "projection": 0.06,
+    "half_width": 0.047,
+    "roundness": 0.8
+  },
+  "balanced": {
+    "version": 1,
+    "kind": "fused",
+    "root_height": 0.4,
+    "tip_height": 0.286,
+    "projection": 0.085,
+    "half_width": 0.056,
+    "roundness": 0.55
+  },
+  "elongated": {
+    "version": 1,
+    "kind": "fused",
+    "root_height": 0.425,
+    "tip_height": 0.276,
+    "projection": 0.108,
+    "half_width": 0.055,
+    "roundness": 0.2
+  },
+  "pad-muzzle": {
+    "version": 1,
+    "kind": "pad-muzzle",
+    "root_height": 0.38,
+    "tip_height": 0.278,
+    "projection": 0.065,
+    "half_width": 0.068,
+    "roundness": 0.9,
+    "muzzle_width": 0.115,
+    "muzzle_projection": 0.028,
+    "pad_width": 0.043,
+    "pad_height": 0.025,
+    "pad_projection": 0.018
+  },
+  "faceted-candidate": {
+    "version": 1,
+    "kind": "faceted-candidate",
+    "root_height": 0.415,
+    "tip_height": 0.28,
+    "projection": 0.1,
+    "half_width": 0.058,
+    "roundness": 0.3
+  }
+}

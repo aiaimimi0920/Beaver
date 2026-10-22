@@ -1,0 +1,31 @@
+{
+  "key": "researched-face-selector",
+  "name": "调研下脸样式选择",
+  "category": "ui",
+  "purpose": "实际载入四组下脸样式，切换和口型兼容性由 GUT 验证；不等于完整头壳或美术验收",
+  "entry": "showcase/researched_face_review.tscn",
+  "taskIds": [
+    "34ae0e4e-d58e-4440-ade2-428f86066909"
+  ],
+  "config": {
+    "seed": 1,
+    "width": 1180,
+    "height": 812,
+    "fps": 30
+  },
+  "steps": [
+    {
+      "id": "ready",
+      "kind": "waitFor",
+      "node": "ResearchedFaceReview",
+      "property": "face_ready",
+      "equals": true,
+      "timeout": 300
+    },
+    {
+      "id": "default-face",
+      "kind": "capture"
+    }
+  ],
+  "video": false
+}

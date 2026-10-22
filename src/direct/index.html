@@ -65,6 +65,8 @@
     ><button id="context">读取任务上下文</button
     ><button id="history">读取任务历史</button>
     <button id="interrupt">中止选中任务</button>
+    <input id="withdraw-reason" placeholder="撤销未执行补充步骤的理由" />
+    <button id="withdraw">撤销未执行补充步骤</button>
   </section>
   <section>
     <label
@@ -77,7 +79,7 @@
     >
     <textarea id="goal" placeholder="人类可读的目标"></textarea
     ><button id="create">提交目标并建立 Beaver 内部计划</button
-    ><button id="continue">继续选中的任务</button>
+    ><button id="continue">继续选中的任务（不提交补充文字）</button>
   </section>
   <section>
     <label
@@ -96,7 +98,8 @@
       id="args"
       spellcheck="false"
     >
-{}</textarea>
+{}</textarea
+    >
     <button id="execute">执行一次工具</button><button id="plan">提交规划</button
     ><button id="finish">提交当前步骤完成</button
     ><button id="receipt">查询上次回执</button
@@ -113,10 +116,25 @@
   ><button id="preview-status">读取展示台日志</button
   ><button id="close-preview">关闭展示台</button>
   <h2 id="status">尚未读取</h2>
+  <section>
+    <label
+      >NPR 依赖目标
+      <select id="upgrade-target">
+        <option value="project">当前工程</option>
+        <option value="task">选中任务的工作副本</option>
+      </select></label
+    >
+    <button id="upgrade-inspect">检查固定依赖升级</button>
+    <button id="upgrade-apply" disabled>执行已检查的依赖升级</button>
+    <p class="hint">
+      先中止相关任务。原生主机验证固定包、保留恢复记录；升级不等于模型验收。
+    </p>
+  </section>
   <pre id="result"></pre>
   <details>
     <summary>任务上下文</summary>
     <pre id="details"></pre>
   </details>
+  <script src="npr-upgrade.js"></script>
   <script src="renderer.js"></script>
 </html>

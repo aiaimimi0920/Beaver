@@ -1,0 +1,340 @@
+# 300 个耳形静态正侧参考：来源索引
+
+日期：2026-10-22 UTC。
+
+计数单位是去重的游戏内来源角色组，不是 300 种耳形、300 个人物世界观身份或 300 套独立网格。
+
+## 使用边界
+
+- 各批粗粒度或更好资格不完全同标；没有统一完整耳根/后面认证。
+- 所有条目均未建立标定三维尺寸、独立网格或说话/耳动验证。
+- 299项第三方归档，1项官方游戏宣传片；不代表市场分布。
+- 链接来自保存的来源记录，未在最终对账中逐个重新访问；部分是角色文件夹页。
+- 仅提供来源链接与自行撰写说明，不附第三方图片、纹理、网格，不授予再分发许可。
+- A/B/C/D 是原批次口径；补A 是独立补充审查的 A 档，二者不是同一编号体系。
+- 所有条目仅支持静态定性形态参考。来源可读性及访问权限由原站点控制。
+
+## 按游戏列出
+
+### Aether Gazer（41）
+
+- aether-gazer:anubis · Anubis · [来源](https://drive.google.com/file/d/1FrY19x_v1i1gg6S75Va1VupsJCe0IosB/view) · D：粗轮廓与共同二维上下文；非逐角度测量。
+- aether-gazer:artemis · Artemis · [来源](https://drive.google.com/file/d/1SChwm3iY0EFQ_Q0Hq2WvpGBvbo3E-3HC/view) · D：粗轮廓与共同二维上下文；非逐角度测量。
+- aether-gazer:athena · Athena · [来源](https://drive.google.com/file/d/1Xrc1caxWTAV_awrvlwobtruwWICO0Iqb/view) · D：粗轮廓与共同二维上下文；非逐角度测量。
+- aether-gazer:baize · Baize · [来源](https://drive.google.com/file/d/1tQGRAKm-59K6H4OtF0kZ_m0LpyhE_mow/view) · D：粗轮廓与共同二维上下文；非逐角度测量。
+- aether-gazer:bastet · Bastet · [来源](https://drive.google.com/file/d/1_-AilveLqIxnk8_UVRxOgJWwmSErYoKi/view) · D：粗轮廓与共同二维上下文；非逐角度测量。
+- aether-gazer:brahm · Brahmā · [来源](https://drive.google.com/file/d/1PBfB6PSYKaoj-0989jBWw1oOsvKkDRWJ/view) · D：粗轮廓与共同二维上下文；非逐角度测量。
+- aether-gazer:buzenbo-tengu · Buzenbo Tengu · [来源](https://drive.google.com/file/d/1CW3QyWlXTWCgYI5KfawlV7JQ4RgqHP1c/view) · D：粗轮廓与共同二维上下文；非逐角度测量。
+- aether-gazer:ek-chuah · EK CHUAH · [来源](https://drive.google.com/file/d/1Smo-8X8K9pf1KgIJfqhVgWyqSd2cFf_p/view) · D：粗轮廓与共同二维上下文；非逐角度测量。
+- aether-gazer:enlil · Enlil · [来源](https://drive.google.com/file/d/1LYn3hapktCfcy94HE3IXsrEx3Pzs2jnD/view) · D：粗轮廓与共同二维上下文；非逐角度测量。
+- aether-gazer:gengchen · Gengchen · [来源](https://drive.google.com/file/d/1DOCb9MyawKfG_jvDTcZJ99CB3VlSKrcD/view) · D：粗轮廓与共同二维上下文；非逐角度测量。
+- aether-gazer:hades · Hades · [来源](https://drive.google.com/file/d/1bGgkirw-h4N5ZZh8_4ZTHuzMXan_tfzt/view) · D：粗轮廓与共同二维上下文；非逐角度测量。
+- aether-gazer:heimdall · Heimdall · [来源](https://drive.google.com/file/d/1HRZawsNNPJmm1sSxKRmt3bHScYndzEwW/view) · D：粗轮廓与共同二维上下文；非逐角度测量。
+- aether-gazer:hel · Hel · [来源](https://drive.google.com/file/d/1u_fip8Nj8316Gx8q2mKmMsKjunxvRZJp/view) · D：粗轮廓与共同二维上下文；非逐角度测量。
+- aether-gazer:hera · Hera · [来源](https://drive.google.com/file/d/1NjGkWsa9uhNv2Jxp0SCd64Ucb-u6_JPB/view) · D：粗轮廓与共同二维上下文；非逐角度测量。
+- aether-gazer:hodur · Hodur · [来源](https://drive.google.com/file/d/1HC50pELj2Z6Nbw_N-3A5UYQOZ7qNQpeL/view) · D：粗轮廓与共同二维上下文；非逐角度测量。
+- aether-gazer:horus · Horus · [来源](https://drive.google.com/file/d/1kU_9zBA8b9Ri5uKvVtYHkfLOtfXAi24K/view) · D：粗轮廓与共同二维上下文；非逐角度测量。
+- aether-gazer:izanami · Izanami · [来源](https://drive.google.com/file/d/1zNIic7rUjgekYSnyqdge_rKaR36RwqB1/view) · D：粗轮廓与共同二维上下文；非逐角度测量。
+- aether-gazer:jinwu · Jinwu · [来源](https://drive.google.com/file/d/1X-5nfeJy8BH7AYYPWftRFlsp4o1Bc8hb/view) · D：粗轮廓与共同二维上下文；非逐角度测量。
+- aether-gazer:kagutsuchi · Kagutsuchi · [来源](https://drive.google.com/file/d/1s41StBnlzN7KtSFBZd3V3e5k9-mgpq6p/view) · D：粗轮廓与共同二维上下文；非逐角度测量。
+- aether-gazer:kali · Kali · [来源](https://drive.google.com/file/d/1DtWH-blOJRsTj6fdMYSndB4FOT0JG9NR/view) · D：粗轮廓与共同二维上下文；非逐角度测量。
+- aether-gazer:kuninotokotachi · Kuninotokotachi · [来源](https://drive.google.com/file/d/1wcGOJxymNqYXCjjdfoNsp8DDTTWmmn_7/view) · D：粗轮廓与共同二维上下文；非逐角度测量。
+- aether-gazer:kuramitsuha · Kuramitsuha · [来源](https://drive.google.com/file/d/1PPn-e2eRqGkzc5kjqtL6VdEflKpfPmsv/view) · D：粗轮廓与共同二维上下文；非逐角度测量。
+- aether-gazer:leviathan · Leviathan · [来源](https://drive.google.com/file/d/1lDq-JLczfhTC2hh8tCQDwxWDQ-Ug6H62/view) · D：粗轮廓与共同二维上下文；非逐角度测量。
+- aether-gazer:lingguang · Lingguang · [来源](https://drive.google.com/file/d/1jDRV5CoXCr6IzItZiVKYIH045I5UzfH_/view) · D：粗轮廓与共同二维上下文；非逐角度测量。
+- aether-gazer:luliang · Luliang · [来源](https://drive.google.com/file/d/1LvSgiYm1Q5d4HrEoKnmVKCFYG184xt9r/view) · D：粗轮廓与共同二维上下文；非逐角度测量。
+- aether-gazer:luwu · Luwu · [来源](https://drive.google.com/file/d/1k797Pm4h_09VqwYnlRXpeoGUhmm_9hqN/view) · D：粗轮廓与共同二维上下文；非逐角度测量。
+- aether-gazer:mengzhang · Mengzhang · [来源](https://drive.google.com/file/d/1iy1bjZ4l69gSY4ribF0_bL10nHL7gKm7/view) · D：粗轮廓与共同二维上下文；非逐角度测量。
+- aether-gazer:oceanus · Oceanus · [来源](https://drive.google.com/file/d/11AMvZendK-pgcASBXVipE9UajBpNPvkp/view) · D：粗轮廓与共同二维上下文；非逐角度测量。
+- aether-gazer:oneiroi · Oneiroi · [来源](https://drive.google.com/file/d/1dWvQtwDCoI0nkVPtOR6a5xaDaKxwZ4IH/view) · D：粗轮廓与共同二维上下文；非逐角度测量。
+- aether-gazer:ookuninushi · Ookuninushi · [来源](https://drive.google.com/file/d/15jLExDnp7lcbWpK3A3unKuNzEo_L5yV1/view) · D：粗轮廓与共同二维上下文；非逐角度测量。
+- aether-gazer:osiris · Osiris · [来源](https://drive.google.com/file/d/1ofYwKBlmRLyM5zOgI8DjXZnHD16nA-Y2/view) · D：粗轮廓与共同二维上下文；非逐角度测量。
+- aether-gazer:parvati · Parvati · [来源](https://drive.google.com/file/d/18K4mCN3A0cImrsttNc0HdBWwjbSIpibx/view) · D：粗轮廓与共同二维上下文；非逐角度测量。
+- aether-gazer:selene · Selene · [来源](https://drive.google.com/file/d/1916bki7szpJOInAniu5ROz0KoAe_ePWH/view) · D：粗轮廓与共同二维上下文；非逐角度测量。
+- aether-gazer:serket · Serket · [来源](https://drive.google.com/file/d/1CBc3jU4fQh1_OFfaXwJAHki4RlavLEQX/view) · D：粗轮廓与共同二维上下文；非逐角度测量。
+- aether-gazer:shu · Shu · [来源](https://drive.google.com/file/d/1YzrzEPpZ9GHDhI8djEECAXwsv94b8ZGN/view) · D：粗轮廓与共同二维上下文；非逐角度测量。
+- aether-gazer:skadi · Skadi · [来源](https://drive.google.com/file/d/1l9zEWNvXL2SdZlt_pgSot2wCsjJg8Tbd/view) · D：粗轮廓与共同二维上下文；非逐角度测量。
+- aether-gazer:skuld · Skuld · [来源](https://drive.google.com/file/d/1ujWerm8oFvgm08UkSff0zMs2roUf5zqB/view) · D：粗轮廓与共同二维上下文；非逐角度测量。
+- aether-gazer:thoth · Thoth · [来源](https://drive.google.com/file/d/1dK7A-xGxhUimwtT4SCXzh25J0VIqOgdi/view) · D：粗轮廓与共同二维上下文；非逐角度测量。
+- aether-gazer:tsukuyomi · Tsukuyomi · [来源](https://drive.google.com/file/d/1BOsoQWalK2U7sujy-hT9vqSI90LRUHhQ/view) · D：粗轮廓与共同二维上下文；非逐角度测量。
+- aether-gazer:tyr · Tyr · [来源](https://drive.google.com/file/d/111t3U3r0twoihtJqrtdQev2jsXGODjlS/view) · D：粗轮廓与共同二维上下文；非逐角度测量。
+- aether-gazer:verthandi · Verthandi · [来源](https://drive.google.com/file/d/1fAudBMPlgiKXsa07hcO0SCLUsh4Mcqjz/view) · D：粗轮廓与共同二维上下文；非逐角度测量。
+
+### Dragon Ball Sparking! Zero（1）
+
+- dbsz-krillin · Krillin · [来源](https://store.steampowered.com/app/1790600/DRAGON_BALL_Sparking_ZERO/) · 补K：正面与近侧面；头俯转、前臂遮下脸；非标定90°。
+
+### Genshin Impact（85）
+
+- genshin-alhaitham · Alhaitham · [来源](https://drive.google.com/file/d/1xRHdpyBS3M_0z5ntEAnCYqm8OmJEOZgY/view) · A：可见主外廓/根部邻域；不等于完整耳后接缝。
+- genshin-amber · Amber · [来源](https://drive.google.com/file/d/1UwR4OZlLQSYROhbY0a-N5xiX7bFMVZ4W/view) · A：可见主外廓/根部邻域；不等于完整耳后接缝。
+- genshin-beidou · Beidou · [来源](https://drive.google.com/file/d/1KIpihp3Oe5DeQisXBZEumiNIoZuC2Q6q/view) · A：可见主外廓/根部邻域；不等于完整耳后接缝。
+- genshin-bennett · Bennett · [来源](https://drive.google.com/file/d/1XVkoU-Sg2N93axB3H0x2XOOjCeBpIUFu/view) · A：可见主外廓/根部邻域；不等于完整耳后接缝。
+- genshin-candace · Candace · [来源](https://drive.google.com/file/d/1XXb024ZzoHSoYI0rpdaFmwodSK_lZdoY/view) · A：可见主外廓/根部邻域；不等于完整耳后接缝。
+- genshin-charlotte · Charlotte · [来源](https://drive.google.com/file/d/1FJ5mVpEppVfQkGUEQl3Tp1dYEKKe8nJX/view) · A：可见主外廓/根部邻域；不等于完整耳后接缝。
+- genshin-chevreuse · Chevreuse · [来源](https://drive.google.com/file/d/18MMKkLc2eL3qqUB1_idZhM5h0TawA3Jd/view) · A：可见主外廓/根部邻域；不等于完整耳后接缝。
+- genshin-chongyun · Chongyun · [来源](https://drive.google.com/file/d/1j7SXnY4EYOqYZsw-qzL2YnchuQuhLvBP/view) · A：可见主外廓/根部邻域；不等于完整耳后接缝。
+- genshin-citlali · Citlali · [来源](https://drive.google.com/file/d/17J-JsdIEFFFi0L_xN18fxKyn6kl5bDsP/view) · A：可见主外廓/根部邻域；不等于完整耳后接缝。
+- genshin-cyno · Cyno · [来源](https://drive.google.com/file/d/1MqUtbVZ3ZnWPmuLYQlbzRAg4FwTAyO5X/view) · A：可见主外廓/根部邻域；不等于完整耳后接缝。
+- genshin-escoffier · Escoffier · [来源](https://drive.google.com/file/d/1mxHGw_9uF6lF8Qbr00sEjqokeucpL0fz/view) · A：可见主外廓/根部邻域；不等于完整耳后接缝。
+- genshin-faruzan · Faruzan · [来源](https://drive.google.com/file/d/1K2pUsHbyQYRJlfA_WB_BMcCbR0UJmXmq/view) · A：可见主外廓/根部邻域；不等于完整耳后接缝。
+- genshin-hu-tao · Hu Tao · [来源](https://drive.google.com/file/d/1KHig2xnOBH3x5_l6Z6FSGNtWGKnc4H2X/view) · A：可见主外廓/根部邻域；不等于完整耳后接缝。
+- genshin-ifa · Ifa · [来源](https://drive.google.com/file/d/1nX4CZTEjpgQO97TFhkpfuTSc1cUmol-l/view) · A：可见主外廓/根部邻域；不等于完整耳后接缝。
+- genshin-illuga · Illuga · [来源](https://drive.google.com/file/d/1M55R9dHQ-kjYKYDRU-n6hVqzXxH8QRfe/view) · A：可见主外廓/根部邻域；不等于完整耳后接缝。
+- genshin-jahoda · Jahoda · [来源](https://drive.google.com/file/d/1nEQj4ak6veLuTD_ZdIX9D2yOn4WNCTvl/view) · A：可见主外廓/根部邻域；不等于完整耳后接缝。
+- genshin-kamisato-ayaka · Kamisato Ayaka · [来源](https://drive.google.com/file/d/1QgFt8tUXH9TXvSDkT01fdFGoqIQHbXaO/view) · A：可见主外廓/根部邻域；不等于完整耳后接缝。
+- genshin-kirara · Kirara · [来源](https://drive.google.com/file/d/1XbF3KeEQAVr8rwXnfDAL_5psBTCoxSdH/view) · A：可见主外廓/根部邻域；不等于完整耳后接缝。
+- genshin-klee · Klee · [来源](https://drive.google.com/file/d/1mNdVtvcgsjvS1ccGnj3XQbtq9Xl-1zf2/view) · A：可见主外廓/根部邻域；不等于完整耳后接缝。
+- genshin-kuki-shinobu · Kuki Shinobu · [来源](https://drive.google.com/file/d/1g0Yck0O1EnAJIEY-0jjcN1sY4H81MJ89/view) · A：可见主外廓/根部邻域；不等于完整耳后接缝。
+- genshin-aino · Aino · [来源](https://drive.google.com/file/d/1FeUmafjvgHePWd3fF8SgDx8poC1nvAuD/view) · A：可见主外廓/根部邻域；不等于完整耳后接缝。
+- genshin-albedo · Albedo · [来源](https://drive.google.com/file/d/1Ld5HwNrFnJ5MNjbxp-f1YuKWdg3yY-mO/view) · A：可见主外廓/根部邻域；不等于完整耳后接缝。
+- genshin-chasca · Chasca · [来源](https://drive.google.com/file/d/1Ci5IG5zKi6cHl0qn8NkHpqUB2fJVe7vX/view) · A：可见主外廓/根部邻域；不等于完整耳后接缝。
+- genshin-dahlia · Dahlia · [来源](https://drive.google.com/file/d/13_cSupzqX556wxIGYY4toGjxSyRBxWwW/view) · A：可见主外廓/根部邻域；不等于完整耳后接缝。
+- genshin-dehya · Dehya · [来源](https://drive.google.com/file/d/1gtSJPVvhF9hFsf88szEQhtPvQnVD_dY6/view) · A：可见主外廓/根部邻域；不等于完整耳后接缝。
+- genshin-flins · Flins · [来源](https://drive.google.com/file/d/1GxY-UPdg8lc-hClZTteAq_9Yd-yrt2mQ/view) · A：可见主外廓/根部邻域；不等于完整耳后接缝。
+- genshin-ganyu · Ganyu · [来源](https://drive.google.com/file/d/14olBGgNPKHnkNrr3QF5J5X6pFzuYOAOD/view) · A：可见主外廓/根部邻域；不等于完整耳后接缝。
+- genshin-kamisato-ayato · Kamisato Ayato · [来源](https://drive.google.com/file/d/16b1Mrf2i33_KOKfg6n3eyI50s_ZdTyH6/view) · A：可见主外廓/根部邻域；不等于完整耳后接缝。
+- genshin-kujou-sara · Kujou Sara · [来源](https://drive.google.com/file/d/1hHR2NfNfb7PeNqlEzOcUvzttyf8DCyjX/view) · A：可见主外廓/根部邻域；不等于完整耳后接缝。
+- genshin-linnea · Linnea · [来源](https://drive.google.com/file/d/1Sq-NIqqwSP2tuBYtXXLN9_Vzxg0nXSqs/view) · A：可见主外廓/根部邻域；不等于完整耳后接缝。
+- genshin-lyney · Lyney · [来源](https://drive.google.com/file/d/1qIM4P2qrMRTwtL-bNZO7-0KTjCVUL2Lp/view) · A：可见主外廓/根部邻域；不等于完整耳后接缝。
+- genshin-mualani · Mualani · [来源](https://drive.google.com/file/d/1cQ2yoFMW9MJTxpwXaYP3KRifk7abyXx1/view) · A：可见主外廓/根部邻域；不等于完整耳后接缝。
+- genshin-nahida · Nahida · [来源](https://drive.google.com/file/d/127mtWDgfQbvJTDm771DlV9c9PimxNxao/view) · A：可见主外廓/根部邻域；不等于完整耳后接缝。
+- genshin-nefer · Nefer · [来源](https://drive.google.com/file/d/1DBqE9Y9mCfTslXH7g2pnY8t5A5Ia1cmP/view) · A：可见主外廓/根部邻域；不等于完整耳后接缝。
+- genshin-nilou · Nilou · [来源](https://drive.google.com/file/d/1sSwTN0VyhQT04ddWrL4CGYRBo9tmr__7/view) · A：可见主外廓/根部邻域；不等于完整耳后接缝。
+- genshin-ningguang · Ningguang · [来源](https://drive.google.com/file/d/11ZMDI5MISe20hFNSorUWzirtkHhi_w55/view) · A：可见主外廓/根部邻域；不等于完整耳后接缝。
+- genshin-noelle · Noelle · [来源](https://drive.google.com/file/d/1voKmAeBwv3a4kaPoeBZLzUpWQPZ70eGh/view) · A：可见主外廓/根部邻域；不等于完整耳后接缝。
+- genshin-qiqi · Qiqi · [来源](https://drive.google.com/file/d/1ZomS82e3Okc7u_DkB-XVNIaMsvExKVRS/view) · A：可见主外廓/根部邻域；不等于完整耳后接缝。
+- genshin-rosaria · Rosaria · [来源](https://drive.google.com/file/d/1yINNhvC_8ugxtGgzfgkweml8e2T4i6c1/view) · A：可见主外廓/根部邻域；不等于完整耳后接缝。
+- genshin-sangonomiya-kokomi · Sangonomiya Kokomi · [来源](https://drive.google.com/file/d/1MCbp2KPe6RKlIoCLKFBvoLO2q9RCJo-g/view) · A：可见主外廓/根部邻域；不等于完整耳后接缝。
+- genshin-sethos · Sethos · [来源](https://drive.google.com/file/d/1-YFVBNEauixpt8-DKqhkLQxbRj6HD8YU/view) · A：可见主外廓/根部邻域；不等于完整耳后接缝。
+- genshin-shikanoin-heizou · Shikanoin Heizou · [来源](https://drive.google.com/file/d/1KhZ4jUodOzaPz2lIBZDSlMKiVFTlUfIj/view) · A：可见主外廓/根部邻域；不等于完整耳后接缝。
+- genshin-thoma · Thoma · [来源](https://drive.google.com/file/d/1mVyeWgNcdmhZCr5xVSCVFh17k5EcyjXA/view) · A：可见主外廓/根部邻域；不等于完整耳后接缝。
+- genshin-wanderer · Wanderer · [来源](https://drive.google.com/file/d/1gu7qUEos9tJW3OyMi1FznR7DIf0mEYjg/view) · A：可见主外廓/根部邻域；不等于完整耳后接缝。
+- genshin-wriothesley · Wriothesley · [来源](https://drive.google.com/file/d/1GXrPSKTVvT-QkxHpxwVI8f3mudREEVwM/view) · A：可见主外廓/根部邻域；不等于完整耳后接缝。
+- genshin-xiao · Xiao · [来源](https://drive.google.com/file/d/1Uqowv-Kl65FLG4meOwvhEqbefOGDlo39/view) · A：可见主外廓/根部邻域；不等于完整耳后接缝。
+- genshin-xinyan · Xinyan · [来源](https://drive.google.com/file/d/1eYu-0sZ11mL9GP0tw8Xzhwhpak3sAF4F/view) · A：可见主外廓/根部邻域；不等于完整耳后接缝。
+- genshin-yaoyao · Yaoyao · [来源](https://drive.google.com/file/d/1lrDek2rpKH-ew6D_zlqZn-nVRwAIbidd/view) · A：可见主外廓/根部邻域；不等于完整耳后接缝。
+- genshin-yumemizuki-mizuki · Yumemizuki Mizuki · [来源](https://drive.google.com/file/d/1Eu77HmSxt43npZ5ZcyK4vgAS6dbInALe/view) · A：可见主外廓/根部邻域；不等于完整耳后接缝。
+- genshin-yun-jin · Yun Jin · [来源](https://drive.google.com/file/d/1cPmdeNcrdPcLn6GFn8oDkAhaFjHmp5ON/view) · A：可见主外廓/根部邻域；不等于完整耳后接缝。
+- genshin-alyosha · Alyosha · [来源](https://drive.google.com/file/d/1Lfqe7MPB9rJiWSoSqApTKVAlyRnpfbE1/view) · A：可见主外廓/根部邻域；不等于完整耳后接缝。
+- genshin-baizhu · Baizhu · [来源](https://drive.google.com/file/d/1VMQ8fReyX8Jvl_u77xseH-DUHF7s8F7Q/view) · A：可见主外廓/根部邻域；不等于完整耳后接缝。
+- genshin-barbara-pegg · Barbara Pegg · [来源](https://drive.google.com/file/d/1gaQ3llHqvA0Z1GoWAPOUNNLUNJiFjzzw/view) · A：可见主外廓/根部邻域；不等于完整耳后接缝。
+- genshin-columbina-hyposelenia · Columbina Hyposelenia · [来源](https://drive.google.com/file/d/164f3wSxnP2sd-k8iWqaHdUZVC_wqLGLA/view) · A：可见主外廓/根部邻域；不等于完整耳后接缝。
+- genshin-diluc-ragnvindr · Diluc Ragnvindr · [来源](https://drive.google.com/file/d/1i5I0V7EKKxQ7OK1p6NP-MN3ut0SjqsXb/view) · A：可见主外廓/根部邻域；不等于完整耳后接缝。
+- genshin-eula-lawrence · Eula Lawrence · [来源](https://drive.google.com/file/d/1rhlpTPpuK-tdH9C7rmcV0vpeuTttq1Wh/view) · A：可见主外廓/根部邻域；不等于完整耳后接缝。
+- genshin-fischl-von-luftschloss-narfidort · Fischl von Luftschloss Narfidort · [来源](https://drive.google.com/file/d/1IVIIJ5loIX2YaY2hAtHrDeMi83KIB9V1/view) · A：可见主外廓/根部邻域；不等于完整耳后接缝。
+- genshin-furina-de-fontaine · Furina de Fontaine · [来源](https://drive.google.com/file/d/1Q83H8D81AYp7mQzurrxsVnm3LuGQ2hn5/view) · A：可见主外廓/根部邻域；不等于完整耳后接缝。
+- genshin-kaedehara-kazuha · Kaedehara Kazuha · [来源](https://drive.google.com/file/d/1t6YvIdd2oCG6os-m_mWYIcd7y3zJ7YdK/view) · A：可见主外廓/根部邻域；不等于完整耳后接缝。
+- genshin-lisa-minci · Lisa Minci · [来源](https://drive.google.com/file/d/1sZU0m0-TdfhCqf3p1zCokODiCK2WxTNF/view) · A：可见主外廓/根部邻域；不等于完整耳后接缝。
+- genshin-lohen · Lohen · [来源](https://drive.google.com/file/d/1VKPlWT86DQfIH9mJ524RTxw_ukWYz5bL/view) · A：可见主外廓/根部邻域；不等于完整耳后接缝。
+- genshin-lumine · Lumine · [来源](https://drive.google.com/file/d/1Gjj0svrGoKugQkKDdV5RP6MjkTcyaN2u/view) · A：可见主外廓/根部邻域；不等于完整耳后接缝。
+- genshin-mao-xiangling · Mao Xiangling · [来源](https://drive.google.com/file/d/1ZwxT1KQa8UslF9zgLbNLa8fiqhQUdC5i/view) · A：可见主外廓/根部邻域；不等于完整耳后接缝。
+- genshin-mona-megistus · Mona Megistus · [来源](https://drive.google.com/file/d/1_OOz9mlJdxt8V6ikXYkB2jeikdIGdpDa/view) · A：可见主外廓/根部邻域；不等于完整耳后接缝。
+- genshin-naganohara-yoimiya · Naganohara Yoimiya · [来源](https://drive.google.com/file/d/1n6Ou07r0p2el52nr41Fh0Gn2PJU1hyJs/view) · A：可见主外廓/根部邻域；不等于完整耳后接缝。
+- genshin-nicole-reeyn · Nicole Reeyn · [来源](https://drive.google.com/file/d/1-SzZBQ2MjD4N0nXJMvNycXDJab7uPLZh/view) · A：可见主外廓/根部邻域；不等于完整耳后接缝。
+- genshin-odette · Odette · [来源](https://drive.google.com/file/d/1l10-tFDBGqQ07kVgFIHHL_y_66bDJAwD/view) · A：可见主外廓/根部邻域；不等于完整耳后接缝。
+- genshin-paimon · Paimon · [来源](https://drive.google.com/file/d/1Dz_fdVqb7AjVvT3kSdNfDNVV_DJuae6X/view) · A：可见主外廓/根部邻域；不等于完整耳后接缝。
+- genshin-prune · Prune · [来源](https://drive.google.com/file/d/1cZI3EPv8qA0Cg2XM6aDszuprNOG0t9VR/view) · A：可见主外廓/根部邻域；不等于完整耳后接缝。
+- genshin-sandrone · Sandrone · [来源](https://drive.google.com/file/d/1zL3bLfZzkjsUdAX8g5Z-jcwTfYqY46br/view) · A：可见主外廓/根部邻域；不等于完整耳后接缝。
+- genshin-tartaglia · Tartaglia · [来源](https://drive.google.com/file/d/1SCM-GK9-gTdlf2PgFiifx5HmFJYiF3pc/view) · A：可见主外廓/根部邻域；不等于完整耳后接缝。
+- genshin-varka · Varka · [来源](https://drive.google.com/file/d/1U6ch9F_C1l4c-7xnYDq1T4W3jiHZZvZ6/view) · A：可见主外廓/根部邻域；不等于完整耳后接缝。
+- genshin-vesna-strivozha · Vesna Strivozha · [来源](https://drive.google.com/file/d/17--ztuEL8aHRT9gyAkUrP4_UbKwOUuEF/view) · A：可见主外廓/根部邻域；不等于完整耳后接缝。
+- genshin-xingqiu · Xingqiu · [来源](https://drive.google.com/file/d/1kZ_g8LeOvcDG02o_A9YvGC0taZ0bBi1q/view) · A：可见主外廓/根部邻域；不等于完整耳后接缝。
+- genshin-yip-gaming · Yip Gaming · [来源](https://drive.google.com/file/d/1o2pPaGbtUSQImRcLkoMCRz2oOLRFp-_W/view) · A：可见主外廓/根部邻域；不等于完整耳后接缝。
+- genshin-zhongli · Zhongli · [来源](https://drive.google.com/file/d/1T8-ucmADr9uyYpjQN4hE1C2FqWvhhwZS/view) · A：可见主外廓/根部邻域；不等于完整耳后接缝。
+- genshin-zibai · Zibai · [来源](https://drive.google.com/file/d/1GKecYtHaf78NdBTV_WitL2GMv_HOuwnX/view) · A：可见主外廓/根部邻域；不等于完整耳后接缝。
+- genshin-aether · Aether · [来源](https://drive.google.com/file/d/1GgUFPmD61Hn2XsxNXbzT2YaCkemifs7i/view) · 补A：主耳体/外轮与眼脸上下文；允许小附着区遮挡。
+- genshin-chiori · Chiori · [来源](https://drive.google.com/file/d/1DB1HOU6t8bl2xdNBwEr6MnDMqpWCfxXu/view) · 补A：主耳体/外轮与眼脸上下文；允许小附着区遮挡。
+- genshin-neuvillette · Neuvillette · [来源](https://drive.google.com/file/d/1GcahaMmR_oBPecv2a97SXzZka76tA0qP/view) · 补A：主耳体/外轮与眼脸上下文；允许小附着区遮挡。
+- genshin-raiden-shogun · Raiden Shogun · [来源](https://drive.google.com/file/d/1dtM-Gmk3fydnAGJ5Z-YH18zDPFas-fwI/view) · 补A：主耳体/外轮与眼脸上下文；允许小附着区遮挡。
+- genshin-houzhang · Houzhang · [来源](https://drive.google.com/file/d/1ARe8uqlkNjqa1ClH9bEQjt0eCsJzzSf7/view) · 补A：主耳体/外轮与眼脸上下文；允许小附着区遮挡。
+- genshin-jiehu · Jiehu · [来源](https://drive.google.com/file/d/1Pw4JMYVJwUzEQiXxhZMj-edihAWCPVYI/view) · 补A：主耳体/外轮与眼脸上下文；允许小附着区遮挡。
+- genshin-crystallina-skofnungr · Crystallina Skofnungr · [来源](https://drive.google.com/file/d/1TJJiI_n3PuSOFkHwKfscSeFp6SbCTHMt/view) · 补A：主耳体/外轮与眼脸上下文；允许小附着区遮挡。
+- genshin-pulcinella · Pulcinella · [来源](https://drive.google.com/file/d/1TdIeC7HMjDphX9F00Qw_9w-04irpbJtF/view) · 补P：主外轮可读；帽/鬓下上根未知。
+
+### Honkai Impact 3rd（25）
+
+- hi3-001 · Ai Hyperion Λ · [来源](https://drive.google.com/file/d/1m_UiOhEIxwH4r_c8hPNLClOlx-5ZVdcu/view) · B：粗外廓及粗附着关系；修复视图按原审查记录。
+- hi3-002 · Aponia · [来源](https://drive.google.com/file/d/1ceEe8BlYLgwYiNdGV5l4oZdrjz-enLjJ/view) · B：粗外廓及粗附着关系；修复视图按原审查记录。
+- hi3-009 · Dreamseeker (female model) · [来源](https://drive.google.com/file/d/13U6a6PS15JAL-hWRwae3Z8OVvfdKVfuy/view) · B：粗外廓及粗附着关系；修复视图按原审查记录。
+- hi3-011 · Eden · [来源](https://drive.google.com/file/d/110qRGbVrZQ3aFEFzRHw88t7S7EgP5P4m/view) · B：粗外廓及粗附着关系；修复视图按原审查记录。
+- hi3-012 · Elysia · [来源](https://drive.google.com/file/d/1UsnYI083m3wPc1FsYpK_aQLM-EH2kLzd/view) · B：粗外廓及粗附着关系；修复视图按原审查记录。
+- hi3-013 · Helia · [来源](https://drive.google.com/file/d/1pXyk9ZvynwhKHYM1fuFBM6eOnMdxFYVH/view) · B：粗外廓及粗附着关系；修复视图按原审查记录。
+- hi3-015 · Griseo · [来源](https://drive.google.com/file/d/1tK8aNToYsjVlJu3Fh-6Mf-n6h9u8dJrP/view) · B：粗外廓及粗附着关系；修复视图按原审查记录。
+- hi3-017 · Kiana Kaslana · [来源](https://drive.google.com/file/d/1-xo6h1LCwgz55hBzTxbLrldwzQ32CoO6/view) · B：粗外廓及粗附着关系；修复视图按原审查记录。
+- hi3-021 · Li Sushang · [来源](https://drive.google.com/file/d/1Pvytq22KK1qIRLAMBNuyUgB03u3unsA_/view) · B：粗外廓及粗附着关系；修复视图按原审查记录。
+- hi3-024 · Misteln Schariac · [来源](https://drive.google.com/file/d/1y5F46CDa-96uPFRy36ajHAdSGGs2p9Zq/view) · B：粗外廓及粗附着关系；修复视图按原审查记录。
+- hi3-025 · Mobius · [来源](https://drive.google.com/file/d/19eB14iFccXi2qBuxdYkxYUqphx8vFYZ5/view) · B：粗外廓及粗附着关系；修复视图按原审查记录。
+- hi3-031 · Raiden Mei · [来源](https://drive.google.com/file/d/1eE_eLwFMF802ZqTChoxuZNeCxyA6MV_B/view) · B：粗外廓及粗附着关系；修复视图按原审查记录。
+- hi3-036 · Senadina · [来源](https://drive.google.com/file/d/1zfhLIOUfZSAiqyHuazdJlNmGj4CBymIB/view) · B：粗外廓及粗附着关系；修复视图按原审查记录。
+- hi3-037 · Serapeum · [来源](https://drive.google.com/file/d/1rVdtsVqMPumjydz0HyA-64nPJoTeP0c5/view) · B：粗外廓及粗附着关系；修复视图按原审查记录。
+- hi3-038 · Shigure Kira · [来源](https://drive.google.com/file/d/1Mp83U8zC4ylq2L4h1SUhNd4HjcEnOUtj/view) · B：粗外廓及粗附着关系；修复视图按原审查记录。
+- hi3-039 · Sirin · [来源](https://drive.google.com/file/d/1heFNqw1kT4e9YgbovLma-UgJzjIxmOcE/view) · B：粗外廓及粗附着关系；修复视图按原审查记录。
+- hi3-040 · Songque · [来源](https://drive.google.com/file/d/1hUe3Wwi3zsqWia47O6H4m1Tpt5Ho4kZa/view) · B：粗外廓及粗附着关系；修复视图按原审查记录。
+- hi3-043 · Thelema Nutriscu · [来源](https://drive.google.com/file/d/11IoE6ll6lTmGT6ShffEHmj8bq6em3clH/view) · B：粗外廓及粗附着关系；修复视图按原审查记录。
+- hi3-045 · Vill-V · [来源](https://drive.google.com/file/d/1jdhrGj58CoL2IIwEtkA3VRNJE7GxWkXl/view) · B：粗外廓及粗附着关系；修复视图按原审查记录。
+- hi3-046 · Vita · [来源](https://drive.google.com/file/d/16XSskr6k8G_ppdBAmmK5mWdbD2WwZwGE/view) · B：粗外廓及粗附着关系；修复视图按原审查记录。
+- hi3-049 · Bronya Zaychik · [来源](https://drive.google.com/file/d/1CLc6OhVBnYDoEbJLEHFktU24V5fW22Az/view) · B：粗外廓及粗附着关系；修复视图按原审查记录。
+- hi3-051 · Fu Hua · [来源](https://drive.google.com/file/d/1y1SQXr1Ay4BvY6py4ttKMSl828LjQe3P/view) · B：粗外廓及粗附着关系；修复视图按原审查记录。
+- hi3-053 · Theresa Apocalypse · [来源](https://drive.google.com/file/d/1Cdby-FS7xmjcaLEK6FVATzh1RqHZ-oCH/view) · B：粗外廓及粗附着关系；修复视图按原审查记录。
+- hi3-054 · Seele Vollerei · [来源](https://drive.google.com/file/d/16Jf91FgNkKsGt80L17ajBXb3kD5Rn6_Y/view) · B：粗外廓及粗附着关系；修复视图按原审查记录。
+- hi3-055 · Durandal · [来源](https://drive.google.com/file/d/1oWlw-bzs-iud6e82f3L5oLS1_V0P81Cn/view) · B：粗外廓及粗附着关系；修复视图按原审查记录。
+
+### Honkai: Star Rail（62）
+
+- hsr-acheron · Acheron · [来源](https://drive.google.com/file/d/1SgCM_j-QaxinLDHogxpbFdoqVA5HpfyY/view) · B：粗外廓及粗附着关系；修复视图按原审查记录。
+- hsr-aglaea · Aglaea · [来源](https://drive.google.com/file/d/1Dmu5WIE1rivqvsBeQG652xFQPeCmEvmN/view) · B：粗外廓及粗附着关系；修复视图按原审查记录。
+- hsr-anaxagoras · Anaxa · [来源](https://drive.google.com/file/d/1zKDfvsuilxhHYvp7ZvZdPYAkmp3uY3tW/view) · B：粗外廓及粗附着关系；修复视图按原审查记录。
+- hsr-argenti · Argenti · [来源](https://drive.google.com/file/d/1MWsgJUaNLTlU0jDvlCPOvkAnCzpHSAJ4/view) · B：粗外廓及粗附着关系；修复视图按原审查记录。
+- hsr-arlan · Arlan · [来源](https://drive.google.com/file/d/10QduprZacTnIByo2bSr2EH0Xo03ZgoZB/view) · B：粗外廓及粗附着关系；修复视图按原审查记录。
+- hsr-ashveil · Ashveil · [来源](https://drive.google.com/file/d/1dgcRY_Prdz-vdEyVBjnlBaKX3qeX6NjD/view) · B：粗外廓及粗附着关系；修复视图按原审查记录。
+- hsr-asta · Asta · [来源](https://drive.google.com/file/d/1hncbaTjpXvFoKoPqKv2OrcE_JyVkpADp/view) · B：粗外廓及粗附着关系；修复视图按原审查记录。
+- hsr-aventurine · Aventurine · [来源](https://drive.google.com/file/d/1Eh0QRLW4TBTjCQckMpjaFu6aPNuY-5VU/view) · B：粗外廓及粗附着关系；修复视图按原审查记录。
+- hsr-bailu · Bailu · [来源](https://drive.google.com/file/d/1zPreed8R9pztqFYAGszffw3h03XDiB5N/view) · B：粗外廓及粗附着关系；修复视图按原审查记录。
+- hsr-black-swan · Black Swan · [来源](https://drive.google.com/file/d/1GhyKqBAULksQqsqHPw2zFj7cqWz9mFFa/view) · B：粗外廓及粗附着关系；修复视图按原审查记录。
+- hsr-blade · Blade · [来源](https://drive.google.com/file/d/1ldq8J--xuMsbGpdC4yWMfycyA43VKkMB/view) · B：粗外廓及粗附着关系；修复视图按原审查记录。
+- hsr-boothill · Boothill · [来源](https://drive.google.com/file/d/1gdZeSX6_SIr80brP1-RrwGHKyOv5AUpn/view) · B：粗外廓及粗附着关系；修复视图按原审查记录。
+- hsr-bronya-rand · Bronya Rand · [来源](https://drive.google.com/file/d/1rovwT4ExpImQT2ZHifE02KURVBY-ylqS/view) · B：粗外廓及粗附着关系；修复视图按原审查记录。
+- hsr-cerydra · Cerydra · [来源](https://drive.google.com/file/d/1xpcKgnffMbVObWt6Hbr7fY698Fopoaqn/view) · B：粗外廓及粗附着关系；修复视图按原审查记录。
+- hsr-clara-svarog · Clara · [来源](https://drive.google.com/file/d/1vToJmgj5o6JrTvhR2CFkVVlJkJQtcB7N/view) · B：粗外廓及粗附着关系；修复视图按原审查记录。
+- hsr-cyrene · Cyrene · [来源](https://drive.google.com/file/d/1EhsOaYyapyoeabYwrXA93ZclI_lBZ2G4/view) · B：粗外廓及粗附着关系；修复视图按原审查记录。
+- hsr-dan-heng · Dan Heng · [来源](https://drive.google.com/file/d/1Oh5SxNUSsbZuBdMBvoU4m95BQ4Fn6qK9/view) · B：粗外廓及粗附着关系；修复视图按原审查记录。
+- hsr-dr-veritas-ratio · Dr. Veritas Ratio · [来源](https://drive.google.com/file/d/1I_v1gz_0CdWjfkFsrMV9_qdRpSBCtWvb/view) · B：粗外廓及粗附着关系；修复视图按原审查记录。
+- hsr-evanescia · Evanescia · [来源](https://drive.google.com/file/d/1aVy5Mesj4vr4sbqSNPWuyIhT4Mxq-w_L/view) · B：粗外廓及粗附着关系；修复视图按原审查记录。
+- hsr-firefly · Firefly · [来源](https://drive.google.com/file/d/14eWpHeP_-I_tZOIkIRuCAJssXnfvuoIZ/view) · B：粗外廓及粗附着关系；修复视图按原审查记录。
+- hsr-fu-xuan · Fu Xuan · [来源](https://drive.google.com/file/d/14kfyjJPTVZKUmrNt95WBqtkqYMD0VNQ6/view) · B：粗外廓及粗附着关系；修复视图按原审查记录。
+- hsr-gallagher · Gallagher · [来源](https://drive.google.com/file/d/1SYKFWzV_DGa2DZ_jQRuCMVRd5hnq-q2A/view) · B：粗外廓及粗附着关系；修复视图按原审查记录。
+- hsr-gepard-landau · Gepard Landau · [来源](https://drive.google.com/file/d/1vtCirJY441-fD8nVeNXMCAKB86_lqAz3/view) · B：粗外廓及粗附着关系；修复视图按原审查记录。
+- hsr-guinaifen · Guinaifen · [来源](https://drive.google.com/file/d/1_wYJ3-ln1vRb5nsXjaPYkDjLEObZaRxg/view) · B：粗外廓及粗附着关系；修复视图按原审查记录。
+- hsr-hanya · Hanya · [来源](https://drive.google.com/file/d/1VqEdjby2A8Vc842bNeoaaZjIbNqF22VJ/view) · B：粗外廓及粗附着关系；修复视图按原审查记录。
+- hsr-herta · Herta · [来源](https://drive.google.com/file/d/1Lm7mtrrlYAZe8AofEThSCn3CMDt0IzOC/view) · B：粗外廓及粗附着关系；修复视图按原审查记录。
+- hsr-himeko · Himeko · [来源](https://drive.google.com/file/d/1bgEuQQ5hJGQlgxO3r4X0erb_L3hRVnub/view) · B：粗外廓及粗附着关系；修复视图按原审查记录。
+- hsr-hook · Hook · [来源](https://drive.google.com/file/d/1Mu0YI1mHaRbIHDVMGOpPnc4voTPAc0Ra/view) · B：粗外廓及粗附着关系；修复视图按原审查记录。
+- hsr-hyacine · Hyacine · [来源](https://drive.google.com/file/d/1d35TAWRmXx9tj19K_5gPDyDWQDptLbbs/view) · B：粗外廓及粗附着关系；修复视图按原审查记录。
+- hsr-hysilens · Hysilens · [来源](https://drive.google.com/file/d/1rFIFMp0XoOVngFMkCdHq0AqVfe1aSfr6/view) · B：粗外廓及粗附着关系；修复视图按原审查记录。
+- hsr-jade · Jade · [来源](https://drive.google.com/file/d/1xrGuugixtdV7yQwl7HB_WfAA8NgZbFTF/view) · B：粗外廓及粗附着关系；修复视图按原审查记录。
+- hsr-jing-yuan · Jing Yuan · [来源](https://drive.google.com/file/d/16g6EyQsi0VFvj4ggdVztYtSV45R_u5QJ/view) · B：粗外廓及粗附着关系；修复视图按原审查记录。
+- hsr-jingliu · Jingliu · [来源](https://drive.google.com/file/d/1_y613hOqkKHfgTEEPGFlV0Kzr_KwLr24/view) · B：粗外廓及粗附着关系；修复视图按原审查记录。
+- hsr-kafka · Kafka · [来源](https://drive.google.com/file/d/1-Uu_plVyLSENrbGqo5wz9MK0_5YcHftl/view) · B：粗外廓及粗附着关系；修复视图按原审查记录。
+- hsr-li-sushang · Li Sushang · [来源](https://drive.google.com/file/d/1UIUUlg7M9jEDnl1fn4XDTCtesRiDPL5h/view) · B：粗外廓及粗附着关系；修复视图按原审查记录。
+- hsr-lingsha · Lingsha · [来源](https://drive.google.com/file/d/1EdXrRaHMqm_HIFEMgoR5ddiA3dniWMP6/view) · B：粗外廓及粗附着关系；修复视图按原审查记录。
+- hsr-luka · Luka · [来源](https://drive.google.com/file/d/1YCQsa788AkfJ03n5K1k96R88uvJa_Q16/view) · B：粗外廓及粗附着关系；修复视图按原审查记录。
+- hsr-luocha · Luocha · [来源](https://drive.google.com/file/d/1DIwbs85BbxDi75sj-a84nSzrgz9Tid49/view) · B：粗外廓及粗附着关系；修复视图按原审查记录。
+- hsr-march-7th-evernight · March 7th · [来源](https://drive.google.com/file/d/1U7FyUTutpbbbMyhq0o5xrgVa0DS7rWsM/view) · B：粗外廓及粗附着关系；修复视图按原审查记录。
+- hsr-misha · Misha · [来源](https://drive.google.com/file/d/1FgnZnH4QjtZLpuRDhS5fi8GM5Q5Sgsni/view) · B：粗外廓及粗附着关系；修复视图按原审查记录。
+- hsr-moze · Moze · [来源](https://drive.google.com/file/d/17v6DcCoLHKhZ_F7Ye6eCWQuDucb8W5h1/view) · B：粗外廓及粗附着关系；修复视图按原审查记录。
+- hsr-mydei · Mydei · [来源](https://drive.google.com/file/d/1t1-_84DAJK1phPorvpvNQQ0KTDidRbpP/view) · B：粗外廓及粗附着关系；修复视图按原审查记录。
+- hsr-natasha · Natasha · [来源](https://drive.google.com/file/d/1QR9ZOpRyQlodyj6R9Kwd1MqpVylmBPmc/view) · B：粗外廓及粗附着关系；修复视图按原审查记录。
+- hsr-pearl · Pearl · [来源](https://drive.google.com/file/d/1FML4F3CZeIVMtwJbc01acI_ViKj5P3BR/view) · B：粗外廓及粗附着关系；修复视图按原审查记录。
+- hsr-pela-pelageya-sergeyevna · Pela · [来源](https://drive.google.com/file/d/18mZIMKefdOmJ42MsDPkm1hSN6TK9uzKY/view) · B：粗外廓及粗附着关系；修复视图按原审查记录。
+- hsr-phainon · Phainon · [来源](https://drive.google.com/file/d/1fOG9FU-lvlXcEzu5ot-74k43Qouky37U/view) · B：粗外廓及粗附着关系；修复视图按原审查记录。
+- hsr-qingque · Qingque · [来源](https://drive.google.com/file/d/1Cjda5nUhf-FwGaXXyBtyVge86-_c8awd/view) · B：粗外廓及粗附着关系；修复视图按原审查记录。
+- hsr-rappa · Rappa · [来源](https://drive.google.com/file/d/1OjGUUH0Z90O9UIQNM9Nt98fvNy051gTe/view) · B：粗外廓及粗附着关系；修复视图按原审查记录。
+- hsr-robin · Robin · [来源](https://drive.google.com/file/d/1x_vrmxXHjGpuSlGYGIhexJVuEkJkidKa/view) · B：粗外廓及粗附着关系；修复视图按原审查记录。
+- hsr-ruan-mei · Ruan Mei · [来源](https://drive.google.com/file/d/1saYxXsVqoKstQ-84SMZU6N3HdJcHWZDw/view) · B：粗外廓及粗附着关系；修复视图按原审查记录。
+- hsr-sampo-koski · Sampo Koski · [来源](https://drive.google.com/file/d/1vtLYtQ4xfyMnw-GEGV5dzA2qwqT407Wm/view) · B：粗外廓及粗附着关系；修复视图按原审查记录。
+- hsr-seele · Seele · [来源](https://drive.google.com/file/d/1TF_z0tNYYpkhbsxN0w8OTE09_HHpQKtV/view) · B：粗外廓及粗附着关系；修复视图按原审查记录。
+- hsr-silver-wolf · Silver Wolf · [来源](https://drive.google.com/file/d/1APmswOr2ePdvMlXD2QW-VTKbJi-6HzpS/view) · B：粗外廓及粗附着关系；修复视图按原审查记录。
+- hsr-sunday · Sunday · [来源](https://drive.google.com/file/d/1nE1ymerevCfrXUF2CLC7rDbC3zrvrCCz/view) · B：粗外廓及粗附着关系；修复视图按原审查记录。
+- hsr-the-dahlia-constance · The Dahlia · [来源](https://drive.google.com/file/d/1S8T7FfTnEUEBSoJUN5uVBoWXbvwu6Ssl/view) · B：粗外廓及粗附着关系；修复视图按原审查记录。
+- hsr-trailblazer · Trailblazer · [来源](https://drive.google.com/file/d/1hhpqVWypU8D0Yx89I7PAOMNwHC79G9iA/view) · B：粗外廓及粗附着关系；修复视图按原审查记录。
+- hsr-tribbie · Tribbie · [来源](https://drive.google.com/file/d/1hegeUJE2ZujTSTHlnM8UNU8q4__eRVsi/view) · B：粗外廓及粗附着关系；修复视图按原审查记录。
+- hsr-welt-yang · Welt Yang · [来源](https://drive.google.com/file/d/11DYLyX5MQ2w5fsXGDuGUXGz4uGFtcUmf/view) · B：粗外廓及粗附着关系；修复视图按原审查记录。
+- hsr-yanqing · Yanqing · [来源](https://drive.google.com/file/d/1Sidvl1SATIBIM_d1qYcp8-woATQ0Jw0P/view) · B：粗外廓及粗附着关系；修复视图按原审查记录。
+- hsr-yao-guang · Yao Guang · [来源](https://drive.google.com/file/d/19BAo06-haEgicqoS_ZE3WBHTndDgBDea/view) · B：粗外廓及粗附着关系；修复视图按原审查记录。
+- hsr-yunli · Yunli · [来源](https://drive.google.com/file/d/1rYQMoM-_bi-wV7KX8sj7pVOSAMXvRMJX/view) · B：粗外廓及粗附着关系；修复视图按原审查记录。
+- hsr-sparkle-sparxie · Sparkle · [来源](https://drive.google.com/file/d/1izu_CGgvfF2kXTpvHKZ3Cy76xrcHBawV/view) · B：粗外廓及粗附着关系；修复视图按原审查记录。
+
+### Wuthering Waves（44）
+
+- wuwa-aalto · Aalto · [来源](https://drive.google.com/drive/folders/1DiApYAUmkvjWzTSY2ip02JTcyISwKEqY) · C：主外缘/下端及根邻域；较弱7例不计入。
+- wuwa-aemeath · Aemeath · [来源](https://drive.google.com/drive/folders/1buafU_Wth1fYt3lNJXtIF2Rivegz4xic) · C：主外缘/下端及根邻域；较弱7例不计入。
+- wuwa-augusta · Augusta · [来源](https://drive.google.com/drive/folders/1oIjHWHIbEkSczxVeD9qkJi1ROVh9we8Z) · C：主外缘/下端及根邻域；较弱7例不计入。
+- wuwa-baizhi · Baizhi · [来源](https://drive.google.com/drive/folders/1Hj_PK3kIqmJVvTyEOL3ElDasoUpogfNE) · C：主外缘/下端及根邻域；较弱7例不计入。
+- wuwa-brant · Brant · [来源](https://drive.google.com/drive/folders/14sV4nD0pkPTnjkFir9ywjpgbAb11Zy8q) · C：主外缘/下端及根邻域；较弱7例不计入。
+- wuwa-buling · Buling · [来源](https://drive.google.com/drive/folders/1B7iwZBESl-cF7EiKBGSUb0nuVNL1jVjP) · C：主外缘/下端及根邻域；较弱7例不计入。
+- wuwa-calcharo · Calcharo · [来源](https://drive.google.com/drive/folders/1GmBwRSuF9U8kxEEpblhVzoTiUFbs3ETm) · C：主外缘/下端及根邻域；较弱7例不计入。
+- wuwa-camellya · Camellya · [来源](https://drive.google.com/drive/folders/1cukE_3GiCgrzVRjuWz7d81DDEy2MDvu-) · C：主外缘/下端及根邻域；较弱7例不计入。
+- wuwa-cartethyia · Cartethyia · [来源](https://drive.google.com/drive/folders/1lrpCvBWPbNI4bre0HDYrSBl31UM6vM_m) · C：主外缘/下端及根邻域；较弱7例不计入。
+- wuwa-changli · Changli · [来源](https://drive.google.com/drive/folders/1sJCTDdob4EaPqZtC3aQQTgryJP9OK-AT) · C：主外缘/下端及根邻域；较弱7例不计入。
+- wuwa-chisa · Chisa · [来源](https://drive.google.com/drive/folders/1zpnUM5x1-r1fMYGccUborYSJQoxObeUn) · C：主外缘/下端及根邻域；较弱7例不计入。
+- wuwa-chixia · Chixia · [来源](https://drive.google.com/drive/folders/1US-zfhnEBDQuJ4V5-1YmwH1zYZ1PjSox) · C：主外缘/下端及根邻域；较弱7例不计入。
+- wuwa-ciaccona · Ciaccona · [来源](https://drive.google.com/drive/folders/17YZNuiWyR6OvMd6GMbiZSZm_jqfBg-DF) · C：主外缘/下端及根邻域；较弱7例不计入。
+- wuwa-cristoforo · Cristoforo · [来源](https://drive.google.com/drive/folders/1-gdmSPWpThwYLwDM-KlJ1cr8_UZZM_IQ) · C：主外缘/下端及根邻域；较弱7例不计入。
+- wuwa-danjin · Danjin · [来源](https://drive.google.com/drive/folders/1BMzPiHO9799QNYWOEGzg8tNHoUy1CuST) · C：主外缘/下端及根邻域；较弱7例不计入。
+- wuwa-encore · Encore · [来源](https://drive.google.com/drive/folders/18nxbCRYyQ1FomNmcuVOzxIPwkZSaUMDS) · C：主外缘/下端及根邻域；较弱7例不计入。
+- wuwa-ganxue · Ganxue · [来源](https://drive.google.com/drive/folders/1HnJGTWE7HIQ5deUThyAF-gveHyhTIG33) · C：主外缘/下端及根邻域；较弱7例不计入。
+- wuwa-i-r-i-s · I.R.I.S. · [来源](https://drive.google.com/drive/folders/1L9qc5p6OWvtTU9qqDplR77dEllju9ZuF) · C：主外缘/下端及根邻域；较弱7例不计入。
+- wuwa-iuno · Iuno · [来源](https://drive.google.com/drive/folders/1-bNhRRObgUeB9V2NamP0PmjIbakvFyoN) · C：主外缘/下端及根邻域；较弱7例不计入。
+- wuwa-jianxin · Jianxin · [来源](https://drive.google.com/drive/folders/1hdFPRCe-Q-h9CLjyFmX1LldVITDr3tgh) · C：主外缘/下端及根邻域；较弱7例不计入。
+- wuwa-jiyan · Jiyan · [来源](https://drive.google.com/drive/folders/1hKTkW8Tl9CiYr9HSVOLtso-2Fp-yXo_T) · C：主外缘/下端及根邻域；较弱7例不计入。
+- wuwa-juyao · Juyao · [来源](https://drive.google.com/drive/folders/1QzIOetEsg_6cgZwwjY1bdHjCO_V0j5xc) · C：主外缘/下端及根邻域；较弱7例不计入。
+- wuwa-lumi · Lumi · [来源](https://drive.google.com/drive/folders/1Z-blBSSRI69xTVTwJ5Pw0C0iB2gTIOtL) · C：主外缘/下端及根邻域；较弱7例不计入。
+- wuwa-lupa · Lupa · [来源](https://drive.google.com/drive/folders/148afp0KqXCfLQlrYxR2FuxzkXqldQQRj) · C：主外缘/下端及根邻域；较弱7例不计入。
+- wuwa-maqi · Maqi · [来源](https://drive.google.com/drive/folders/1oHOxTroQsA1HFSXuNX_gNP-t6_HWThxy) · C：主外缘/下端及根邻域；较弱7例不计入。
+- wuwa-margherita · Margherita · [来源](https://drive.google.com/drive/folders/1YSdMH8hK-2hse9j6p1p_slyh8NRPjEau) · C：主外缘/下端及根邻域；较弱7例不计入。
+- wuwa-mornye · Mornye · [来源](https://drive.google.com/drive/folders/1p8Y2mt3WZtEpWka2Cw6nT0oi8uiko4QI) · C：主外缘/下端及根邻域；较弱7例不计入。
+- wuwa-mortefi · Mortefi · [来源](https://drive.google.com/drive/folders/1utjdiqvGHzJlgT1YRECYUOgpV84Gbg-z) · C：主外缘/下端及根邻域；较弱7例不计入。
+- wuwa-phoebe · Phoebe · [来源](https://drive.google.com/drive/folders/1mIGF-RKqcb0U-kALK-OpCwIdQcLO8hxH) · C：主外缘/下端及根邻域；较弱7例不计入。
+- wuwa-phrolova · Phrolova · [来源](https://drive.google.com/drive/folders/1yYcn5vmZhauff9ZSKc-a_kOLObKQzKYK) · C：主外缘/下端及根邻域；较弱7例不计入。
+- wuwa-qiuyuan · Qiuyuan · [来源](https://drive.google.com/drive/folders/1ni9v9sFwwgkLzO71_hUnZy2WZ0SOQqXu) · C：主外缘/下端及根邻域；较弱7例不计入。
+- wuwa-roccia · Roccia · [来源](https://drive.google.com/drive/folders/1AdoyRPLv6yU2g2sYTnW37vIUxYp7ChV4) · C：主外缘/下端及根邻域；较弱7例不计入。
+- wuwa-rosemary · Rosemary · [来源](https://drive.google.com/drive/folders/19gxHdJyndKyMJTMiynBn0uDveIYiEjsw) · C：主外缘/下端及根邻域；较弱7例不计入。
+- wuwa-rover · Rover · [来源](https://drive.google.com/drive/folders/1xH6MiNSWh8Z5U2b7xb8ou541KU6jPqQr) · C：主外缘/下端及根邻域；较弱7例不计入。
+- wuwa-sanhua · Sanhua · [来源](https://drive.google.com/drive/folders/1jIVuA4byRHnMp7DSACXzVA6qR57jFq8R) · C：主外缘/下端及根邻域；较弱7例不计入。
+- wuwa-scar · Scar · [来源](https://drive.google.com/drive/folders/1ZiGU1GdsCNqkrQJGjq8600VwKIfS-Ht6) · C：主外缘/下端及根邻域；较弱7例不计入。
+- wuwa-taoqi · Taoqi · [来源](https://drive.google.com/drive/folders/1blv_KAixD6li2n3nErTj4CaUaLuzu4NU) · C：主外缘/下端及根邻域；较弱7例不计入。
+- wuwa-the-shorekeeper · The Shorekeeper · [来源](https://drive.google.com/drive/folders/17biw1JSou-1zgSXhjSSss1WSfbvADuFG) · C：主外缘/下端及根邻域；较弱7例不计入。
+- wuwa-xiangli-yao · Xiangli Yao · [来源](https://drive.google.com/drive/folders/1vDW0Zfhjf-5Qpp93397eNJk6Esg2d_EF) · C：主外缘/下端及根邻域；较弱7例不计入。
+- wuwa-yangyang · Yangyang · [来源](https://drive.google.com/drive/folders/1SALfTHZOKtkKqn7AaoZgRey5aDF5B83c) · C：主外缘/下端及根邻域；较弱7例不计入。
+- wuwa-yhan · Yhan · [来源](https://drive.google.com/drive/folders/1x6rD83feoG0t7kRSqzqZxXczppvWvcFQ) · C：主外缘/下端及根邻域；较弱7例不计入。
+- wuwa-youhu · Youhu · [来源](https://drive.google.com/drive/folders/1p1_QLvoVMXWJV7v0vxACkJEKb1VbTSIh) · C：主外缘/下端及根邻域；较弱7例不计入。
+- wuwa-yuanwu · Yuanwu · [来源](https://drive.google.com/drive/folders/1WEzdfTyVaGKLCzY5NaxnZCxywUWXaykz) · C：主外缘/下端及根邻域；较弱7例不计入。
+- wuwa-zani · Zani · [来源](https://drive.google.com/drive/folders/1vdYfmFfO6VSkoWnxmg3wGDC_bQkIdnau) · C：主外缘/下端及根邻域；较弱7例不计入。
+
+### Zenless Zone Zero（42）
+
+- zzz-alexandrina-sebastiane · Alexandrina Sebastiane · [来源](https://drive.google.com/drive/folders/1-5EHlucyXFxbtLR3QwxO_lJ8EyVDHu3d) · C：主外缘/下端及根邻域；较弱7例不计入。
+- zzz-anton-ivanov · Anton Ivanov · [来源](https://drive.google.com/drive/folders/1nSxj5GbUDlJyhH4PxrOs9BnGbzoEGrbl) · C：主外缘/下端及根邻域；较弱7例不计入。
+- zzz-asaba-harumasa · Asaba Harumasa · [来源](https://drive.google.com/drive/folders/1kPFOOJ71lbu2hN8vuJ_BiRGpKVoN2qie) · C：主外缘/下端及根邻域；较弱7例不计入。
+- zzz-ben-bigger · Ben Bigger · [来源](https://drive.google.com/drive/folders/10YECxyeBhZsmnQx_KxglmsJMnpWeZ0Rz) · C：主外缘/下端及根邻域；较弱7例不计入。
+- zzz-burnice-white · Burnice White · [来源](https://drive.google.com/drive/folders/1y6tvQVDbUqx6uG3qyGxSSS2TtyV3x4GX) · C：主外缘/下端及根邻域；较弱7例不计入。
+- zzz-cissia · Cissia · [来源](https://drive.google.com/drive/folders/161-vR3aMq111YXUpglLQOBF6F6XuadFr) · C：主外缘/下端及根邻域；较弱7例不计入。
+- zzz-claret-flint · Claret Flint · [来源](https://drive.google.com/drive/folders/1D1OG0F9PD6asH8qTMYilC7TWe_wqGdjA) · C：主外缘/下端及根邻域；较弱7例不计入。
+- zzz-dialyn · Dialyn · [来源](https://drive.google.com/drive/folders/1G9yenk75q1ryqk4OzofNZFNEx-5ez_zg) · C：主外缘/下端及根邻域；较弱7例不计入。
+- zzz-grace-howard · Grace Howard · [来源](https://drive.google.com/drive/folders/1nfInNM2g87cpbmFblY-WDnYFgbvABuOE) · C：主外缘/下端及根邻域；较弱7例不计入。
+- zzz-hugo-vlad · Hugo Vlad · [来源](https://drive.google.com/drive/folders/1Qpq47kdOIMU6ArTY4IrtwBOR7geBx5FB) · C：主外缘/下端及根邻域；较弱7例不计入。
+- zzz-koleda-belobog · Koleda Belobog · [来源](https://drive.google.com/drive/folders/1-En1Dd4FDjMGFxOqXFAKUPUdt-rVnH3W) · C：主外缘/下端及根邻域；较弱7例不计入。
+- zzz-lighter · Lighter · [来源](https://drive.google.com/drive/folders/1ptjMYMPK3EIXGJD1QNz2GpgcoFm_sPl7) · C：主外缘/下端及根邻域；较弱7例不计入。
+- zzz-lucia-elowen · Lucia Elowen · [来源](https://drive.google.com/drive/folders/1e_oVRw-MI0mlpeaAEXmLdSruGVscwl4Q) · C：主外缘/下端及根邻域；较弱7例不计入。
+- zzz-norma-hollowell · Norma Hollowell · [来源](https://drive.google.com/drive/folders/1J4qmqZ8opesA6-Mg9788cPNOODuqo5Lx) · C：主外缘/下端及根邻域；较弱7例不计入。
+- zzz-piper-wheel · Piper Wheel · [来源](https://drive.google.com/drive/folders/1VJeXeY6Xz5lBL6tRBmzSpt9FszAwfxgT) · C：主外缘/下端及根邻域；较弱7例不计入。
+- zzz-promeia · Promeia · [来源](https://drive.google.com/drive/folders/1ka-L1aXBexuW7Zzba5JMPzFfLGNLxA1Y) · C：主外缘/下端及根邻域；较弱7例不计入。
+- zzz-aria · Aria · [来源](https://drive.google.com/drive/folders/1kIOZI9TP2EkhPAH10-r8JRdAcTrtEfNS) · C：主外缘/下端及根邻域；较弱7例不计入。
+- zzz-astra-yao · Astra Yao · [来源](https://drive.google.com/drive/folders/1wT4YsIaI7xH2z8-6691CPArh2pu8Vek9) · C：主外缘/下端及根邻域；较弱7例不计入。
+- zzz-belle · Belle · [来源](https://drive.google.com/drive/folders/1pueIGNVtIUn8gryZmnqxjGyX0r6gYBTO) · C：主外缘/下端及根邻域；较弱7例不计入。
+- zzz-ellen-joe · Ellen Joe · [来源](https://drive.google.com/drive/folders/1jI6LfXteV_qIviHYlhWGhlr5DDjv7c_j) · C：主外缘/下端及根邻域；较弱7例不计入。
+- zzz-jane-doe · Jane Doe · [来源](https://drive.google.com/drive/folders/1WOkPSPoMnysuUnzlllgUK4YnQxkWV4vo) · C：主外缘/下端及根邻域；较弱7例不计入。
+- zzz-luciana-de-montefio · Luciana de Montefio · [来源](https://drive.google.com/drive/folders/13LxIAGRfTJDPA8QwQN-w0XtMhWKj0d9G) · C：主外缘/下端及根邻域；较弱7例不计入。
+- zzz-nangong-yu · Nangong Yu · [来源](https://drive.google.com/drive/folders/1oufVwkOMEYFbeY2LJDdMt-tlZbsEFGJZ) · C：主外缘/下端及根邻域；较弱7例不计入。
+- zzz-nicole-demara · Nicole Demara · [来源](https://drive.google.com/drive/folders/1V_KLOZ0Y63dpeVuLU3bQqD4bYlSLNDQ2) · C：主外缘/下端及根邻域；较弱7例不计入。
+- zzz-sunna · Sunna · [来源](https://drive.google.com/drive/folders/1xeFqm8QZpCo6YmKQfMDnQlwBVRRbzfwq) · C：主外缘/下端及根邻域；较弱7例不计入。
+- zzz-velina-airgid · Velina Airgid · [来源](https://drive.google.com/drive/folders/1jeQvpZ_DS2Xb6NsVB6EWkVwjbCqbl69U) · C：主外缘/下端及根邻域；较弱7例不计入。
+- zzz-vivian-banshee · Vivian Banshee · [来源](https://drive.google.com/drive/folders/1TZIxAxBnw18dmoA9DpzeFpEyqGImmLT2) · C：主外缘/下端及根邻域；较弱7例不计入。
+- zzz-wise · Wise · [来源](https://drive.google.com/drive/folders/16cTvZQQShws3_mO13f8IlD3E1sidd4N1) · C：主外缘/下端及根邻域；较弱7例不计入。
+- zzz-yixuan · Yixuan · [来源](https://drive.google.com/drive/folders/1Qh5L72MW40lpXQr6FuLQwYFYDIhPYpFP) · C：主外缘/下端及根邻域；较弱7例不计入。
+- zzz-remielle-dan · Remielle Dan · [来源](https://drive.google.com/file/d/1O5vUZqDSOGaQevTQtj_exbTz5rZUmdiK/view) · 补A：主耳体/外轮与眼脸上下文；允许小附着区遮挡。
+- zzz-qingyi · Qingyi · [来源](https://drive.google.com/file/d/10fT-M-2UFBcVu75D8nNck_907gEYlUY0/view) · 补A：主耳体/外轮与眼脸上下文；允许小附着区遮挡。
+- zzz-soldier-11 · Soldier 11 · [来源](https://drive.google.com/file/d/1Ajy50Wk3MLk4uZp8LOMvw94IdILcSB1j/view) · 补A：主耳体/外轮与眼脸上下文；允许小附着区遮挡。
+- zzz-orphie-magus · Orphie & Magus · [来源](https://drive.google.com/file/d/1-GfiKbNTTptoCC7pPsIz4h4HFQU5eZqB/view) · 补A：主耳体/外轮与眼脸上下文；允许小附着区遮挡。
+- zzz-tsukishiro-yanagi · Tsukishiro Yanagi · [来源](https://drive.google.com/file/d/1DphVoJdK1s-UpCbAXvNJPIj-mU3c0Ms2/view) · 补A：主耳体/外轮与眼脸上下文；允许小附着区遮挡。
+- zzz-zhu-yuan · Zhu Yuan · [来源](https://drive.google.com/file/d/1DnGF6IFDum3PWhLdO3oAEMy8AaBPaqMJ/view) · 补A：主耳体/外轮与眼脸上下文；允许小附着区遮挡。
+- zzz-yidhari-murphy · Yidhari Murphy · [来源](https://drive.google.com/file/d/18ReoAl7d34mMiux_bIDbcr28-dmWT1ND/view) · 补A：主耳体/外轮与眼脸上下文；允许小附着区遮挡。
+- zzz-seed · Seed · [来源](https://drive.google.com/file/d/1Znyy8fE-aqPtjdZ5GNq7F1ADKvAw-OVl/view) · 补A：主耳体/外轮与眼脸上下文；允许小附着区遮挡。
+- zzz-ning-qian · Ning Qian · [来源](https://drive.google.com/file/d/1_M4ErHGk4vOn0U0NKtI61KwgAgBKdz1J/view) · 补A：主耳体/外轮与眼脸上下文；允许小附着区遮挡。
+- zzz-charles-perlman · Charles Perlman · [来源](https://drive.google.com/file/d/1ytHhlkAXguA58wF_qo4dv-YFVaGHFYwH/view) · 补A：主耳体/外轮与眼脸上下文；允许小附着区遮挡。
+- zzz-curtis · Curtis · [来源](https://drive.google.com/file/d/1BiXU3EU9CEEO852h-e_9IODOY5_EWG0F/view) · 补A：主耳体/外轮与眼脸上下文；允许小附着区遮挡。
+- zzz-damian-blackwood · Damian Blackwood · [来源](https://drive.google.com/file/d/1Ugw9_Uwlu1uPPxSAuq7AKLQdOAnp6sM2/view) · 补A：主耳体/外轮与眼脸上下文；允许小附着区遮挡。
+- zzz-lorenz · Lorenz · [来源](https://drive.google.com/file/d/1XcPHogfDIfDbOFeDpbUv04jyhX3JXMou/view) · 补A：主耳体/外轮与眼脸上下文；允许小附着区遮挡。
+
+克林另附[发行商新闻](https://www.bandainamcoent.com/news/dragon-ball-sparking-zero-master-and-apprentice)与[官方角色表](https://dbsz.bn-ent.net/character/)用于来源与身份交叉说明；仍只计一个来源组。

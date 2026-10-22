@@ -1,0 +1,74 @@
+{
+  "standard-oval": {
+    "version": 1,
+    "kind": "standard-oval",
+    "root_height_offset": 0,
+    "root_span_scale": 1,
+    "outward_scale": 1,
+    "posterior_scale": 1,
+    "tip_height": 0,
+    "tip_roundness": 0,
+    "lobe_fullness": 0,
+    "fold_strength": 1
+  },
+  "compact-round": {
+    "version": 1,
+    "kind": "compact-round",
+    "root_height_offset": 0,
+    "root_span_scale": 1,
+    "outward_scale": 1,
+    "posterior_scale": 1,
+    "tip_height": 0,
+    "tip_roundness": 0,
+    "lobe_fullness": 0,
+    "fold_strength": 1
+  },
+  "slender-oval": {
+    "version": 1,
+    "kind": "slender-oval",
+    "root_height_offset": 0,
+    "root_span_scale": 1,
+    "outward_scale": 1,
+    "posterior_scale": 1,
+    "tip_height": 0,
+    "tip_roundness": 0,
+    "lobe_fullness": 0,
+    "fold_strength": 1
+  },
+  "short-point": {
+    "version": 1,
+    "kind": "short-point",
+    "root_height_offset": 0,
+    "root_span_scale": 1,
+    "outward_scale": 1,
+    "posterior_scale": 1,
+    "tip_height": 0,
+    "tip_roundness": 0,
+    "lobe_fullness": 0,
+    "fold_strength": 1
+  },
+  "long-leaf": {
+    "version": 1,
+    "kind": "long-leaf",
+    "root_height_offset": 0,
+    "root_span_scale": 1,
+    "outward_scale": 1,
+    "posterior_scale": 1,
+    "tip_height": 0,
+    "tip_roundness": 0,
+    "lobe_fullness": 0,
+    "fold_strength": 1
+  },
+  "side-droop": {
+    "version": 1,
+    "kind": "side-droop",
+    "root_height_offset": 0,
+    "root_span_scale": 1,
+    "outward_scale": 1,
+    "posterior_scale": 1,
+    "tip_height": 0,
+    "tip_roundness": 0,
+    "lobe_fullness": 0,
+    "fold_strength": 1
+  }
+}

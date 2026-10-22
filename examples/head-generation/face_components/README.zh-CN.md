@@ -13,9 +13,9 @@
 - 眼睛：8个现有家族，参考原 eye_presets 文档；新组合不继承原组合验收。
 - 眉毛：soft-level / soft-arched 是柔顺收尖眉族内的两个设置；另有 angular-peaked 折锋眉与 broad-band 浓带眉实验。当前原生状态见 families.json 与对应候选证据，不把4个设置当作4个独立造型族。
 - 嘴：最小口缝族包含保留型、宽度与唇部浮雕变体；bowed-contour 为第二种浅弓中性口线构造，847/848已有原生组合样例。
-- 鼻：保留型、defined-bridge 与 long-bridge 属于紧凑楔鼻族；short-rounded 为第二种圆钝低投影构造，849/850已有原生组合样例。
+- 鼻：原四个选项保留；另有 `research-compact`、`research-balanced`、`research-elongated` 三个共享核心起点，以及 `research-pad-muzzle`、`research-faceted` 两个特殊方向，共九个可选项。详见 [调研鼻形库](../nose_library/README.zh-CN.md) 和其原生证据登记；不能把九个选项当作九种自然鼻形。
 - 耳：保留型和 compact-human 属于人耳族；lateral-elf 为侧展尖耳族，837已有原生功能样例。保留共享耳根和接缝守卫，不能外推所有组合。
-- 上述鼻、耳均为第一组有界实验，不能据此声称独立造型调研已穷尽。
+- 上述旧鼻、耳实验仍保留其历史范围；新鼻形研究也不代表行业造型已穷尽。
 - 脸型：保留型、局部宽度方案与 root-protected-round-chin 模板仍属于柔和轮廓族；另有宽钝下颏独立类别，854/855已有原生样例。新搭配必须实际验证。
 
 眉毛位置在眼部局部坐标系中跟随眼距与眼高，独立选择不意味着固定世界坐标。
@@ -24,11 +24,14 @@
 
 ## 运行步骤
 
-1. 复制 example-selection.json，选择部位 ID。
-2. 用 bundle.py --selection SELECTION.json --prefix assets/aster/general_face_eyes_combo827/ --workspace WORKSPACE --output REQUEST.json 准备生成请求。
-3. 通过 Beaver 的 blender.start 执行并轮询，保存成功回执。
-4. 用 sdf_request.py --prefix PREFIX --workspace WORKSPACE --generation-receipt RECEIPT.json --output SDF.json 准备 SDF 请求，通过 Beaver 执行。
-5. 在现有头部展示台打开 PREFIX/aster_definition.tres；检查正面、左右斜侧、白模、眨眼和张嘴，再登记实际结果。
+1. 复制 example-selection.json，选择部位 ID，并选择尚不存在的 combo 前缀。
+2. 用 bundle.py --selection SELECTION.json --prefix PREFIX --workspace WORKSPACE --output REQUEST.json 准备生成请求。保留同时写出的 REQUEST.source-plan.json；使用 Python API 时调用 bundle.build_plan，分别保留 generation 与 source_packaging。
+3. 通过 Beaver 的 blender.start 执行 generation 并轮询，保存成功回执 GENERATION_RECEIPT.json。
+4. 用 ../source_layout/pack_request.py --source-plan REQUEST.source-plan.json --generation-receipt GENERATION_RECEIPT.json --workspace WORKSPACE --output PACK.json 准备源码包装请求，再通过 Beaver 执行并保存独立成功回执 PACK_RECEIPT.json。这一步不再次生成模型。
+5. 用 sdf_request.py --prefix PREFIX --workspace WORKSPACE --generation-receipt GENERATION_RECEIPT.json --source-packaging-receipt PACK_RECEIPT.json --output SDF.json 准备 SDF 请求，通过 Beaver 执行并保存成功回执。
+6. 在现有头部展示台打开 PREFIX/aster_definition.tres；检查正面、左右斜侧、白模、眨眼和张嘴，再登记实际结果。最终 verify_run 的规格中同时提供 generation_receipt、source_packaging_receipt、sdf_receipt 及相应捕获清单。
+
+源码包装是当前生成流程的必需阶段，不能省略第二份回执、改写旧回执或只把文件写进工作区冒充原生包装完成。
 
 SDF入口读取实际生成报告，不重新套用最新目录；报告必须与该次生成回执中的输出摘要一致，
 并继续使用原有运行时 blend、GLB、参数与工作区回执校验。
@@ -54,7 +57,7 @@ SDF入口读取实际生成报告，不重新套用最新目录；报告必须�
 
 这些是视觉设计参考，不是从原图恢复尺寸。defined-bridge只是现有基底上的鼻梁肩部变化，
 不等于已经复现海塔的长鼻；compact-human也只是人耳跨度变化，不等于精灵耳。
-游戏样本扩充、部位级论文关联和更多类别仍待完成。论文将用于建模/变形方法和约束，
+鼻形后续已经过论文与 358 组正侧配对研究；此处保留早期参考来源，不将早期数目当作当前分类。其他部位的研究状态独立记录。论文用于建模/变形方法和约束，
 不能用“论文证明”替代观众对具体造型的美感判断。
 
 
@@ -216,3 +219,9 @@ v3在既有限幅后的可选边界平滑上增加整个位移场回溯，两个
 854/855的首次边界平滑均回溯为0.5，第二次为1.0，修正位移分别不超过2.124毫米和1.888毫米；保留原有预算与原生守卫。所有记录仅对这些历史组合成立，不能推出其他组合也已验收。
 
 856进一步同时选择杏仁眼、折锋眉、浅弓口线、圆钝鼻、侧展尖耳与宽钝下颏，完成原生生成、SDF及102张状态图。它验证六槽均可替换后的组合通路；密集尖锐的睫毛与白模局部起伏仍是美术限制，不能把技术整合通过写成最终外观交付。
+
+## 调研鼻形设计入口
+
+新鼻形使用显式 `nose_design` 与源指纹，拒绝与旧鼻缩放或旧模板混用。`bundle.py` 和 `plan.py` 可接收 `--nose-controls controls.json`，只覆盖当前模式拥有的数值项，不能替换类型或其他部件。三个通用预设只登记为一个共享核心；特殊候选不是完整动物或机器人头部复原。
+
+原生结果见 [nose_library/native-evidence.json](../nose_library/native-evidence.json)。SDF 请求及最后验证同时检查鼻形快照、发出源码、校准、拓扑与附件贴合记录。新增选择可用不等于已完成原生验证，旧证据不能跳过新输出检查。

@@ -11,7 +11,12 @@ export type TaskStatus =
   | "completed"
   | "rolledBack";
 export type Capability =
-  "code" | "review" | "image" | "speech" | "music" | "translation";
+  | "code"
+  | "review"
+  | "image"
+  | "speech"
+  | "music"
+  | "translation";
 export type Snapshot = Record<string, string>;
 export interface GameBrief {
   genres: string[];
@@ -46,6 +51,13 @@ export interface Change {
   after?: string;
 }
 export interface Task {
+  supplementWithdrawal?: {
+    schemaVersion: number;
+    parentId: string;
+    reason: string;
+    at: string;
+    workspaceUnchanged: boolean;
+  };
   objectFramework?: import("./object-framework").ObjectTaskIdentity;
   assetTask?: boolean;
   delivery?: Delivery;

@@ -2,6 +2,7 @@
 
 import copy
 import hashlib
+import importlib.util
 import json
 from pathlib import Path
 
@@ -31,7 +32,38 @@ def digest(value):
     ).hexdigest()
 
 
-def resolve(selection, fit_policy="legacy"):
+def resolved_brow_design(preset, overrides):
+    design = preset.get("design")
+    if design is None:
+        if overrides is not None:
+            raise ValueError("Brow controls require an explicit researched preset")
+        return None
+    if isinstance(design, str):
+        designs = json.loads((HERE.parent / "brow_library/presets.json").read_text())
+        if design not in designs:
+            raise ValueError("Unknown researched brow design reference")
+        design = designs[design]
+    spec = importlib.util.spec_from_file_location(
+        "component_brow_design", HERE.parent / "brow_library/brow_design.py"
+    )
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    if overrides is not None and (
+        not isinstance(overrides, dict) or set(overrides) - set(module.LIMITS)
+    ):
+        raise ValueError("Brow controls may only override bounded geometry parameters")
+    return module.validate({**design, **(overrides or {})})
+
+
+def resolve(
+    selection,
+    fit_policy="legacy",
+    brow_overrides=None,
+    nose_overrides=None,
+    mouth_overrides=None,
+    face_overrides=None,
+    ear_overrides=None,
+):
     if fit_policy not in ("legacy", "skin-seated-075"):
         raise ValueError("Unknown explicit fit policy")
     if not isinstance(selection, dict) or set(selection) != set(SLOTS):
@@ -40,6 +72,22 @@ def resolve(selection, fit_policy="legacy"):
     for slot in SLOTS:
         if not isinstance(selection[slot], str) or selection[slot] not in catalog[slot]:
             raise ValueError("Unknown component selection: " + slot)
+    from nose_selection import resolve_nose
+
+    nose_design, nose_hashes = resolve_nose(
+        catalog["nose"][selection["nose"]], nose_overrides
+    )
+    from mouth_selection import resolve_mouth
+
+    mouth_design, mouth_hashes = resolve_mouth(
+        catalog["mouth"][selection["mouth"]], mouth_overrides
+    )
+    from face_selection import resolve_face
+
+    face_design, face_hashes = resolve_face(catalog["face"][selection["face"]], face_overrides)
+    from ear_selection import resolve_ear
+
+    ear_design, ear_hashes = resolve_ear(catalog["ears"][selection["ears"]], ear_overrides)
     eye_id = catalog["eyes"][selection["eyes"]]
     if eye_id == "baseline-795":
         spec = json.loads((SURFACE / "face-baseline-795.json").read_text())
@@ -55,13 +103,15 @@ def resolve(selection, fit_policy="legacy"):
             raise ValueError("Preserved baseline changed: " + name)
     parameters = copy.deepcopy(spec["eye_parameters"])
     brow = catalog["brows"][selection["brows"]]
-    if set(brow) != BROW_KEYS:
+    if set(brow) - {"design"} != BROW_KEYS:
         raise ValueError("Brow preset must own all and only brow parameters")
-    parameters.update(brow)
+    design = resolved_brow_design(brow, brow_overrides)
+    parameters.update({k: v for k, v in brow.items() if k != "design"})
     if fit_policy == "skin-seated-075":
         parameters["lateral_guide_regularization"] = 0.75
     owned_keys = {
         "mouth": {
+            "design",
             "mouth_width_scale",
             "upper_lip_relief_scale",
             "upper_lip_lateral_power",
@@ -74,14 +124,17 @@ def resolve(selection, fit_policy="legacy"):
             "nose_bridge_length_scale",
             "nose_tip_projection_scale",
             "template_id",
+            "design",
         },
         "ears": {
+            "design",
             "ear_span_scale",
             "ear_tip_length_scale",
             "ear_point_strength",
             "ear_tip_lift",
         },
         "face": {
+            "design",
             "face_width",
             "jaw_width",
             "chin_width",
@@ -98,9 +151,9 @@ def resolve(selection, fit_policy="legacy"):
         **{
             k: v
             for k, v in catalog["nose"][selection["nose"]].items()
-            if k != "template_id"
+            if k not in {"template_id", "design"}
         },
-        **catalog["ears"][selection["ears"]],
+        **{k: v for k, v in catalog["ears"][selection["ears"]].items() if k != "design"},
     }
     if "mouth_width_scale" in mouth:
         components["mouth_width_scale"] = mouth["mouth_width_scale"]
@@ -127,12 +180,12 @@ def resolve(selection, fit_policy="legacy"):
         "silhouette_parameters": {
             k: v
             for k, v in catalog["face"][selection["face"]].items()
-            if k != "template_id"
+            if k not in {"template_id", "design"}
         },
         "lip_parameters": {
             k: v
             for k, v in mouth.items()
-            if k not in ("mouth_width_scale", "template_id")
+            if k not in ("mouth_width_scale", "template_id", "design")
         },
         "component_parameters": components,
         "style_profile": spec["style_profile"],
@@ -154,6 +207,33 @@ def resolve(selection, fit_policy="legacy"):
             templates.append(copy.deepcopy(registry[template_id]))
     if templates:
         resolved["family_templates"] = templates
+    if design is not None:
+        resolved["brow_design"] = design
+        resolved["brow_source_sha256"] = {
+            name: hashlib.sha256(
+                (HERE.parent / "brow_library" / name)
+                .read_text(encoding="utf-8")
+                .encode("utf-8")
+            ).hexdigest()
+            for name in (
+                "brow_design.py",
+                "brow_shapes.py",
+                "brow_mesh.py",
+                "brow_source.py",
+            )
+        }
+    if nose_design is not None:
+        resolved["nose_design"] = nose_design
+        resolved["nose_source_sha256"] = nose_hashes
+    if mouth_design is not None:
+        resolved["mouth_design"] = mouth_design
+        resolved["mouth_source_sha256"] = mouth_hashes
+    if face_design is not None:
+        resolved["face_design"] = face_design
+        resolved["face_source_sha256"] = face_hashes
+    if ear_design is not None:
+        resolved["ear_design"] = ear_design
+        resolved["ear_source_sha256"] = ear_hashes
     return {**resolved, "composition_sha256": digest(resolved)}
 
 

@@ -36,6 +36,9 @@ fn child(
         "workspacePrepared":false,"baseline":{},"changes":[],"conflicts":[],"dependsOn":[],
         "status":"queued","createdAt":now,"updatedAt":now
     });
+    if origin == "user" {
+        child["integrationSupplement"] = json!({"parentId":id,"source":"validationSteering"});
+    }
     if let Some(repair) = repair {
         child["validationRepair"] = repair;
         child["validationRepairAttempts"] = task["validationRepairAttempts"].clone();
@@ -46,6 +49,7 @@ fn child(
         "projectContext",
         "design",
         "stopConditions",
+        "executionMode",
     ] {
         if let Some(value) = task.get(key) {
             child[key] = value.clone();
@@ -154,10 +158,14 @@ pub fn repair(store: &mut Store, files: &Files, task: &mut Value) -> Result<()> 
 
 pub fn integrated(store: &Store, task: &mut Value) -> Result<()> {
     let children = task["subtaskIds"].as_array().context("Missing child IDs")?;
-    let count = children.len();
+    let mut count = 0;
     for id in children {
         let child: Value =
             repository::get(store, "task", id.as_str().context("Invalid child ID")?)?;
+        if crate::task_supplement::withdrawn(&child, task) {
+            continue;
+        }
+        count += 1;
         anyhow::ensure!(
             child["status"] == "completed" && child["accepted"] == true,
             "A child changed before integration validation completed"

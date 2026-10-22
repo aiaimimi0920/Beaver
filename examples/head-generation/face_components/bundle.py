@@ -7,6 +7,7 @@ from pathlib import Path
 import re
 import sys
 from compose import HERE, SURFACE, resolve
+from source_layout_bridge import modular_plan
 
 
 def load_module(path, name):
@@ -16,12 +17,24 @@ def load_module(path, name):
     return module
 
 
-def build_request(selection, prefix, workspace, fit_policy="legacy"):
+def build_raw_request(
+    selection,
+    prefix,
+    workspace,
+    fit_policy="legacy",
+    brow_overrides=None,
+    nose_overrides=None,
+    mouth_overrides=None,
+    face_overrides=None,
+    ear_overrides=None,
+):
     if not re.fullmatch(r"assets/aster/general_face_eyes_combo[a-z0-9_]+/", prefix):
         raise ValueError("Use a fresh general_face_eyes_combo prefix")
     if (Path(workspace) / prefix).exists():
         raise ValueError("Composition must use a fresh directory")
-    snapshot = resolve(selection, fit_policy)
+    snapshot = resolve(
+        selection, fit_policy, brow_overrides, nose_overrides, mouth_overrides, face_overrides, ear_overrides
+    )
     old_path = sys.path[:]
     sys.path.insert(0, str(SURFACE))
     try:
@@ -38,6 +51,11 @@ def build_request(selection, prefix, workspace, fit_policy="legacy"):
             lip_parameters=snapshot["lip_parameters"],
             component_parameters=snapshot["component_parameters"],
             family_templates=snapshot.get("family_templates"),
+            brow_design=snapshot.get("brow_design"),
+            nose_design=snapshot.get("nose_design"),
+            mouth_design=snapshot.get("mouth_design"),
+            face_design=snapshot.get("face_design"),
+            ear_design=snapshot.get("ear_design"),
         )
     finally:
         sys.path[:] = old_path
@@ -51,6 +69,16 @@ def build_request(selection, prefix, workspace, fit_policy="legacy"):
     return request
 
 
+def build_plan(*args, **kwargs):
+    prefix = kwargs.get("prefix", args[1] if len(args) > 1 else None)
+    return modular_plan(build_raw_request(*args, **kwargs), prefix)
+
+
+def build_request(*args, **kwargs):
+    """First native job; callers must retain build_plan's source packaging plan."""
+    return build_plan(*args, **kwargs)["generation"]
+
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--selection", type=Path, required=True)
@@ -60,17 +88,33 @@ if __name__ == "__main__":
     parser.add_argument("--prefix", required=True)
     parser.add_argument("--workspace", type=Path, required=True)
     parser.add_argument("--output", type=Path, required=True)
+    parser.add_argument(
+        "--brow-controls", type=Path, help="Bounded researched-brow overrides JSON"
+    )
+    parser.add_argument(
+        "--nose-controls", type=Path, help="Bounded researched-nose overrides JSON"
+    )
+    parser.add_argument(
+        "--mouth-controls", type=Path, help="Bounded researched-mouth overrides JSON"
+    )
+    parser.add_argument("--face-controls", type=Path, help="Bounded researched-face overrides JSON")
+    parser.add_argument("--ear-controls", type=Path, help="Bounded researched-ear overrides JSON")
     args = parser.parse_args()
     target = args.output.resolve()
     if HERE.parent.resolve() in target.parents:
         raise ValueError("Request output must be outside retained recipe directories")
-    args.output.write_text(
-        json.dumps(
-            build_request(
-                json.loads(args.selection.read_text()),
-                args.prefix,
-                args.workspace,
-                args.fit_policy,
-            )
-        )
+    plan = build_plan(
+        json.loads(args.selection.read_text()),
+        args.prefix,
+        args.workspace,
+        args.fit_policy,
+        (json.loads(args.brow_controls.read_text()) if args.brow_controls else None),
+        (json.loads(args.nose_controls.read_text()) if args.nose_controls else None),
+        (json.loads(args.mouth_controls.read_text()) if args.mouth_controls else None),
+        (json.loads(args.face_controls.read_text()) if args.face_controls else None),
+        (json.loads(args.ear_controls.read_text()) if args.ear_controls else None),
+    )
+    args.output.write_text(json.dumps(plan["generation"]))
+    args.output.with_suffix(".source-plan.json").write_text(
+        json.dumps(plan["source_packaging"])
     )

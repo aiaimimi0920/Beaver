@@ -58,6 +58,149 @@
       "brow_angularity": 0,
       "brow_peak_position": 0.5,
       "brow_band_fullness": 1
+    },
+    "research-linear-fine": {
+      "brow_height_offset": -0.006,
+      "brow_rise_offset": -0.0255,
+      "brow_thickness": 0.85,
+      "brow_arch": 1.0,
+      "brow_fullness_offset": 0.2,
+      "brow_softness": 0.4,
+      "brow_head_rounding": 1.0,
+      "brow_angularity": 0,
+      "brow_peak_position": 0.5,
+      "brow_band_fullness": 0,
+      "design": "linear-fine"
+    },
+    "research-linear-wedge": {
+      "brow_height_offset": -0.006,
+      "brow_rise_offset": -0.0255,
+      "brow_thickness": 0.85,
+      "brow_arch": 1.0,
+      "brow_fullness_offset": 0.2,
+      "brow_softness": 0.4,
+      "brow_head_rounding": 1.0,
+      "brow_angularity": 0,
+      "brow_peak_position": 0.5,
+      "brow_band_fullness": 0,
+      "design": "linear-wedge"
+    },
+    "research-arc-fine": {
+      "brow_height_offset": -0.006,
+      "brow_rise_offset": -0.0255,
+      "brow_thickness": 0.85,
+      "brow_arch": 1.0,
+      "brow_fullness_offset": 0.2,
+      "brow_softness": 0.4,
+      "brow_head_rounding": 1.0,
+      "brow_angularity": 0,
+      "brow_peak_position": 0.5,
+      "brow_band_fullness": 0,
+      "design": "arc-fine"
+    },
+    "research-arc-medium": {
+      "brow_height_offset": -0.006,
+      "brow_rise_offset": -0.0255,
+      "brow_thickness": 0.85,
+      "brow_arch": 1.0,
+      "brow_fullness_offset": 0.2,
+      "brow_softness": 0.4,
+      "brow_head_rounding": 1.0,
+      "brow_angularity": 0,
+      "brow_peak_position": 0.5,
+      "brow_band_fullness": 0,
+      "design": "arc-medium"
+    },
+    "research-angled": {
+      "brow_height_offset": -0.006,
+      "brow_rise_offset": -0.0255,
+      "brow_thickness": 0.85,
+      "brow_arch": 1.0,
+      "brow_fullness_offset": 0.2,
+      "brow_softness": 0.4,
+      "brow_head_rounding": 1.0,
+      "brow_angularity": 0,
+      "brow_peak_position": 0.5,
+      "brow_band_fullness": 0,
+      "design": "angled"
+    },
+    "research-compact-leaf": {
+      "brow_height_offset": -0.006,
+      "brow_rise_offset": -0.0255,
+      "brow_thickness": 0.85,
+      "brow_arch": 1.0,
+      "brow_fullness_offset": 0.2,
+      "brow_softness": 0.4,
+      "brow_head_rounding": 1.0,
+      "brow_angularity": 0,
+      "brow_peak_position": 0.5,
+      "brow_band_fullness": 0,
+      "design": "compact-leaf"
+    },
+    "research-compact-round": {
+      "brow_height_offset": -0.006,
+      "brow_rise_offset": -0.0255,
+      "brow_thickness": 0.85,
+      "brow_arch": 1.0,
+      "brow_fullness_offset": 0.2,
+      "brow_softness": 0.4,
+      "brow_head_rounding": 1.0,
+      "brow_angularity": 0,
+      "brow_peak_position": 0.5,
+      "brow_band_fullness": 0,
+      "design": "compact-round"
+    },
+    "research-curl": {
+      "brow_height_offset": -0.003,
+      "brow_rise_offset": -0.0255,
+      "brow_thickness": 0.85,
+      "brow_arch": 1.0,
+      "brow_fullness_offset": 0.2,
+      "brow_softness": 0.4,
+      "brow_head_rounding": 1.0,
+      "brow_angularity": 0,
+      "brow_peak_position": 0.5,
+      "brow_band_fullness": 0,
+      "design": "curl"
+    },
+    "research-multipoint": {
+      "brow_height_offset": -0.006,
+      "brow_rise_offset": -0.0255,
+      "brow_thickness": 0.85,
+      "brow_arch": 1.0,
+      "brow_fullness_offset": 0.2,
+      "brow_softness": 0.4,
+      "brow_head_rounding": 1.0,
+      "brow_angularity": 0,
+      "brow_peak_position": 0.5,
+      "brow_band_fullness": 0,
+      "design": "multipoint"
+    },
+    "research-fringe": {
+      "brow_height_offset": -0.006,
+      "brow_rise_offset": -0.0255,
+      "brow_thickness": 0.85,
+      "brow_arch": 1.0,
+      "brow_fullness_offset": 0.2,
+      "brow_softness": 0.4,
+      "brow_head_rounding": 1.0,
+      "brow_angularity": 0,
+      "brow_peak_position": 0.5,
+      "brow_band_fullness": 0,
+      "design": "fringe"
+    },
+    "research-symbols": {
+      "brow_height_offset": -0.006,
+      "brow_rise_offset": -0.0255,
+      "brow_thickness": 0.85,
+      "brow_arch": 1.0,
+      "brow_fullness_offset": 0.2,
+      "brow_softness": 0.4,
+      "brow_head_rounding": 1.0,
+      "brow_angularity": 0,
+      "brow_peak_position": 0.5,
+      "brow_band_fullness": 0,
+      "design": "symbols"
     }
   },
   "mouth": {
@@ -81,6 +224,18 @@
     },
     "bowed-contour": {
       "template_id": "bowed-mouth-contour-v1"
+    },
+    "research-line": {
+      "design": "line"
+    },
+    "research-lip-band": {
+      "design": "lip-band"
+    },
+    "research-round-muzzle": {
+      "design": "round-muzzle"
+    },
+    "research-short-muzzle": {
+      "design": "short-muzzle"
     }
   },
   "nose": {
@@ -95,6 +250,21 @@
     },
     "short-rounded": {
       "template_id": "short-rounded-nose-v1"
+    },
+    "research-compact": {
+      "design": "compact"
+    },
+    "research-balanced": {
+      "design": "balanced"
+    },
+    "research-elongated": {
+      "design": "elongated"
+    },
+    "research-pad-muzzle": {
+      "design": "pad-muzzle"
+    },
+    "research-faceted": {
+      "design": "faceted-candidate"
     }
   },
   "ears": {
@@ -106,6 +276,24 @@
       "ear_tip_length_scale": 1.7,
       "ear_point_strength": 1,
       "ear_tip_lift": 0.025
+    },
+    "research-standard-oval": {
+      "design": "standard-oval"
+    },
+    "research-compact-round": {
+      "design": "compact-round"
+    },
+    "research-slender-oval": {
+      "design": "slender-oval"
+    },
+    "research-short-point": {
+      "design": "short-point"
+    },
+    "research-long-leaf": {
+      "design": "long-leaf"
+    },
+    "research-side-droop": {
+      "design": "side-droop"
     }
   },
   "face": {
@@ -131,6 +319,18 @@
     },
     "broad-blunt-chin": {
       "template_id": "broad-blunt-chin-v3"
+    },
+    "research-compact-rounded": {
+      "design": "compact-rounded"
+    },
+    "research-soft-tapered": {
+      "design": "soft-tapered"
+    },
+    "research-straight-tapered": {
+      "design": "straight-tapered"
+    },
+    "research-blunt-chin": {
+      "design": "blunt-chin"
     }
   }
 }

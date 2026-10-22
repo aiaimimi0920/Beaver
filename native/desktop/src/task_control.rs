@@ -81,6 +81,41 @@ pub(crate) async fn call(
         let _ = app.emit("beaver:changed", ());
         return Ok(Value::Null);
     }
+    if method == "task.withdrawSupplement" {
+        let input = input.as_ref().ok_or("Missing withdrawal parameters")?;
+        let id = input["id"].as_str().ok_or("Missing task ID")?.to_owned();
+        let parent = input["parentId"]
+            .as_str()
+            .ok_or("Missing parent ID")?
+            .to_owned();
+        let reason = input["reason"].as_str().ok_or("Missing reason")?.to_owned();
+        let handles = task_runtime_handles(
+            &state.project_storage,
+            state.store.clone(),
+            &state.root,
+            &id,
+        )?;
+        let backend = state.clone();
+        let result = tauri::async_runtime::spawn_blocking(move || -> Result<Value, String> {
+            let mut store = handles.store.lock().map_err(|_| "Store lock unavailable")?;
+            if backend.closing.load(Ordering::SeqCst) {
+                return Err("Application closing".into());
+            }
+            beaver_core::task_supplement::withdraw(
+                &mut store,
+                &handles.files,
+                &id,
+                &parent,
+                &reason,
+            )
+            .map_err(|e| e.to_string())
+        })
+        .await
+        .map_err(|e| e.to_string())??;
+        state.scheduler.wake()?;
+        let _ = app.emit("beaver:changed", ());
+        return Ok(result);
+    }
     if method == "task.continue" {
         let input = input.as_ref().ok_or("缺少补充参数")?;
         let id = input["id"].as_str().ok_or("缺少任务标识")?.to_owned();

@@ -1,0 +1,519 @@
+{
+  "schema_version": 1,
+  "scope": "Historical verified native samples only; no automatic acceptance of current output, all controls or untested combinations.",
+  "samples": [
+    {
+      "candidate": "combo886",
+      "status": "technically_verified",
+      "selection": {
+        "eyes": "downturned",
+        "brows": "soft-arched",
+        "mouth": "research-line",
+        "nose": "research-balanced",
+        "ears": "retained",
+        "face": "narrow-chin"
+      },
+      "fit_policy": "legacy",
+      "composition_sha256": "6c107300c2254853ea0fdb64339d98a77d5aebeae6352d87ee5f56fa013645d5",
+      "glb_sha256": "05ce1c3b718e1ca1da052bc7db02b9a1f29c3c9051b2cecbccba69a6943eda87",
+      "generation_job": "d6f54118-90c5-4dc3-99da-c89eccbaeac3",
+      "sdf_job": "e00cbfe0-88aa-4802-b013-6e69f86c8f2e",
+      "captures": {
+        "eye": {
+          "captures_verified": 84,
+          "source_sha256": "05ce1c3b718e1ca1da052bc7db02b9a1f29c3c9051b2cecbccba69a6943eda87",
+          "camera_size": 0.430432230234146,
+          "scope": "Integrity, expression and view state; not aesthetic acceptance"
+        },
+        "mouth": {
+          "captures_verified": 18,
+          "source_sha256": "05ce1c3b718e1ca1da052bc7db02b9a1f29c3c9051b2cecbccba69a6943eda87",
+          "camera_size": 0.430432230234146,
+          "scope": "Integrity, expression and view state; not aesthetic acceptance"
+        },
+        "mouth_motion": {
+          "captures_verified": 92,
+          "source_sha256": "05ce1c3b718e1ca1da052bc7db02b9a1f29c3c9051b2cecbccba69a6943eda87",
+          "scope": "Sampled manual controller and image integrity; not aesthetic, speech or continuous collision acceptance"
+        }
+      },
+      "scope": "Current artifact integrity and recorded native states, not aesthetic approval, current-generator reproducibility or untested combinations",
+      "mouth_design": {
+        "parameters": {
+          "version": 1,
+          "kind": "line",
+          "half_width": 0.065,
+          "corner_lift": -0.001,
+          "seam_bow": 0.0,
+          "lip_band_width_m": 0.0003,
+          "lip_strength": 0.62,
+          "muzzle_projection": 0.0,
+          "muzzle_half_width": 0.13
+        },
+        "source_sha256": {
+          "mouth_design.py": "76373dfaeb81897169a54b592bc81aeda7285d09ffc70d7d5dfb0e846bf985ac",
+          "mouth_field.py": "03de0cd0df45f5b618c8e9b12267b2b64958351f2b482f00985b30b857246e3d",
+          "mouth_motion.py": "0df080f89b8f6c4dc520aee143ecca242fea436ee32b77a1d1daf2867acacd09",
+          "mouth_morphs.py": "f8fd0cfaa72a77cbfc3ede55851559da99c44a5ada84f7c8a93caae6468bb655",
+          "mouth_source.py": "ab2d5802a2c5f9bca1aed3add9b78ad323066fcd494046452d6e0ab74023e309"
+        },
+        "authored_support_envelope_m": 0.0,
+        "scope": "Authored support field envelope; not baseline displacement, collision or speech proof"
+      },
+      "motion_geometry": {
+        "binding_scope": "All triangle-referenced vertices; loose vertices excluded",
+        "target_names": [
+          "MouthOpen",
+          "blink.L",
+          "blink.R",
+          "MouthRound",
+          "MouthSpread",
+          "MouthPucker"
+        ],
+        "new_targets": [
+          "MouthRound",
+          "MouthSpread",
+          "MouthPucker"
+        ],
+        "changed_vertices": {
+          "MouthRound": 724,
+          "MouthSpread": 688,
+          "MouthPucker": 720
+        },
+        "max_displacement_m": {
+          "MouthRound": 0.003358043497563636,
+          "MouthSpread": 0.002426067367196083,
+          "MouthPucker": 0.004247643053531647
+        },
+        "outside_owned_components_unchanged": true,
+        "blink_overlap_vertices": 0,
+        "sampled_combinations": 81,
+        "sampled_triangles": 1482,
+        "minimum_sampled_area_m2": 4.362889469730451e-09,
+        "minimum_sampled_normal_dot": 1.2688594933102975e-16,
+        "scope": "81 sampled open/round/spread/pucker states on affected triangles; no continuous-domain, self-collision, oral-clearance or speech proof"
+      },
+      "native_report_sha256": "512e5ed90598c971d8f02a2bf2e3948db08cea4f1b2bf8634f8a7387fe15260e",
+      "native_surface_vertices": 6096,
+      "native_triangles": 10980,
+      "visual_status": "contact_sheets_reviewed",
+      "visual_scope": "Sampled head-only review, not final character art, speech alignment or global collision acceptance"
+    },
+    {
+      "candidate": "combo887",
+      "status": "technically_verified",
+      "selection": {
+        "eyes": "downturned",
+        "brows": "soft-arched",
+        "mouth": "research-lip-band",
+        "nose": "research-balanced",
+        "ears": "retained",
+        "face": "narrow-chin"
+      },
+      "fit_policy": "legacy",
+      "composition_sha256": "b7dbeaa8cf9b1c7ce7af7a8d90606d9baeb1e13f731c89fbc87110eb2d065672",
+      "glb_sha256": "5a052a991c770993f908ce3e0c7441aa107d3a5bd5bff743934ea9f61bcb4cb3",
+      "generation_job": "a549f2ec-b7cd-48f7-bf31-b2a004212226",
+      "sdf_job": "651a96f4-4296-4c60-88c5-e44dd4b238a5",
+      "captures": {
+        "eye": {
+          "captures_verified": 84,
+          "source_sha256": "5a052a991c770993f908ce3e0c7441aa107d3a5bd5bff743934ea9f61bcb4cb3",
+          "camera_size": 0.430432230234146,
+          "scope": "Integrity, expression and view state; not aesthetic acceptance"
+        },
+        "mouth": {
+          "captures_verified": 18,
+          "source_sha256": "5a052a991c770993f908ce3e0c7441aa107d3a5bd5bff743934ea9f61bcb4cb3",
+          "camera_size": 0.430432230234146,
+          "scope": "Integrity, expression and view state; not aesthetic acceptance"
+        },
+        "mouth_motion": {
+          "captures_verified": 92,
+          "source_sha256": "5a052a991c770993f908ce3e0c7441aa107d3a5bd5bff743934ea9f61bcb4cb3",
+          "scope": "Sampled manual controller and image integrity; not aesthetic, speech or continuous collision acceptance"
+        }
+      },
+      "scope": "Current artifact integrity and recorded native states, not aesthetic approval, current-generator reproducibility or untested combinations",
+      "mouth_design": {
+        "parameters": {
+          "version": 1,
+          "kind": "lip-band",
+          "half_width": 0.065,
+          "corner_lift": -0.001,
+          "seam_bow": 0.0014,
+          "lip_band_width_m": 0.0012,
+          "lip_strength": 0.5,
+          "muzzle_projection": 0.0,
+          "muzzle_half_width": 0.13
+        },
+        "source_sha256": {
+          "mouth_design.py": "76373dfaeb81897169a54b592bc81aeda7285d09ffc70d7d5dfb0e846bf985ac",
+          "mouth_field.py": "03de0cd0df45f5b618c8e9b12267b2b64958351f2b482f00985b30b857246e3d",
+          "mouth_motion.py": "0df080f89b8f6c4dc520aee143ecca242fea436ee32b77a1d1daf2867acacd09",
+          "mouth_morphs.py": "f8fd0cfaa72a77cbfc3ede55851559da99c44a5ada84f7c8a93caae6468bb655",
+          "mouth_source.py": "ab2d5802a2c5f9bca1aed3add9b78ad323066fcd494046452d6e0ab74023e309"
+        },
+        "authored_support_envelope_m": 0.0,
+        "scope": "Authored support field envelope; not baseline displacement, collision or speech proof"
+      },
+      "motion_geometry": {
+        "binding_scope": "All triangle-referenced vertices; loose vertices excluded",
+        "target_names": [
+          "MouthOpen",
+          "blink.L",
+          "blink.R",
+          "MouthRound",
+          "MouthSpread",
+          "MouthPucker"
+        ],
+        "new_targets": [
+          "MouthRound",
+          "MouthSpread",
+          "MouthPucker"
+        ],
+        "changed_vertices": {
+          "MouthRound": 724,
+          "MouthSpread": 688,
+          "MouthPucker": 720
+        },
+        "max_displacement_m": {
+          "MouthRound": 0.003358043497563636,
+          "MouthSpread": 0.002426067367196083,
+          "MouthPucker": 0.004247643053531647
+        },
+        "outside_owned_components_unchanged": true,
+        "blink_overlap_vertices": 0,
+        "sampled_combinations": 81,
+        "sampled_triangles": 1482,
+        "minimum_sampled_area_m2": 4.362889469730451e-09,
+        "minimum_sampled_normal_dot": 1.2688594933102975e-16,
+        "scope": "81 sampled open/round/spread/pucker states on affected triangles; no continuous-domain, self-collision, oral-clearance or speech proof"
+      },
+      "native_report_sha256": "9a23802906ebfcbf7702656724c41bfc2882ba432d92e715b2d04da7c68500da",
+      "native_surface_vertices": 6096,
+      "native_triangles": 10980,
+      "visual_status": "contact_sheets_reviewed",
+      "visual_scope": "Sampled head-only review, not final character art, speech alignment or global collision acceptance"
+    },
+    {
+      "candidate": "combo891",
+      "status": "technically_verified",
+      "selection": {
+        "eyes": "downturned",
+        "brows": "soft-arched",
+        "mouth": "research-round-muzzle",
+        "nose": "research-balanced",
+        "ears": "retained",
+        "face": "narrow-chin"
+      },
+      "fit_policy": "legacy",
+      "composition_sha256": "4502ecf30e24b8008cfeb24fa844b97ba580deb54520245db968fb762f68f4f8",
+      "glb_sha256": "12e25a0fd83c6dab7e6b5c6902634fed21f4c66744209dfa86f550715d995dc2",
+      "generation_job": "932dd18e-4b36-4ca7-80a6-39f91d537bad",
+      "sdf_job": "45a6453b-c7ac-4238-9541-a34a839c1998",
+      "captures": {
+        "eye": {
+          "captures_verified": 84,
+          "source_sha256": "12e25a0fd83c6dab7e6b5c6902634fed21f4c66744209dfa86f550715d995dc2",
+          "camera_size": 0.430432230234146,
+          "scope": "Integrity, expression and view state; not aesthetic acceptance"
+        },
+        "mouth": {
+          "captures_verified": 18,
+          "source_sha256": "12e25a0fd83c6dab7e6b5c6902634fed21f4c66744209dfa86f550715d995dc2",
+          "camera_size": 0.430432230234146,
+          "scope": "Integrity, expression and view state; not aesthetic acceptance"
+        },
+        "mouth_motion": {
+          "captures_verified": 92,
+          "source_sha256": "12e25a0fd83c6dab7e6b5c6902634fed21f4c66744209dfa86f550715d995dc2",
+          "scope": "Sampled manual controller and image integrity; not aesthetic, speech or continuous collision acceptance"
+        }
+      },
+      "scope": "Current artifact integrity and recorded native states, not aesthetic approval, current-generator reproducibility or untested combinations",
+      "mouth_design": {
+        "parameters": {
+          "version": 1,
+          "kind": "muzzle",
+          "half_width": 0.078,
+          "corner_lift": -0.002,
+          "seam_bow": 0.0,
+          "lip_band_width_m": 0.0003,
+          "lip_strength": 0.62,
+          "muzzle_projection": 0.035,
+          "muzzle_half_width": 0.16
+        },
+        "source_sha256": {
+          "mouth_design.py": "76373dfaeb81897169a54b592bc81aeda7285d09ffc70d7d5dfb0e846bf985ac",
+          "mouth_field.py": "03de0cd0df45f5b618c8e9b12267b2b64958351f2b482f00985b30b857246e3d",
+          "mouth_motion.py": "0df080f89b8f6c4dc520aee143ecca242fea436ee32b77a1d1daf2867acacd09",
+          "mouth_morphs.py": "f8fd0cfaa72a77cbfc3ede55851559da99c44a5ada84f7c8a93caae6468bb655",
+          "mouth_source.py": "7e442676a354210e03755869287844e3f15c2026b22d0ab12d8554d82bb02f82"
+        },
+        "authored_support_envelope_m": 0.00826,
+        "scope": "Authored support field envelope; not baseline displacement, collision or speech proof"
+      },
+      "motion_geometry": {
+        "binding_scope": "All triangle-referenced vertices; loose vertices excluded",
+        "target_names": [
+          "MouthOpen",
+          "blink.L",
+          "blink.R",
+          "MouthRound",
+          "MouthSpread",
+          "MouthPucker"
+        ],
+        "new_targets": [
+          "MouthRound",
+          "MouthSpread",
+          "MouthPucker"
+        ],
+        "changed_vertices": {
+          "MouthRound": 724,
+          "MouthSpread": 688,
+          "MouthPucker": 720
+        },
+        "max_displacement_m": {
+          "MouthRound": 0.003358716523045061,
+          "MouthSpread": 0.002423575147986412,
+          "MouthPucker": 0.004247643053531647
+        },
+        "outside_owned_components_unchanged": true,
+        "blink_overlap_vertices": 0,
+        "sampled_combinations": 81,
+        "sampled_triangles": 1482,
+        "minimum_sampled_area_m2": 4.362889469730451e-09,
+        "minimum_sampled_normal_dot": 1.2688594933102975e-16,
+        "scope": "81 sampled open/round/spread/pucker states on affected triangles; no continuous-domain, self-collision, oral-clearance or speech proof"
+      },
+      "native_report_sha256": "5772773a9fb6229bfe45a3f93da6a2aeb46ec84f5d4956e1502c7463a79693f7",
+      "native_surface_vertices": 6096,
+      "native_triangles": 10980,
+      "visual_status": "contact_sheets_reviewed",
+      "visual_scope": "Sampled head-only review, not final character art, speech alignment or global collision acceptance"
+    },
+    {
+      "candidate": "combo889",
+      "status": "technically_verified",
+      "selection": {
+        "eyes": "downturned",
+        "brows": "soft-arched",
+        "mouth": "research-short-muzzle",
+        "nose": "research-balanced",
+        "ears": "retained",
+        "face": "narrow-chin"
+      },
+      "fit_policy": "legacy",
+      "composition_sha256": "c0f9d8d2e0c867ef1f912f72c3dfe4c842b3afabde2c68aac0adcc0a7448bdb5",
+      "glb_sha256": "f38308cb166a56493cf221647895327486b9c9e83807713ab5e89a08812ef78d",
+      "generation_job": "d2f98ab2-b4a7-4d4d-a965-dffcd8c73e79",
+      "sdf_job": "a325390c-2e35-4acd-a281-c88642598959",
+      "captures": {
+        "eye": {
+          "captures_verified": 84,
+          "source_sha256": "f38308cb166a56493cf221647895327486b9c9e83807713ab5e89a08812ef78d",
+          "camera_size": 0.430432230234146,
+          "scope": "Integrity, expression and view state; not aesthetic acceptance"
+        },
+        "mouth": {
+          "captures_verified": 18,
+          "source_sha256": "f38308cb166a56493cf221647895327486b9c9e83807713ab5e89a08812ef78d",
+          "camera_size": 0.430432230234146,
+          "scope": "Integrity, expression and view state; not aesthetic acceptance"
+        },
+        "mouth_motion": {
+          "captures_verified": 92,
+          "source_sha256": "f38308cb166a56493cf221647895327486b9c9e83807713ab5e89a08812ef78d",
+          "scope": "Sampled manual controller and image integrity; not aesthetic, speech or continuous collision acceptance"
+        }
+      },
+      "scope": "Current artifact integrity and recorded native states, not aesthetic approval, current-generator reproducibility or untested combinations",
+      "mouth_design": {
+        "parameters": {
+          "version": 1,
+          "kind": "muzzle",
+          "half_width": 0.07,
+          "corner_lift": -0.001,
+          "seam_bow": 0.002,
+          "lip_band_width_m": 0.0003,
+          "lip_strength": 0.62,
+          "muzzle_projection": 0.018,
+          "muzzle_half_width": 0.12
+        },
+        "source_sha256": {
+          "mouth_design.py": "76373dfaeb81897169a54b592bc81aeda7285d09ffc70d7d5dfb0e846bf985ac",
+          "mouth_field.py": "03de0cd0df45f5b618c8e9b12267b2b64958351f2b482f00985b30b857246e3d",
+          "mouth_motion.py": "0df080f89b8f6c4dc520aee143ecca242fea436ee32b77a1d1daf2867acacd09",
+          "mouth_morphs.py": "f8fd0cfaa72a77cbfc3ede55851559da99c44a5ada84f7c8a93caae6468bb655",
+          "mouth_source.py": "7e442676a354210e03755869287844e3f15c2026b22d0ab12d8554d82bb02f82"
+        },
+        "authored_support_envelope_m": 0.004247999999999999,
+        "scope": "Authored support field envelope; not baseline displacement, collision or speech proof"
+      },
+      "motion_geometry": {
+        "binding_scope": "All triangle-referenced vertices; loose vertices excluded",
+        "target_names": [
+          "MouthOpen",
+          "blink.L",
+          "blink.R",
+          "MouthRound",
+          "MouthSpread",
+          "MouthPucker"
+        ],
+        "new_targets": [
+          "MouthRound",
+          "MouthSpread",
+          "MouthPucker"
+        ],
+        "changed_vertices": {
+          "MouthRound": 724,
+          "MouthSpread": 688,
+          "MouthPucker": 720
+        },
+        "max_displacement_m": {
+          "MouthRound": 0.003358199324257493,
+          "MouthSpread": 0.002425979822874069,
+          "MouthPucker": 0.004247643053531647
+        },
+        "outside_owned_components_unchanged": true,
+        "blink_overlap_vertices": 0,
+        "sampled_combinations": 81,
+        "sampled_triangles": 1482,
+        "minimum_sampled_area_m2": 4.362889469730451e-09,
+        "minimum_sampled_normal_dot": 1.2688594933102975e-16,
+        "scope": "81 sampled open/round/spread/pucker states on affected triangles; no continuous-domain, self-collision, oral-clearance or speech proof"
+      },
+      "native_report_sha256": "3ed03a5669aa99abc739cdfa4353545e9ff2233511313a8e9e26d7c5e4955ba1",
+      "native_surface_vertices": 6096,
+      "native_triangles": 10980,
+      "visual_status": "contact_sheets_reviewed",
+      "visual_scope": "Sampled head-only review, not final character art, speech alignment or global collision acceptance"
+    }
+  ],
+  "cross_combinations": [
+    {
+      "candidate": "combo890",
+      "status": "technically_verified",
+      "selection": {
+        "eyes": "almond",
+        "brows": "research-arc-fine",
+        "mouth": "research-lip-band",
+        "nose": "research-compact",
+        "ears": "retained",
+        "face": "narrow-chin"
+      },
+      "fit_policy": "legacy",
+      "composition_sha256": "2ba85be80b29c6b8ba54dc8a449b79912e26d3f91892a47e9dde5e26280c1c45",
+      "glb_sha256": "d09ec95a68250e5e7966fd05cee40e20fc2655a5d303b526272582ce5f32ea5c",
+      "generation_job": "dc801089-3d84-48dd-8063-0dcfc452d4f0",
+      "sdf_job": "680f758a-27a2-4948-8e31-efdc16ab8fa5",
+      "captures": {
+        "eye": {
+          "captures_verified": 84,
+          "source_sha256": "d09ec95a68250e5e7966fd05cee40e20fc2655a5d303b526272582ce5f32ea5c",
+          "camera_size": 0.430432230234146,
+          "scope": "Integrity, expression and view state; not aesthetic acceptance"
+        },
+        "mouth": {
+          "captures_verified": 18,
+          "source_sha256": "d09ec95a68250e5e7966fd05cee40e20fc2655a5d303b526272582ce5f32ea5c",
+          "camera_size": 0.430432230234146,
+          "scope": "Integrity, expression and view state; not aesthetic acceptance"
+        },
+        "mouth_motion": {
+          "captures_verified": 92,
+          "source_sha256": "d09ec95a68250e5e7966fd05cee40e20fc2655a5d303b526272582ce5f32ea5c",
+          "scope": "Sampled manual controller and image integrity; not aesthetic, speech or continuous collision acceptance"
+        }
+      },
+      "scope": "Current artifact integrity and recorded native states, not aesthetic approval, current-generator reproducibility or untested combinations",
+      "mouth_design": {
+        "parameters": {
+          "version": 1,
+          "kind": "lip-band",
+          "half_width": 0.065,
+          "corner_lift": -0.001,
+          "seam_bow": 0.0014,
+          "lip_band_width_m": 0.0012,
+          "lip_strength": 0.5,
+          "muzzle_projection": 0.0,
+          "muzzle_half_width": 0.13
+        },
+        "source_sha256": {
+          "mouth_design.py": "76373dfaeb81897169a54b592bc81aeda7285d09ffc70d7d5dfb0e846bf985ac",
+          "mouth_field.py": "03de0cd0df45f5b618c8e9b12267b2b64958351f2b482f00985b30b857246e3d",
+          "mouth_motion.py": "0df080f89b8f6c4dc520aee143ecca242fea436ee32b77a1d1daf2867acacd09",
+          "mouth_morphs.py": "f8fd0cfaa72a77cbfc3ede55851559da99c44a5ada84f7c8a93caae6468bb655",
+          "mouth_source.py": "7e442676a354210e03755869287844e3f15c2026b22d0ab12d8554d82bb02f82"
+        },
+        "authored_support_envelope_m": 0.0,
+        "scope": "Authored support field envelope; not baseline displacement, collision or speech proof"
+      },
+      "motion_geometry": {
+        "binding_scope": "All triangle-referenced vertices; loose vertices excluded",
+        "target_names": [
+          "MouthOpen",
+          "blink.L",
+          "blink.R",
+          "MouthRound",
+          "MouthSpread",
+          "MouthPucker"
+        ],
+        "new_targets": [
+          "MouthRound",
+          "MouthSpread",
+          "MouthPucker"
+        ],
+        "changed_vertices": {
+          "MouthRound": 724,
+          "MouthSpread": 686,
+          "MouthPucker": 720
+        },
+        "max_displacement_m": {
+          "MouthRound": 0.003358043497563636,
+          "MouthSpread": 0.002426067367196083,
+          "MouthPucker": 0.004247643053531647
+        },
+        "outside_owned_components_unchanged": true,
+        "blink_overlap_vertices": 0,
+        "sampled_combinations": 81,
+        "sampled_triangles": 1482,
+        "minimum_sampled_area_m2": 4.362889469730451e-09,
+        "minimum_sampled_normal_dot": 1.2688594933102975e-16,
+        "scope": "81 sampled open/round/spread/pucker states on affected triangles; no continuous-domain, self-collision, oral-clearance or speech proof"
+      },
+      "native_report_sha256": "d3fa448e279a091616f7b939d1b2fa3593696e4f85df0f32c7bd6bc44bec3aed",
+      "native_surface_vertices": 7446,
+      "native_triangles": 13716,
+      "visual_status": "contact_sheets_reviewed",
+      "visual_scope": "Sampled head-only review, not final character art, speech alignment or global collision acceptance"
+    }
+  ],
+  "pending_cases": [],
+  "manual_controller_review": {
+    "checked_utc": "2026-10-21T01:16:40Z",
+    "candidate": "combo890",
+    "source_sha256": "d09ec95a68250e5e7966fd05cee40e20fc2655a5d303b526272582ce5f32ea5c",
+    "controller_sha256": "94362d0f811bb1dfd17438615cd54e519689fde0c3b1079beae8254311753e40",
+    "method": "Physical UI clicks via native desktop; observed screenshots in conversation, not a persisted capture manifest",
+    "observations": [
+      "Clicked Open slider and observed mouth opening",
+      "Clicked Round, Spread, Pucker sliders and observed mixed state",
+      "Changed to left profile; state persisted and visible profile changed",
+      "Clicked actual neutral reset button; all4sliders returned to zero and neutral mouth restored",
+      "Changed to front; neutral persisted"
+    ],
+    "scope": "Manual interaction observations, not numerical readback, speech alignment or final art acceptance"
+  },
+  "rejected_candidates": [
+    {
+      "candidate": "combo888",
+      "stage": "generation",
+      "reason": "Hidden oral wall sample lies outside facial skin",
+      "published_outputs": 0,
+      "resolution": "Hidden rear cavity and tongue depth referenced to original head surface; unchanged containment guard passed for replacement combo891."
+    }
+  ],
+  "source_layout_followup": "Source files were refactored on 2026-10-21 after these captures. These remain pre-refactor historical observations; complete source-chain verification against modified files is not claimed."
+}

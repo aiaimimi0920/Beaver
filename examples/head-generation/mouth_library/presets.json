@@ -1,0 +1,46 @@
+{
+  "line": {
+    "version": 1,
+    "kind": "line",
+    "half_width": 0.065,
+    "corner_lift": -0.001,
+    "seam_bow": 0.0,
+    "lip_band_width_m": 0.0003,
+    "lip_strength": 0.62,
+    "muzzle_projection": 0.0,
+    "muzzle_half_width": 0.13
+  },
+  "lip-band": {
+    "version": 1,
+    "kind": "lip-band",
+    "half_width": 0.065,
+    "corner_lift": -0.001,
+    "seam_bow": 0.0014,
+    "lip_band_width_m": 0.0012,
+    "lip_strength": 0.5,
+    "muzzle_projection": 0.0,
+    "muzzle_half_width": 0.13
+  },
+  "round-muzzle": {
+    "version": 1,
+    "kind": "muzzle",
+    "half_width": 0.078,
+    "corner_lift": -0.002,
+    "seam_bow": 0.0,
+    "lip_band_width_m": 0.0003,
+    "lip_strength": 0.62,
+    "muzzle_projection": 0.035,
+    "muzzle_half_width": 0.16
+  },
+  "short-muzzle": {
+    "version": 1,
+    "kind": "muzzle",
+    "half_width": 0.07,
+    "corner_lift": -0.001,
+    "seam_bow": 0.002,
+    "lip_band_width_m": 0.0003,
+    "lip_strength": 0.62,
+    "muzzle_projection": 0.018,
+    "muzzle_half_width": 0.12
+  }
+}

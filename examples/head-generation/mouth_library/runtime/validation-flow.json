@@ -1,0 +1,41 @@
+{
+  "schemaVersion": 1,
+  "code": {
+    "directories": [
+      "tests"
+    ]
+  },
+  "flows": [
+    {
+      "key": "researched-mouth-controller",
+      "name": "调研嘴部控制器",
+      "category": "ui",
+      "purpose": "展示真实混搭GLB与嘴部控制面板，中性状态；组合和拒绝路径由GUT测试",
+      "entry": "showcase/mouth_controller_review.tscn",
+      "taskIds": [
+        "c918678c-91ac-49bb-ad62-486332681946"
+      ],
+      "config": {
+        "seed": 1,
+        "width": 1180,
+        "height": 812,
+        "fps": 30
+      },
+      "steps": [
+        {
+          "id": "ready",
+          "kind": "waitFor",
+          "node": "MouthControllerReview",
+          "property": "mouth_ready",
+          "equals": true,
+          "timeout": 300
+        },
+        {
+          "id": "neutral-controls",
+          "kind": "capture"
+        }
+      ],
+      "video": false
+    }
+  ]
+}

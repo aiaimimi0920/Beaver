@@ -1,0 +1,12 @@
+[gd_scene load_steps=3 format=3]
+[ext_resource type="Script" path="res://showcase_extensions/researched_mouth_review.gd" id="1"]
+[ext_resource type="Resource" path="res://assets/aster/general_face_eyes_combo892/aster_definition.tres" id="2"]
+[node name="MouthControllerReview" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1")
+character_id = "mouth_controller_review"
+character_display_name = "Mouth controller review"
+character_definition = ExtResource("2")

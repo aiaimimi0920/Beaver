@@ -1,0 +1,1178 @@
+[
+  {
+    "mouth": {},
+    "yaw": 0.0,
+    "pitch": 0.0,
+    "mode": "render",
+    "blink": [
+      0.0,
+      0.0
+    ]
+  },
+  {
+    "mouth": {},
+    "yaw": 0.0,
+    "pitch": 0.0,
+    "mode": "white",
+    "blink": [
+      0.0,
+      0.0
+    ]
+  },
+  {
+    "mouth": {},
+    "yaw": -45.0,
+    "pitch": 0.0,
+    "mode": "render",
+    "blink": [
+      0.0,
+      0.0
+    ]
+  },
+  {
+    "mouth": {},
+    "yaw": -45.0,
+    "pitch": 0.0,
+    "mode": "white",
+    "blink": [
+      0.0,
+      0.0
+    ]
+  },
+  {
+    "mouth": {},
+    "yaw": 45.0,
+    "pitch": 0.0,
+    "mode": "render",
+    "blink": [
+      0.0,
+      0.0
+    ]
+  },
+  {
+    "mouth": {},
+    "yaw": 45.0,
+    "pitch": 0.0,
+    "mode": "white",
+    "blink": [
+      0.0,
+      0.0
+    ]
+  },
+  {
+    "mouth": {},
+    "yaw": -90.0,
+    "pitch": 0.0,
+    "mode": "render",
+    "blink": [
+      0.0,
+      0.0
+    ]
+  },
+  {
+    "mouth": {},
+    "yaw": -90.0,
+    "pitch": 0.0,
+    "mode": "white",
+    "blink": [
+      0.0,
+      0.0
+    ]
+  },
+  {
+    "mouth": {},
+    "yaw": 90.0,
+    "pitch": 0.0,
+    "mode": "render",
+    "blink": [
+      0.0,
+      0.0
+    ]
+  },
+  {
+    "mouth": {},
+    "yaw": 90.0,
+    "pitch": 0.0,
+    "mode": "white",
+    "blink": [
+      0.0,
+      0.0
+    ]
+  },
+  {
+    "mouth": {
+      "MouthOpen": 1.0
+    },
+    "yaw": 0.0,
+    "pitch": 0.0,
+    "mode": "render",
+    "blink": [
+      0.0,
+      0.0
+    ]
+  },
+  {
+    "mouth": {
+      "MouthOpen": 1.0
+    },
+    "yaw": 0.0,
+    "pitch": 0.0,
+    "mode": "white",
+    "blink": [
+      0.0,
+      0.0
+    ]
+  },
+  {
+    "mouth": {
+      "MouthOpen": 1.0
+    },
+    "yaw": -45.0,
+    "pitch": 0.0,
+    "mode": "render",
+    "blink": [
+      0.0,
+      0.0
+    ]
+  },
+  {
+    "mouth": {
+      "MouthOpen": 1.0
+    },
+    "yaw": -45.0,
+    "pitch": 0.0,
+    "mode": "white",
+    "blink": [
+      0.0,
+      0.0
+    ]
+  },
+  {
+    "mouth": {
+      "MouthOpen": 1.0
+    },
+    "yaw": 45.0,
+    "pitch": 0.0,
+    "mode": "render",
+    "blink": [
+      0.0,
+      0.0
+    ]
+  },
+  {
+    "mouth": {
+      "MouthOpen": 1.0
+    },
+    "yaw": 45.0,
+    "pitch": 0.0,
+    "mode": "white",
+    "blink": [
+      0.0,
+      0.0
+    ]
+  },
+  {
+    "mouth": {
+      "MouthOpen": 1.0
+    },
+    "yaw": -90.0,
+    "pitch": 0.0,
+    "mode": "render",
+    "blink": [
+      0.0,
+      0.0
+    ]
+  },
+  {
+    "mouth": {
+      "MouthOpen": 1.0
+    },
+    "yaw": -90.0,
+    "pitch": 0.0,
+    "mode": "white",
+    "blink": [
+      0.0,
+      0.0
+    ]
+  },
+  {
+    "mouth": {
+      "MouthOpen": 1.0
+    },
+    "yaw": 90.0,
+    "pitch": 0.0,
+    "mode": "render",
+    "blink": [
+      0.0,
+      0.0
+    ]
+  },
+  {
+    "mouth": {
+      "MouthOpen": 1.0
+    },
+    "yaw": 90.0,
+    "pitch": 0.0,
+    "mode": "white",
+    "blink": [
+      0.0,
+      0.0
+    ]
+  },
+  {
+    "mouth": {
+      "MouthOpen": 0.7,
+      "MouthRound": 1.0
+    },
+    "yaw": 0.0,
+    "pitch": 0.0,
+    "mode": "render",
+    "blink": [
+      0.0,
+      0.0
+    ]
+  },
+  {
+    "mouth": {
+      "MouthOpen": 0.7,
+      "MouthRound": 1.0
+    },
+    "yaw": 0.0,
+    "pitch": 0.0,
+    "mode": "white",
+    "blink": [
+      0.0,
+      0.0
+    ]
+  },
+  {
+    "mouth": {
+      "MouthOpen": 0.7,
+      "MouthRound": 1.0
+    },
+    "yaw": -45.0,
+    "pitch": 0.0,
+    "mode": "render",
+    "blink": [
+      0.0,
+      0.0
+    ]
+  },
+  {
+    "mouth": {
+      "MouthOpen": 0.7,
+      "MouthRound": 1.0
+    },
+    "yaw": -45.0,
+    "pitch": 0.0,
+    "mode": "white",
+    "blink": [
+      0.0,
+      0.0
+    ]
+  },
+  {
+    "mouth": {
+      "MouthOpen": 0.7,
+      "MouthRound": 1.0
+    },
+    "yaw": 45.0,
+    "pitch": 0.0,
+    "mode": "render",
+    "blink": [
+      0.0,
+      0.0
+    ]
+  },
+  {
+    "mouth": {
+      "MouthOpen": 0.7,
+      "MouthRound": 1.0
+    },
+    "yaw": 45.0,
+    "pitch": 0.0,
+    "mode": "white",
+    "blink": [
+      0.0,
+      0.0
+    ]
+  },
+  {
+    "mouth": {
+      "MouthOpen": 0.7,
+      "MouthRound": 1.0
+    },
+    "yaw": -90.0,
+    "pitch": 0.0,
+    "mode": "render",
+    "blink": [
+      0.0,
+      0.0
+    ]
+  },
+  {
+    "mouth": {
+      "MouthOpen": 0.7,
+      "MouthRound": 1.0
+    },
+    "yaw": -90.0,
+    "pitch": 0.0,
+    "mode": "white",
+    "blink": [
+      0.0,
+      0.0
+    ]
+  },
+  {
+    "mouth": {
+      "MouthOpen": 0.7,
+      "MouthRound": 1.0
+    },
+    "yaw": 90.0,
+    "pitch": 0.0,
+    "mode": "render",
+    "blink": [
+      0.0,
+      0.0
+    ]
+  },
+  {
+    "mouth": {
+      "MouthOpen": 0.7,
+      "MouthRound": 1.0
+    },
+    "yaw": 90.0,
+    "pitch": 0.0,
+    "mode": "white",
+    "blink": [
+      0.0,
+      0.0
+    ]
+  },
+  {
+    "mouth": {
+      "MouthOpen": 0.5,
+      "MouthSpread": 1.0
+    },
+    "yaw": 0.0,
+    "pitch": 0.0,
+    "mode": "render",
+    "blink": [
+      0.0,
+      0.0
+    ]
+  },
+  {
+    "mouth": {
+      "MouthOpen": 0.5,
+      "MouthSpread": 1.0
+    },
+    "yaw": 0.0,
+    "pitch": 0.0,
+    "mode": "white",
+    "blink": [
+      0.0,
+      0.0
+    ]
+  },
+  {
+    "mouth": {
+      "MouthOpen": 0.5,
+      "MouthSpread": 1.0
+    },
+    "yaw": -45.0,
+    "pitch": 0.0,
+    "mode": "render",
+    "blink": [
+      0.0,
+      0.0
+    ]
+  },
+  {
+    "mouth": {
+      "MouthOpen": 0.5,
+      "MouthSpread": 1.0
+    },
+    "yaw": -45.0,
+    "pitch": 0.0,
+    "mode": "white",
+    "blink": [
+      0.0,
+      0.0
+    ]
+  },
+  {
+    "mouth": {
+      "MouthOpen": 0.5,
+      "MouthSpread": 1.0
+    },
+    "yaw": 45.0,
+    "pitch": 0.0,
+    "mode": "render",
+    "blink": [
+      0.0,
+      0.0
+    ]
+  },
+  {
+    "mouth": {
+      "MouthOpen": 0.5,
+      "MouthSpread": 1.0
+    },
+    "yaw": 45.0,
+    "pitch": 0.0,
+    "mode": "white",
+    "blink": [
+      0.0,
+      0.0
+    ]
+  },
+  {
+    "mouth": {
+      "MouthOpen": 0.5,
+      "MouthSpread": 1.0
+    },
+    "yaw": -90.0,
+    "pitch": 0.0,
+    "mode": "render",
+    "blink": [
+      0.0,
+      0.0
+    ]
+  },
+  {
+    "mouth": {
+      "MouthOpen": 0.5,
+      "MouthSpread": 1.0
+    },
+    "yaw": -90.0,
+    "pitch": 0.0,
+    "mode": "white",
+    "blink": [
+      0.0,
+      0.0
+    ]
+  },
+  {
+    "mouth": {
+      "MouthOpen": 0.5,
+      "MouthSpread": 1.0
+    },
+    "yaw": 90.0,
+    "pitch": 0.0,
+    "mode": "render",
+    "blink": [
+      0.0,
+      0.0
+    ]
+  },
+  {
+    "mouth": {
+      "MouthOpen": 0.5,
+      "MouthSpread": 1.0
+    },
+    "yaw": 90.0,
+    "pitch": 0.0,
+    "mode": "white",
+    "blink": [
+      0.0,
+      0.0
+    ]
+  },
+  {
+    "mouth": {
+      "MouthPucker": 1.0
+    },
+    "yaw": 0.0,
+    "pitch": 0.0,
+    "mode": "render",
+    "blink": [
+      0.0,
+      0.0
+    ]
+  },
+  {
+    "mouth": {
+      "MouthPucker": 1.0
+    },
+    "yaw": 0.0,
+    "pitch": 0.0,
+    "mode": "white",
+    "blink": [
+      0.0,
+      0.0
+    ]
+  },
+  {
+    "mouth": {
+      "MouthPucker": 1.0
+    },
+    "yaw": -45.0,
+    "pitch": 0.0,
+    "mode": "render",
+    "blink": [
+      0.0,
+      0.0
+    ]
+  },
+  {
+    "mouth": {
+      "MouthPucker": 1.0
+    },
+    "yaw": -45.0,
+    "pitch": 0.0,
+    "mode": "white",
+    "blink": [
+      0.0,
+      0.0
+    ]
+  },
+  {
+    "mouth": {
+      "MouthPucker": 1.0
+    },
+    "yaw": 45.0,
+    "pitch": 0.0,
+    "mode": "render",
+    "blink": [
+      0.0,
+      0.0
+    ]
+  },
+  {
+    "mouth": {
+      "MouthPucker": 1.0
+    },
+    "yaw": 45.0,
+    "pitch": 0.0,
+    "mode": "white",
+    "blink": [
+      0.0,
+      0.0
+    ]
+  },
+  {
+    "mouth": {
+      "MouthPucker": 1.0
+    },
+    "yaw": -90.0,
+    "pitch": 0.0,
+    "mode": "render",
+    "blink": [
+      0.0,
+      0.0
+    ]
+  },
+  {
+    "mouth": {
+      "MouthPucker": 1.0
+    },
+    "yaw": -90.0,
+    "pitch": 0.0,
+    "mode": "white",
+    "blink": [
+      0.0,
+      0.0
+    ]
+  },
+  {
+    "mouth": {
+      "MouthPucker": 1.0
+    },
+    "yaw": 90.0,
+    "pitch": 0.0,
+    "mode": "render",
+    "blink": [
+      0.0,
+      0.0
+    ]
+  },
+  {
+    "mouth": {
+      "MouthPucker": 1.0
+    },
+    "yaw": 90.0,
+    "pitch": 0.0,
+    "mode": "white",
+    "blink": [
+      0.0,
+      0.0
+    ]
+  },
+  {
+    "mouth": {
+      "MouthOpen": 0.5,
+      "MouthPucker": 1.0
+    },
+    "yaw": 0.0,
+    "pitch": 0.0,
+    "mode": "render",
+    "blink": [
+      0.0,
+      0.0
+    ]
+  },
+  {
+    "mouth": {
+      "MouthOpen": 0.5,
+      "MouthPucker": 1.0
+    },
+    "yaw": 0.0,
+    "pitch": 0.0,
+    "mode": "white",
+    "blink": [
+      0.0,
+      0.0
+    ]
+  },
+  {
+    "mouth": {
+      "MouthOpen": 0.5,
+      "MouthPucker": 1.0
+    },
+    "yaw": -45.0,
+    "pitch": 0.0,
+    "mode": "render",
+    "blink": [
+      0.0,
+      0.0
+    ]
+  },
+  {
+    "mouth": {
+      "MouthOpen": 0.5,
+      "MouthPucker": 1.0
+    },
+    "yaw": -45.0,
+    "pitch": 0.0,
+    "mode": "white",
+    "blink": [
+      0.0,
+      0.0
+    ]
+  },
+  {
+    "mouth": {
+      "MouthOpen": 0.5,
+      "MouthPucker": 1.0
+    },
+    "yaw": 45.0,
+    "pitch": 0.0,
+    "mode": "render",
+    "blink": [
+      0.0,
+      0.0
+    ]
+  },
+  {
+    "mouth": {
+      "MouthOpen": 0.5,
+      "MouthPucker": 1.0
+    },
+    "yaw": 45.0,
+    "pitch": 0.0,
+    "mode": "white",
+    "blink": [
+      0.0,
+      0.0
+    ]
+  },
+  {
+    "mouth": {
+      "MouthOpen": 0.5,
+      "MouthPucker": 1.0
+    },
+    "yaw": -90.0,
+    "pitch": 0.0,
+    "mode": "render",
+    "blink": [
+      0.0,
+      0.0
+    ]
+  },
+  {
+    "mouth": {
+      "MouthOpen": 0.5,
+      "MouthPucker": 1.0
+    },
+    "yaw": -90.0,
+    "pitch": 0.0,
+    "mode": "white",
+    "blink": [
+      0.0,
+      0.0
+    ]
+  },
+  {
+    "mouth": {
+      "MouthOpen": 0.5,
+      "MouthPucker": 1.0
+    },
+    "yaw": 90.0,
+    "pitch": 0.0,
+    "mode": "render",
+    "blink": [
+      0.0,
+      0.0
+    ]
+  },
+  {
+    "mouth": {
+      "MouthOpen": 0.5,
+      "MouthPucker": 1.0
+    },
+    "yaw": 90.0,
+    "pitch": 0.0,
+    "mode": "white",
+    "blink": [
+      0.0,
+      0.0
+    ]
+  },
+  {
+    "mouth": {
+      "MouthOpen": 0.6,
+      "MouthRound": 0.5,
+      "MouthSpread": 0.5
+    },
+    "yaw": 0.0,
+    "pitch": 0.0,
+    "mode": "render",
+    "blink": [
+      0.0,
+      0.0
+    ]
+  },
+  {
+    "mouth": {
+      "MouthOpen": 0.6,
+      "MouthRound": 0.5,
+      "MouthSpread": 0.5
+    },
+    "yaw": 0.0,
+    "pitch": 0.0,
+    "mode": "white",
+    "blink": [
+      0.0,
+      0.0
+    ]
+  },
+  {
+    "mouth": {
+      "MouthOpen": 0.6,
+      "MouthRound": 0.5,
+      "MouthSpread": 0.5
+    },
+    "yaw": -45.0,
+    "pitch": 0.0,
+    "mode": "render",
+    "blink": [
+      0.0,
+      0.0
+    ]
+  },
+  {
+    "mouth": {
+      "MouthOpen": 0.6,
+      "MouthRound": 0.5,
+      "MouthSpread": 0.5
+    },
+    "yaw": -45.0,
+    "pitch": 0.0,
+    "mode": "white",
+    "blink": [
+      0.0,
+      0.0
+    ]
+  },
+  {
+    "mouth": {
+      "MouthOpen": 0.6,
+      "MouthRound": 0.5,
+      "MouthSpread": 0.5
+    },
+    "yaw": 45.0,
+    "pitch": 0.0,
+    "mode": "render",
+    "blink": [
+      0.0,
+      0.0
+    ]
+  },
+  {
+    "mouth": {
+      "MouthOpen": 0.6,
+      "MouthRound": 0.5,
+      "MouthSpread": 0.5
+    },
+    "yaw": 45.0,
+    "pitch": 0.0,
+    "mode": "white",
+    "blink": [
+      0.0,
+      0.0
+    ]
+  },
+  {
+    "mouth": {
+      "MouthOpen": 0.6,
+      "MouthRound": 0.5,
+      "MouthSpread": 0.5
+    },
+    "yaw": -90.0,
+    "pitch": 0.0,
+    "mode": "render",
+    "blink": [
+      0.0,
+      0.0
+    ]
+  },
+  {
+    "mouth": {
+      "MouthOpen": 0.6,
+      "MouthRound": 0.5,
+      "MouthSpread": 0.5
+    },
+    "yaw": -90.0,
+    "pitch": 0.0,
+    "mode": "white",
+    "blink": [
+      0.0,
+      0.0
+    ]
+  },
+  {
+    "mouth": {
+      "MouthOpen": 0.6,
+      "MouthRound": 0.5,
+      "MouthSpread": 0.5
+    },
+    "yaw": 90.0,
+    "pitch": 0.0,
+    "mode": "render",
+    "blink": [
+      0.0,
+      0.0
+    ]
+  },
+  {
+    "mouth": {
+      "MouthOpen": 0.6,
+      "MouthRound": 0.5,
+      "MouthSpread": 0.5
+    },
+    "yaw": 90.0,
+    "pitch": 0.0,
+    "mode": "white",
+    "blink": [
+      0.0,
+      0.0
+    ]
+  },
+  {
+    "mouth": {
+      "MouthOpen": 1.0,
+      "MouthRound": 1.0,
+      "MouthSpread": 1.0,
+      "MouthPucker": 1.0
+    },
+    "yaw": 0.0,
+    "pitch": 0.0,
+    "mode": "render",
+    "blink": [
+      0.0,
+      0.0
+    ]
+  },
+  {
+    "mouth": {
+      "MouthOpen": 1.0,
+      "MouthRound": 1.0,
+      "MouthSpread": 1.0,
+      "MouthPucker": 1.0
+    },
+    "yaw": 0.0,
+    "pitch": 0.0,
+    "mode": "white",
+    "blink": [
+      0.0,
+      0.0
+    ]
+  },
+  {
+    "mouth": {
+      "MouthOpen": 1.0,
+      "MouthRound": 1.0,
+      "MouthSpread": 1.0,
+      "MouthPucker": 1.0
+    },
+    "yaw": -45.0,
+    "pitch": 0.0,
+    "mode": "render",
+    "blink": [
+      0.0,
+      0.0
+    ]
+  },
+  {
+    "mouth": {
+      "MouthOpen": 1.0,
+      "MouthRound": 1.0,
+      "MouthSpread": 1.0,
+      "MouthPucker": 1.0
+    },
+    "yaw": -45.0,
+    "pitch": 0.0,
+    "mode": "white",
+    "blink": [
+      0.0,
+      0.0
+    ]
+  },
+  {
+    "mouth": {
+      "MouthOpen": 1.0,
+      "MouthRound": 1.0,
+      "MouthSpread": 1.0,
+      "MouthPucker": 1.0
+    },
+    "yaw": 45.0,
+    "pitch": 0.0,
+    "mode": "render",
+    "blink": [
+      0.0,
+      0.0
+    ]
+  },
+  {
+    "mouth": {
+      "MouthOpen": 1.0,
+      "MouthRound": 1.0,
+      "MouthSpread": 1.0,
+      "MouthPucker": 1.0
+    },
+    "yaw": 45.0,
+    "pitch": 0.0,
+    "mode": "white",
+    "blink": [
+      0.0,
+      0.0
+    ]
+  },
+  {
+    "mouth": {
+      "MouthOpen": 1.0,
+      "MouthRound": 1.0,
+      "MouthSpread": 1.0,
+      "MouthPucker": 1.0
+    },
+    "yaw": -90.0,
+    "pitch": 0.0,
+    "mode": "render",
+    "blink": [
+      0.0,
+      0.0
+    ]
+  },
+  {
+    "mouth": {
+      "MouthOpen": 1.0,
+      "MouthRound": 1.0,
+      "MouthSpread": 1.0,
+      "MouthPucker": 1.0
+    },
+    "yaw": -90.0,
+    "pitch": 0.0,
+    "mode": "white",
+    "blink": [
+      0.0,
+      0.0
+    ]
+  },
+  {
+    "mouth": {
+      "MouthOpen": 1.0,
+      "MouthRound": 1.0,
+      "MouthSpread": 1.0,
+      "MouthPucker": 1.0
+    },
+    "yaw": 90.0,
+    "pitch": 0.0,
+    "mode": "render",
+    "blink": [
+      0.0,
+      0.0
+    ]
+  },
+  {
+    "mouth": {
+      "MouthOpen": 1.0,
+      "MouthRound": 1.0,
+      "MouthSpread": 1.0,
+      "MouthPucker": 1.0
+    },
+    "yaw": 90.0,
+    "pitch": 0.0,
+    "mode": "white",
+    "blink": [
+      0.0,
+      0.0
+    ]
+  },
+  {
+    "mouth": {
+      "MouthOpen": 0.7,
+      "MouthRound": 1.0
+    },
+    "yaw": 0.0,
+    "pitch": 0.0,
+    "mode": "render",
+    "blink": [
+      1.0,
+      1.0
+    ]
+  },
+  {
+    "mouth": {
+      "MouthOpen": 0.7,
+      "MouthRound": 1.0
+    },
+    "yaw": 0.0,
+    "pitch": 0.0,
+    "mode": "white",
+    "blink": [
+      1.0,
+      1.0
+    ]
+  },
+  {
+    "mouth": {
+      "MouthOpen": 0.7,
+      "MouthRound": 1.0
+    },
+    "yaw": -45.0,
+    "pitch": 0.0,
+    "mode": "render",
+    "blink": [
+      1.0,
+      1.0
+    ]
+  },
+  {
+    "mouth": {
+      "MouthOpen": 0.7,
+      "MouthRound": 1.0
+    },
+    "yaw": -45.0,
+    "pitch": 0.0,
+    "mode": "white",
+    "blink": [
+      1.0,
+      1.0
+    ]
+  },
+  {
+    "mouth": {
+      "MouthOpen": 0.7,
+      "MouthRound": 1.0
+    },
+    "yaw": 45.0,
+    "pitch": 0.0,
+    "mode": "render",
+    "blink": [
+      1.0,
+      1.0
+    ]
+  },
+  {
+    "mouth": {
+      "MouthOpen": 0.7,
+      "MouthRound": 1.0
+    },
+    "yaw": 45.0,
+    "pitch": 0.0,
+    "mode": "white",
+    "blink": [
+      1.0,
+      1.0
+    ]
+  },
+  {
+    "mouth": {
+      "MouthOpen": 0.5,
+      "MouthPucker": 1.0
+    },
+    "yaw": 0.0,
+    "pitch": 0.0,
+    "mode": "render",
+    "blink": [
+      1.0,
+      0.0
+    ]
+  },
+  {
+    "mouth": {
+      "MouthOpen": 0.5,
+      "MouthPucker": 1.0
+    },
+    "yaw": 0.0,
+    "pitch": 0.0,
+    "mode": "white",
+    "blink": [
+      1.0,
+      0.0
+    ]
+  },
+  {
+    "mouth": {
+      "MouthOpen": 0.5,
+      "MouthPucker": 1.0
+    },
+    "yaw": -45.0,
+    "pitch": 0.0,
+    "mode": "render",
+    "blink": [
+      1.0,
+      0.0
+    ]
+  },
+  {
+    "mouth": {
+      "MouthOpen": 0.5,
+      "MouthPucker": 1.0
+    },
+    "yaw": -45.0,
+    "pitch": 0.0,
+    "mode": "white",
+    "blink": [
+      1.0,
+      0.0
+    ]
+  },
+  {
+    "mouth": {
+      "MouthOpen": 0.5,
+      "MouthPucker": 1.0
+    },
+    "yaw": 45.0,
+    "pitch": 0.0,
+    "mode": "render",
+    "blink": [
+      1.0,
+      0.0
+    ]
+  },
+  {
+    "mouth": {
+      "MouthOpen": 0.5,
+      "MouthPucker": 1.0
+    },
+    "yaw": 45.0,
+    "pitch": 0.0,
+    "mode": "white",
+    "blink": [
+      1.0,
+      0.0
+    ]
+  }
+]

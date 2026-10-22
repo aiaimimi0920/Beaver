@@ -8,6 +8,31 @@ import re
 
 from compose import HERE, verify_snapshot
 from verify_outline import verify_outline_guard
+from brow_evidence import verify_brow_artifacts
+from nose_evidence import verify_nose_artifacts
+from mouth_evidence import verify_mouth_artifacts
+from face_evidence import verify_face_artifacts
+from ear_evidence import verify_ear_artifacts
+from source_layout_bridge import verify_packaging
+
+
+def verify_requested_composition(snapshot, spec):
+    """Bind adjustable designs to the saved pre-launch composition, not a label."""
+    if (
+        snapshot["selection"] != spec["selection"]
+        or snapshot.get("fit_policy", "legacy") != spec["fit_policy"]
+    ):
+        raise ValueError("Requested selection or fit policy mismatch")
+    expected = spec.get("composition_sha256")
+    if (
+        snapshot.get("nose_design") is not None
+        or snapshot.get("mouth_design") is not None
+        or snapshot.get("face_design") is not None
+        or snapshot.get("ear_design") is not None
+    ) and expected is None:
+        raise ValueError("Researched design requires requested composition identity")
+    if expected is not None and expected != snapshot.get("composition_sha256"):
+        raise ValueError("Requested composition identity mismatch")
 
 
 def sha(path):
@@ -139,7 +164,19 @@ def verify_run(spec):
     ):
         raise ValueError("SDF binding differs from generation job")
     report = json.loads(resource(root, prefix + "generation_report.json").read_text())
+    verify_packaging(
+        report,
+        root,
+        prefix,
+        spec["generation_receipt"],
+        spec.get("source_packaging_receipt"),
+    )
     snapshot = verify_snapshot(report["face_components"])
+    verify_brow_artifacts(snapshot, report, root, prefix, generated)
+    verify_nose_artifacts(snapshot, report, root, prefix, generated)
+    verify_mouth_artifacts(snapshot, report, root, prefix, generated)
+    verify_face_artifacts(snapshot, report, root, prefix, generated)
+    verify_ear_artifacts(snapshot, report, root, prefix, generated)
     verify_outline_guard(snapshot, report)
     verify_template_reports(
         snapshot,
@@ -152,11 +189,7 @@ def verify_run(spec):
             else {}
         ),
     )
-    if (
-        snapshot["selection"] != spec["selection"]
-        or snapshot.get("fit_policy", "legacy") != spec["fit_policy"]
-    ):
-        raise ValueError("Requested selection or fit policy mismatch")
+    verify_requested_composition(snapshot, spec)
     parameters = json.loads(
         resource(root, prefix + "semantic_parameters.json").read_text()
     )
@@ -166,6 +199,8 @@ def verify_run(spec):
         "upper_corner_softness": 0.0,
         "upper_angularity": 0.0,
         "wing_lift_scale": 1.0,
+        "lateral_aperture_follow": 0.0,
+        "lateral_blink_follow": 0.85,
         "lateral_guide_regularization": 1.0,
         "lateral_guide_inward_power": 0.0,
     }
@@ -194,6 +229,20 @@ def verify_run(spec):
         )
         for profile in ("eye", "mouth")
     }
+    if snapshot.get("mouth_design") is not None:
+        import sys
+
+        library = HERE.parent / "mouth_library"
+        sys.path.insert(0, str(library))
+        module_spec = importlib.util.spec_from_file_location(
+            "mouth_motion_capture_verifier", library / "verify_capture.py"
+        )
+        module = importlib.util.module_from_spec(module_spec)
+        module_spec.loader.exec_module(module)
+        captures["mouth_motion"] = module.verify_capture(
+            root, spec["mouth_motion_manifest"], "res://" + prefix + "aster_head.glb",
+            spec.get("mouth_motion_probe_profile", "mouth"),
+        )
     return {
         "status": "technically_verified",
         "selection": spec["selection"],

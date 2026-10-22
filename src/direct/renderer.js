@@ -4,6 +4,7 @@ let state,
   lastRequest,
   lastJob,
   busy = false;
+let upgradeActions;
 // Bound only the DOM presentation; authoritative receipts and context stay intact.
 function displayCopy(value, depth = 0, budget = { left: 400 }) {
   if (--budget.left < 0) return "[display limit; full receipt retained]";
@@ -115,6 +116,9 @@ function updateRole() {
   $("create").disabled = busy || r !== "user";
   $("plan").disabled = busy || r !== "planner";
   $("finish").disabled = busy || r !== "executor";
+  $("upgrade-inspect").disabled = busy || r !== "user";
+  $("upgrade-apply").disabled =
+    busy || r !== "user" || !upgradeActions?.canUpgrade();
 }
 async function refresh() {
   state = await window.beaver.call("state");
@@ -155,6 +159,23 @@ async function submit(method, args) {
   return r;
 }
 $("role").onchange = updateRole;
+upgradeActions = createNprUpgradeActions(
+  (method, input) => window.beaver.call(method, input),
+  () =>
+    resolveNprUpgradeTarget(state, $("upgrade-target").value, $("task").value),
+);
+$("upgrade-target").onchange = () => {
+  upgradeActions.clear();
+  updateRole();
+};
+$("task").onchange = () => {
+  upgradeActions.clear();
+  updateRole();
+};
+$("upgrade-inspect").onclick = () =>
+  action(() => upgradeActions.inspect()).catch(() => {});
+$("upgrade-apply").onclick = () =>
+  action(() => upgradeActions.upgrade()).catch(() => {});
 updateRole();
 $("setup").onclick = () =>
   action(() => window.beaver.call("recovery.setup")).catch(() => {});
@@ -191,9 +212,23 @@ $("continue").onclick = () =>
   action(() =>
     window.beaver.call("task.continue", {
       id: $("task").value,
-      text: $("goal").value,
+      text: "",
     }),
   ).catch(() => {});
+$("withdraw").onclick = () =>
+  action(async () => {
+    const task = state?.tasks.find((item) => item.id === $("task").value);
+    if (!task?.parentTaskId) throw Error("请选择需要撤销的补充子步骤");
+    const reason = $("withdraw-reason").value.trim();
+    if (!reason) throw Error("请填写撤销理由");
+    const result = await window.beaver.call("task.withdrawSupplement", {
+      id: task.id,
+      parentId: task.parentTaskId,
+      reason,
+    });
+    await refresh();
+    return result;
+  }).catch(() => {});
 $("execute").onclick = () =>
   action(() =>
     submit("external.tool", {
@@ -232,7 +267,10 @@ $("file").onchange = async () => {
   if (f) {
     const s = await f.text();
     const value = JSON.parse(s);
-    if (typeof value.userGoal === "string") $("goal").value = value.userGoal;
+    if (typeof value.withdrawReason === "string")
+      $("withdraw-reason").value = value.withdrawReason;
+    else if (typeof value.userGoal === "string")
+      $("goal").value = value.userGoal;
     else if (typeof value.previewDefinition === "string")
       $("preview-definition").value = value.previewDefinition;
     else $("args").value = s;

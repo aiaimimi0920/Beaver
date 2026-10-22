@@ -58,7 +58,7 @@ mod release_tests;
 #[cfg(test)]
 mod task_integration_tests;
 #[cfg(test)]
-mod test_support;
+pub(crate) mod test_support;
 
 pub const RUNNER_VERSION: &str = "beaver-validation-2";
 pub const GUT_VERSION: &str = "9.4.0";

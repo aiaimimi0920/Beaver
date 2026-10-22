@@ -10,7 +10,7 @@ pub async fn call(host: Arc<Host>, method: String, input: Value) -> Result<Value
     }
     if matches!(
         method.as_str(),
-        "task.answer" | "task.continue" | "task.interrupt"
+        "task.answer" | "task.continue" | "task.interrupt" | "task.withdrawSupplement"
     ) {
         return tasks::control(host, &method, input).await;
     }

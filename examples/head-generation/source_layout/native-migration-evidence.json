@@ -1,0 +1,74 @@
+{
+  "scope": "Native source migration, not model generation or final native validation. Historical receipts remain unchanged.",
+  "original_source_count": 171,
+  "ordinary_source_count": 642,
+  "native_jobs": [
+    {
+      "job_id": "b365cf22-05d2-4be4-bb1a-e4a26548acdf",
+      "receipt_sha256": "5756afff63cf2535e4acbebba1d46daecaa162fa5545f0c692e13ca39550a135",
+      "script_sha256": "b11d0b4e498ef72aa5b86a928126ea3fb4fce49044c9891a77528b986ac2c66d",
+      "output_count": 64
+    },
+    {
+      "job_id": "8a9fa2d8-d54a-4f55-9504-f2ff3185b65d",
+      "receipt_sha256": "cb1ddaf21c4a0e565c2e1ab4c91bf980d11644085cda9a250c887f3cbcfb2511",
+      "script_sha256": "78e243b4db5c98ef2fe5a1447f47de9dc1ac94958780254974b870b9265ec774",
+      "output_count": 64
+    },
+    {
+      "job_id": "5912597a-aa34-4bdb-ace9-845ed2f90a8f",
+      "receipt_sha256": "e4ce7f0a24515e718cdb2cecc696bccff75568b1882d9a1fd80bef6782c99377",
+      "script_sha256": "62a10c3edde758efaff5e0b53458ac5295cec9ab69c0b5c0ef57b682bdf5be18",
+      "output_count": 64
+    },
+    {
+      "job_id": "89434df4-3c15-4c31-9824-4d0b60712649",
+      "receipt_sha256": "52a65bd22a778ec1c576cf6267a259a2790e56f7e3453707d34d936b039a4fb2",
+      "script_sha256": "fa2e8cbb1f220dbfa58eecdfa1922f55ed9e4dd64a39a79f59de8800a50fb7c6",
+      "output_count": 64
+    },
+    {
+      "job_id": "9af89ced-7a46-4117-aea7-425599de4a87",
+      "receipt_sha256": "8e4ba700fe10f79a39e445323af2d50bd9c0327cc22991183cdbc98a288c0b31",
+      "script_sha256": "43fb799656293a6df923fbc25fd936e81028bffb00de72d58db8c34cee17184c",
+      "output_count": 64
+    },
+    {
+      "job_id": "6221412f-69fe-47c9-9847-a1ce8b8b1542",
+      "receipt_sha256": "38838b95a545ec7c799d9d65fabfac951547f0b8cf3a5bf86ab2a66b8bd0a47c",
+      "script_sha256": "f3a7fd38f45168bcc702d215dcb0a9915a07e2ca9c0cc817829c7bf716fd377f",
+      "output_count": 64
+    },
+    {
+      "job_id": "056ca688-2c26-4674-b9e9-6c3974765216",
+      "receipt_sha256": "44030350398de0781130522c3a0093a2056c946ad4a30fdeeb3d77ee04a87d5c",
+      "script_sha256": "833287a660e56492a227b179f865f0f75174f8dfb0e7af1537c3b3d8884b3338",
+      "output_count": 64
+    },
+    {
+      "job_id": "1f9536f6-7835-436b-92bc-a47159744081",
+      "receipt_sha256": "7c5ab8a38f5f6d74c97a5dc056e6a458f173ee66e2ffb9f0d73e28fdf2437d32",
+      "script_sha256": "2ee0e1ad2597aa9068964d3cee4131ebed085d4666331462f90a676a6b0368e5",
+      "output_count": 64
+    },
+    {
+      "job_id": "844211e4-d5d4-40c6-a46c-0d9223c1151c",
+      "receipt_sha256": "fb0d01b8ac2928e6890816203fea0a039907d4a18a41164486660780804f73df",
+      "script_sha256": "5248230e2383d4159ce61a4d72a4e57839fa3c570c60ff997131f038c6652e59",
+      "output_count": 64
+    },
+    {
+      "job_id": "dc97603d-8638-4dab-91f8-1e0a86904b60",
+      "receipt_sha256": "25f460dee1f64cb4bfdc299aab9fc480f552961a53881bb4747b545a4dbfee6b",
+      "script_sha256": "98df8c23dac84cc7595d213e468bf477aac921eabc7671af6f467b7ac098b8b3",
+      "output_count": 64
+    },
+    {
+      "job_id": "f60e29b4-d57e-41fe-904e-29aa7a94adbd",
+      "receipt_sha256": "33168232441214b1081b486e60f0a323e33e5a1ea81b47f3330279175f63a9ee",
+      "script_sha256": "08ca9edf0cd8fbee094b1c7d51d6325273b2e7b09cfd7fe4659c989831bb260e",
+      "output_count": 3
+    }
+  ],
+  "reconstruction": "All original sources reconstruct byte-exactly from current regular modules."
+}

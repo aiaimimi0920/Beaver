@@ -39,6 +39,11 @@ def build_request(
     normal_parameters=None,
     component_parameters=None,
     family_templates=None,
+    brow_design=None,
+    nose_design=None,
+    mouth_design=None,
+    face_design=None,
+    ear_design=None,
 ):
     if (
         silhouette_parameters
@@ -46,6 +51,11 @@ def build_request(
         or normal_parameters
         or component_parameters
         or family_templates
+        or brow_design
+        or nose_design
+        or mouth_design
+        or face_design
+        or ear_design
     ) and prefix in {
         "assets/aster/general_face_eyes_795/",
         "assets/aster/general_face_eyes_796/",
@@ -109,13 +119,28 @@ def build_request(
         baseline_style, family_report = apply_family_templates(
             baseline_style, face_templates, silhouette_parameters
         )
+        import source_face_design as face_adapter
+
+        baseline_style, face_design_report = face_adapter.apply(
+            baseline_style, face_design, silhouette_parameters, face_templates
+        )
         from source_components import apply_components
 
         baseline_style, component_report = apply_components(
             baseline_style, component_parameters
         )
+        import source_ear_design as ear_adapter
+
+        baseline_style, ear_design_report = ear_adapter.apply(
+            baseline_style, ear_design, component_parameters
+        )
         baseline_style, nose_template_report = apply_nose_template(
             baseline_style, nose_templates
+        )
+        import source_nose_design as nose_adapter
+
+        baseline_style, nose_design_report = nose_adapter.apply(
+            baseline_style, nose_design, component_parameters, nose_templates
         )
         from source_silhouette import apply_silhouette
 
@@ -142,12 +167,23 @@ def build_request(
         baseline_style, mouth_template_report = apply_mouth_template(
             baseline_style, mouth_templates
         )
+        import source_mouth_design as mouth_adapter
+
+        baseline_style = mouth_adapter.apply(
+            baseline_style,
+            mouth_design,
+            lip_parameters,
+            component_parameters,
+            mouth_templates,
+        )
         style = builder.adapt_style(baseline_style, builder.validate(eyes))
         face = adapt_lip_source(
             (recipe / "face.py").read_text(), baseline_style["calibration"]
         )
         face = adapt_mouth_face(face, mouth_template_report is not None)
+        face = mouth_adapter.module().adapt_face(face, mouth_design)
         face = adapt_nose_face(face, nose_template_report is not None)
+        face = nose_adapter.module().adapt_face(face, nose_design)
         from source_upper_warp import adapt_face_source
 
         analysis_face = adapt_face_source(
@@ -230,12 +266,23 @@ def depth(x, y):"""
                         mouth_template_report is not None,
                     )
                 )
+            for name in ("mouth.py", "textures.py", "crease_rules.py"):
+                path = snapshot / name
+                path.write_text(
+                    mouth_adapter.module().adapt_companion(
+                        name, path.read_text(), mouth_design
+                    )
+                )
             for companion in ("nose_refine.py", "nose_fair.py"):
                 (snapshot / companion).write_text(
-                    adapt_nose_companion(
+                    nose_adapter.module().companion(
                         companion,
-                        (recipe / companion).read_text(),
-                        nose_template_report is not None,
+                        adapt_nose_companion(
+                            companion,
+                            (recipe / companion).read_text(),
+                            nose_template_report is not None,
+                        ),
+                        nose_design,
                     )
                 )
             from source_ear_profile import adapt_ear_profile
@@ -246,13 +293,17 @@ def depth(x, y):"""
                     (recipe / "ear_silhouette.py").read_text(),
                     baseline_style["calibration"].get("ear_point_strength", 0) > 0
                     or baseline_style["calibration"].get("ear_tip_length_scale", 1) != 1
-                    or baseline_style["calibration"].get("ear_tip_lift", 0) != 0,
+                    or baseline_style["calibration"].get("ear_tip_lift", 0) != 0
+                    or ear_design is not None,
                 )
             )
 
             (snapshot / "ears.py").write_text(
-                adapt_ear_profile(
-                    (recipe / "ears.py").read_text(), baseline_style["calibration"]
+                ear_adapter.adapt(
+                    adapt_ear_profile(
+                        (recipe / "ears.py").read_text(), baseline_style["calibration"]
+                    ),
+                    ear_design,
                 )
             )
             (snapshot / "face_style.json").write_text(
@@ -292,7 +343,18 @@ def depth(x, y):"""
                         boundary_source, retained_width_stations
                     )
                 boundary_path.write_text(boundary_source)
-            if silhouette_report is not None or family_report is not None:
+            if face_design_report is not None:
+                face_adapter.adapt_sources(snapshot, retained_width_stations)
+            if ear_design is not None:
+                boundary_path = snapshot / "ear_boundary.py"
+                boundary_path.write_text(
+                    ear_adapter.adapt_boundary(boundary_path.read_text(), ear_design)
+                )
+                topology_path = snapshot / "ear_topology.py"
+                topology_path.write_text(
+                    ear_adapter.adapt_topology(topology_path.read_text(), ear_design)
+                )
+            if silhouette_report is not None or family_report is not None or face_design_report is not None:
                 from source_silhouette import adapt_ear_envelope
 
                 (snapshot / "ear_width.py").write_text(
@@ -302,27 +364,46 @@ def depth(x, y):"""
                     )
                 )
             pipeline = adapt_pipeline(pipeline, normal_amount)
+            pipeline = nose_adapter.module().adapt_pipeline(pipeline, nose_design)
             (snapshot / "pipeline.py").write_text(pipeline)
             (snapshot / "face.py").write_text(face)
             (snapshot / "eye_socket.py").write_text(socket)
             builder.RECIPE = snapshot
-            request = builder.build_request(eyes, prefix, workspace, blink=blink)
+            request = builder.build_request(
+                eyes,
+                prefix,
+                workspace,
+                blink=blink,
+                brow_design=brow_design,
+                mouth_design=mouth_design,
+            )
     finally:
         sys.path.remove(str(EYES))
     module = (HERE / "runtime_field.py").read_text()
     preamble = 'import types, sys\n_facial = types.ModuleType("facial_surface_runtime")\nsys.modules["facial_surface_runtime"] = _facial\n'
     preamble += f'exec(compile({module!r}, "facial_surface_runtime.py", "exec"), _facial.__dict__)\n'
     preamble += f"_facial.DATA = {data!r}\n_facial.REVIEWED_BOUND = {reviewed_support_bound_m!r}\n"
-    request["code"] = preamble + request["code"]
+    request["code"] = (
+        mouth_adapter.module().preamble(mouth_design)
+        + nose_adapter.preamble(nose_design)
+        + preamble
+        + request["code"]
+    )
     profile_scope = (
         "Layered eye art direction plus reduced nose-plane pigment; nose geometry unchanged"
         if style_profile in ("emerald_layered", "emerald_illustrated")
         else "Inherited or clean eye art direction"
     )
-    if component_report and "nose_stations" in component_report["after"]:
+    if (
+        nose_design_report
+        or nose_template_report
+        or (component_report and "nose_stations" in component_report["after"])
+    ):
         profile_scope = profile_scope.replace(
             "nose geometry unchanged", "nose calibration altered"
         )
+    if nose_design_report is not None:
+        profile_scope += "; researched nasal geometry active; separate attachment normals excluded from current face SDF"
     if style_profile in ("emerald_layered", "emerald_illustrated"):
         request["code"] += f'report["semantic_eyes"]["scope"] = {profile_scope!r}\n'
     if component_report is not None:
@@ -332,10 +413,31 @@ def depth(x, y):"""
         )
     if family_report is not None:
         report["family_template"] = family_report
+    if face_design_report is not None:
+        report["face_design"] = face_design_report
+        request["code"] += f'report["face_design"] = {face_design_report!r}\n'
+    if ear_design_report is not None:
+        report["ear_design"] = ear_design_report
+        request["code"] += f'report["ear_design"] = {ear_design_report!r}\n'
     if mouth_template_report is not None:
         report["mouth_template"] = mouth_template_report
     if nose_template_report is not None:
         report["nose_template"] = nose_template_report
+    if nose_design_report is not None:
+        report["nose_design"] = nose_design_report
+        request[
+            "code"
+        ] += f'report["nose_design"] = {{"parameters": {nose_design!r}, "source_sha256": {nose_design_report["source_sha256"]!r}, "attachments": _nose_runtime.NOSE_MESH_REPORT}}\n'
+    if mouth_design is not None:
+        mouth_record = {
+            "parameters": mouth_design,
+            "source_sha256": mouth_adapter.module().provenance(),
+            "authored_support_envelope_m": style["calibration"]["height_m"]
+            * mouth_design["muzzle_projection"],
+            "scope": "Authored support field envelope; not baseline displacement, collision or speech proof",
+        }
+        report["mouth_design"] = mouth_record
+        request["code"] += f'report["mouth_design"] = {mouth_record!r}\n'
     if silhouette_report is not None:
         report["silhouette"] = silhouette_report
     if normal_amount:
@@ -370,49 +472,20 @@ def depth(x, y):"""
     request[
         "code"
     ] += f'Path(beaver_output({prefix+"generation_report.json"!r})).write_text(json.dumps(report, indent=2))\n'
-    artifacts = {
-        f"facial_surface_{path.name}": path.read_text()
-        for path in HERE.glob("*.py")
-        if not path.name.startswith("test_") and not path.name.startswith("source_")
-    }
-    for name in ("fit.py", "curve_profile.py", "diagnostics.py"):
-        artifacts["coherent_dependency_" + name] = (
-            HERE.parent / "coherent_surface" / name
-        ).read_text()
-    artifacts["facial_surface_preflight.json"] = json.dumps(
-        dict(
-            data=data,
-            report=report,
-            packager_helpers={
-                **{path.name: path.read_text() for path in HERE.glob("source_*.py")},
-                "semantic_illustrated_art.py": (
-                    EYES / "illustrated_art.py"
-                ).read_text(),
-            },
-        ),
-        indent=2,
-    )
-    artifacts["facial_surface_source_manifest.json"] = json.dumps(
-        {
-            name: hashlib.sha256(content.encode()).hexdigest()
-            for name, content in artifacts.items()
+    from source_artifacts import append_artifacts
+
+    append_artifacts(
+        request, prefix, workspace, data, report,
+        nose_adapter.retained(nose_design),
+        {} if mouth_design is None else mouth_adapter.module().retained_sources(),
+        {} if face_design is None else {
+            "face_design.py": (HERE.parent / "face_library/face_design.py").read_text()
         },
-        indent=2,
+        {} if ear_design is None else {
+            name: (HERE.parent / "ear_library" / name).read_text()
+            for name in ("ear_design.py", "ear_profile.py")
+        },
     )
-    for name, content in artifacts.items():
-        path = prefix + name
-        request["code"] += f"Path(beaver_output({path!r})).write_text({content!r})\n"
-        previous = Path(workspace) / path
-        request["outputs"].append(
-            dict(
-                path=path,
-                expectedSha256=(
-                    hashlib.sha256(previous.read_bytes()).hexdigest()
-                    if previous.is_file()
-                    else None
-                ),
-            )
-        )
     paths = [output["path"] for output in request["outputs"]]
     if len(paths) > 64 or len(set(paths)) != len(paths):
         raise ValueError("Native request requires at most 64 unique retained outputs")
