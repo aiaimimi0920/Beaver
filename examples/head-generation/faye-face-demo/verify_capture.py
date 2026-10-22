@@ -15,6 +15,12 @@ import sys
 MODEL = "ee91af5f00f1b1d267c0ac6a46c5227a7f7ba6fad2390a5f30bac228415551a4"
 COMPOSITION = "8e9e09d6d02c6ddc46de45fc6c19896d1f0dded2d3c727649701a24833b04871"
 RUNTIME_ROOTS = ["res://addons/npr_character_frame", "res://showcase_extensions"]
+MOUTH_CHANNELS = {"MouthOpen", "MouthPucker", "MouthRound", "MouthSpread"}
+REQUIRED_TEXTURES = {"face_base", "face_ilm", "face_map", "face_ramp", "face_sdf360"}
+MATERIAL_SCRIPTS = [
+    "res://addons/npr_character_frame/npr_character_materials.gd",
+    "res://addons/npr_character_frame/shaders/face/sdf360/sdf_materials.gd",
+]
 RUNTIME_SENTINELS = [
     "res://addons/npr_character_frame/npr_character.gd",
     "res://addons/npr_character_frame/shaders/face/sdf360/sdf_materials.gd",
@@ -34,6 +40,45 @@ def sha(path):
         for block in iter(lambda: stream.read(1048576), b""):
             digest.update(block)
     return digest.hexdigest()
+
+
+def finite_number(value):
+    return type(value) in (int, float) and math.isfinite(value)
+
+
+def verify_vector(value):
+    require(isinstance(value, list) and len(value) == 3 and all(map(finite_number, value)),
+            "Camera vector must contain three finite numbers")
+
+
+def verify_neutral(mouth, blink):
+    require(isinstance(mouth, dict) and set(mouth) == MOUTH_CHANNELS,
+            "Missing or unexpected mouth channels")
+    require(all(finite_number(value) and value == 0 for value in mouth.values()), "Non-neutral mouth")
+    require(isinstance(blink, list) and len(blink) == 2
+            and all(finite_number(value) and value == 0 for value in blink), "Non-neutral blink")
+
+
+def resource_path(workspace, value):
+    require(isinstance(value, str) and value.startswith("res://"), "Invalid resource path")
+    result = (workspace / value[6:]).resolve()
+    require(result.is_relative_to(workspace), "Resource escapes workspace")
+    return result
+
+
+def verify_textures(workspace, before, after):
+    require(isinstance(before, dict) and before and before == after, "Texture provenance changed")
+    fields = set()
+    for script in MATERIAL_SCRIPTS:
+        text = resource_path(workspace, script).read_text()
+        fields.update(re.findall(r"@export\s+var\s+(\w+)\s*:\s*Texture2D\b", text))
+    require(REQUIRED_TEXTURES <= fields and set(before) == fields, "Incomplete texture field snapshot")
+    for field, item in before.items():
+        if item is None:
+            require(field not in REQUIRED_TEXTURES, "Missing required texture: " + field)
+            continue
+        require(isinstance(item, dict) and set(item) == {"path", "sha256"}, "Malformed texture binding")
+        require(sha(resource_path(workspace, item["path"])) == item["sha256"], "Texture bytes changed: " + field)
 
 
 def verify_scale(base, size):
@@ -65,10 +110,7 @@ def verify(workspace, manifest):
     data = json.loads(manifest.read_text())
 
     def resource(value):
-        require(isinstance(value, str) and value.startswith("res://"), "Invalid resource path")
-        result = (workspace / value[6:]).resolve()
-        require(result.is_relative_to(workspace), "Resource escapes workspace")
-        return result
+        return resource_path(workspace, value)
 
     require(data["expected"] == len(data["captures"]) == 9, "Expected nine captures")
     for group in ["source", "bindings"]:
@@ -97,6 +139,9 @@ def verify(workspace, manifest):
     require(data["bindings_before"].get("res://project.godot") == sha(resource("res://project.godot")),
             "Project settings are not bound")
     verify_runtime(workspace, data["bindings_before"])
+    verify_textures(workspace, data["textures_before"], data["textures_after"])
+    require(data["textures_before"]["face_sdf360"] == {"path": data["atlas"],
+            "sha256": data["source_before"]["atlas"]}, "Atlas field binding mismatch")
 
     rows = []
     reference = data["captures"][0]["actual_view"]
@@ -106,18 +151,24 @@ def verify(workspace, manifest):
         yaw = [0, 45, 90][index % 3]
         expected = {"mode": mode, "mouth": {}, "pitch": 0, "scale": .85, "view": view, "yaw": yaw}
         require(capture["requested"] == expected, "Wrong capture order or request")
+        require(all(finite_number(capture["requested"][key]) for key in ["yaw", "pitch", "scale"]),
+                "Invalid requested camera number")
         actual = capture["actual_view"]
         verify_scale(data["base_view_size"], actual["size"])
+        require(all(finite_number(actual[key]) for key in ["yaw", "pitch", "camera_pitch"]),
+                "Invalid actual camera number")
+        require(type(actual["projection"]) is int, "Invalid projection type")
+        for vector in [actual["target"], actual["position"], capture["expected_target"], capture["expected_position"]]:
+            verify_vector(vector)
         require(actual["mode"] == mode and actual["yaw"] == yaw and actual["pitch"] == 0
                 and actual["camera_pitch"] == 0 and actual["projection"] == 1, "Wrong actual view")
-        require(actual["face_visible"] and not actual["body_visible"] and not actual["hair_visible"],
+        require(actual["face_visible"] is True and actual["body_visible"] is False and actual["hair_visible"] is False,
                 "Unexpected visibility")
         require(actual["target"] == capture["expected_target"]
                 and actual["position"] == capture["expected_position"], "Camera transform mismatch")
         require(actual["size"] == reference["size"] and actual["viewport_size"] == reference["viewport_size"],
                 "Capture framing changed")
-        require(capture["actual_blink"] == [0, 0]
-                and all(value == 0 for value in capture["actual_mouth"].values()), "Non-neutral expression")
+        verify_neutral(capture["actual_mouth"], capture["actual_blink"])
         path = resource(capture["image"])
         require(sha(path) == capture["sha256"], "Image digest mismatch")
         with path.open("rb") as stream:

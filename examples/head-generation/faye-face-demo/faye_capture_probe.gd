@@ -4,6 +4,7 @@ extends "res://showcase_extensions/researched_mouth_review.gd"
 const CAPTURE_VIEW = preload("res://showcase_extensions/ear_capture_view.gd")
 const EXPECTED_COMPOSITION := "8e9e09d6d02c6ddc46de45fc6c19896d1f0dded2d3c727649701a24833b04871"
 const EXPECTED_MODEL := "ee91af5f00f1b1d267c0ac6a46c5227a7f7ba6fad2390a5f30bac228415551a4"
+const REQUIRED_TEXTURES := ["face_base", "face_ilm", "face_map", "face_ramp", "face_sdf360"]
 const SCHEDULE := "res://showcase_extensions/faye_capture_schedule.json"
 const RUNTIME_ROOTS := ["res://addons/npr_character_frame", "res://showcase_extensions"]
 const BINDINGS := [
@@ -67,6 +68,31 @@ func _valid_identity(report_path: String, hashes: Dictionary) -> bool:
 		and sdf.get("atlas_sha256") == hashes.get("atlas"))
 
 
+func _texture_snapshot(materials: Resource) -> Dictionary:
+	if materials == null:
+		return {}
+	var result := {}
+	for property in materials.get_property_list():
+		if property.type != TYPE_OBJECT or property.hint != PROPERTY_HINT_RESOURCE_TYPE:
+			continue
+		if not "Texture2D" in str(property.hint_string).split(","):
+			continue
+		var texture = materials.get(property.name)
+		if texture == null:
+			result[property.name] = null
+			continue
+		if not texture is Texture2D or not texture.resource_path.begins_with("res://"):
+			return {}
+		var digest := FileAccess.get_sha256(texture.resource_path)
+		if digest.length() != 64:
+			return {}
+		result[property.name] = {"path": texture.resource_path, "sha256": digest}
+	for field in REQUIRED_TEXTURES:
+		if not result.get(field) is Dictionary:
+			return {}
+	return result
+
+
 func _ready() -> void:
 	super._ready()
 	if not mouth_ready or not is_instance_valid(preview) or not preview.initialized:
@@ -106,6 +132,10 @@ func _ready() -> void:
 	var atlas_path: String = atlas.resource_path
 	var before := {"model": FileAccess.get_sha256(source), "atlas": FileAccess.get_sha256(atlas_path),
 		"definition": FileAccess.get_sha256(definition), "report": FileAccess.get_sha256(report_path)}
+	var textures_before := _texture_snapshot(character_definition.material_set)
+	if textures_before.is_empty():
+		push_error("FAYE_CAPTURE_TEXTURE_PROVENANCE_MISSING")
+		return
 	var bindings := _bindings()
 	if not _valid_hashes(before) or not _valid_hashes(bindings):
 		return
@@ -162,9 +192,11 @@ func _ready() -> void:
 				"hair_visible": preview.meshes[2].visible}, "image": path, "sha256": FileAccess.get_sha256(path)})
 	var after := {"model": FileAccess.get_sha256(source), "atlas": FileAccess.get_sha256(atlas_path),
 		"definition": FileAccess.get_sha256(definition), "report": FileAccess.get_sha256(report_path)}
+	var textures_after := _texture_snapshot(character_definition.material_set)
 	var bindings_after := _bindings()
 	var entry_sha_after := FileAccess.get_sha256(entry_scene)
-	if (before != after or bindings != bindings_after or entry_sha != entry_sha_after
+	if (before != after or textures_before != textures_after or textures_after.is_empty()
+		or bindings != bindings_after or entry_sha != entry_sha_after
 		or engine_sha != FileAccess.get_sha256(OS.get_executable_path())):
 		push_error("FAYE_CAPTURE_PROVENANCE_CHANGED")
 		return
@@ -173,6 +205,7 @@ func _ready() -> void:
 		"entry_scene_sha256_before": entry_sha, "entry_scene_sha256_after": entry_sha_after,
 		"report": report_path, "atlas": atlas_path, "composition_sha256": EXPECTED_COMPOSITION,
 		"source_before": before, "source_after": after,
+		"textures_before": textures_before, "textures_after": textures_after,
 		"runtime_roots": RUNTIME_ROOTS, "engine_sha256": engine_sha, "engine_version": Engine.get_version_info(),
 		"bindings_before": bindings, "bindings_after": bindings_after, "base_view_size": _head_view_size,
 		"captures": captures, "expected": 9, "speech_aligned": false, "continuous_animation": false}

@@ -70,3 +70,38 @@ func test_binding_includes_renderer_implementation_and_project_settings() -> voi
 		"res://addons/npr_character_frame/shaders/face/sdf360/face_base.gdshader"]:
 		assert_eq(bindings.get(path), FileAccess.get_sha256(path))
 		assert_eq(str(bindings.get(path)).length(), 64)
+
+
+func _materials():
+	return load("res://assets/aster/general_face_eyes_combofaye01/aster_definition.tres").material_set.duplicate()
+
+
+func test_texture_snapshot_covers_required_optional_and_aliased_maps() -> void:
+	var materials = _materials()
+	var snapshot: Dictionary = probe._texture_snapshot(materials)
+	for field in CAPTURE.REQUIRED_TEXTURES:
+		assert_eq(snapshot[field].sha256, FileAccess.get_sha256(materials.get(field).resource_path))
+	assert_true(snapshot.has("face_expression"))
+	assert_null(snapshot.face_expression)
+	assert_eq(snapshot.face_outline_control, snapshot.face_map)
+	assert_true(snapshot.has("dissolve_noise"))
+
+
+func test_texture_snapshot_rejects_missing_required_and_pathless_maps() -> void:
+	var materials = _materials()
+	materials.face_base = null
+	assert_true(probe._texture_snapshot(materials).is_empty())
+	materials = _materials()
+	var image := Image.create(1, 1, false, Image.FORMAT_RGBA8)
+	materials.face_expression = ImageTexture.create_from_image(image)
+	assert_true(probe._texture_snapshot(materials).is_empty())
+
+
+func test_texture_snapshot_detects_optional_changes_and_reassignment() -> void:
+	var materials = _materials()
+	var before: Dictionary = probe._texture_snapshot(materials)
+	materials.face_expression = materials.face_base
+	assert_true(probe._texture_snapshot(materials) != before)
+	materials = _materials()
+	materials.face_base = materials.face_map
+	assert_true(probe._texture_snapshot(materials) != before)

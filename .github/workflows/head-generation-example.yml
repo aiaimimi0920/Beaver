@@ -20,6 +20,7 @@ on:
       ]
     paths:
       - "examples/head-generation/**"
+      - "examples/head-review/**"
       - "resources/packages/npr-characters/addons/npr_character_frame/.ci_script/tools/sdf360/**"
       - ".github/workflows/head-generation-example.yml"
       - "src/direct/preview.cjs"
