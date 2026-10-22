@@ -7,6 +7,7 @@ import json
 from pathlib import Path
 from .layout import digest, pipeline_layout, parameter_layout
 from .evidence import HELPERS, native_job, resource
+from .transport_sources import share_source_literals
 import re
 
 
@@ -110,6 +111,7 @@ def modular_plan(request, prefix):
     request[
         "code"
     ] += f'Path(beaver_output({prefix + "generation_report.json"!r})).write_text(json.dumps(report, indent=2))\n'
+    request["code"] = share_source_literals(request["code"])
     compile(request["code"], "<modular generation>", "exec")
     if (
         len(request["outputs"]) > 64
