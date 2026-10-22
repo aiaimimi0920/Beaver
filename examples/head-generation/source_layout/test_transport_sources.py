@@ -1,6 +1,7 @@
 """Source sharing must preserve behavior and provenance, not bypass native gates."""
 
 import ast
+import json
 from pathlib import Path
 import sys
 import tempfile
@@ -85,6 +86,19 @@ class TransportSourcesTests(unittest.TestCase):
         self.assertLess(len(code.encode()), 1024 * 1024)
         with self.assertRaisesRegex(ValueError, 'serialized request frame'):
             validate_native_frame({'code': code, 'outputs': [], 'timeoutSeconds': 240})
+
+    def test_longest_escaped_protocol_id_is_within_frame_budget(self):
+        request = {'code': '', 'outputs': [], 'timeoutSeconds': 240}
+        request['code'] = 'a' * (1024 * 1024 - validate_native_frame(request))
+        identity = '\0' * 160
+        frame = {'id': '\0' * 200, 'method': 'external.tool', 'input': {
+            'taskId': identity, 'runId': identity, 'revision': 2**64 - 1,
+            'requestId': identity,
+            'arguments': {'tool': 'blender.start', 'arguments': request},
+        }}
+        wire = json.dumps(frame, ensure_ascii=False, separators=(',', ':')) + '\n'
+        self.assertEqual(len(wire.encode()), 1024 * 1024)
+        self.assertEqual(validate_native_frame(request), len(wire.encode()))
 
     def test_complete_frame_boundary_includes_identity_envelope_and_newline(self):
         request = {'code': '', 'outputs': [], 'timeoutSeconds': 240}

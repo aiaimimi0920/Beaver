@@ -84,11 +84,11 @@ def validate_native_frame(request):
     """Bound the full direct-host JSON frame, not only its decoded Python code.
 
     External identities allow 160 UTF-8 bytes each. NUL is their worst JSON
-    escaping case (six bytes per one input byte); numeric IDs use the host's
-    maximum safe integer and revisions use the Core's maximum u64.
+    escaping case (six bytes per one input byte). The top-level protocol ID
+    allows 200 bytes; revisions use the Core's maximum u64.
     """
     identity = '\0' * 160
-    frame = {"id": 2**53 - 1, "method": "external.tool", "input": {
+    frame = {"id": "\0" * 200, "method": "external.tool", "input": {
         "taskId": identity, "runId": identity, "revision": 2**64 - 1,
         "requestId": identity,
         "arguments": {"tool": "blender.start", "arguments": request},
