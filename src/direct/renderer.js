@@ -114,6 +114,7 @@ async function action(fn) {
 function updateRole() {
   const r = $("role").value;
   $("create").disabled = busy || r !== "user";
+  $("steer").disabled = busy || r !== "user";
   $("plan").disabled = busy || r !== "planner";
   $("finish").disabled = busy || r !== "executor";
   $("upgrade-inspect").disabled = busy || r !== "user";
@@ -215,6 +216,17 @@ $("continue").onclick = () =>
       text: "",
     }),
   ).catch(() => {});
+$("steer").onclick = () =>
+  action(async () => {
+    const id = $("task").value;
+    const text = $("goal").value.trim();
+    if (!id || !text) throw Error("请选择运行中的任务并填写补充内容");
+    const current = await window.beaver.call("state");
+    const task = current.tasks.find((item) => item.id === id);
+    if (!task || task.status !== "running")
+      throw Error("只有运行中的任务可发送补充；先确认中止或继续操作已返回");
+    return window.beaver.call("task.continue", { id, text, freshContext: false });
+  }).catch(() => {});
 $("withdraw").onclick = () =>
   action(async () => {
     const task = state?.tasks.find((item) => item.id === $("task").value);
