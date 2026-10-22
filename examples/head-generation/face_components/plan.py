@@ -53,10 +53,12 @@ def build_plan(
     mouth_overrides=None,
     face_overrides=None,
     ear_overrides=None,
+    brow_overrides=None,
 ):
     snapshot = resolve(
         selection,
         fit_policy,
+        brow_overrides=brow_overrides,
         nose_overrides=nose_overrides,
         mouth_overrides=mouth_overrides,
         face_overrides=face_overrides,
@@ -160,6 +162,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "--mouth-controls", type=Path, help="Bounded researched-mouth overrides JSON"
     )
+    parser.add_argument("--brow-controls", type=Path)
     parser.add_argument("--face-controls", type=Path)
     parser.add_argument("--ear-controls", type=Path)
     args = parser.parse_args()
@@ -168,6 +171,7 @@ if __name__ == "__main__":
             build_plan(
                 json.loads(args.selection.read_text()),
                 args.fit_policy,
+                brow_overrides=(json.loads(args.brow_controls.read_text()) if args.brow_controls else None),
                 face_overrides=(json.loads(args.face_controls.read_text()) if args.face_controls else None),
                 ear_overrides=(json.loads(args.ear_controls.read_text()) if args.ear_controls else None),
                 mouth_overrides=(

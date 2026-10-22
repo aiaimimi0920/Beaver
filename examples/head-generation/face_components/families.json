@@ -342,14 +342,14 @@
           "research-long-leaf",
           "research-side-droop"
         ],
-        "status": "native_validation_pending",
+        "status": "implemented_with_historical_samples",
         "sources": ["../ear_library/README.zh-CN.md"],
         "missing_controls": [
           "crown attachment",
           "active ear motion",
           "independent shell thickness"
         ],
-        "scope": "Six authored seeds; side-droop is a constrained prototype. Not six universal anatomy classes or native acceptance."
+        "scope": "Bounded historical native samples and integration checks completed. Six authored seeds; side-droop remains a constrained prototype. Not universal anatomy classes, complete-character acceptance, or validation of fresh outputs; source changes require fresh composition identities."
       }
     },
     "face": {
@@ -395,13 +395,14 @@
           "research-straight-tapered",
           "research-blunt-chin"
         ],
-        "status": "native_validation_pending",
+        "status": "implemented_with_historical_samples",
         "sources": ["../face_library/README.zh-CN.md"],
         "missing_controls": [
           "independent vertical face length",
           "complete skull and forehead shape",
           "complete animal or mechanical heads"
-        ]
+        ],
+        "scope": "Bounded historical native samples and integration checks completed. Four authored lower-face contours only. Not universal anatomy classes, complete-character acceptance, or validation of fresh outputs; source changes require fresh composition identities."
       }
     }
   }
