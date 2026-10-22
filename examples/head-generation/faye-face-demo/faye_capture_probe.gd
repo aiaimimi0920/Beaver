@@ -24,6 +24,14 @@ func _bindings() -> Dictionary:
 	return result
 
 
+func _valid_hashes(values: Dictionary) -> bool:
+	for value in values.values():
+		if not value is String or value.length() != 64:
+			push_error("FAYE_CAPTURE_MISSING_PROVENANCE")
+			return false
+	return not values.is_empty()
+
+
 func _ready() -> void:
 	super._ready()
 	if not mouth_ready or not is_instance_valid(preview) or not preview.initialized:
@@ -34,7 +42,8 @@ func _ready() -> void:
 		push_error("FAYE_CAPTURE_EXPLICIT_DEFINITION_REQUIRED")
 		return
 	var entry_scene: String = get_tree().current_scene.scene_file_path
-	if FileAccess.get_sha256(entry_scene) != FileAccess.get_sha256("res://showcase/faye_face_capture.tscn"):
+	var entry_sha := FileAccess.get_sha256(entry_scene)
+	if entry_sha.length() != 64 or entry_sha != FileAccess.get_sha256("res://showcase/faye_face_capture.tscn"):
 		push_error("FAYE_CAPTURE_ENTRY_SCENE_MISMATCH")
 		return
 	set_process_input(false)
@@ -52,6 +61,8 @@ func _ready() -> void:
 	var before := {"model": FileAccess.get_sha256(source),
 		"definition": FileAccess.get_sha256(definition), "report": FileAccess.get_sha256(report_path)}
 	var bindings := _bindings()
+	if not _valid_hashes(before) or not _valid_hashes(bindings):
+		return
 	var left := mouth_face.find_blend_shape_by_name("blink.L")
 	var right := mouth_face.find_blend_shape_by_name("blink.R")
 	if left < 0 or right < 0:
@@ -102,10 +113,16 @@ func _ready() -> void:
 				"hair_visible": preview.meshes[2].visible}, "image": path, "sha256": FileAccess.get_sha256(path)})
 	var after := {"model": FileAccess.get_sha256(source),
 		"definition": FileAccess.get_sha256(definition), "report": FileAccess.get_sha256(report_path)}
+	var bindings_after := _bindings()
+	var entry_sha_after := FileAccess.get_sha256(entry_scene)
+	if before != after or bindings != bindings_after or entry_sha != entry_sha_after:
+		push_error("FAYE_CAPTURE_PROVENANCE_CHANGED")
+		return
 	var manifest := {"schema_version": 1, "source": source, "definition": definition,
-		"entry_scene_at_capture": entry_scene, "entry_scene_sha256": FileAccess.get_sha256(entry_scene),
+		"entry_scene_at_capture": entry_scene, "entry_scene_sha256": entry_sha_after,
+		"entry_scene_sha256_before": entry_sha, "entry_scene_sha256_after": entry_sha_after,
 		"report": report_path, "source_before": before, "source_after": after,
-		"bindings_before": bindings, "bindings_after": _bindings(), "base_view_size": _head_view_size,
+		"bindings_before": bindings, "bindings_after": bindings_after, "base_view_size": _head_view_size,
 		"captures": captures, "expected": 9, "speech_aligned": false, "continuous_animation": false}
 	var file := FileAccess.open(folder + "/manifest.json", FileAccess.WRITE)
 	if file == null:
