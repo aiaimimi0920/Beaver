@@ -7,7 +7,7 @@ import json
 from pathlib import Path
 from .layout import digest, pipeline_layout, parameter_layout
 from .evidence import HELPERS, native_job, resource
-from .transport_sources import share_source_literals
+from .transport_sources import share_source_literals, validate_native_frame
 import re
 
 
@@ -118,6 +118,7 @@ def modular_plan(request, prefix):
         or len(request["code"].encode("utf-8")) > 1024 * 1024
     ):
         raise ValueError("Native generation request limit exceeded")
+    validate_native_frame(request)
     return {
         "generation": request,
         "source_packaging": {
@@ -199,4 +200,6 @@ def packaging_request(plan, receipt_path, workspace):
         declared.append({"path": path, "expectedSha256": None})
     if len(declared) > 64 or len(source.encode()) > 1024 * 1024:
         raise ValueError("Native packaging limit exceeded")
-    return {"code": source, "outputs": declared, "timeoutSeconds": 120}
+    request = {"code": source, "outputs": declared, "timeoutSeconds": 120}
+    validate_native_frame(request)
+    return request

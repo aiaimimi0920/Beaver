@@ -1,9 +1,6 @@
 """Source sharing must preserve behavior and provenance, not bypass native gates."""
 
 import ast
-import hashlib
-import importlib.util
-import json
 from pathlib import Path
 import sys
 import tempfile
@@ -11,7 +8,7 @@ import unittest
 
 HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE.parent))
-from source_layout.transport_sources import share_source_literals
+from source_layout.transport_sources import share_source_literals, validate_native_frame
 
 
 class TransportSourcesTests(unittest.TestCase):
@@ -42,6 +39,61 @@ class TransportSourcesTests(unittest.TestCase):
         self.assertEqual(ast.get_docstring(ast.parse(actual)), 'Preserved module documentation.')
         self.assertIn('__beaver_shared_source_0 = ', actual)
         compile(actual, '<test>', 'exec')
+
+    def test_same_line_docstring_and_future_import_execute_safely(self):
+        source = '# retained source\n' * 300 + 'answer = 7\n'
+        for header in ['"doc"; ', 'from __future__ import annotations; ',
+                       '"doc"; from __future__ import annotations; ']:
+            code = header + 'exec(compile(' + repr(source) + ', "x", "exec"))\n'
+            code += 'destination.write_text(' + repr(source) + ')\n'
+            with tempfile.TemporaryDirectory() as directory:
+                destination = Path(directory) / 'source.py'
+                scope = {'destination': destination}
+                exec(share_source_literals(code), scope)
+                self.assertEqual(scope['answer'], 7)
+                self.assertEqual(destination.read_text(), source)
+                if header.startswith('"doc"'):
+                    self.assertEqual(scope['__doc__'], 'doc')
+
+    def test_nfkc_identifier_collision_keeps_source_and_existing_binding(self):
+        source = '# retained source\n' * 300 + 'answer = 11\n'
+        code = '_ｂeaver_shared_source_0 = "existing"\n'
+        code += 'exec(compile(' + repr(source) + ', "x", "exec"))\n'
+        code += 'destination.write_text(' + repr(source) + ')\n'
+        with tempfile.TemporaryDirectory() as directory:
+            destination = Path(directory) / 'source.py'
+            scope = {'destination': destination}
+            exec(share_source_literals(code), scope)
+            self.assertEqual(scope['_beaver_shared_source_0'], 'existing')
+            self.assertEqual(scope['answer'], 11)
+            self.assertEqual(destination.read_text(), source)
+
+    def test_decorator_evaluated_after_shared_sources_exist(self):
+        source = '# retained source\n' * 300 + 'answer = 13\n'
+        code = '@decorator(compile(' + repr(source) + ', "x", "exec"))\n'
+        code += 'def target():\n    return 1\n'
+        code += 'destination.write_text(' + repr(source) + ')\n'
+        with tempfile.TemporaryDirectory() as directory:
+            destination = Path(directory) / 'source.py'
+            scope = {'destination': destination, 'decorator': lambda code: lambda fn: fn}
+            exec(share_source_literals(code), scope)
+            self.assertEqual(scope['target'](), 1)
+            self.assertEqual(destination.read_text(), source)
+
+    def test_serialized_escape_expansion_rejected_below_decoded_limit(self):
+        code = "x = '\\n'\n" * 100000
+        self.assertLess(len(code.encode()), 1024 * 1024)
+        with self.assertRaisesRegex(ValueError, 'serialized request frame'):
+            validate_native_frame({'code': code, 'outputs': [], 'timeoutSeconds': 240})
+
+    def test_complete_frame_boundary_includes_identity_envelope_and_newline(self):
+        request = {'code': '', 'outputs': [], 'timeoutSeconds': 240}
+        overhead = validate_native_frame(request)
+        request['code'] = 'a' * (1024 * 1024 - overhead)
+        self.assertEqual(validate_native_frame(request), 1024 * 1024)
+        request['code'] += 'a'
+        with self.assertRaisesRegex(ValueError, 'serialized request frame'):
+            validate_native_frame(request)
 
     def test_non_source_constants_and_single_occurrences_unchanged(self):
         value = 'x' * 5000
