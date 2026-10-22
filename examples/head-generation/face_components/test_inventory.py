@@ -18,7 +18,7 @@ class FamilyInventoryTests(unittest.TestCase):
         self.assertEqual(result["brows"]["selectable_options"], 15)
         self.assertEqual(result["brows"]["implemented_families"], 12)
         self.assertEqual(result["brows"]["pending_native_families"], 0)
-        self.assertEqual(result["face"]["implemented_families"], 2)
+        self.assertEqual(result["face"]["implemented_families"], 3)
 
     def test_duplicate_or_missing_preset_rejected(self):
         r = copy.deepcopy(self.registry)

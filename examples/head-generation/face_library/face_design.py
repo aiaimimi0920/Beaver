@@ -33,7 +33,7 @@ def digest(value):
 
 
 def provenance():
-    return {"face_design.py": hashlib.sha256(Path(__file__).read_bytes()).hexdigest()}
+    return {"face_design.py": hashlib.sha256(Path(__file__).read_text(encoding="utf-8").encode("utf-8")).hexdigest()}
 
 
 def validate(value):

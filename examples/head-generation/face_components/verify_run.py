@@ -25,7 +25,8 @@ def verify_requested_composition(snapshot, spec):
         raise ValueError("Requested selection or fit policy mismatch")
     expected = spec.get("composition_sha256")
     if (
-        snapshot.get("nose_design") is not None
+        snapshot.get("brow_design") is not None
+        or snapshot.get("nose_design") is not None
         or snapshot.get("mouth_design") is not None
         or snapshot.get("face_design") is not None
         or snapshot.get("ear_design") is not None

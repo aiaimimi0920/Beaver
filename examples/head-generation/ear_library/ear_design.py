@@ -42,7 +42,7 @@ def digest(value):
 
 def provenance():
     root = Path(__file__).resolve().parent
-    return {name: hashlib.sha256((root / name).read_bytes()).hexdigest()
+    return {name: hashlib.sha256((root / name).read_text(encoding="utf-8").encode("utf-8")).hexdigest()
             for name in ("ear_design.py", "ear_profile.py")}
 
 
