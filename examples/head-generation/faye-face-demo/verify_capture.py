@@ -202,6 +202,16 @@ def verify_png(path):
     return width, height
 
 
+def verify_entry_scene(workspace, data):
+    require(data["entry_scene_sha256_before"] == data["entry_scene_sha256_after"]
+            == data["entry_scene_sha256"], "Entry scene changed")
+    require(data["entry_scene_sha256"]
+            == data["bindings_before"]["res://showcase/faye_face_capture.tscn"], "Wrong capture scene")
+    entry = resource_path(workspace, data.get("entry_scene_at_capture"))
+    require(entry.is_file() and sha(entry) == data["entry_scene_sha256"],
+            "Actual capture entry scene is missing or changed")
+
+
 def verify(workspace, manifest):
     workspace = Path(workspace).resolve()
     manifest = Path(manifest).resolve()
@@ -219,10 +229,7 @@ def verify(workspace, manifest):
         require(before and before == after, "Provenance changed: " + group)
         require(all(isinstance(v, str) and re.fullmatch(r"[a-f0-9]{64}", v)
                     for v in before.values()), "Missing provenance digest")
-    require(data["entry_scene_sha256_before"] == data["entry_scene_sha256_after"]
-            == data["entry_scene_sha256"], "Entry scene changed")
-    require(data["entry_scene_sha256"]
-            == data["bindings_before"]["res://showcase/faye_face_capture.tscn"], "Wrong capture scene")
+    verify_entry_scene(workspace, data)
     for kind, key in [("model", "source"), ("definition", "definition"),
                       ("report", "report"), ("atlas", "atlas")]:
         require(sha(resource(data[key])) == data["source_before"][kind], "Source mismatch: " + kind)
