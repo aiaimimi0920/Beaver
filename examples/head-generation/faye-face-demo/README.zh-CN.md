@@ -16,10 +16,12 @@
 1. 经 Beaver 规划与执行交接，用选择和参数构建一个全新组合目录的计划，保留整个计划。
 2. 原生 `blender.start` 执行生成并轮询至成功，再用真实生成回执构建、执行源码封装请求。
 3. 用生成及封装回执构建、执行 SDF 请求；验证实际输出身份。
-4. 通过 Beaver 声明输出的工具安装 `faye_capture_probe.gd` 和 `faye_capture_schedule.json` 到 `showcase_extensions/`，安装场景到 `showcase/faye_face_capture.tscn`。Blender 写入脚本必须使用 `beaver_output(path)`，不能仅写相对当前目录后当作成功发布。
+4. 先确认工程已安装嘴部、脸部运行时；还需将 `../ear_library/ear_capture_view.gd` 安装到 `showcase_extensions/ear_capture_view.gd`，它是捕获器的直接预加载依赖，即使工程没有耳部截图工具也不能省略。然后通过 Beaver 声明输出的工具安装 `faye_capture_probe.gd` 和 `faye_capture_schedule.json` 到 `showcase_extensions/`，安装场景到 `showcase/faye_face_capture.tscn`。Blender 写入脚本必须使用 `beaver_output(path)`，不能仅写相对当前目录后当作成功发布。
 5. 先通过 `npr-character` 工作流验证新定义，再用配置好的 MiDot 引擎启动捕获场景，并将该定义的 `res://` 路径作为明确的用户参数。
 6. 若展示台固定打开 `showcase/aster_head_review.tscn`，可通过有期望哈希的文件写入临时切换成同一捕获场景；关闭展示台后恢复原来的入口。独立捕获场景保留用于复现。
-7. 检查生成清单的九张图片、源文件前后哈希、显示模式、相机、零嘴型/眨眼以及头发/身体隐藏状态。完成必要运行验证后交回结果。
+7. 检查生成清单的九张图片、源文件前后哈希、显示模式、相机、零嘴型/眨眼以及头发/身体隐藏状态。将 `test_faye_capture.gd` 安装到工程 `tests/`，运行身份反例回归；完成必要运行验证后交回结果。
+
+捕获器固定绑定本次已核验的组合身份与模型 SHA，并检查实际加载的 SDF 贴图路径、前后哈希与生成报告中的贴图哈希。重新生成若产生不同模型字节，须先核验原生回执和选择/参数，再显式更新固定模型值；不能在捕获时自动接受任意当前文件。
 
 ## 九张图
 
@@ -29,6 +31,6 @@
 
 ## 本次已观察结果与边界
 
-2026-10-22：生成、源码封装、SDF 和工作流定义验证成功；MiDot `4.8.dev.custom_build.38b6ddee7` 的 Forward+ 首轮实际生成九张 1180×812 PNG；随后发现侧向符号与展示台约定相反，首轮侧向标签已作废，正在按正角度重新捕获。捕获前后同一模型哈希为 `ee91af5f00f1b1d267c0ac6a46c5227a7f7ba6fad2390a5f30bac228415551a4`，组合身份为 `8e9e09d6d02c6ddc46de45fc6c19896d1f0dded2d3c727649701a24833b04871`。
+2026-10-22：生成、源码封装、SDF 和工作流定义验证成功；MiDot `4.8.dev.custom_build.38b6ddee7` 的 Forward+ 首轮实际生成九张 1180×812 PNG；随后发现侧向符号与展示台约定相反，首轮侧向标签已作废；已按 0/+45/+90 重新实际捕获九张 1180×812 PNG，逐张检查并验证模型、SDF 贴图、入口与运行时前后哈希。更正版保留同一模型，外观仍待用户验收。捕获前后同一模型哈希为 `ee91af5f00f1b1d267c0ac6a46c5227a7f7ba6fad2390a5f30bac228415551a4`，组合身份为 `8e9e09d6d02c6ddc46de45fc6c19896d1f0dded2d3c727649701a24833b04871`。
 
 此前生成阶段的既有框架回归是 20 项测试、760 个断言通过，仍有 45 条弃用提示及 orphan 计数 1/7。它不等于零告警，也不证明菲的相似度、全部姿态/表情或最终工程验收。截图是中性表情，不是语音对齐或连续动画测试。

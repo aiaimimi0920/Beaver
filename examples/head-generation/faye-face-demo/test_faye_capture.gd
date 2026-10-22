@@ -1,0 +1,56 @@
+extends GutTest
+
+const CAPTURE = preload("res://showcase_extensions/faye_capture_probe.gd")
+const ATLAS := "25969224699a1bcec09e2df78f48922cf91bd652c3e855cf939cc436073b6223"
+var fixture_paths: Array[String] = []
+var probe
+
+
+func before_each() -> void:
+	probe = CAPTURE.new()
+
+
+func after_each() -> void:
+	probe.free()
+	for path in fixture_paths:
+		DirAccess.remove_absolute(path)
+	fixture_paths.clear()
+
+
+func _report(value: Dictionary) -> String:
+	var path := "user://faye-capture-test-%s.json" % Time.get_ticks_usec()
+	var file := FileAccess.open(path, FileAccess.WRITE)
+	file.store_string(JSON.stringify(value))
+	file.close()
+	fixture_paths.append(path)
+	return path
+
+
+func _valid_report() -> Dictionary:
+	return {"face_components": {"composition_sha256": CAPTURE.EXPECTED_COMPOSITION},
+		"semantic_eyes": {"sdf": {"atlas_sha256": ATLAS}}}
+
+
+func test_accepts_exact_model_composition_and_atlas() -> void:
+	assert_true(probe._valid_identity(_report(_valid_report()),
+		{"model": CAPTURE.EXPECTED_MODEL, "atlas": ATLAS}))
+
+
+func test_rejects_wrong_model_or_atlas() -> void:
+	var report := _report(_valid_report())
+	assert_false(probe._valid_identity(report, {"model": "wrong", "atlas": ATLAS}))
+	assert_false(probe._valid_identity(report, {"model": CAPTURE.EXPECTED_MODEL, "atlas": "wrong"}))
+
+
+func test_rejects_wrong_composition_and_missing_report_fields() -> void:
+	var report := _valid_report()
+	report.face_components.composition_sha256 = "another-composition"
+	var hashes := {"model": CAPTURE.EXPECTED_MODEL, "atlas": ATLAS}
+	assert_false(probe._valid_identity(_report(report), hashes))
+	assert_false(probe._valid_identity(_report({}), hashes))
+	assert_false(probe._valid_identity(_report({"face_components": "invalid", "semantic_eyes": {}}), hashes))
+
+
+func test_hash_collection_cannot_be_empty() -> void:
+	assert_false(probe._valid_hashes({}))
+	assert_true(probe._valid_hashes({"model": CAPTURE.EXPECTED_MODEL, "atlas": ATLAS}))

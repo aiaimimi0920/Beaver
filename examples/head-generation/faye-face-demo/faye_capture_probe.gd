@@ -2,6 +2,8 @@ extends "res://showcase_extensions/researched_mouth_review.gd"
 ## Nine source-bound views of one generated face using the existing NPR stage.
 
 const CAPTURE_VIEW = preload("res://showcase_extensions/ear_capture_view.gd")
+const EXPECTED_COMPOSITION := "8e9e09d6d02c6ddc46de45fc6c19896d1f0dded2d3c727649701a24833b04871"
+const EXPECTED_MODEL := "ee91af5f00f1b1d267c0ac6a46c5227a7f7ba6fad2390a5f30bac228415551a4"
 const SCHEDULE := "res://showcase_extensions/faye_capture_schedule.json"
 const BINDINGS := [
 	"res://showcase/faye_face_capture.tscn",
@@ -32,6 +34,22 @@ func _valid_hashes(values: Dictionary) -> bool:
 	return not values.is_empty()
 
 
+func _valid_identity(report_path: String, hashes: Dictionary) -> bool:
+	var report = JSON.parse_string(FileAccess.get_file_as_string(report_path))
+	if not report is Dictionary:
+		return false
+	var components = report.get("face_components")
+	var eyes = report.get("semantic_eyes")
+	if not components is Dictionary or not eyes is Dictionary:
+		return false
+	var sdf = eyes.get("sdf")
+	if not sdf is Dictionary:
+		return false
+	return (components.get("composition_sha256") == EXPECTED_COMPOSITION
+		and hashes.get("model") == EXPECTED_MODEL
+		and sdf.get("atlas_sha256") == hashes.get("atlas"))
+
+
 func _ready() -> void:
 	super._ready()
 	if not mouth_ready or not is_instance_valid(preview) or not preview.initialized:
@@ -58,10 +76,21 @@ func _ready() -> void:
 	var source: String = character_definition.model_scene.resource_path
 	var definition: String = character_definition.resource_path
 	var report_path := definition.get_base_dir() + "/generation_report.json"
-	var before := {"model": FileAccess.get_sha256(source),
+	if character_definition.material_set == null:
+		push_error("FAYE_CAPTURE_MISSING_MATERIALS")
+		return
+	var atlas = character_definition.material_set.get("face_sdf360")
+	if not atlas is Texture2D or atlas.resource_path.is_empty():
+		push_error("FAYE_CAPTURE_MISSING_ATLAS")
+		return
+	var atlas_path: String = atlas.resource_path
+	var before := {"model": FileAccess.get_sha256(source), "atlas": FileAccess.get_sha256(atlas_path),
 		"definition": FileAccess.get_sha256(definition), "report": FileAccess.get_sha256(report_path)}
 	var bindings := _bindings()
 	if not _valid_hashes(before) or not _valid_hashes(bindings):
+		return
+	if not _valid_identity(report_path, before):
+		push_error("FAYE_CAPTURE_IDENTITY_MISMATCH")
 		return
 	var left := mouth_face.find_blend_shape_by_name("blink.L")
 	var right := mouth_face.find_blend_shape_by_name("blink.R")
@@ -111,7 +140,7 @@ func _ready() -> void:
 				"viewport_size": [get_viewport().size.x, get_viewport().size.y],
 				"face_visible": mouth_face.is_visible_in_tree(), "body_visible": preview.meshes[0].visible,
 				"hair_visible": preview.meshes[2].visible}, "image": path, "sha256": FileAccess.get_sha256(path)})
-	var after := {"model": FileAccess.get_sha256(source),
+	var after := {"model": FileAccess.get_sha256(source), "atlas": FileAccess.get_sha256(atlas_path),
 		"definition": FileAccess.get_sha256(definition), "report": FileAccess.get_sha256(report_path)}
 	var bindings_after := _bindings()
 	var entry_sha_after := FileAccess.get_sha256(entry_scene)
@@ -121,7 +150,8 @@ func _ready() -> void:
 	var manifest := {"schema_version": 1, "source": source, "definition": definition,
 		"entry_scene_at_capture": entry_scene, "entry_scene_sha256": entry_sha_after,
 		"entry_scene_sha256_before": entry_sha, "entry_scene_sha256_after": entry_sha_after,
-		"report": report_path, "source_before": before, "source_after": after,
+		"report": report_path, "atlas": atlas_path, "composition_sha256": EXPECTED_COMPOSITION,
+		"source_before": before, "source_after": after,
 		"bindings_before": bindings, "bindings_after": bindings_after, "base_view_size": _head_view_size,
 		"captures": captures, "expected": 9, "speech_aligned": false, "continuous_animation": false}
 	var file := FileAccess.open(folder + "/manifest.json", FileAccess.WRITE)
