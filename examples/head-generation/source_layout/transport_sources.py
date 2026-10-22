@@ -52,7 +52,7 @@ def share_source_literals(code, minimum=4096):
     prefix = '_beaver_shared_source_'
     normalized = unicodedata.normalize('NFKC', code)
     while prefix in normalized:
-        prefix = '_' + prefix
+        prefix = prefix + '_'
     edits, assignments = [], []
     for index, (value, nodes) in enumerate(repeated):
         name = prefix + str(index)

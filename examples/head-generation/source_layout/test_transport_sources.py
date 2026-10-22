@@ -38,7 +38,7 @@ class TransportSourcesTests(unittest.TestCase):
                 + 'destination.write_text(' + repr(source) + ')\n')
         actual = share_source_literals(code)
         self.assertEqual(ast.get_docstring(ast.parse(actual)), 'Preserved module documentation.')
-        self.assertIn('__beaver_shared_source_0 = ', actual)
+        self.assertIn('_beaver_shared_source__0 = ', actual)
         compile(actual, '<test>', 'exec')
 
     def test_same_line_docstring_and_future_import_execute_safely(self):
@@ -67,6 +67,22 @@ class TransportSourcesTests(unittest.TestCase):
             exec(share_source_literals(code), scope)
             self.assertEqual(scope['_beaver_shared_source_0'], 'existing')
             self.assertEqual(scope['answer'], 11)
+            self.assertEqual(destination.read_text(), source)
+
+    def test_collision_fallback_is_not_name_mangled_in_class_scope(self):
+        source = '# retained source\n' * 300 + 'answer = 17\n'
+        code = '_beaver_shared_source_0 = "existing"\n'
+        code += 'class C:\n    compiled = compile(' + repr(source) + ', "x", "exec")\n'
+        code += '    def emit(self):\n        destination.write_text(' + repr(source) + ')\n'
+        with tempfile.TemporaryDirectory() as directory:
+            destination = Path(directory) / 'source.py'
+            scope = {'destination': destination}
+            exec(share_source_literals(code), scope)
+            scope['C']().emit()
+            result = {}
+            exec(scope['C'].compiled, result)
+            self.assertEqual(result['answer'], 17)
+            self.assertEqual(scope['_beaver_shared_source_0'], 'existing')
             self.assertEqual(destination.read_text(), source)
 
     def test_decorator_evaluated_after_shared_sources_exist(self):
