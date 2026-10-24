@@ -37,6 +37,9 @@ class FaceSelectionTests(unittest.TestCase):
             'sampling_pocket_samples':0, 'sampling_main_stations':21,
             'sampling_companion_stations':17, 'sampling_lateral_gap':.065,
             'sampling_wing_gap':.025,
+            'sampling_surface_subdivision':1, 'sampling_budget_trial':0,
+            'sampling_section_blink':0, 'sampling_ear_budget':0,
+            'sampling_surface_fairing':0,
         }
         for name in NAMES:
             spec=packager.load_preset(name)
