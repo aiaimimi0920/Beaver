@@ -191,6 +191,18 @@ def reconstructed(files, record):
         if hashlib.sha256(raw[:cut]).hexdigest() != record["entry_prefix_sha256"]:
             raise ValueError("Changed parameter import boundary")
         original = helper + raw[cut:].decode("utf-8")
+    elif record['kind']=='surface_rules':
+        entry=files['ear_surface.py'];helper=files['source_mesh_rules.py']
+        if digest(entry)!=record['entry_sha256'] or digest(helper)!=record['helper_sha256']:
+            raise ValueError('Changed surface source')
+        raw=entry.encode();cut=record['entry_cut_bytes'];size=record['entry_import_bytes']
+        if type(cut) is not int or type(size) is not int or not 0<=cut<=len(raw) or not 0<size<=len(raw)-cut:
+            raise ValueError('Invalid surface import boundary')
+        wanted=('polygon_diagonals','triangulate_valid_skin','verify_skin_triangles','sample_source_cage')
+        imports=('from source_mesh_rules import ('+', '.join(wanted)+')\n').encode()
+        if record['imported_functions']!=list(wanted) or raw[cut:cut+size]!=imports:
+            raise ValueError('Changed surface import boundary')
+        original=(raw[:cut]+helper.encode()+raw[cut+size:]).decode()
     else:
         raise ValueError("Unknown source layout")
     if digest(original) != record["original_sha256"]:

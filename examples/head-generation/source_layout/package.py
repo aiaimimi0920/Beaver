@@ -5,8 +5,9 @@ import copy
 import hashlib
 import json
 from pathlib import Path
-from .layout import digest, pipeline_layout, parameter_layout
-from .evidence import HELPERS, native_job, resource
+from .layout import digest, pipeline_layout, parameter_layout, reconstructed
+from .surface_layout import surface_layout
+from .evidence import HELPERS, native_job, resource, validate_layout_set
 from .transport_sources import share_source_literals, validate_native_frame
 import re
 
@@ -62,10 +63,10 @@ def modular_plan(request, prefix):
     records = []
     original_pipeline = None
     stages = None
-    for filename, splitter in [
-        ("pipeline.py", pipeline_layout),
-        ("semantic_parameters.py", parameter_layout),
-    ]:
+    splitters=[("pipeline.py",pipeline_layout),("semantic_parameters.py",parameter_layout)]
+    if prefix+"ear_surface.py" in writes and "def polygon_diagonals(" in writes[prefix+"ear_surface.py"][0]:
+        splitters.append(("ear_surface.py",surface_layout))
+    for filename, splitter in splitters:
         if prefix + filename not in writes:
             raise ValueError("Missing retained source output: " + filename)
         source, expression = writes[prefix + filename]
@@ -166,19 +167,18 @@ def packaging_request(plan, receipt_path, workspace):
     if report.get("source_layout") != plan["layout"]:
         raise ValueError("Source plan not bound to native report")
     wanted = plan["layout"]["helper_sha256"]
-    if set(wanted) != {prefix + name for name in HELPERS}:
-        raise ValueError("Unexpected helper path")
+    validate_layout_set(plan["layout"], prefix)
     if {p: digest(s) for p, s in plan["helpers"].items()} != wanted:
         raise ValueError("Changed planned helper source")
     records = plan["layout"]["records"]
-    if len(records) != 2 or {r["path"] for r in records} != {
-        "pipeline.py",
-        "semantic_parameters.py",
-    }:
-        raise ValueError("Unexpected modular source entries")
+    validate_layout_set(plan["layout"], prefix)
     for record in records:
         if outputs[prefix + record["path"]] != record["entry_sha256"]:
             raise ValueError("Modular entry differs from native output")
+    for record in records:
+        if record.get('kind')=='surface_rules':
+            reconstructed({'ear_surface.py':resource(root,prefix+'ear_surface.py').read_text(),
+                           'source_mesh_rules.py':plan['helpers'][prefix+'source_mesh_rules.py']},record)
     binding = {
         "generation_job": job["jobId"],
         "generation_receipt_sha256": hashlib.sha256(raw).hexdigest(),

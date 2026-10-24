@@ -14,6 +14,20 @@ HELPERS = {
 }
 
 
+def validate_layout_set(layout, prefix):
+    records=layout['records'];paths={r['path'] for r in records}
+    base={'pipeline.py','semantic_parameters.py'}
+    if len(paths)!=len(records) or paths not in (base,base|{'ear_surface.py'}):
+        raise ValueError('Unexpected source layout entries')
+    extra={'source_mesh_rules.py'} if 'ear_surface.py' in paths else set()
+    if set(layout['helper_sha256'])!={prefix+name for name in HELPERS|extra}:
+        raise ValueError('Unexpected modular source set')
+    if extra:
+        record=next(r for r in records if r['path']=='ear_surface.py')
+        if record.get('kind')!='surface_rules' or record.get('helper_sha256')!=layout['helper_sha256'][prefix+'source_mesh_rules.py']:
+            raise ValueError('Surface rule module not bound to layout')
+
+
 def sha(path):
     return hashlib.sha256(Path(path).read_bytes()).hexdigest()
 
@@ -85,8 +99,7 @@ def verify_packaging(report, root, prefix, generation_receipt, packaging_receipt
     if layout.get("schema_version") != 1:
         raise ValueError("Unknown source layout version")
     wanted = layout["helper_sha256"]
-    if set(wanted) != {prefix + name for name in HELPERS}:
-        raise ValueError("Unexpected modular source set")
+    validate_layout_set(layout, prefix)
     gen, generated = native_job(generation_receipt, root)
     packed, outputs = native_job(packaging_receipt, root)
     if packed["jobId"] == gen["jobId"]:
@@ -116,11 +129,7 @@ def verify_packaging(report, root, prefix, generation_receipt, packaging_receipt
         if manifest.get(name.removeprefix(prefix)) != digest:
             raise ValueError("Source helper not bound to input manifest")
     records = layout["records"]
-    if len(records) != 2 or {x["path"] for x in records} != {
-        "pipeline.py",
-        "semantic_parameters.py",
-    }:
-        raise ValueError("Unexpected source layout entries")
+    validate_layout_set(layout, prefix)
     for record in records:
         name = prefix + record["path"]
         if (
@@ -128,4 +137,8 @@ def verify_packaging(report, root, prefix, generation_receipt, packaging_receipt
             or sha(resource(root, name)) != record["entry_sha256"]
         ):
             raise ValueError("Changed modular source entry")
+    for record in records:
+        if record.get('kind')=='surface_rules':
+            from .layout import reconstructed
+            reconstructed({name:resource(root,prefix+name).read_text() for name in ('ear_surface.py','source_mesh_rules.py')},record)
     return outputs

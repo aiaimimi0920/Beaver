@@ -156,11 +156,18 @@ def adapt(sources):
     if 'pipeline.py' not in result:
         return result
     pipeline = result['pipeline.py']
-    from source_cage_fairing import fair_source_cage
+    from source_cage_fairing import fair_source_cage, sample_source_cage
+    from source_polygon_validity import polygon_diagonals, triangulate_valid_skin, verify_skin_triangles
+    result['ear_surface.py'] += '\n\n'+inspect.getsource(polygon_diagonals)+'\n\n'+inspect.getsource(triangulate_valid_skin)+'\n\n'+inspect.getsource(verify_skin_triangles)+'\n'
     result['ear_topology.py'] += '\n\n'+inspect.getsource(fair_source_cage)+'\n'
-    pipeline = once(pipeline, 'from shell import build_face', 'from shell import build_face\nfrom ear_topology import fair_source_cage')
+    result['ear_surface.py'] += '\n\n'+inspect.getsource(sample_source_cage)+'\n'
+    pipeline = once(pipeline, 'from shell import build_face', 'from shell import build_face\nfrom ear_topology import fair_source_cage\nfrom ear_surface import sample_source_cage')
+    pipeline = once(pipeline, '        bmesh.ops.triangulate(bm, faces=list(bm.faces), quad_method="BEAUTY", ngon_method="BEAUTY")',
+                    '        if STYLE.get("sampling_detail_budget",0) and STYLE.get("sampling_shell_columns",13)==13:\n            from ear_surface import triangulate_valid_skin\n            report["paired_skin_triangulation"]=triangulate_valid_skin(members[0].data,bm)\n        bmesh.ops.triangulate(bm, faces=list(bm.faces), quad_method="BEAUTY", ngon_method="BEAUTY")')
+    pipeline = once(pipeline, '        # Honest geometry-consistent normals; no unmatched analytic shading field.',
+                    '        if STYLE.get("sampling_detail_budget",0) and STYLE.get("sampling_shell_columns",13)==13:\n            from ear_surface import verify_skin_triangles\n            report["paired_skin_triangle_verification"]=verify_skin_triangles(members[0].data)\n        # Honest geometry-consistent normals; no unmatched analytic shading field.')
     pipeline = once(pipeline, 'sub = shell.modifiers.new("Semantic quad surface refinement", "SUBSURF")',
-                    'if STYLE.get("sampling_surface_fairing",0):\n    report["source_cage_fairing"]=fair_source_cage(shell)\nsub = shell.modifiers.new("Semantic quad surface refinement", "SUBSURF")')
+                    'if STYLE.get("sampling_surface_fairing",0):\n    report["source_cage_fairing"]=(sample_source_cage(shell, fair_source_cage) if STYLE.get("sampling_detail_budget",0) and STYLE.get("sampling_shell_columns",13)==13 else fair_source_cage(shell))\nsub = shell.modifiers.new("Semantic quad surface refinement", "SUBSURF")')
     pipeline = once(pipeline, 'sub.levels = STYLE["surface_subdivision_levels"]',
                     'sub.levels = int(STYLE.get("sampling_surface_subdivision", STYLE["surface_subdivision_levels"]))')
     pipeline = once(pipeline, '"evaluated_effect": measure_crease_effect(shell, new_crease_edges),',
