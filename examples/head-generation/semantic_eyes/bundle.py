@@ -424,6 +424,7 @@ def build_request(
                 "source_cage_fairing.py": (HERE / "source_cage_fairing.py").read_text(),
                 "source_outline_sampling.py": (HERE / "source_outline_sampling.py").read_text(),
                 "source_outline_stage.py": (HERE / "source_outline_stage.py").read_text(),
+                "source_triangle_fairing.py": (HERE / "source_triangle_fairing.py").read_text(),
                 "source_angular_samples.py": (
                     HERE / "source_angular_samples.py"
                 ).read_text(),

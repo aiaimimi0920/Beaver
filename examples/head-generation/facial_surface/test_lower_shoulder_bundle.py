@@ -120,6 +120,7 @@ class LowerShoulderBundleTests(unittest.TestCase):
                 "source_cage_fairing.py",
                 "source_outline_sampling.py",
                 "source_outline_stage.py",
+                "source_triangle_fairing.py",
                 "source_return_order.py",
                 "source_lateral_regularization.py",
                     "source_brow_profiles.py",

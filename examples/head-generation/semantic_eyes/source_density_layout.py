@@ -182,5 +182,13 @@ def adapt(sources):
                     '        if STYLE.get("sampling_outline_refinement",0):\n'
                     '            from crease_rules import validate_final_outline_triangles\n'
                     '            report["final_outline_geometry"] = validate_final_outline_triangles(data, report["source_outline_sampling"])')
+    from source_triangle_fairing import fair_final_source_triangles
+    result['ear_surface.py'] = result.get('ear_surface.py','')+'\n\n'+inspect.getsource(fair_final_source_triangles)+'\n'
+    pipeline = once(pipeline, '        normals = [Vector((0, 0, 0)) for _ in data.vertices]',
+                    '        if STYLE.get("sampling_surface_fairing",0):\n'
+                    '            from ear_surface import fair_final_source_triangles\n'
+                    '            report["final_source_triangle_fairing"] = fair_final_source_triangles(data,C,H,Y0,report["head_assembly_y_offset_m"],project_uv=faceuv)\n'
+                    '            report["ear_shared_seams_after_final_fairing"] = verify_ear_seams(data,report["ear_root_fit"])\n'
+                    '        normals = [Vector((0, 0, 0)) for _ in data.vertices]')
     result['pipeline.py'] = pipeline
     return result
