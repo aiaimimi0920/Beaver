@@ -3,7 +3,10 @@ import json
 from pathlib import Path
 import tempfile
 import unittest
-from evidence import native_job
+if __package__:
+    from .evidence import native_job
+else:
+    from evidence import native_job
 
 
 class DurableJobTests(unittest.TestCase):
