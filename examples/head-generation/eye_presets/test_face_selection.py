@@ -40,6 +40,7 @@ class FaceSelectionTests(unittest.TestCase):
             'sampling_surface_subdivision':1, 'sampling_budget_trial':0,
             'sampling_section_blink':0, 'sampling_ear_budget':0,
             'sampling_surface_fairing':0,
+            'sampling_detail_budget':0, 'sampling_outline_refinement':0,
         }
         for name in NAMES:
             spec=packager.load_preset(name)

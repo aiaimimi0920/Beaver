@@ -35,6 +35,10 @@ def fair_source_cage(shell, maximum_move=.002):
             r=sum(((p+old[j])/2 for j in neighbors[i]),Vector())/n
             target=(f+2*r+(n-3)*p)/n
         if abs(p.x) < 1e-8:
+            outer=[j for j in neighbors[i] if uses[tuple(sorted((i,j)))]==1 and abs(old[j].x)>1e-8]
+            if len(outer)==1 and i not in pinned:
+                mirrored_neighbor=old[outer[0]].copy();mirrored_neighbor.x=0.0
+                target=(6*p+2*mirrored_neighbor)/8
             target=target.copy();target.x=0.0
         delta=target-p
         if delta.length>maximum_move:delta*=maximum_move/delta.length

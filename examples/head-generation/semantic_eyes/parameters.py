@@ -432,8 +432,12 @@ def adapt_style(original, request):
             # A swept intermediate sheet between the micro tip and outer fork.
             # Reuse its independent mesh, not its former medial placement.
             upper, lower = [], []
-            for index in range(17):
-                u = index / 16
+            fork_stations = [i/16 for i in range(17)]
+            if p["sampling_detail_budget"]:
+                anchors = [(row[0] - .36) / .40 for row in rails if .36 < row[0] < .76]
+                grid = [i / 8 for i in range(9)]
+                fork_stations = sorted(anchors + [u for u in grid if all(abs(u - a) > 1e-10 for a in anchors)])
+            for u in fork_stations:
                 t = 0.36 + 0.40 * u
                 center = sample(rails, t, 2) + 0.0185 * u * u - 0.006 * (1 - u) ** 2
                 half_width = 0.004 * math.sin(math.pi * u)

@@ -86,7 +86,7 @@ def brow_sampling_divisions(design, style):
 
 def brow_polygons(design, span, base_width, sampling_divisions=0):
     kind = design["kind"]
-    if isinstance(sampling_divisions, bool) or sampling_divisions not in (0, 16, 24, 32, 40, 48, 56, 64):
+    if isinstance(sampling_divisions, bool) or sampling_divisions not in (0, 12, 16, 24, 32, 40, 48, 56, 64):
         raise ValueError("Invalid brow sampling divisions")
     if sampling_divisions and kind in ("symbols", "curl"):
         raise ValueError("This brow family requires its own sampling plan")

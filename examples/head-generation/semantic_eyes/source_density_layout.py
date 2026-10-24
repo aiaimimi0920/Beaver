@@ -112,13 +112,31 @@ def adapt(sources):
     shell = once(shell,'        "semantic_rows": levels,',
                  '        "density_layout": {"version": 6, "stage": "source sampling", "mouth_rings": 2, "rows": len(levels), "chin_columns": len(chin_columns)},\n'
                  '        "semantic_rows": levels,')
+    from source_outline_sampling import refined_outline
+    result['ear_topology.py'] = result.get('ear_topology.py','')+'\n\n'+inspect.getsource(refined_outline)+'\n'
+    shell = 'from ear_topology import refined_outline\n'+shell
+    shell = once(shell, '    side_count = len(shell_faces) - front_count - underside_count',
+                 '    side_count = len(shell_faces) - front_count - underside_count\n'
+                 '    outline_report = None\n'
+                 '    if STYLE.get("sampling_outline_refinement",0):\n'
+                 '        chain = [j*cols+cols-1 for j in range(len(side_path)-1, rows)] + [(rows-1)*cols+i for i in range(cols-2,-1,-1)]\n'
+                 '        ear_anchors = [i for i in chain if C["ear_root_min_height"] <= (verts[i][2]-Y0)/H <= C["ear_root_max_height"]]\n'
+                 '        protected = set(ear_anchors[:2]+ear_anchors[-1:])\n'
+                 '        outline_report = {"stage": "deferred source boundary strip"}')
+    shell = once(shell, '        "jaw_boundary_fairing": jaw_fairing,',
+                 '        "source_outline_sampling": outline_report,\n        "face_authoring_ngons": sum(len(f)>4 for f in shell_faces),\n        "jaw_boundary_fairing": jaw_fairing,')
+    shell = once(shell, '    face["chin_side_face_count"] = side_count',
+                 '    if STYLE.get("sampling_outline_refinement",0): face["source_outline_chain"] = chain\n    face["chin_side_face_count"] = side_count')
     result['shell.py'] = shell
+    if 'mouth.py' in result:
+        result['mouth.py'] = once(result['mouth.py'], '    cols = 16\n    rows = 9',
+                                 '    cols = 12 if STYLE.get("sampling_detail_budget",0) else 16\n    rows = 7 if STYLE.get("sampling_detail_budget",0) else 9')
     if 'pipeline.py' not in result:
         return result
     pipeline = result['pipeline.py']
     from source_cage_fairing import fair_source_cage
-    result['shell.py'] += '\n\n'+inspect.getsource(fair_source_cage)+'\n'
-    pipeline = once(pipeline, 'from shell import build_face', 'from shell import build_face, fair_source_cage')
+    result['ear_topology.py'] += '\n\n'+inspect.getsource(fair_source_cage)+'\n'
+    pipeline = once(pipeline, 'from shell import build_face', 'from shell import build_face\nfrom ear_topology import fair_source_cage')
     pipeline = once(pipeline, 'sub = shell.modifiers.new("Semantic quad surface refinement", "SUBSURF")',
                     'if STYLE.get("sampling_surface_fairing",0):\n    report["source_cage_fairing"]=fair_source_cage(shell)\nsub = shell.modifiers.new("Semantic quad surface refinement", "SUBSURF")')
     pipeline = once(pipeline, 'sub.levels = STYLE["surface_subdivision_levels"]',
@@ -149,5 +167,20 @@ def adapt(sources):
         if len(lines) != 1: raise ValueError('Unexpected blink result boundary')
         pipeline = once(pipeline, lines[0], lines[0]+'        if report["eyelid_closure"]["continuous_orientation"].get("status") == "failed":\n            report["budget_trial_quality_pending"] = True\n')
         result['semantic_eye_runtime.py'] = runtime
+    from source_outline_stage import refine_outline_after_fairing, validate_final_outline_triangles
+    result['crease_rules.py'] = result.get('crease_rules.py','')+'\n\n'+inspect.getsource(refine_outline_after_fairing)+'\n\n'+inspect.getsource(validate_final_outline_triangles)+'\n'
+    pipeline = once(pipeline, 'from eye_socket import fit_pocket_clearance',
+                    'if STYLE.get("sampling_outline_refinement",0):\n'
+                    '    from crease_rules import refine_outline_after_fairing\n'
+                    '    report["source_outline_sampling"] = refine_outline_after_fairing(shell, front_count, C, H, Y0)\n'
+                    'from eye_socket import fit_pocket_clearance')
+    pipeline = once(pipeline, '            region = 1 if poly.index < front_count else 2',
+                    '            source_regions = part.data.attributes.get("OutlineSourceRegion")\n'
+                    '            region = source_regions.data[poly.index].value if source_regions else 1 if poly.index < front_count else 2')
+    pipeline = once(pipeline, '        report["flat_geometric_triangles"] = sum(not poly.use_smooth for poly in data.polygons)',
+                    '        report["flat_geometric_triangles"] = sum(not poly.use_smooth for poly in data.polygons)\n'
+                    '        if STYLE.get("sampling_outline_refinement",0):\n'
+                    '            from crease_rules import validate_final_outline_triangles\n'
+                    '            report["final_outline_geometry"] = validate_final_outline_triangles(data, report["source_outline_sampling"])')
     result['pipeline.py'] = pipeline
     return result

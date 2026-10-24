@@ -422,6 +422,8 @@ def build_request(
                 "sampling_contract.py": (HERE / "sampling_contract.py").read_text(),
                 "source_density_layout.py": (HERE / "source_density_layout.py").read_text(),
                 "source_cage_fairing.py": (HERE / "source_cage_fairing.py").read_text(),
+                "source_outline_sampling.py": (HERE / "source_outline_sampling.py").read_text(),
+                "source_outline_stage.py": (HERE / "source_outline_stage.py").read_text(),
                 "source_angular_samples.py": (
                     HERE / "source_angular_samples.py"
                 ).read_text(),

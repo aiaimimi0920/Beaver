@@ -20,6 +20,9 @@ def add_final_return(data):
     original = [(v, v.co.copy()) for v in bm.verts]
     regions = bm.faces.layers.int.get('NormalRegion')
     assert regions is not None
+    outline_id=bm.faces.layers.int.get('OutlineOriginalFace')
+    outline_region=bm.faces.layers.int.get('OutlineSourceRegion')
+    generated_return=bm.faces.layers.int.new('OutlineGeneratedReturn') if outline_id else None
     skin = {v for f in bm.faces if f[regions] in (1,2) for v in f.verts}
     pending = list(skin)
     while pending:
@@ -72,6 +75,8 @@ def add_final_return(data):
                 continue
             face = bm.faces.new(corners, source)
             face.smooth = True
+            if outline_id is not None:
+                face[outline_id]=0;face[outline_region]=0;face[generated_return]=1
             for new_loop in face.loops:
                 origin = a if new_loop.vert in (previous[a],row[a]) else b
                 old_loop = next(old_loop for old_loop in source.loops if old_loop.vert == origin)
