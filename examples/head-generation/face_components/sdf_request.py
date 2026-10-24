@@ -13,7 +13,7 @@ from nose_evidence import verify_nose_artifacts
 from mouth_evidence import verify_mouth_artifacts
 from face_evidence import verify_face_artifacts
 from ear_evidence import verify_ear_artifacts
-from source_layout_bridge import verify_packaging
+from source_layout_bridge import verify_packaging, native_job
 
 
 def load_module(path, name):
@@ -23,9 +23,14 @@ def load_module(path, name):
     return module
 
 
-def bind_composition_report(report_path, prefix, receipt):
+def bind_composition_report(report_path, prefix, receipt, workspace=None):
     raw = report_path.read_bytes()
-    job = json.loads(Path(receipt).read_text())["response"]["result"]["result"]
+    if workspace is None:
+        # Preserve the standalone report-only RPC binding API. Durable journals
+        # require the explicit workspace used by the full request builder.
+        job = json.loads(Path(receipt).read_text())["response"]["result"]["result"]
+    else:
+        job, _ = native_job(receipt, Path(workspace).resolve())
     if job["status"] != "succeeded" or job["result"]["success"] is not True:
         raise ValueError("Successful generation receipt required")
     outputs = job["result"]["outputs"]
@@ -42,11 +47,11 @@ def build_request(prefix, workspace, receipt, source_packaging_receipt=None):
         raise ValueError("Expected composition output prefix")
     root = Path(workspace)
     report = bind_composition_report(
-        root / prefix / "generation_report.json", prefix, receipt
+        root / prefix / "generation_report.json", prefix, receipt, root
     )
     verify_packaging(report, root, prefix, receipt, source_packaging_receipt)
     snapshot = verify_snapshot(report.get("face_components"))
-    generation = json.loads(Path(receipt).read_text())["response"]["result"]["result"]
+    generation, _ = native_job(receipt, root.resolve())
     generated = {row["path"]: row["sha256"] for row in generation["result"]["outputs"]}
     verify_brow_artifacts(snapshot, report, root, prefix, generated)
     verify_nose_artifacts(snapshot, report, root, prefix, generated)

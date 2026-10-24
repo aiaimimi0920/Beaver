@@ -82,6 +82,16 @@ def once(source, old, new):
     return source.replace(old,new,1)
 
 
+def tongue_budget(style):
+    """Keep cardinal tongue rings; allocate hidden detail to denser skin sampling."""
+    if not style.get("sampling_detail_budget", 0):
+        return 16, 9
+    columns = int(style.get("sampling_shell_columns", 13))
+    if columns not in (9, 13):
+        raise ValueError("Unsupported skin/interior budget allocation")
+    return 12, 5 if columns == 13 else 7
+
+
 def adapt(sources):
     result = dict(sources)
     shell = result['shell.py']
@@ -130,7 +140,8 @@ def adapt(sources):
     result['shell.py'] = shell
     if 'mouth.py' in result:
         result['mouth.py'] = once(result['mouth.py'], '    cols = 16\n    rows = 9',
-                                 '    cols = 12 if STYLE.get("sampling_detail_budget",0) else 16\n    rows = 7 if STYLE.get("sampling_detail_budget",0) else 9')
+                                 '    cols, rows = tongue_budget(STYLE)')
+        result['mouth.py'] += '\n\n'+inspect.getsource(tongue_budget)+'\n'
     if 'pipeline.py' not in result:
         return result
     pipeline = result['pipeline.py']
@@ -190,5 +201,8 @@ def adapt(sources):
                     '            report["final_source_triangle_fairing"] = fair_final_source_triangles(data,C,H,Y0,report["head_assembly_y_offset_m"],project_uv=faceuv)\n'
                     '            report["ear_shared_seams_after_final_fairing"] = verify_ear_seams(data,report["ear_root_fit"])\n'
                     '        normals = [Vector((0, 0, 0)) for _ in data.vertices]')
+    center_guard = 'if abs(data.vertices[index].co.x) < 1e-7'
+    assert pipeline.count(center_guard) == 2
+    pipeline = pipeline.replace(center_guard, center_guard + ' and not (region in (1, 2) and STYLE.get("sampling_detail_budget", 0) and STYLE.get("sampling_shell_columns", 13) == 13)')
     result['pipeline.py'] = pipeline
     return result

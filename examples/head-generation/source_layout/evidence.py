@@ -35,7 +35,28 @@ def resource(root, name):
 
 
 def native_job(path, root):
-    job = json.loads(Path(path).read_text())["response"]["result"]["result"]
+    raw = json.loads(Path(path).read_text())
+    if "response" in raw:
+        job = raw["response"]["result"]["result"]
+    else:
+        # A completed managed job journal is authoritative disk evidence, not an
+        # invented RPC receipt. Keep it unchanged at its original workspace path.
+        job = raw
+        for key in ("runId", "requestId"):
+            value = job[key]
+            if not isinstance(value, str) or not re.fullmatch(r"[A-Za-z0-9_-]+", value):
+                raise ValueError("Durable native job identifiers must be single components")
+        relative = ".beaver-context/external/{}/{}/job.json".format(
+            job["runId"], job["requestId"]
+        )
+        journal = resource(root, relative)
+        if Path(path).absolute() != journal or Path(job["process"]["jobDirectory"]).resolve() != journal.parent:
+            raise ValueError("Durable native job must retain its original location")
+        completed = json.loads(resource(root, str(Path(relative).with_name("completed.json"))).read_text())
+        if (completed.get("completed") is not True
+            or job["result"].get("ownedTreeCleanup") != "completed"
+            or job["result"].get("termination") != "exited"):
+            raise ValueError("Durable native job did not complete and clean up")
     if (
         job["status"] != "succeeded"
         or job["result"]["success"] is not True
