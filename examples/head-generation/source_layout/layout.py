@@ -132,16 +132,14 @@ def parameter_layout(source):
         cut = max(n.end_lineno for n in sampling)
         assignments = [n for n in tree.body if isinstance(n, ast.Assign)
                        and n.end_lineno <= cut]
-        if len(assignments) != 1 or not any(
-            isinstance(t, ast.Name) and t.id == "SAMPLING_LIMITS"
-            for t in assignments[0].targets
-        ):
+        constants = [t.id for n in assignments for t in n.targets if isinstance(t, ast.Name)]
+        if len(constants) != len(assignments) or set(constants) not in ({"SAMPLING_LIMITS"}, {"SAMPLING_LIMITS", "GAME_FACE_SAMPLING"}):
             raise ValueError("Unexpected sampling constants")
         allowed = set(names) | {"validate_sampling", "lid_station_plan"}
         if any(isinstance(n, ast.FunctionDef) and n.name not in allowed
                for n in tree.body if n.end_lineno <= cut):
             raise ValueError("Unexpected sampling helper boundary")
-        names += ["SAMPLING_LIMITS", "validate_sampling", "lid_station_plan"]
+        names += constants + ["validate_sampling", "lid_station_plan"]
     curves = "".join(lines[:cut])
     suffix = "".join(lines[cut:])
     doc = ast.get_docstring(tree, clean=False)

@@ -86,6 +86,18 @@ def legacy_shell_source(source):
 def legacy_ribbon_tree(source):
     branch = '    if key == "upper_lash_rails" and STYLE.get("sampling_main_exact", False):\n        return [tuple(row) for row in rails]\n'
     source = replace_once(source, branch, '')
+    branch = '\n'.join([
+        '    if name.startswith("Outer lateral eye liner ") and STYLE.get("sampling_section_blink", 0):',
+        '        stations = obj.data.attributes.new("BlinkSection", "INT", "POINT")',
+        '        cursor = 0',
+        '        for section_id, (_, lower, upper) in enumerate(sections, 1):',
+        '            for _ in range(1 if upper-lower < 1e-9 else 6):',
+        '                stations.data[cursor].value = section_id',
+        '                cursor += 1',
+        '        assert cursor == len(vertices), "Section identity must cover authored ribbon vertices"',
+        '',
+    ])
+    source = replace_once(source, branch, '')
     tree = ast.parse(source)
     moved = {'tuft_rear_scoop', 'tuft_free_bow'}
     actual = {node.name for node in tree.body if isinstance(node, ast.FunctionDef) and node.name in moved}
@@ -93,3 +105,29 @@ def legacy_ribbon_tree(source):
         raise AssertionError('Extracted tuft helper definitions changed')
     tree.body = [node for node in tree.body if not (isinstance(node, ast.FunctionDef) and node.name in moved)]
     return tree
+
+
+def legacy_ear_source(source):
+    marker='\n\n"""Bounded source-stage angular sampling of the lower ear endpoint fan."""'
+    if source.count(marker)!=1:
+        raise AssertionError('Unexpected source fan helper boundary')
+    source=source.split(marker)[0]
+    additions = ('            angular_source_fan = False\n',
+     '            budget_stations = source_budget_fan_stations(root_points,low,high,side) if '
+     'STYLE.get("sampling_ear_budget",0) else None\n',
+     '                if budget_stations is not None and j in (1,2):\n'
+     '                    values = budget_stations\n'
+     '                    angular_source_fan = True\n'
+     '                elif j == 1 and STYLE.get("sampling_first_pass", 0):\n'
+     '                    values = lower_fan_stations(root, root_points[0], t, low, high, side)\n'
+     '                    angular_source_fan = True\n',
+     '                elif len(a) != len(b):\n'
+     '                    fs.extend(source_row_transition(a,b,vs))\n'
+     '                elif budget_stations is not None and len(a)==4:\n'
+     '                    for k in range(len(a)-1): '
+     'fs.extend(source_quad_split(a[k:k+2],b[k:k+2],vs))\n',
+     '                    "source_fan_policy": "quality-budget-source-fan-v2" if budget_stations '
+     'is not None else "angular-source-fan-v1" if angular_source_fan else None,\n')
+    for addition in additions:
+        source=replace_once(source,addition,'')
+    return source

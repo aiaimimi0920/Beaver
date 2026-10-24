@@ -339,7 +339,8 @@ for role in ["Face"]:
         from ear_fold import fair_attachment_folds
         report["ear_lower_attachment_fold_fairing"]=fair_attachment_folds(data,report["ear_root_fit"])
 
-        from ear_topology import improve_lower_root_diagonals
+        from ear_topology import improve_lower_root_diagonals, reflow_source_fans
+        report["ear_source_fan_reflow"]=reflow_source_fans(data,report["ear_root_fit"])
         report["ear_root_diagonal_quality"]=improve_lower_root_diagonals(data,report["ear_root_fit"])
         from nose_refine import refine_nose
         report["nose_refinement"] = refine_nose(data)

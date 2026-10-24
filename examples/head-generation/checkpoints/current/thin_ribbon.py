@@ -100,6 +100,14 @@ def accent_mesh(name, sections, point, color, thickness, roll, folded=False):
     vertices, faces, zones = closed_ribbon_mesh(sections, point, thickness, roll,
         STYLE["accent_fold_ridge_fraction"] if folded else .42, folded)
     obj = mesh(name, vertices, faces, color)
+    if name.startswith("Outer lateral eye liner ") and STYLE.get("sampling_section_blink", 0):
+        stations = obj.data.attributes.new("BlinkSection", "INT", "POINT")
+        cursor = 0
+        for section_id, (_, lower, upper) in enumerate(sections, 1):
+            for _ in range(1 if upper-lower < 1e-9 else 6):
+                stations.data[cursor].value = section_id
+                cursor += 1
+        assert cursor == len(vertices), "Section identity must cover authored ribbon vertices"
     attribute = obj.data.attributes.new("AccentNormalZone", "INT", "FACE")
     front = []
     for polygon, zone in zip(obj.data.polygons, zones):

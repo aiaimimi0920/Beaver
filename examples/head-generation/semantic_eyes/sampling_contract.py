@@ -3,6 +3,11 @@ import math
 
 SAMPLING_LIMITS = {
     "sampling_first_pass": (0, 0, 1),
+    "sampling_surface_subdivision": (1, 0, 1),
+    "sampling_budget_trial": (0, 0, 1),
+    "sampling_section_blink": (0, 0, 1),
+    "sampling_ear_budget": (0, 0, 1),
+    "sampling_surface_fairing": (0, 0, 1),
     "sampling_density_layout": (0, 0, 1),
     "sampling_rim_quality_guard": (0, 0, 0),
     "sampling_shell_columns": (13, 9, 13),
@@ -15,6 +20,19 @@ SAMPLING_LIMITS = {
     "sampling_companion_stations": (17, 5, 17),
     "sampling_lateral_gap": (0.065, 0.065, 0.22),
     "sampling_wing_gap": (0.025, 0.025, 0.22),
+}
+
+# Shared first-pass game-face recipe. Budget is measured on the complete exported Face.
+# Actual count is composition-dependent; this is not a post-export simplifier.
+GAME_FACE_SAMPLING = {
+    "sampling_first_pass": 1, "sampling_density_layout": 1,
+    "sampling_shell_columns": 9, "sampling_brow_divisions": 16,
+    "sampling_lid_stations": 17, "sampling_iris_samples": 24,
+    "sampling_iris_rings": 2, "sampling_pocket_samples": 24,
+    "sampling_main_stations": 9, "sampling_companion_stations": 5,
+    "sampling_lateral_gap": .22, "sampling_wing_gap": .22,
+    "sampling_surface_subdivision": 0, "sampling_section_blink": 1,
+    "sampling_ear_budget": 1, "sampling_budget_trial": 0,
 }
 
 def validate_sampling(request):
@@ -34,13 +52,17 @@ def validate_sampling(request):
             raise ValueError("Unsupported brow sampling division count")
         if key == "sampling_shell_columns" and value not in (9, 13):
             raise ValueError("Shell columns must preserve the documented semantic anchors")
-        if key in ("sampling_first_pass", "sampling_rim_quality_guard", "sampling_density_layout") and value not in (0, 1):
+        if key in ("sampling_surface_fairing", "sampling_ear_budget", "sampling_section_blink", "sampling_budget_trial", "sampling_surface_subdivision", "sampling_first_pass", "sampling_rim_quality_guard", "sampling_density_layout") and value not in (0, 1):
             raise ValueError("First-pass mode must be numeric zero or one")
         if key == "sampling_lid_stations" and value not in (0, 17, 25, 33):
             raise ValueError("Lid sampling must preserve corners and midpoint")
         if key.endswith("_stations") and value != 0 and (value != int(value) or int(value) % 2 != 1):
             raise ValueError("Station counts must be odd integers, preserving the midpoint")
         result[key] = int(value) if key.endswith("_stations") else float(value)
+    if (result["sampling_surface_subdivision"] == 0 or result["sampling_surface_fairing"] or result["sampling_budget_trial"]) and not result["sampling_density_layout"]:
+        raise ValueError("Source budget controls require density layout")
+    if result["sampling_surface_fairing"] and result["sampling_surface_subdivision"] != 0:
+        raise ValueError("Source cage fairing requires unsubdivided output")
     return result
 
 

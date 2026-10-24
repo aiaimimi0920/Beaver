@@ -23,7 +23,9 @@ class ResearchedBrowTests(unittest.TestCase):
             self.assertEqual(verify_snapshot(result), result)
             for field in ("surface_parameters", "silhouette_parameters", "lip_parameters", "component_parameters"):
                 self.assertEqual(result[field], old[field])
-            self.assertEqual({k: v for k, v in result["eye_parameters"].items() if k not in BROW_KEYS}, {k: v for k, v in old["eye_parameters"].items() if k not in BROW_KEYS})
+            self.assertEqual({k: v for k, v in result["eye_parameters"].items() if k not in BROW_KEYS | {"sampling_brow_divisions"}}, {k: v for k, v in old["eye_parameters"].items() if k not in BROW_KEYS | {"sampling_brow_divisions"}})
+            self.assertEqual(result["eye_parameters"]["sampling_brow_divisions"], 16 if "brow_design" in result else 0)
+            self.assertEqual(old["eye_parameters"]["sampling_brow_divisions"], 0)
             if id.startswith("research-"):
                 self.assertEqual(len(result["brow_source_sha256"]), 4)
 

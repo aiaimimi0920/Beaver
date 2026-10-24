@@ -1,6 +1,7 @@
 """Inject researched lateral contours while preserving the evaluated root chain."""
 
 import inspect
+import ast
 
 
 def researched_ear_envelope(t, u, envelope, config):
@@ -84,6 +85,14 @@ def adapt_topology(source, design):
     """Prefer the legacy locality; large ears may use a bounded fallback search."""
     if design is None:
         return source
+    nodes = [node for node in ast.parse(source).body
+             if isinstance(node, ast.FunctionDef) and node.name == 'improve_lower_root_diagonals']
+    if len(nodes) != 1:
+        raise ValueError('Expected one root diagonal quality function')
+    lines = source.splitlines(keepends=True)
+    first,last = nodes[0].lineno-1,nodes[0].end_lineno
+    prefix,suffix = ''.join(lines[:first]),''.join(lines[last:])
+    source = ''.join(lines[first:last])
     replacements = (
         ("    import bmesh\n", "    import bmesh\n    from face import C\n    search_radius = researched_ear_root_radius(C)\n"),
         ("root=bm.verts[i];candidates=[]", "root=bm.verts[i];candidates=[];expanded=[]\n        fan_before=min(triangle_quality(*[v.co for v in f.verts]) for f in root.link_faces)"),
@@ -107,7 +116,7 @@ def adapt_topology(source, design):
                           "            diagnostics.append({'before':q0,'after':q1,'radius':candidate_radius})\n            if q1<=q0+.05:continue")
     source = replace_once(source, "assert candidates,'No safe lower-root quality improvement found'",
                           "assert candidates,('No safe lower-root quality improvement found',diagnostics)")
-    source += "\n\n" + inspect.getsource(researched_ear_root_radius)
+    source = prefix + source + suffix + "\n\n" + inspect.getsource(researched_ear_root_radius)
     compile(source, "<researched ear topology locality>", "exec")
     return source
 

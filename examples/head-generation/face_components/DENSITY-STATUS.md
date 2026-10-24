@@ -1,3 +1,5 @@
+> Update 2026-10-24: see [GAME-FACE-BUDGET.md](GAME-FACE-BUDGET.md) for the current 4k source recipe and strict native evidence. The 8,056-triangle specimen below is historical, not the current reduction target.
+
 # Shared source-density construction: development checkpoint
 
 Status: partial, not final model acceptance (2026-10-24 UTC).

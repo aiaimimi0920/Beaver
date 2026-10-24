@@ -113,4 +113,41 @@ def adapt(sources):
                  '        "density_layout": {"version": 6, "stage": "source sampling", "mouth_rings": 2, "rows": len(levels), "chin_columns": len(chin_columns)},\n'
                  '        "semantic_rows": levels,')
     result['shell.py'] = shell
+    if 'pipeline.py' not in result:
+        return result
+    pipeline = result['pipeline.py']
+    from source_cage_fairing import fair_source_cage
+    result['shell.py'] += '\n\n'+inspect.getsource(fair_source_cage)+'\n'
+    pipeline = once(pipeline, 'from shell import build_face', 'from shell import build_face, fair_source_cage')
+    pipeline = once(pipeline, 'sub = shell.modifiers.new("Semantic quad surface refinement", "SUBSURF")',
+                    'if STYLE.get("sampling_surface_fairing",0):\n    report["source_cage_fairing"]=fair_source_cage(shell)\nsub = shell.modifiers.new("Semantic quad surface refinement", "SUBSURF")')
+    pipeline = once(pipeline, 'sub.levels = STYLE["surface_subdivision_levels"]',
+                    'sub.levels = int(STYLE.get("sampling_surface_subdivision", STYLE["surface_subdivision_levels"]))')
+    pipeline = once(pipeline, '"evaluated_effect": measure_crease_effect(shell, new_crease_edges),',
+                    '"evaluated_effect": measure_crease_effect(shell, new_crease_edges) if sub.levels else {"status": "not_applicable", "reason": "unsubdivided source budget trial"},')
+    pipeline = once(pipeline, '            bpy.ops.object.modifier_apply(modifier=m.name)',
+                    '            if m.type == "SUBSURF" and m.levels == 0:\n                o.modifiers.remove(m)\n            else:\n                bpy.ops.object.modifier_apply(modifier=m.name)')
+    for field, call in (("ear_source_fan_reflow", "reflow_source_fans"), ("ear_root_diagonal_quality", "improve_lower_root_diagonals")):
+        old = f'        report["{field}"]={call}(data,report["ear_root_fit"])'
+        new = ('        try:\n    '+old+'\n'
+               '        except AssertionError as error:\n'
+               '            if not STYLE.get("sampling_budget_trial", 0): raise\n'
+               f'            report["{field}"]={{"status": "failed", "error": str(error)}}\n'
+               '            report["budget_trial_quality_pending"] = True')
+        pipeline = once(pipeline, old, new)
+    runtime = result.get('semantic_eye_runtime.py', '')
+    if 'def build_blink_shapes' in runtime:
+        runtime = once(runtime, 'def build_blink_shapes(obj, ordinals, calibration, ink_floor_closure=False):',
+                       'def build_blink_shapes(obj, ordinals, calibration, ink_floor_closure=False, budget_trial=False):')
+        runtime = once(runtime, '    report["continuous_orientation"] = verify_pose_orientation(obj)',
+                       '    try:\n        report["continuous_orientation"] = verify_pose_orientation(obj)\n'
+                       '    except AssertionError as error:\n        if not budget_trial: raise\n'
+                       '        report["continuous_orientation"] = {"status": "failed", "error": str(error), "acceptance": False}')
+        pipeline = once(pipeline, 'build_blink_shapes(members[0], semantic_part_ordinals, C, ink_floor_closure=',
+                        'build_blink_shapes(members[0], semantic_part_ordinals, C, budget_trial=bool(STYLE.get("sampling_budget_trial", 0)), ink_floor_closure=')
+        lines = [line for line in pipeline.splitlines(keepends=True) if 'report["eyelid_closure"] = build_blink_shapes(' in line]
+        if len(lines) != 1: raise ValueError('Unexpected blink result boundary')
+        pipeline = once(pipeline, lines[0], lines[0]+'        if report["eyelid_closure"]["continuous_orientation"].get("status") == "failed":\n            report["budget_trial_quality_pending"] = True\n')
+        result['semantic_eye_runtime.py'] = runtime
+    result['pipeline.py'] = pipeline
     return result

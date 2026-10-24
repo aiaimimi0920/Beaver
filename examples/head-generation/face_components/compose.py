@@ -110,16 +110,20 @@ def resolve(
     sampling_spec.loader.exec_module(sampling_module)
     if sampling_overrides is not None and not isinstance(sampling_overrides, dict):
         raise ValueError("Expected facial sampling control object")
-    parameters.update(sampling_module.validate_sampling({
-        "sampling_first_pass": 1,
-        "sampling_density_layout": 1,
-        "sampling_shell_columns": 9,
-        **(sampling_overrides or {}),
-    }))
+    overrides = sampling_overrides or {}
+    if not overrides.get("sampling_first_pass",1):
+        defaults = {}
+    elif not overrides.get("sampling_density_layout",1):
+        defaults = {"sampling_first_pass":1,"sampling_density_layout":0,"sampling_shell_columns":13}
+    else:
+        defaults = sampling_module.GAME_FACE_SAMPLING
+    parameters.update(sampling_module.validate_sampling({**defaults, **(sampling_overrides or {})}))
     brow = catalog["brows"][selection["brows"]]
     if set(brow) - {"design"} != BROW_KEYS:
         raise ValueError("Brow preset must own all and only brow parameters")
     design = resolved_brow_design(brow, brow_overrides)
+    if design is None and "sampling_brow_divisions" not in (sampling_overrides or {}):
+        parameters["sampling_brow_divisions"] = 0
     parameters.update({k: v for k, v in brow.items() if k != "design"})
     if fit_policy == "skin-seated-075":
         parameters["lateral_guide_regularization"] = 0.75
