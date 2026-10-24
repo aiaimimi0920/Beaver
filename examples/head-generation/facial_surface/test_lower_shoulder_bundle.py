@@ -115,6 +115,8 @@ class LowerShoulderBundleTests(unittest.TestCase):
                 "source_upper_warp.py",
                 "source_lateral_rim.py",
                 "source_angular_samples.py",
+                "sampling_contract.py",
+                "source_density_layout.py",
                 "source_return_order.py",
                 "source_lateral_regularization.py",
                     "source_brow_profiles.py",

@@ -48,6 +48,16 @@ def legacy_accent_tree(tree):
             node.names = [alias for alias in node.names if alias.name != 'companion_stations']
     if removed != 1:
         raise AssertionError('Companion sampling import changed')
+    moved = 0
+    for node in tree.body:
+        if isinstance(node, ast.ImportFrom) and node.module == 'thin_ribbon':
+            names = {'tuft_rear_scoop', 'tuft_free_bow'}
+            moved += sum(alias.name in names for alias in node.names)
+            node.names = [alias for alias in node.names if alias.name not in names]
+    if moved != 2:
+        raise AssertionError('Extracted tuft helper imports changed')
+    tree.body = [node for node in tree.body
+                 if not (isinstance(node, ast.ImportFrom) and not node.names)]
     return tree
 
 
@@ -71,3 +81,15 @@ def legacy_shell_source(source):
     ):
         source = replace_once(source, old, new)
     return source
+
+
+def legacy_ribbon_tree(source):
+    branch = '    if key == "upper_lash_rails" and STYLE.get("sampling_main_exact", False):\n        return [tuple(row) for row in rails]\n'
+    source = replace_once(source, branch, '')
+    tree = ast.parse(source)
+    moved = {'tuft_rear_scoop', 'tuft_free_bow'}
+    actual = {node.name for node in tree.body if isinstance(node, ast.FunctionDef) and node.name in moved}
+    if actual != moved:
+        raise AssertionError('Extracted tuft helper definitions changed')
+    tree.body = [node for node in tree.body if not (isinstance(node, ast.FunctionDef) and node.name in moved)]
+    return tree
