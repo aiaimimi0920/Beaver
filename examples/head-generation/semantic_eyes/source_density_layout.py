@@ -92,11 +92,22 @@ def tongue_budget(style):
     return 12, 5 if columns == 13 else 7
 
 
+def oral_ring_fractions(kind, style):
+    """Spend one extra local ring only in the optional denser-skin profile."""
+    if kind == "eye":
+        return [0, 0.30, 0.65]
+    if kind != "mouth":
+        raise ValueError("Unknown source patch kind")
+    if style.get("sampling_detail_budget", 0) and style.get("sampling_shell_columns", 13) == 13:
+        return [0, 0.50, 0.75]
+    return [0, 0.30]
+
+
 def adapt(sources):
     result = dict(sources)
     shell = result['shell.py']
     helpers = '\n\n'.join(inspect.getsource(f) for f in
-                            (density_rows, chin_column_indices, chin_strip_faces, subnasal_band_faces))
+                            (density_rows, chin_column_indices, chin_strip_faces, subnasal_band_faces, oral_ring_fractions))
     # Face owns shared geometric sampling primitives; shell owns assembly.
     result['face.py'] = result['face.py'] + '\n\n' + helpers + '\n'
     shell = once(shell,'    assert min(b - a for a, b in zip(levels, levels[1:])) >= 0.00349',
@@ -118,9 +129,9 @@ def adapt(sources):
     shell = once(shell, '        for i in range(cols - 1):\n            shell_faces.append((previous[i + 1]',
                  '        for i in range(len(base) - 1):\n            shell_faces.append((previous[i + 1]')
     shell = once(shell,'for blend in ([0, 0.30, 0.65] if kind == "eye" else [0, 0.30, 0.65]):',
-                 'for blend in ([0, 0.30, 0.65] if kind == "eye" else [0, 0.30]):')
+                 'for blend in oral_ring_fractions(kind, STYLE):')
     shell = once(shell,'        "semantic_rows": levels,',
-                 '        "density_layout": {"version": 6, "stage": "source sampling", "mouth_rings": 2, "rows": len(levels), "chin_columns": len(chin_columns)},\n'
+                 '        "density_layout": {"version": 6, "stage": "source sampling", "mouth_rings": len(oral_ring_fractions("mouth", STYLE)), "rows": len(levels), "chin_columns": len(chin_columns)},\n'
                  '        "semantic_rows": levels,')
     from source_outline_sampling import refined_outline
     result['ear_topology.py'] = result.get('ear_topology.py','')+'\n\n'+inspect.getsource(refined_outline)+'\n'
@@ -204,5 +215,8 @@ def adapt(sources):
     center_guard = 'if abs(data.vertices[index].co.x) < 1e-7'
     assert pipeline.count(center_guard) == 2
     pipeline = pipeline.replace(center_guard, center_guard + ' and not (region in (1, 2) and STYLE.get("sampling_detail_budget", 0) and STYLE.get("sampling_shell_columns", 13) == 13)')
+    pipeline = once(pipeline, '                normals[index] += poly.normal * poly.area',
+                    '                if region in (1,2) or not (STYLE.get("sampling_detail_budget",0) and STYLE.get("sampling_shell_columns",13)==13):\n'
+                    '                    normals[index] += poly.normal * poly.area')
     result['pipeline.py'] = pipeline
     return result

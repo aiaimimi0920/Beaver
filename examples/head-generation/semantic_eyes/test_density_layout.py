@@ -56,7 +56,8 @@ class DensityLayoutTests(unittest.TestCase):
         self.assertNotIn('def chin_strip_faces', out)
         compile(out,'shell.py','exec')
         self.assertIn('levels = density_rows(levels)',out)
-        self.assertIn('else [0, 0.30]',out)
+        self.assertIn('oral_ring_fractions(kind, STYLE)',out)
+        self.assertIn('def oral_ring_fractions',result['face.py'])
         self.assertNotIn('dissolve',out)
         self.assertEqual(shell.count('else [0, 0.30, 0.65]'),1)
     def test_control_rejects_fraction(self):
