@@ -209,14 +209,20 @@ def build_face():
         1.780,
     ]
     assert min(b - a for a, b in zip(levels, levels[1:])) >= 0.00349
-    lateral = [0, 0.06, 0.12, 0.18, 0.25, 0.34, 0.44, 0.55, 0.67, 0.78, 0.87, 0.94, 1]
+    column_count = STYLE.get("sampling_shell_columns", 13)
+    if column_count not in (9, 13):
+        raise ValueError("Unsupported semantic shell column count")
+    original_lateral = [0, 0.06, 0.12, 0.18, 0.25, 0.34, 0.44, 0.55, 0.67, 0.78, 0.87, 0.94, 1]
+    retained = [0, 2, 3, 5, 6, 8, 10, 11, 12] if column_count == 9 else list(range(13))
+    lateral = [original_lateral[i] for i in retained]
+    nominal = [i / 12 for i in retained]
     rows, cols = len(levels), len(lateral)
     verts = []
     for j in range(rows):
         y = levels[j]
         for i in range(cols):
             focus = max(0, min(1, (y - 1.544) / 0.026)) * max(0, min(1, (1.710 - y) / 0.028))
-            q = lateral[i] * focus + (i / (cols - 1)) * (1 - focus)
+            q = lateral[i] * focus + nominal[i] * (1 - focus)
             x = width(y) * q
             top_blend = float(y > Y0 + H * C["top_warp_start_height"])
             yy = (
@@ -234,10 +240,10 @@ def build_face():
     # Feature-aligned patches replace the uniform lattice around eyes and mouth.
     ej0 = levels.index(1.614)
     ej1 = levels.index(1.673)
-    ei0, ei1 = 3, 11
+    ei0, ei1 = lateral.index(0.18), lateral.index(0.94)
     mj0 = levels.index(1.570)
     mj1 = levels.index(1.599)
-    mi1 = 6
+    mi1 = lateral.index(0.44)
     shell_faces = []
     for j in range(rows - 1):
         for i in range(cols - 1):
@@ -322,7 +328,7 @@ def build_face():
     for back, lift, spread in C["chin_underside_stations"]:
         current = []
         for i, (x, negz, y) in enumerate(base):
-            q = i / (cols - 1)
+            q = nominal[i]
             current.append(len(verts))
             half_width = min(
                 base[-1][0] * spread, width(Y0 + H * lift) * C["chin_return_boundary_inset"]
@@ -379,6 +385,7 @@ def build_face():
         "face_authoring_quads": sum(len(q) == 4 for q in shell_faces),
         "face_authoring_triangles": sum(len(q) == 3 for q in shell_faces),
         "semantic_rows": levels,
+        "semantic_lateral_stations": lateral,
         "chin_underside_quads": underside_count,
         "chin_side_quads": len(side_path) - 2,
         "chin_side_triangles": 1,

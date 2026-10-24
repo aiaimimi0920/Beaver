@@ -29,11 +29,26 @@ class FaceSelectionTests(unittest.TestCase):
 
     def test_expanded_eye_defaults_are_frozen(self):
         from test_refined_selection import validate
+        sampling_defaults = {
+            'sampling_first_pass':0, 'sampling_density_layout':0,
+            'sampling_rim_quality_guard':0, 'sampling_shell_columns':13,
+            'sampling_brow_divisions':0, 'sampling_lid_stations':0,
+            'sampling_iris_samples':0, 'sampling_iris_rings':0,
+            'sampling_pocket_samples':0, 'sampling_main_stations':21,
+            'sampling_companion_stations':17, 'sampling_lateral_gap':.065,
+            'sampling_wing_gap':.025,
+            'sampling_surface_subdivision':1, 'sampling_budget_trial':0,
+            'sampling_section_blink':0, 'sampling_ear_budget':0,
+            'sampling_surface_fairing':0,
+            'sampling_detail_budget':0, 'sampling_outline_refinement':0,
+        }
         for name in NAMES:
             spec=packager.load_preset(name)
             # Retained snapshots predate this identity-default control.
             # Require exactly the identity additions; keep stored parameters frozen.
             normalized=validate(spec['eye_parameters'])
+            for key,value in sampling_defaults.items():
+                self.assertEqual(normalized.pop(key),value)
             self.assertEqual(set(normalized)-set(spec['eye_parameters']),{'lateral_guide_regularization','brow_angularity','brow_peak_position','brow_band_fullness'})
             self.assertEqual(normalized.pop('lateral_guide_regularization'),1.0)
             self.assertEqual(normalized.pop('brow_angularity'),0.0)

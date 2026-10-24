@@ -58,6 +58,8 @@ def build_request(
 ):
     p = validate(parameters)
     brow_design = validate_brow_design(brow_design)
+    if p["sampling_brow_divisions"] and brow_design is None:
+        raise ValueError("Brow sampling requires a researched brow design")
     if type(blink) is not bool:
         raise ValueError("blink must be a boolean")
     if blink and (
@@ -106,6 +108,9 @@ def build_request(
     ]
     base.SOURCE_FILES.append("semantic_eye_runtime.py")
     pipeline = (RECIPE / "pipeline.py").read_text()
+    if p["sampling_first_pass"] == 1:
+        pipeline = replace_once(pipeline, "report = build_face()",
+                                'report = build_face()\nreport["first_pass_sampling"] = True')
     pipeline = replace_once(
         pipeline, 'OUT = "' + base.OUTPUT_PREFIX + '"', "OUT = " + repr(output_prefix)
     )
@@ -239,7 +244,7 @@ def build_request(
         sources["thin_ribbon.py"] = replace_once(
             sources["thin_ribbon.py"],
             '(b[0]-a[0])/STYLE["accent_max_station_gap"]',
-            '(b[0]-a[0])/(min(STYLE["accent_max_station_gap"],0.025) if key == "outer_lash_wing_rails" else STYLE["accent_max_station_gap"])',
+            '(b[0]-a[0])/(min(STYLE["accent_max_station_gap"],STYLE.get("sampling_wing_gap",0.025)) if key == "outer_lash_wing_rails" else STYLE["accent_max_station_gap"])',
         )
     if p["upper_lash_layer"]:
         # The intermediate leaf is rooted on the final upper band, not on
@@ -299,7 +304,7 @@ def build_request(
         or p["lower_shoulder"] != 0
         or p["upper_angularity"] != 0,
     )
-    sources = adapt_angular_samples(sources, p["upper_angularity"])
+    sources = adapt_angular_samples(sources, p["upper_angularity"], p)
     if blink:
         sources["semantic_eye_runtime.py"] += (
             "\n\n"
@@ -380,6 +385,10 @@ def build_request(
             sources = adapt_export_sources(sources, mouth_design, blink)
         finally:
             sys.path[:] = old_mouth_path
+    if p["sampling_density_layout"] == 1:
+        from source_density_layout import adapt as adapt_density_layout
+
+        sources = adapt_density_layout(sources)
     base.OUTPUT_PREFIX = output_prefix
     with tempfile.TemporaryDirectory() as directory:
         snapshot = Path(directory)
@@ -410,17 +419,24 @@ def build_request(
                 "source_lateral_regularization.py": (
                     HERE / "source_lateral_regularization.py"
                 ).read_text(),
+                "sampling_contract.py": (HERE / "sampling_contract.py").read_text(),
+                "source_density_layout.py": (HERE / "source_density_layout.py").read_text(),
+                "source_cage_fairing.py": (HERE / "source_cage_fairing.py").read_text(),
+                "source_outline_sampling.py": (HERE / "source_outline_sampling.py").read_text(),
+                "source_outline_stage.py": (HERE / "source_outline_stage.py").read_text(),
+                "source_triangle_fairing.py": (HERE / "source_triangle_fairing.py").read_text(),
                 "source_angular_samples.py": (
                     HERE / "source_angular_samples.py"
                 ).read_text(),
             }
         )
         + "\n",
-        "semantic_parameters.py": HELPERS
+        "semantic_parameters.py": HELPERS + "\n" + (HERE / "sampling_contract.py").read_text()
         + "\n\n"
         + (HERE / "parameters.py")
         .read_text()
-        .replace("from contour_warp import upper_shape, upper_shape_derivative\n", ""),
+        .replace("from contour_warp import upper_shape, upper_shape_derivative, upper_change\n", "")
+        .replace("from sampling_contract import SAMPLING_LIMITS, validate_sampling\n", ""),
         "definition_guard.py": guard,
         "semantic_input_hashes.json": json.dumps(
             {
