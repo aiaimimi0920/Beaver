@@ -45,6 +45,8 @@ class ResearchedBrowTests(unittest.TestCase):
             root = Path(directory)
             component = root / "face_components"
             shutil.copytree(HERE, component)
+            (root / "semantic_eyes").mkdir()
+            shutil.copy2(HERE.parent / "semantic_eyes/sampling_contract.py", root / "semantic_eyes/sampling_contract.py")
             library = root / "brow_library"
             shutil.copytree(HERE.parent / "brow_library", library)
             for name in expected:

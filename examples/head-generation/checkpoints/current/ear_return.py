@@ -77,6 +77,24 @@ def add_final_return(data):
                 old_loop = next(old_loop for old_loop in source.loops if old_loop.vert == origin)
                 for layer in bm.loops.layers.uv.values():
                     new_loop[layer].uv = old_loop[layer].uv
+                    # UV2 is the signed face projection for all joined Face parts.
+                    # UVMap is chart-specific; only skin corners use the mirrored
+                    # facial atlas derivative. Existing boundaries stay pinned.
+                    skin_chart = source[regions] in (1, 2)
+                    if new_loop.vert != origin and (layer.name == "UV2" or (layer.name == "UVMap" and skin_chart)):
+                        point = new_loop.vert.co
+                        assert abs(point.x) < .1175 and abs(origin.co.x) < .1175, "Clamped lateral projection"
+                        assert 1.5 < point.z < 1.789 and 1.5 < origin.co.z < 1.789, "Clamped vertical projection"
+                        if layer.name == "UVMap":
+                            assert .02 < old_loop[layer].uv.x < .55, "Clamped source skin UV"
+                            new_loop[layer].uv.x += .53 * (abs(point.x)-abs(origin.co.x)) / .235
+                            new_loop[layer].uv.y -= .96 * (point.z-origin.co.z) / .31
+                            assert .02 <= new_loop[layer].uv.x <= .55 and .02 <= new_loop[layer].uv.y <= .98, "Return escaped skin atlas"
+                        else:
+                            assert all(0 < c < 1 for c in old_loop[layer].uv), "Clamped source projected UV"
+                            new_loop[layer].uv.x += (point.x-origin.co.x) / .235
+                            new_loop[layer].uv.y += (point.z-origin.co.z) / .31
+                            assert all(0 <= c <= 1 for c in new_loop[layer].uv), "Return escaped face projection"
                 for kind in ('color','float_color','float','int','float_vector'):
                     collection = getattr(bm.loops.layers, kind, None)
                     if collection is not None:

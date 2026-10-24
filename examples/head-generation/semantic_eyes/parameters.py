@@ -2,7 +2,8 @@
 
 import copy
 import math
-from contour_warp import upper_shape, upper_shape_derivative
+from contour_warp import upper_shape, upper_shape_derivative, upper_change
+from sampling_contract import SAMPLING_LIMITS, validate_sampling
 
 # Multipliers default to one; offsets are fractions of calibrated face height H.
 LIMITS = {
@@ -55,9 +56,13 @@ LIMITS = {
 }
 
 
+LIMITS.update(SAMPLING_LIMITS)
+
+
 def validate(request):
     if not isinstance(request, dict) or set(request) - LIMITS.keys():
         raise ValueError("Expected only documented numeric eye-family controls")
+    validate_sampling({k: v for k, v in request.items() if k in SAMPLING_LIMITS})
     result = {key: limits[0] for key, limits in LIMITS.items()}
     for key, value in request.items():
         if (
@@ -117,49 +122,19 @@ def validate(request):
     return result
 
 
-def upper_change(t, calibration, parameters):
-    arch = (
-        max(0.0, 1 - abs(t) ** calibration["eye_horizontal_power"])
-        ** calibration["eye_upper_power"]
-    )
-    taper = parameters["aperture_corner_taper"]
-    upper_power = calibration["eye_upper_power"] * parameters["upper_roundness"]
-    upper_power = ((1 - taper) * upper_power + taper) * (
-        1 - 0.3 * parameters["upper_corner_softness"]
-    )
-    new_arch = (
-        max(
-            0.0,
-            1
-            - abs(t)
-            ** (
-                calibration["eye_horizontal_power"]
-                * parameters["upper_horizontal_roundness"]
-            ),
-        )
-        ** upper_power
-    )
-    if parameters["upper_asymmetry"] or parameters["upper_angularity"]:
-        shaped = dict(
-            calibration,
-            eye_horizontal_power=calibration["eye_horizontal_power"]
-            * parameters["upper_horizontal_roundness"],
-            eye_upper_power=upper_power,
-            eye_upper_asymmetry=parameters["upper_asymmetry"],
-            eye_upper_angularity=parameters["upper_angularity"],
-        )
-        new_arch = upper_shape(t, shaped)
-    upper_height = calibration["eye_upper_arch"] * parameters["upper_arch"]
-    if parameters["aperture_upper_share"]:
-        total = upper_height + calibration["eye_lower_arch"] * parameters["lower_arch"]
-        upper_height = total * parameters["aperture_upper_share"]
-    return upper_height * new_arch - calibration["eye_upper_arch"] * arch
-
-
 def adapt_style(original, request):
     p = validate(request)
     style = copy.deepcopy(original)
+    sampling = validate_sampling({k: p[k] for k in SAMPLING_LIMITS})
+    style.update({k: v for k, v in sampling.items() if v != SAMPLING_LIMITS[k][0]})
     c, old = style["calibration"], original["calibration"]
+    for control, field in (
+        ("sampling_iris_samples", "iris_radial_samples"),
+        ("sampling_iris_rings", "iris_radial_rings"),
+        ("sampling_pocket_samples", "pocket_ring_samples"),
+    ):
+        if p[control]:
+            c[field] = int(p[control])
     if p["lateral_blink_follow"] != 0.85:
         c["lateral_blink_follow"] = p["lateral_blink_follow"]
     if p["lateral_aperture_follow"]:
@@ -279,16 +254,19 @@ def adapt_style(original, request):
     # A coherent thin band follows the adapted aperture instead of inheriting
     # the original unrelated hand-authored rise profile. Blend zero is identity.
     if p["lash_contour_follow"]:
+        if p["sampling_first_pass"] or p["sampling_main_stations"] != 21:
+            style["sampling_main_exact"] = True
         rails = []
         tail_end = (
             1.18
             if p["layered_lashes"]
             else 1.025 if style.get("illustrated_eye_art", False) else 1.12
         )
-        for i in range(21):
+        station_count = int(p["sampling_main_stations"])
+        for i in range(station_count):
             rail_span = tail_end + 0.98
-            t = -0.98 + rail_span * i / 20
-            q = i / 20
+            t = -0.98 + rail_span * i / (station_count - 1)
+            q = i / (station_count - 1)
             join_t = 0.96 if style.get("illustrated_eye_art", False) else 0.75
             tc = min(t, join_t)
             arch = (
@@ -331,7 +309,7 @@ def adapt_style(original, request):
                 * math.sin(math.pi * q) ** 0.8
                 * (0.45 + 0.90 * q)
             )
-            if i in (0, 20):
+            if i in (0, station_count - 1):
                 width = 0.0
             rails.append([t, center - width * 0.55, center + width * 0.45])
 

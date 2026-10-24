@@ -105,6 +105,7 @@ def parameter_layout(source):
         if isinstance(n, ast.FunctionDef) and n.end_lineno < imports[0].lineno
     ]
     wanted = {
+        "upper_change",
         "angular_coordinate",
         "angular_derivative",
         "eye_warp",
@@ -122,6 +123,25 @@ def parameter_layout(source):
         raise ValueError("Unexpected curve-function boundary")
     lines = source.splitlines(keepends=True)
     cut = max(n.end_lineno for n in functions)
+    # First-pass sampling is part of the same pure coordinate/sampling API.
+    sampling = [n for n in tree.body if isinstance(n, ast.FunctionDef)
+                and n.name in {"validate_sampling", "lid_station_plan"}]
+    if sampling:
+        if {n.name for n in sampling} != {"validate_sampling", "lid_station_plan"}:
+            raise ValueError("Incomplete sampling API")
+        cut = max(n.end_lineno for n in sampling)
+        assignments = [n for n in tree.body if isinstance(n, ast.Assign)
+                       and n.end_lineno <= cut]
+        if len(assignments) != 1 or not any(
+            isinstance(t, ast.Name) and t.id == "SAMPLING_LIMITS"
+            for t in assignments[0].targets
+        ):
+            raise ValueError("Unexpected sampling constants")
+        allowed = set(names) | {"validate_sampling", "lid_station_plan"}
+        if any(isinstance(n, ast.FunctionDef) and n.name not in allowed
+               for n in tree.body if n.end_lineno <= cut):
+            raise ValueError("Unexpected sampling helper boundary")
+        names += ["SAMPLING_LIMITS", "validate_sampling", "lid_station_plan"]
     curves = "".join(lines[:cut])
     suffix = "".join(lines[cut:])
     doc = ast.get_docstring(tree, clean=False)

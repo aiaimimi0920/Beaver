@@ -10,6 +10,7 @@ from pathlib import Path
 from unittest.mock import patch
 
 from ast_contract import canonical_function_dump
+from sampling_legacy_contract import legacy_accent_tree
 from bundle import MODULES, SOURCE_FILES, OUTPUT_PREFIX, build_request
 
 ROOT = Path(__file__).parent
@@ -19,9 +20,11 @@ CONTRACT = json.loads((ROOT / "accent-attachment-refactor-contract.json").read_t
 def combined_accent_tree(tree=None):
     """Reassemble the historical AST for existing cross-version scope checks."""
     tree = tree if tree is not None else ast.parse((ROOT / "eye_accents.py").read_text())
+    tree = legacy_accent_tree(tree)
     attachment = ast.parse((ROOT / "accent_attachment.py").read_text())
+    ribbon = ast.parse((ROOT / "thin_ribbon.py").read_text())
     functions = {
-        node.name: node for node in tree.body + attachment.body
+        node.name: node for node in tree.body + attachment.body + ribbon.body
         if isinstance(node, ast.FunctionDef)
     }
     preamble = [
@@ -35,9 +38,12 @@ def combined_accent_tree(tree=None):
 class AccentAttachmentRefactorTests(unittest.TestCase):
     def test_all_original_functions_preserve_their_exact_ast(self):
         functions = []
-        for name in ("eye_accents.py", "accent_attachment.py"):
-            functions.extend(node for node in ast.parse((ROOT / name).read_text()).body
-                             if isinstance(node, ast.FunctionDef))
+        for name in ("eye_accents.py", "accent_attachment.py", "thin_ribbon.py"):
+            tree = ast.parse((ROOT / name).read_text())
+            if name == "eye_accents.py":
+                tree = legacy_accent_tree(tree)
+            functions.extend(node for node in tree.body if isinstance(node, ast.FunctionDef)
+                             and (name != "thin_ribbon.py" or node.name in ("tuft_rear_scoop", "tuft_free_bow")))
         self.assertEqual(len(functions), len(CONTRACT["canonical_sha256"]))
         actual = {
             node.name: hashlib.sha256(canonical_function_dump(
@@ -73,7 +79,7 @@ class AccentAttachmentRefactorTests(unittest.TestCase):
         eye_tree = ast.parse((ROOT / "eye_accents.py").read_text())
         for node in eye_tree.body:
             if isinstance(node, ast.ImportFrom) and node.module not in ("face", "accent_attachment"):
-                stub = types.ModuleType(node.module)
+                stub = modules.get(node.module, types.ModuleType(node.module))
                 for alias in node.names:
                     setattr(stub, alias.name, lambda *args: None)
                 modules[node.module] = stub

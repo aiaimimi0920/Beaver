@@ -29,6 +29,8 @@ def accent_sections(key):
     if not key.endswith("_rails"):
         return outline_sections(STYLE[key])
     rails = STYLE[key]
+    if key == "upper_lash_rails" and STYLE.get("sampling_main_exact", False):
+        return [tuple(row) for row in rails]
     stations = set(p[0] for p in rails)
     for a,b in zip(rails,rails[1:]):
         n = max(1,int((b[0]-a[0])/STYLE["accent_max_station_gap"])+1)
@@ -109,5 +111,18 @@ def accent_mesh(name, sections, point, color, thickness, roll, folded=False):
     obj["accent_positive_volume_m3"] = abs(signed_volume(vertices, faces))
     assert all(p.area > 1e-12 for p in obj.data.polygons), "Degenerate accent face"
     return obj
+
+
+
+
+def tuft_rear_scoop(progress, maximum):
+    """A rooted leaf retreats behind its parent before its free tip curls forward."""
+    p=max(0.0,min(1.0,progress))
+    return maximum*sin(pi*p/.45)**2 if 0.0 < p < .45 else 0.0
+
+
+def tuft_free_bow(progress, maximum):
+    p=max(0.0,min(1.0,(progress-.25)/.75))
+    return maximum*sin(pi*p)**2
 
 

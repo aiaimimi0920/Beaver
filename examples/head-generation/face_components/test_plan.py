@@ -10,6 +10,17 @@ class PlanTests(unittest.TestCase):
     def setUp(self):
         self.selection = json.loads((HERE / "example-selection.json").read_text())
 
+    def test_shared_density_layout_applies_to_future_compositions(self):
+        for face in ("research-straight-tapered", "research-compact-rounded", "research-blunt-chin"):
+            choice = {**self.selection, "face": face}
+            snapshot = resolve(choice)
+            self.assertEqual(snapshot["eye_parameters"]["sampling_density_layout"], 1)
+            self.assertEqual(snapshot["eye_parameters"]["sampling_shell_columns"], 9)
+        explicit = resolve(self.selection, sampling_overrides={"sampling_density_layout": 0, "sampling_shell_columns": 13})
+        self.assertEqual(explicit["eye_parameters"]["sampling_density_layout"], 0)
+        result = build_plan(self.selection, records=[])
+        self.assertIn("surface area", result["topology_policy"]["measure"][0])
+
     def test_no_evidence_does_not_claim_progress(self):
         plan = build_plan(self.selection, records=[])
         self.assertEqual(plan["current_output_status"], "not_generated")

@@ -63,6 +63,7 @@ def resolve(
     mouth_overrides=None,
     face_overrides=None,
     ear_overrides=None,
+    sampling_overrides=None,
 ):
     if fit_policy not in ("legacy", "skin-seated-075"):
         raise ValueError("Unknown explicit fit policy")
@@ -102,6 +103,19 @@ def resolve(
         if hashlib.sha256((SURFACE / name).read_bytes()).hexdigest() != expected:
             raise ValueError("Preserved baseline changed: " + name)
     parameters = copy.deepcopy(spec["eye_parameters"])
+    sampling_spec = importlib.util.spec_from_file_location(
+        "component_sampling_contract", HERE.parent / "semantic_eyes/sampling_contract.py"
+    )
+    sampling_module = importlib.util.module_from_spec(sampling_spec)
+    sampling_spec.loader.exec_module(sampling_module)
+    if sampling_overrides is not None and not isinstance(sampling_overrides, dict):
+        raise ValueError("Expected facial sampling control object")
+    parameters.update(sampling_module.validate_sampling({
+        "sampling_first_pass": 1,
+        "sampling_density_layout": 1,
+        "sampling_shell_columns": 9,
+        **(sampling_overrides or {}),
+    }))
     brow = catalog["brows"][selection["brows"]]
     if set(brow) - {"design"} != BROW_KEYS:
         raise ValueError("Brow preset must own all and only brow parameters")

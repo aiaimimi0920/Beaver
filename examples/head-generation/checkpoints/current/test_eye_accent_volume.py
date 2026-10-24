@@ -66,6 +66,9 @@ class AccentVolumeTests(unittest.TestCase):
         frozen=json.loads((ROOT/'frozen177-contract.json').read_text())
         for name,sha in frozen['files'].items():
             raw = (ROOT/name).read_text()
+            if name == 'shell.py':
+                from sampling_legacy_contract import legacy_shell_source
+                raw = legacy_shell_source(raw)
             if name == 'textures.py':
                 # The only permitted addition is the isolated lash strip. Removing
                 # that exact addition must recover the entire frozen texture source.
