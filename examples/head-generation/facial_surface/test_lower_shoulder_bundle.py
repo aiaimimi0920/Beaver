@@ -118,6 +118,8 @@ class LowerShoulderBundleTests(unittest.TestCase):
                 "sampling_contract.py",
                 "source_density_layout.py",
                 "source_cage_fairing.py",
+                "source_outline_sampling.py",
+                "source_outline_stage.py",
                 "source_return_order.py",
                 "source_lateral_regularization.py",
                     "source_brow_profiles.py",
