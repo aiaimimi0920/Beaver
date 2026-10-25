@@ -2,12 +2,7 @@
 
 
 def closed_interior_boundary_edges(faces, points, expected_components=1):
-    """Identify closed boundary cycles wholly off the mirror seam.
-
-    The supported authored half-face has one eye hole. The outer/mouth boundary
-    touches the mirror seam and cannot own an eye crease, even where its
-    coordinates happen to cross the eye's bounding rectangle.
-    """
+    """Identify the eye-hole cycle; reject outer boundaries touching the seam."""
     uses = {}
     for face in faces:
         ids = tuple(face)

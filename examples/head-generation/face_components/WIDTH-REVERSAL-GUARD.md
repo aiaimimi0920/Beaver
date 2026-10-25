@@ -113,3 +113,9 @@ A fresh native regeneration (136) from the retained checkout, including the
 complete frozen helper provenance, produced the exact same GLB SHA-256 as 135.
 This verifies the retained implementation against the reviewed geometry and
 morph output. It was not described as a second SDF or capture run.
+
+The first exact-head CI found one longer public-recipe prefix exceeding the
+native frame by 205 bytes. Additional duplicated docstrings were shortened;
+AST comparison after removing docstrings confirms no executable change. The
+existing public source-size regression now passes both almond and segmented
+compositions, with the original frame and source-size checks unchanged.

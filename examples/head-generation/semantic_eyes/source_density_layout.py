@@ -1,18 +1,10 @@
-"""Shared first-pass facial density layout, before subdivision or export.
-
-Feature endpoints and the outer silhouette remain anchors. The layout does not
-collapse a finished mesh and has no character name or exported vertex IDs.
-"""
+"""Source-stage density allocation; preserve feature and silhouette anchors."""
 import inspect
 import math
 
 
 def density_rows(levels):
-    """Retain all calibrated row coordinates; topology sets local resolution.
-
-Mouth/eye patch boundaries remain unchanged. Detail stays in their local rings
-instead of propagating another thin horizontal strip across both cheeks.
-"""
+    """Keep calibrated rows and feature boundaries; vary only local connectivity."""
     expected = (
         1.544, 1.551, 1.560, 1.570, 1.580, 1.590, 1.599, 1.6045,
         1.608, 1.614, 1.623, 1.633, 1.644, 1.655, 1.664, 1.673,
