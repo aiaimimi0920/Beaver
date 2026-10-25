@@ -148,6 +148,9 @@ def adapt(sources):
                  '        "source_outline_sampling": outline_report,\n        "face_authoring_ngons": sum(len(f)>4 for f in shell_faces),\n        "jaw_boundary_fairing": jaw_fairing,')
     shell = once(shell, '    face["chin_side_face_count"] = side_count',
                  '    if STYLE.get("sampling_outline_refinement",0): face["source_outline_chain"] = chain\n    face["chin_side_face_count"] = side_count')
+    from source_chin_normal_join import mark_chin_normal_join, shared_chin_normal_vertices
+    shell = once(shell, '    face["front_surface_face_count"] = front_count',
+                 '    if not STYLE.get("sampling_surface_subdivision",1):\n        from crease_rules import mark_chin_normal_join\n        mark_chin_normal_join(face.data, chin_columns, rear_ids)\n    face["front_surface_face_count"] = front_count')
     result['shell.py'] = shell
     if 'mouth.py' in result:
         result['mouth.py'] = once(result['mouth.py'], '    cols = 16\n    rows = 9',
@@ -155,6 +158,13 @@ def adapt(sources):
         result['mouth.py'] += '\n\n'+inspect.getsource(tongue_budget)+'\n'
     if 'pipeline.py' not in result:
         return result
+    from source_aperture_ownership import closed_interior_boundary_edges
+    crease_source = result['crease_rules.py']
+    crease_source = once(crease_source, '    for edge in shell.data.edges:\n        key = tuple(sorted(edge.vertices))',
+                        '    eye_edges = closed_interior_boundary_edges([tuple(p.vertices) for p in shell.data.polygons], [tuple(v.co) for v in shell.data.vertices])\n    for edge in shell.data.edges:\n        key = tuple(sorted(edge.vertices))')
+    crease_source = once(crease_source, '(0.018 < x < 0.087 and 1.610 < y < 1.671)', 'key in eye_edges')
+    result['crease_rules.py'] = crease_source + '\n\n' + inspect.getsource(closed_interior_boundary_edges) + '\n'
+    result['crease_rules.py'] += '\n\n' + inspect.getsource(mark_chin_normal_join) + '\n\n' + inspect.getsource(shared_chin_normal_vertices) + '\n'
     pipeline = result['pipeline.py']
     from source_cage_fairing import fair_source_cage, sample_source_cage
     from source_polygon_validity import polygon_diagonals, triangulate_valid_skin, verify_skin_triangles
@@ -225,5 +235,19 @@ def adapt(sources):
     pipeline = once(pipeline, '                normals[index] += poly.normal * poly.area',
                     '                if region in (1,2) or not (STYLE.get("sampling_detail_budget",0) and STYLE.get("sampling_shell_columns",13)==13):\n'
                     '                    normals[index] += poly.normal * poly.area')
+    pipeline = once(pipeline, '        corner_normals = [Vector((0, 0, 0)) for _ in data.loops]',
+                    '        from crease_rules import shared_chin_normal_vertices\n'
+                    '        chin_normal_ids = shared_chin_normal_vertices(data, regions, ear_root_ids) if not STYLE.get("sampling_surface_subdivision",1) else set()\n'
+                    '        report["shared_chin_normal_vertices"] = len(chin_normal_ids)\n'
+                    '        report["shared_chin_normal_corners"] = 0\n'
+                    '        corner_normals = [Vector((0, 0, 0)) for _ in data.loops]')
+    pipeline = once(pipeline, '                corner_normals[loop_index] = normal if poly.use_smooth else poly.normal.copy()',
+                    '                if index in chin_normal_ids and region in (1,2) and poly.use_smooth:\n'
+                    '                    assert normals[index].length > 1e-12, "Degenerate shared chin geometric normal"\n'
+                    '                    normal = normals[index].normalized()\n'
+                    '                    report["shared_chin_normal_corners"] += 1\n'
+                    '                corner_normals[loop_index] = normal if poly.use_smooth else poly.normal.copy()')
+    from source_width_guard import adapt_width_envelope
+    result['ear_width.py'] = adapt_width_envelope(result['ear_width.py'])
     result['pipeline.py'] = pipeline
     return result

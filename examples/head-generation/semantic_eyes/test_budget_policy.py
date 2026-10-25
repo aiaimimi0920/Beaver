@@ -11,7 +11,7 @@ class BudgetPolicyTests(unittest.TestCase):
         self.assertEqual(validate_sampling(GAME_FACE_SAMPLING)['sampling_budget_trial'],0)
     def fixture(self):
         root=Path(__file__).resolve().parents[1]/'checkpoints/current'
-        sources={name:(root/name).read_text() for name in ('face.py','shell.py','pipeline.py','ear_surface.py')}
+        sources={name:(root/name).read_text() for name in ('face.py','shell.py','pipeline.py','ear_surface.py','crease_rules.py','ear_width.py')}
         sources['pipeline.py']+='\nif True:\n    if True:\n        report["eyelid_closure"] = build_blink_shapes(members[0], semantic_part_ordinals, C, ink_floor_closure=False)\n'
         sources['semantic_eye_runtime.py']='''def build_blink_shapes(obj, ordinals, calibration, ink_floor_closure=False):
     report = {}

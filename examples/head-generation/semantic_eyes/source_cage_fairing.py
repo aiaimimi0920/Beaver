@@ -109,13 +109,16 @@ def sample_source_cage(shell, baseline_fairing, maximum_move=.001):
             if groups.data[edge.index].value==3:
                 a,b=edge.vertices
                 aperture_links.setdefault(a,set()).add(b);aperture_links.setdefault(b,set()).add(a)
-    unseen=set(aperture_links);eye_support=set()
+    unseen=set(aperture_links);eye_support=set();eye_cycles=0
     while unseen:
         component={unseen.pop()};front=set(component)
         while front:
             front={j for i in front for j in aperture_links[i] if j not in component}
             component.update(front);unseen.difference_update(front)
-        if all(abs(old[i].x)>1e-7 for i in component):eye_support.update(component)
+        if all(old[i].x>1e-7 for i in component):
+            assert len(component)>=3 and all(len(aperture_links[i])==2 for i in component), 'Eye aperture group is not a closed cycle'
+            eye_cycles+=1;eye_support.update(component)
+    assert eye_cycles==1, 'Expected one closed eye aperture on the authored half cage'
     for _ in range(2):eye_support.update(j for i in list(eye_support) for j in neighbors[i])
     pins.update(eye_support)
     weights={i:0. for i in pins};front=set(pins)
