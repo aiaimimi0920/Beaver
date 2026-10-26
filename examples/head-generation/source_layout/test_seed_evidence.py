@@ -1,0 +1,93 @@
+"""Synthetic receipt fixtures test rejection paths, not native execution."""
+
+import copy
+import hashlib
+import json
+from pathlib import Path
+import sys
+import tempfile
+import unittest
+
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+from source_layout.seed_evidence import finalize_seed_plan, verify_seed
+
+
+class SeedEvidenceTests(unittest.TestCase):
+    def setUp(self):
+        self.directory = tempfile.TemporaryDirectory()
+        self.addCleanup(self.directory.cleanup)
+        self.root = Path(self.directory.name).resolve()
+        self.path = 'assets/aster/general_face_eyes_combo_test/source_seed_semantic_bundle.py'
+        self.file = self.root / self.path
+        self.file.parent.mkdir(parents=True)
+        self.file.write_bytes(b'answer = 42\n')
+        self.binding = {
+            'path': self.path,
+            'sha256': hashlib.sha256(self.file.read_bytes()).hexdigest(),
+            'native_seed_script_sha256': hashlib.sha256(b'seed fixture').hexdigest(),
+        }
+        self.job = {
+            'jobId': 'unit-test-seed', 'status': 'succeeded',
+            'process': {'workspace': str(self.root),
+                        'scriptSha256': self.binding['native_seed_script_sha256']},
+            'result': {'success': True, 'exitCode': 0,
+                       'outputs': [{'path': self.path, 'sha256': self.binding['sha256']}]},
+        }
+        self.receipt = self.root / 'synthetic-seed-receipt.json'
+        self.write_receipt(self.job)
+
+    def write_receipt(self, job):
+        self.receipt.write_text(json.dumps({'response': {'result': {'result': job}}}),
+                                encoding='utf-8')
+
+    def test_finalize_binds_original_receipt_and_new_generation_identity(self):
+        code = f'report["authored_source_seed"] = {self.binding!r}\n'
+        plan = {'source_seed_binding': self.binding,
+                'generation': {'code': code, 'outputs': [], 'timeoutSeconds': 120},
+                'source_packaging': {}}
+        before = copy.deepcopy(plan)
+        result = finalize_seed_plan(plan, self.receipt, self.root)
+        self.assertEqual(plan, before)
+        binding = result['source_seed_binding']
+        self.assertEqual(binding['job_id'], 'unit-test-seed')
+        self.assertEqual(binding['receipt_sha256'], hashlib.sha256(self.receipt.read_bytes()).hexdigest())
+        self.assertEqual(result['source_packaging']['source_seed_binding'], binding)
+        expected = hashlib.sha256(result['generation']['code'].encode()).hexdigest()
+        self.assertEqual(result['source_packaging']['generation_script_sha256'], expected)
+        self.assertNotEqual(expected, binding['native_seed_script_sha256'])
+        self.assertEqual(verify_seed(binding, self.receipt, self.root), binding)
+        with self.assertRaisesRegex(ValueError, 'already finalized'):
+            finalize_seed_plan(result, self.receipt, self.root)
+
+    def test_wrong_native_identity_or_outputs_are_rejected(self):
+        cases = []
+        script = copy.deepcopy(self.job)
+        script['process']['scriptSha256'] = '0' * 64
+        cases.append(script)
+        workspace = copy.deepcopy(self.job)
+        workspace['process']['workspace'] = str(self.root / 'other')
+        cases.append(workspace)
+        output = copy.deepcopy(self.job)
+        output['result']['outputs'][0]['sha256'] = '0' * 64
+        cases.append(output)
+        failed = copy.deepcopy(self.job)
+        failed['status'] = 'failed'
+        cases.append(failed)
+        for index, job in enumerate(cases):
+            with self.subTest(case=index), self.assertRaises(ValueError):
+                self.write_receipt(job)
+                verify_seed(self.binding, self.receipt, self.root)
+
+    def test_changed_artifact_and_bound_receipt_are_rejected(self):
+        bound = verify_seed(self.binding, self.receipt, self.root)
+        self.file.write_bytes(b'answer = 43\n')
+        with self.assertRaisesRegex(ValueError, 'content changed'):
+            verify_seed(self.binding, self.receipt, self.root)
+        self.file.write_bytes(b'answer = 42\n')
+        self.receipt.write_bytes(self.receipt.read_bytes() + b'\n')
+        with self.assertRaisesRegex(ValueError, 'not the bound native job'):
+            verify_seed(bound, self.receipt, self.root)
+
+
+if __name__ == '__main__':
+    unittest.main()

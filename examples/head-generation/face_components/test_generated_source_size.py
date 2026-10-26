@@ -13,6 +13,7 @@ class SourceSizeTests(unittest.TestCase):
         sys.path.insert(0, str(parent))
         try:
             from source_layout.package import literal_writes
+            from source_layout.python_lines import conservative_effective_lines
             with tempfile.TemporaryDirectory() as directory:
                 root = Path(directory)
                 required = ['project.godot', 'authoring/head_generation_guide.md']
@@ -43,8 +44,7 @@ class SourceSizeTests(unittest.TestCase):
                     self.assertGreater(len(sources), 20)
                     for name, source in sources.items():
                         compile(source, name, 'exec')
-                        count = sum(bool(line.strip()) and not line.lstrip().startswith('#')
-                                    for line in source.splitlines())
+                        count = conservative_effective_lines(source)
                         self.assertLessEqual(count, 500, name)
         finally:
             sys.path.pop(0)

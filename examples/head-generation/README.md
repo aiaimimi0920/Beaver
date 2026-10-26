@@ -1,5 +1,10 @@
 # Original semantic head-generation recipe
 
+[Experimental quad source flow](feature-flow-source.md) documents the opt-in
+feature-aligned source path, native receipt chain, replay API and remaining
+visual acceptance work. It does not replace the default recipe or certify a
+finished character.
+
 The current development route is the [six-component face composition workflow](face_components/README.zh-CN.md): explicit eyes, brows, mouth, nose, ears and face selections → retained authoring intents and parameter snapshot → Beaver native generation → receipt-bound SDF → same-camera expression and visual checks. The first native combinations are 827/828; cross-combination evidence is kept separately.
 
 [Face-only creation and visual review](face-only-workflow.md) explains the current priority and retains earlier input/export contracts. Preserve the accepted 795/796 prompts and existing candidates. Earlier 709/664 records below are historical evidence, not the current task queue or a claim of final approval.

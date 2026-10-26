@@ -11,6 +11,7 @@ SAMPLING_LIMITS = {
     "sampling_detail_budget": (0, 0, 1),
     "sampling_outline_refinement": (0, 0, 1),
     "sampling_density_layout": (0, 0, 1),
+    "sampling_feature_flow": (0, 0, 1),
     "sampling_rim_quality_guard": (0, 0, 0),
     "sampling_shell_columns": (13, 9, 13),
     "sampling_brow_divisions": (0, 0, 64),
@@ -54,7 +55,7 @@ def validate_sampling(request):
             raise ValueError("Unsupported brow sampling division count")
         if key == "sampling_shell_columns" and value not in (9, 13):
             raise ValueError("Shell columns must preserve the documented semantic anchors")
-        if key in ("sampling_outline_refinement", "sampling_detail_budget", "sampling_surface_fairing", "sampling_ear_budget", "sampling_section_blink", "sampling_budget_trial", "sampling_surface_subdivision", "sampling_first_pass", "sampling_rim_quality_guard", "sampling_density_layout") and value not in (0, 1):
+        if key in ("sampling_outline_refinement", "sampling_detail_budget", "sampling_surface_fairing", "sampling_ear_budget", "sampling_section_blink", "sampling_budget_trial", "sampling_surface_subdivision", "sampling_first_pass", "sampling_rim_quality_guard", "sampling_density_layout", "sampling_feature_flow") and value not in (0, 1):
             raise ValueError("First-pass mode must be numeric zero or one")
         if key == "sampling_lid_stations" and value not in (0, 17, 25, 33):
             raise ValueError("Lid sampling must preserve corners and midpoint")
@@ -67,6 +68,8 @@ def validate_sampling(request):
         raise ValueError("Source cage fairing requires unsubdivided output")
     if result["sampling_outline_refinement"] and result["sampling_surface_subdivision"]:
         raise ValueError("Outline refinement requires the unsubdivided source cage")
+    if result["sampling_feature_flow"]:
+        validate_feature_flow_contract(result)
     return result
 
 
@@ -76,3 +79,16 @@ def lid_station_plan(count, angular=False):
     if angular:
         stations.update((-.55, .55))
     return tuple(sorted(stations))
+
+
+def validate_feature_flow_contract(parameters):
+    required = {
+        'sampling_density_layout': 1,
+        'sampling_shell_columns': 13,
+        'sampling_detail_budget': 1,
+        'sampling_surface_subdivision': 0,
+        'sampling_surface_fairing': 0,
+        'sampling_outline_refinement': 0,
+    }
+    if any(parameters.get(name) != value for name, value in required.items()):
+        raise ValueError('Feature flow requires the versioned raw13 quad-source contract')

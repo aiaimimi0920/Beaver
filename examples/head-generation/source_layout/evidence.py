@@ -1,4 +1,4 @@
-"""Verify both native jobs without fabricating or rewriting their receipts."""
+"""Verify the native job chain without fabricating or rewriting their receipts."""
 
 import hashlib
 import json
@@ -15,17 +15,32 @@ HELPERS = {
 
 
 def validate_layout_set(layout, prefix):
-    records=layout['records'];paths={r['path'] for r in records}
-    base={'pipeline.py','semantic_parameters.py'}
-    if len(paths)!=len(records) or paths not in (base,base|{'ear_surface.py'}):
+    from .module_layout import MODULE_STAGES
+    records = layout['records']
+    paths = {r['path'] for r in records}
+    base = {'pipeline.py', 'semantic_parameters.py'}
+    ordered = set(MODULE_STAGES) & paths
+    if len(paths) != len(records) or not base <= paths:
         raise ValueError('Unexpected source layout entries')
-    extra={'source_mesh_rules.py'} if 'ear_surface.py' in paths else set()
-    if set(layout['helper_sha256'])!={prefix+name for name in HELPERS|extra}:
-        raise ValueError('Unexpected modular source set')
+    if paths - base - {'ear_surface.py'} != ordered or ordered not in (set(), set(MODULE_STAGES)):
+        raise ValueError('Incomplete or unexpected ordered module family')
+    extra = {'source_mesh_rules.py'} if 'ear_surface.py' in paths else set()
     if extra:
-        record=next(r for r in records if r['path']=='ear_surface.py')
-        if record.get('kind')!='surface_rules' or record.get('helper_sha256')!=layout['helper_sha256'][prefix+'source_mesh_rules.py']:
+        record = next(r for r in records if r['path'] == 'ear_surface.py')
+        if record.get('kind') != 'surface_rules' or record.get('helper_sha256') != layout['helper_sha256'][prefix + 'source_mesh_rules.py']:
             raise ValueError('Surface rule module not bound to layout')
+    for name in ordered:
+        record = next(r for r in records if r['path'] == name)
+        wanted = [path for path, _ in MODULE_STAGES[name]]
+        if (record.get('kind') != 'ordered_module' or record.get('entry_name') != name
+                or [item['path'] for item in record.get('stages', [])] != wanted):
+            raise ValueError('Ordered source module contract changed')
+        for item in record['stages']:
+            if item['sha256'] != layout['helper_sha256'].get(prefix + item['path']):
+                raise ValueError('Ordered module source is not hash bound')
+        extra.update(wanted)
+    if set(layout['helper_sha256']) != {prefix + name for name in HELPERS | extra}:
+        raise ValueError('Unexpected modular source set')
 
 
 def sha(path):
@@ -48,8 +63,8 @@ def resource(root, name):
     return path
 
 
-def native_job(path, root):
-    raw = json.loads(Path(path).read_text())
+def native_job(path, root, raw_bytes=None):
+    raw = json.loads(Path(path).read_bytes() if raw_bytes is None else raw_bytes)
     if "response" in raw:
         job = raw["response"]["result"]["result"]
     else:
@@ -105,7 +120,9 @@ def verify_packaging(report, root, prefix, generation_receipt, packaging_receipt
     if packed["jobId"] == gen["jobId"]:
         raise ValueError("Source packaging must be a separate native job")
     binding_path = prefix + "source_layout_binding.json"
-    if set(outputs) != set(wanted) | {binding_path}:
+    seed_binding = report.get("authored_source_seed")
+    seed_sidecar = {prefix + "source_seed_receipt.json"} if seed_binding else set()
+    if set(outputs) != set(wanted) | {binding_path} | seed_sidecar:
         raise ValueError("Incomplete or unexpected source packaging outputs")
     for name, digest in outputs.items():
         if sha(resource(root, name)) != digest:
@@ -113,12 +130,21 @@ def verify_packaging(report, root, prefix, generation_receipt, packaging_receipt
     if any(outputs[name] != digest for name, digest in wanted.items()):
         raise ValueError("Packaged source differs from generation plan")
     binding = json.loads(resource(root, binding_path).read_text())
-    if binding != {
+    expected_binding = {
         "generation_job": gen["jobId"],
         "generation_receipt_sha256": sha(generation_receipt),
         "generation_outputs": generated,
         "helper_sha256": wanted,
-    }:
+    }
+    if seed_binding:
+        from .seed_evidence import verify_seed
+        if seed_binding.get("schema_version") != 1:
+            raise ValueError("Unknown source seed binding schema")
+        verified = verify_seed(seed_binding, resource(root,prefix + "source_seed_receipt.json"),root)
+        if verified["job_id"] in (gen["jobId"],packed["jobId"]) or generated.get(prefix + "semantic_bundle.py") != verified["sha256"]:
+            raise ValueError("Invalid native source seed/generation chain")
+        expected_binding["source_seed"] = verified
+    if binding != expected_binding:
         raise ValueError("Source packaging not bound to generation receipt")
     manifest = json.loads(resource(root, prefix + "input-manifest.json").read_text())
     if generated.get(prefix + "input-manifest.json") != sha(
@@ -141,4 +167,8 @@ def verify_packaging(report, root, prefix, generation_receipt, packaging_receipt
         if record.get('kind')=='surface_rules':
             from .layout import reconstructed
             reconstructed({name:resource(root,prefix+name).read_text() for name in ('ear_surface.py','source_mesh_rules.py')},record)
+        elif record.get('kind') == 'ordered_module':
+            from .layout import reconstructed
+            names = [record['entry_name']] + [item['path'] for item in record['stages']]
+            reconstructed({name: resource(root, prefix + name).read_text() for name in names}, record)
     return outputs

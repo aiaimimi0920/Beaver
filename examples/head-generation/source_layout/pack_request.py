@@ -1,4 +1,4 @@
-"""Prepare the second managed request; never execute a model engine here."""
+"""Prepare the final source-packaging request; never execute a model engine here."""
 
 import argparse
 import json

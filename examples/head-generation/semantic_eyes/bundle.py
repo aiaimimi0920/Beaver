@@ -389,6 +389,9 @@ def build_request(
         from source_density_layout import adapt as adapt_density_layout
 
         sources = adapt_density_layout(sources)
+        if p["sampling_feature_flow"]:
+            from feature_flow_recipe import adapt as adapt_feature_flow_recipe
+            sources = adapt_feature_flow_recipe(sources, p)
     base.OUTPUT_PREFIX = output_prefix
     with tempfile.TemporaryDirectory() as directory:
         snapshot = Path(directory)
@@ -462,6 +465,9 @@ def build_request(
         request[
             "code"
         ] += f'Path(beaver_output({output_prefix + "generation_report.json"!r})).write_text(json.dumps(report, indent=2))\n'
+    if p["sampling_feature_flow"]:
+        from feature_flow_recipe import retained_sources as retained_feature_flow_sources
+        retained["semantic_bundle.py"] += "\nRETAINED_FEATURE_FLOW_SOURCES = " + repr(retained_feature_flow_sources()) + "\n"
     for name, source in retained.items():
         request[
             "code"

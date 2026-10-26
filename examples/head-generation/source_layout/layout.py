@@ -125,9 +125,9 @@ def parameter_layout(source):
     cut = max(n.end_lineno for n in functions)
     # First-pass sampling is part of the same pure coordinate/sampling API.
     sampling = [n for n in tree.body if isinstance(n, ast.FunctionDef)
-                and n.name in {"validate_sampling", "lid_station_plan"}]
+                and n.name in {"validate_sampling", "lid_station_plan", "validate_feature_flow_contract"}]
     if sampling:
-        if {n.name for n in sampling} != {"validate_sampling", "lid_station_plan"}:
+        if not {"validate_sampling", "lid_station_plan"} <= {n.name for n in sampling}:
             raise ValueError("Incomplete sampling API")
         cut = max(n.end_lineno for n in sampling)
         assignments = [n for n in tree.body if isinstance(n, ast.Assign)
@@ -135,11 +135,11 @@ def parameter_layout(source):
         constants = [t.id for n in assignments for t in n.targets if isinstance(t, ast.Name)]
         if len(constants) != len(assignments) or set(constants) not in ({"SAMPLING_LIMITS"}, {"SAMPLING_LIMITS", "GAME_FACE_SAMPLING"}):
             raise ValueError("Unexpected sampling constants")
-        allowed = set(names) | {"validate_sampling", "lid_station_plan"}
+        allowed = set(names) | {n.name for n in sampling}
         if any(isinstance(n, ast.FunctionDef) and n.name not in allowed
                for n in tree.body if n.end_lineno <= cut):
             raise ValueError("Unexpected sampling helper boundary")
-        names += constants + ["validate_sampling", "lid_station_plan"]
+        names += constants + [n.name for n in sampling]
     curves = "".join(lines[:cut])
     suffix = "".join(lines[cut:])
     doc = ast.get_docstring(tree, clean=False)
@@ -176,6 +176,16 @@ def reconstructed(files, record):
             part = files[item["path"]]
             if digest(part) != item["sha256"]:
                 raise ValueError("Changed pipeline stage")
+            parts.append(part)
+        original = "".join(parts)
+    elif record["kind"] == "ordered_module":
+        if digest(files[record["entry_name"]]) != record["entry_sha256"]:
+            raise ValueError("Changed ordered module entry")
+        parts = []
+        for item in record["stages"]:
+            part = files[item["path"]]
+            if digest(part) != item["sha256"]:
+                raise ValueError("Changed ordered module source")
             parts.append(part)
         original = "".join(parts)
     elif record["kind"] == "parameter_curves":

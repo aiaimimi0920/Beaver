@@ -52,6 +52,32 @@ steps.append(("export", members))
         with self.assertRaises(ValueError):
             reconstructed(changed, record)
 
+    def test_sampling_optional_contract_shares_helper_globals(self):
+        source = ('def upper_shape(t,c):\n    return t\n'
+                  'def upper_shape_derivative(t,c):\n    return 1\n'
+                  'import math\nSAMPLING_LIMITS = {"flow": 0}\n'
+                  'def validate_sampling(p):\n    validate_feature_flow_contract(p)\n    return p\n'
+                  'def lid_station_plan(n):\n    return n\n'
+                  'def validate_feature_flow_contract(p):\n    assert p["flow"] == 1\n'
+                  'import copy\nLIMITS = copy.copy(SAMPLING_LIMITS)\n')
+        files, record = parameter_layout(source)
+        self.assertEqual(reconstructed(files, record), source)
+        helper = types.ModuleType('semantic_parameter_curves')
+        exec(files['semantic_parameter_curves.py'], helper.__dict__)
+        previous = sys.modules.get(helper.__name__)
+        sys.modules[helper.__name__] = helper
+        try:
+            scope = {}
+            exec(files['semantic_parameters.py'], scope)
+            self.assertEqual(scope['validate_sampling']({'flow': 1}), {'flow': 1})
+            with self.assertRaises(AssertionError):
+                scope['validate_sampling']({'flow': 0})
+        finally:
+            if previous is None:
+                sys.modules.pop(helper.__name__, None)
+            else:
+                sys.modules[helper.__name__] = previous
+
     def test_parameters_preserve_imported_api(self):
         source = '''"""Original public documentation."""
 def upper_shape(t, c):
