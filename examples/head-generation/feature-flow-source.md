@@ -63,7 +63,7 @@ limitation by bypassing hashes or falling back to unverified source.
 
 ## Evidence and remaining work
 
-Native source iterations on 2026-10-26 generated 920 skin/ear quads. The retained
+Early native source iterations on 2026-10-26 generated 920 skin/ear quads. The retained
 source refactor was checked against the prior model: all 55 meshes had matching
 positions, topology, UVs, point attributes and deform weights, and runtime GLB
 bytes were identical. Later source-flow and ear corrections intentionally change
@@ -125,6 +125,37 @@ describe this as a 2 mm spatial bound. Source generation and sampled mouth
 poses passed their checks, and nine actual engine pose captures were verified.
 These checks do not remove the remaining upper-lip crest/valley or establish
 continuous-domain collision safety or final artistic approval.
+
+### Local upper-lip depth and outer-ring transition
+
+The opt-in source path now keeps the first upper support ring at its earlier
+peak-sampling location, but uses a compact C1 upper-half window for the second
+and third rings. One additional closed support ring splits the long outer
+span. It does not globally densify the head or reconstruct reference quads.
+
+Depth fairing is limited to internal upper-mouth samples: the inherited
+reference and calibration remain unchanged, the total local depth difference
+is capped at 5.2 mm, and the additional fairing move at 1.5 mm. All other depth
+calls retain their existing reviewed bound (4.2 mm in the checked profile).
+These are depth differences, not limits on total three-dimensional vertex
+displacement. Non-finite values fail closed. The new lower-half support points
+use midpoint depths, and those final interpolated depths are checked against
+the original lower-region bound rather than checked only before replacement.
+
+Saved-model checkpoints using these adapters retained the oral aperture and
+added 30 source points/quads, producing 950 skin/ear quads. One central 15.192 mm
+span became 7.139/8.114 mm. The following outer-ring transition reduced the
+measured central-versus-shoulder height difference from 2.964 to 0.176 mm.
+Only 28 moving mouth points required new UV and morph values in that step;
+fixed oral points and unrelated mouth fields remained unchanged. Independent
+81-pose CPU checks did not find degenerate or reversed sampled triangles.
+
+A real nine-pose engine capture was verified for the added-ring checkpoint,
+not for every later shape. Subdividing a nonplanar lower quad does not preserve
+its triangulated surface exactly: sampled distances reached 0.117 mm near a
+mouth corner. Narrow ear regions, concentrated nasal turns and final visual
+likeness remain open. None of these measurements, source tests or CI results
+constitutes artistic, global-collision or deployment acceptance.
 
 Focused CPU checks, from this directory:
 
