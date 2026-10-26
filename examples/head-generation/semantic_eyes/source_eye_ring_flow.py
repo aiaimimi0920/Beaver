@@ -1,12 +1,11 @@
-"""Lower-orbit curvature sampling without moving the aperture or outer frame."""
+"""Distribute orbital rings without moving the aperture or shared outer frame."""
 import inspect
 
 
 def eye_source_ring_fraction(base, angle):
-    from math import sin
-    if abs(base-.6) > 1e-12:
-        return base
-    return .6-.2*max(0.0,-sin(angle))**2
+    for old,new in ((.6,.25),(.7,.5),(.9,.75)):
+        if abs(base-old)<1e-12: return new
+    return base
 
 
 def adapt(sources):
@@ -24,7 +23,7 @@ def adapt(sources):
             '                x = ix * (1 - sample_blend) + bx * sample_blend\n'
             '                y = iy * (1 - sample_blend) + by * sample_blend')
     replace('        "semantic_rows": levels,',
-            '        "eye_curvature_source_sampling": {"version":1,"base_rings":[0,.6,.7,.9,1],"lower_first_ring":".6 - .2 * max(0, -sin(angle)) ** 2","aperture_and_frame_fixed":True,"surface_changed":False},\n'
+        '        "eye_curvature_source_sampling": {"version":2,"base_rings":[0,.6,.7,.9,1],"effective_rings":[0,.25,.5,.75,1],"aperture_and_frame_fixed":True,"surface_changed":False},\n'
             '        "semantic_rows": levels,')
     out['shell.py'] = shell
     out['face.py'] += '\n\n'+inspect.getsource(eye_source_ring_fraction)+'\n'

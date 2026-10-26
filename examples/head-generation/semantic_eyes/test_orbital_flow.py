@@ -32,11 +32,10 @@ class OrbitalFlowTest(unittest.TestCase):
             for i in range(101):self.assertTrue(0<=w(-h+2*h*i/100)<=1)
             self.assertAlmostEqual((w(eps)-w(0))/eps,(w(0)-w(-eps))/eps,delta=.01)
 
-    def test_only_lower_first_ring_changes(self):
+    def test_radial_rings_are_even_and_boundaries_fixed(self):
         for angle in [i*math.pi/100 for i in range(-100,101)]:
-            first=eye_source_ring_fraction(.6,angle)
-            self.assertTrue(.4-1e-14<=first<=.6+1e-14)
-            if angle>=0:self.assertEqual(first,.6)
-            for value in [0,.7,.9,1]:self.assertEqual(eye_source_ring_fraction(value,angle),value)
+            values=[eye_source_ring_fraction(value,angle) for value in [0,.6,.7,.9,1]]
+            self.assertEqual(values,[0,.25,.5,.75,1])
+            self.assertTrue(all(b>a for a,b in zip(values,values[1:])))
 
 if __name__=='__main__':unittest.main()

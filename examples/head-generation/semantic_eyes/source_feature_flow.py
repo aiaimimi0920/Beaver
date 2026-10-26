@@ -33,6 +33,21 @@ def flow_monotone_curve(value, knots, targets):
             + (t**3 - t**2) * widths[i] * tangents[i + 1])
 
 
+def orbital_shell_rounding(height, lateral, mapped_q, mapped_y, strength):
+    """Round the shared eye-frame corners with compact C1 source-chart support.
+
+    The true aperture still uses the unmapped reference. The nasal cheek guide
+    below 1.608, midline, outer head rim and ear roots remain outside support.
+    """
+    nx = (lateral-.56)/.38
+    ny = (height-1.6435)/.0295
+    window = ((1-flow_smoothstep((abs(nx)-1)/.15))
+              * (1-flow_smoothstep((abs(ny)-1)/(.4 if ny>0 else .2))))
+    amount = .04*strength*window
+    return (mapped_q-amount*.38*nx*ny*ny,
+            mapped_y-amount*.0295*ny*nx*nx)
+
+
 def feature_flow_chart(height, lateral, strength=1.0):
     """Compose two monotone chart maps, preserving the center seam and lower-mouth boundary.
 
@@ -73,7 +88,7 @@ def feature_flow_chart(height, lateral, strength=1.0):
         if lateral == 1:
             return lateral, height
         targets = old_targets if height <= 1.580 else broad_targets
-        return q, flow_monotone_curve(height, old_knots, targets)
+        return orbital_shell_rounding(height,lateral,q,flow_monotone_curve(height, old_knots, targets),strength)
     mouth_boundary = flow_monotone_curve(1.580, old_knots, old_targets)
     ear_boundary = flow_monotone_curve(1.608, old_knots, broad_targets)
     knots = [1.551, 1.570, 1.580, 1.599, 1.608, 1.614, 1.673, 1.710]
@@ -81,7 +96,7 @@ def feature_flow_chart(height, lateral, strength=1.0):
                1.599 + strength*(.008*nose - .014*cheek),
                ear_boundary, broad_targets[3], old_targets[4], 1.710]
     yy = flow_monotone_curve(height, knots, targets)
-    return q, yy
+    return orbital_shell_rounding(height,lateral,q,yy,strength)
 
 
 def feature_flow_surface_point(height, lateral):
@@ -124,6 +139,6 @@ def adapt(sources):
     out['face.py'] = out['face.py'].replace(
         eye_ring_source, '    if kind == "eye":\n        return [0, 0.6, 0.7, 0.9]', 1)
     out['shell.py'] = shell + '\n\n' + inspect.getsource(feature_flow_surface_point)
-    helpers = (flow_smoothstep, flow_monotone_curve, feature_flow_chart)
+    helpers = (flow_smoothstep, flow_monotone_curve, orbital_shell_rounding, feature_flow_chart)
     out['face.py'] += '\n\n' + '\n\n'.join(inspect.getsource(f) for f in helpers) + '\n'
     return out

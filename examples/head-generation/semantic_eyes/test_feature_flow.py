@@ -1,6 +1,6 @@
 """Source-chart invariants, not native mesh or artistic acceptance."""
 import unittest
-from source_feature_flow import feature_flow_chart
+from source_feature_flow import feature_flow_chart, orbital_shell_rounding
 
 
 class FeatureFlowTests(unittest.TestCase):
@@ -16,9 +16,27 @@ class FeatureFlowTests(unittest.TestCase):
                     self.assertEqual(feature_flow_chart(y, q), (q, y))
 
     def test_cheek_guide_has_no_outward_turnback(self):
-        for height in (1.599, 1.614):
+        for height in (1.599,):
             heights = [feature_flow_chart(height, i/100)[1] for i in range(101)]
             self.assertTrue(all(b <= a + 1e-12 for a,b in zip(heights,heights[1:])))
+
+    def test_eye_frame_rounding_is_compact_and_preserves_reference_domains(self):
+        # The 1.614 eye-frame boundary now curves locally around the eye instead
+        # of being constrained to a globally horizontal/monotone rectangle.
+        # The nasal cheek guide above still has the original no-turnback test.
+        for y in (1.599, 1.608, 1.686):
+            for q in (0, .12, .18, .56, .94, 1):
+                self.assertEqual(orbital_shell_rounding(y,q,q,y,1),(q,y))
+        for y in (1.614, 1.6435, 1.673):
+            for q in (0, 1):
+                self.assertEqual(orbital_shell_rounding(y,q,q,y,1),(q,y))
+        for y in (1.614, 1.673):
+            for q in (.18, .94):
+                x,z = orbital_shell_rounding(y,q,q,y,1)
+                self.assertLess(abs(x-.56),abs(q-.56))
+                self.assertLess(abs(z-1.6435),abs(y-1.6435))
+                self.assertLessEqual(abs(x-q),.01521)
+                self.assertLessEqual(abs(z-y),.001181)
 
     def test_landmark_flow_directions(self):
         self.assertLess(feature_flow_chart(1.673, 0)[1], feature_flow_chart(1.673, .55)[1])

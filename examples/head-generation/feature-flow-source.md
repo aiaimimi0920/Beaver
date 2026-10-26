@@ -108,6 +108,24 @@ experimental mesh confirmed all 30 shared oral edges retained the skin donor's
 crease/group values; this is an attribute-ownership result, not a claim that
 the experimental eye or lip shape has final artistic acceptance.
 
+The opt-in eye chart also rounds the shared rectangular support locally with
+a compact C1 field, while retaining the original aperture reference and fixed
+head rim. Its four radial intervals are redistributed to 0/.25/.5/.75/1.
+The upper lip's two internal samples move toward the existing peak and shoulder
+with an angle-dependent fade; the lower-lip samples, aperture and outer boundary
+remain fixed. This is sampling of the existing depth function, not additional
+lip-depth smoothing or an increase of the reviewed support bound.
+
+Actual experimental saved-mesh checks preserved both eye apertures and all
+30 shared oral aperture points and their morph deltas. The upper-lip first
+radial gap decreased from 13.723 to 4.803 mm. Both lower internal rings remained
+unchanged. Eye-frame XZ displacement was about 2.02 mm, but reevaluating depth
+on the existing surface produced up to 5.97 mm total 3D displacement; do not
+describe this as a 2 mm spatial bound. Source generation and sampled mouth
+poses passed their checks, and nine actual engine pose captures were verified.
+These checks do not remove the remaining upper-lip crest/valley or establish
+continuous-domain collision safety or final artistic approval.
+
 Focused CPU checks, from this directory:
 
 ```sh
