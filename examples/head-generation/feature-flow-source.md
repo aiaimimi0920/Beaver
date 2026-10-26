@@ -85,12 +85,26 @@ model across all 55 source meshes and the complete runtime GLB bytes. Source
 packaging reconstruction and the original three-job receipt chain were verified
 independently of that geometric comparison.
 
+The subsequent upper ear-to-skin attachment revision keeps the original 40 ear
+points, their corner UVs and crease groups unchanged. It moves three attachment
+points and one adjoining skin point per side, retaining all source face indices.
+Actual saved-mesh checks found the affected attachment's largest 3D corner
+reduced from about 155 to 135 degrees, with right-side and right-45-degree
+projection maxima reduced from 162.56/165.59 to 139.21/126.71 degrees.
+Both six-quad skin patches retain two-face incidence along the shared split
+seams; new corner UV interpolation errors were below 3.1e-8.
+Native generation, source packaging and opaque source-wire three-view rendering
+completed for this revision. This does not certify global self-intersection
+absence or final runtime/artistic acceptance. The adjacent front smooth cap,
+eye outer-frame and mouth faceting remain unresolved.
+
 Focused CPU checks, from this directory:
 
 ```sh
 python -m unittest discover -s source_layout -p 'test_*.py'
 python -m unittest discover -s semantic_eyes -p '*flow.py'
 python -m unittest discover -s semantic_eyes -p 'test_weld_ownership.py'
+python -m unittest discover -s semantic_eyes -p 'test_ear_attachment.py'
 python -m unittest discover -s face_components -p 'test_feature_flow_recipe.py'
 python -m unittest discover -s face_components -p 'test_generated_source_size.py'
 ```
