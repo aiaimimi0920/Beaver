@@ -98,6 +98,16 @@ completed for this revision. This does not certify global self-intersection
 absence or final runtime/artistic acceptance. The adjacent front smooth cap,
 eye outer-frame and mouth faceting remain unresolved.
 
+The shared oral weld now restores skin-owned crease EDGE fields as well as
+POINT fields. Duplicate skin/cavity edges previously made `crease_edge` and
+`FacialCreaseGroup` ownership depend on weld ordering. Capture requires a
+unique pre-weld skin/cavity boundary edge; restoration requires exactly two
+mixed-owner incident faces and a bijective endpoint donor correspondence.
+Only these shared edges are written. Native validation in the subsequent
+experimental mesh confirmed all 30 shared oral edges retained the skin donor's
+crease/group values; this is an attribute-ownership result, not a claim that
+the experimental eye or lip shape has final artistic acceptance.
+
 Focused CPU checks, from this directory:
 
 ```sh

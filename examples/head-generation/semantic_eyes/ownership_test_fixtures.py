@@ -81,6 +81,14 @@ def mesh_object(name, points, faces, regions, skin=False):
                   for i, point in enumerate(points)],
         polygons=[SimpleNamespace(index=i, vertices=face) for i, face in enumerate(faces)],
         attributes=Attributes(), update=lambda: None)
+    edge_keys = sorted({tuple(sorted((a,b))) for face in faces
+                        for a,b in zip(face,face[1:]+face[:1])})
+    owner.data.edges = [SimpleNamespace(index=i,vertices=edge)
+                        for i,edge in enumerate(edge_keys)]
+    add_attribute(owner, 'crease_edge', 'FLOAT', 'EDGE',
+                  [1.0 if skin else 0.0] * len(edge_keys), 'value')
+    add_attribute(owner, 'FacialCreaseGroup', 'INT', 'EDGE',
+                  [3 if skin else 0] * len(edge_keys), 'value')
     color = (.985, .895, .865, 1) if skin else (.26, .065, .072, 1)
     add_attribute(owner, 'NormalRegion', 'INT', 'FACE', regions, 'value')
     add_attribute(owner, 'Color', 'FLOAT_COLOR', 'POINT', [color] * len(points), 'color')

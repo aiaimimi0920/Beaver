@@ -36,6 +36,13 @@ class WeldOwnershipTests(unittest.TestCase):
         positions = [vertex.co.copy() for vertex in joined.data.vertices]
         untouched = [joined.data.attributes['Color'].data[i].color for i in (2, 3)]
         result = restore_oral_skin_donors(joined, snapshot)
+        self.assertEqual(result['edge_ownership']['boundary_edges'], 1)
+        for edge in joined.data.edges:
+            shared = set(edge.vertices) == {0,1}
+            self.assertEqual(joined.data.attributes['crease_edge'].data[edge.index].value,
+                             1.0 if shared else 0.0)
+            self.assertEqual(joined.data.attributes['FacialCreaseGroup'].data[edge.index].value,
+                             3 if shared else 0)
         self.assertEqual(result['boundary_vertices'], 2)
         self.assertEqual(result['group_memberships_changed'], 2)
         for vertex, before in zip(joined.data.vertices, positions):
@@ -76,6 +83,36 @@ class WeldOwnershipTests(unittest.TestCase):
         np.testing.assert_allclose(snapshot['records'][0]['position'], [-.2, .3, -.1])
         self.assertEqual(snapshot['records'][0]['values']['MouthOpenDelta'],
                          before['records'][0]['values']['MouthOpenDelta'])
+
+    def test_shared_edge_cardinality_is_not_silently_dropped(self):
+        snapshot = self.capture()
+        snapshot['edge_records'] = []
+        joined = mesh_object('Face', [(0,0,0),(1,0,0),(0,1,0),(0,-1,0)],
+                             [[0,1,2],[0,1,3]], [1,10])
+        joined.vertex_groups.append(Group('Continuous facial shell',0,joined))
+        add_attribute(joined,'BlinkSection','INT','POINT',[0]*4,'value')
+        with self.assertRaisesRegex(ValueError,'edge correspondence'):
+            restore_oral_skin_donors(joined,snapshot)
+
+    def test_missing_source_edge_schema_fails_closed(self):
+        del self.skin.data.attributes['crease_edge']
+        with self.assertRaisesRegex(ValueError,'crease donor schema'):
+            self.capture()
+
+    def test_reordered_weld_indices_keep_semantic_edge_owner(self):
+        snapshot = self.capture()
+        joined = mesh_object('Face', [(0,-1,0),(1,0,0),(0,0,0),(0,1,0)],
+                             [[2,1,3],[2,1,0]], [1,10])
+        joined.vertex_groups.append(Group('Continuous facial shell',0,joined))
+        add_attribute(joined,'BlinkSection','INT','POINT',[0]*4,'value')
+        result = restore_oral_skin_donors(joined,snapshot)
+        self.assertEqual(result['edge_ownership']['boundary_edges'],1)
+        for edge in joined.data.edges:
+            shared = set(edge.vertices)=={1,2}
+            self.assertEqual(joined.data.attributes['crease_edge'].data[edge.index].value,
+                             1.0 if shared else 0.0)
+            self.assertEqual(joined.data.attributes['FacialCreaseGroup'].data[edge.index].value,
+                             3 if shared else 0)
 
 
 if __name__ == '__main__':
