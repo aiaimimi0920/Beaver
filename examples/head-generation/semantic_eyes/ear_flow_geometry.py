@@ -1,9 +1,10 @@
 """Semantic upper attachment layout without per-corner O-grid refinement."""
 
 
-def source_flow_ear_layout(vertices, faces):
+def source_flow_ear_layout(vertices, faces, lower_root=False):
     import numpy as np
-    result = flow_initialize_ear(vertices, faces)
+    result = (flow_initialize_ear(vertices, faces, lower_root=True) if lower_root
+              else flow_initialize_ear(vertices, faces))
     v = np.array(result['vertices'],dtype=float)
     if len(v) != 40 or result['quads'][-1] != [37,36,39,27]:
         raise ValueError('Upper attachment source template changed')
@@ -103,7 +104,7 @@ def flow_ruled_weights(first, second, u, t):
     return result
 
 
-def flow_initialize_ear(vertices, faces):
+def flow_initialize_ear(vertices, faces, lower_root=False):
     """Fit the semantic template with a smooth bounded radial parameterization."""
     import numpy as np
     original = np.asarray(vertices,dtype=float)
@@ -178,6 +179,9 @@ def flow_initialize_ear(vertices, faces):
     fit = ear_quad_least_squares(loss,np.zeros(size),max_nfev=500,
                                 bounds=(np.full(size,-1000.),np.full(size,1000.)))
     points = decode(fit.x)
+    lower_root_report = None
+    if lower_root:
+        points, lower_root_report = flow_lower_root_stations(points,base,original,unit,fixed,quads)
     dots,angles,areas,orientation = measures(points)
     other = list(range(31))
     if dots[other].min()<.49 or angles[other].min()<8 or angles[other].max()>160 or orientation.min()<.14 or areas.min()<=1e-8:
@@ -191,6 +195,7 @@ def flow_initialize_ear(vertices, faces):
     output[fixed] = original[fixed]
     order = list(range(10))+[18,20,21,22,23,24,25,26,27,28,19,29]+list(range(10,18))+[30,31]
     return {'vertices':output.tolist(),'quads':quads[order].tolist(),
+            'lower_root_flow':lower_root_report,
             'fixed_vertex_ids':fixed,'ear_main_faces':22,'ear_return_band_faces':8,
             'ear_front_faces':32,
             'ear_face_zones':['main']*20+['smooth_cap']*2+['outer_return','inner_return']*4+['attachment']*2,

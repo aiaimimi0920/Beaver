@@ -413,3 +413,28 @@ corner's fan-normal spread rises from 3.04 to 6.83 degrees. Actual front and
 right45 opaque-wire views support a modestly more direct lower-mouth-to-chin
 transition, not final likeness. The upper frame and broad lower-cheek strips
 remain unresolved; no global artistic or collision acceptance is claimed.
+
+## Bounded lower ear-root source stations
+
+Only the opt-in slender-oval, first-pass source-budget profile applies the
+normalized u1/u2 correction at the first nonendpoint ear row. It runs before
+the existing complete source-fit gates, retaining the original 3.999999-unit
+radial budget in double and stored precision. Incremental movement is bounded
+to one millimeter; worst touched-quad twist must improve, the short segment
+must not shrink, chain turning must not regress, and local area/orientation
+bounds remain enforced. Other ear profiles retain the previous path.
+
+Native comparison changed exactly four ear-interior points, at most .999847 mm.
+The other 2534 vertices, source topology, region labels, skin-root chains and
+ear silhouette boundaries stayed fixed. Worst diagonal warp decreased from
+59.619 to 44.357 degrees; the short segment grew from 2.329 to 2.500 mm and
+maximum chain turning decreased from 88.919 to 79.999 degrees. Neighboring
+quads redistribute warp; this is not a uniform per-face improvement.
+
+Deform weights, six morph deltas, crease ownership, UVMap and DetailUV stayed
+unchanged. Four points' fourteen UV2 corners updated by source projection.
+All 4492 actual triangles passed 81 sampled poses without flips/degeneracy;
+changed triangles had no intersections against the full Face in those samples.
+Actual white-wire views show less lower-root bunching without new visible
+cracks, but an angular side-cheek transition persists. This is local retention,
+not a universal ear-profile or complete artistic acceptance claim.

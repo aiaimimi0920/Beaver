@@ -12,12 +12,16 @@ def flow_stage_source(original):
     for base,faces,vertices in specs:
         print('FEATURE_FLOW_EAR_BEGIN',base,flush=True)
         validate_lower_flow_interface(bm,faces,vertices)
-        result = source_flow_ear_layout([tuple(v.co) for v in vertices],EAR_QUAD_EXPECTED_FACES)
+        lower_root = (C.get('researched_ear_kind') == 'slender-oval'
+                      and STYLE.get('sampling_ear_budget',0) == 1
+                      and STYLE.get('sampling_first_pass',0) == 1)
+        result = source_flow_ear_layout([tuple(v.co) for v in vertices],EAR_QUAD_EXPECTED_FACES,lower_root=lower_root)
         ear_report = apply_final_ear(bm,faces,vertices,result,base,C['ear_return_crease_normals'])
         generated = result.pop('_applied_vertices')
         skin_reports.append(flow_reconnect_skin(bm,vertices,generated,result))
         ear_report['upper_attachment_flow'] = result['upper_attachment_flow']
         ear_report['source_continuity'] = result['source_continuity']
+        ear_report['lower_root_flow'] = result['lower_root_flow']
         ear_report['upper_front_refinement'] = result['upper_front_refinement']
         ear_report['lower_interface_redefinition'] = result['lower_interface_redefinition']
         output.append(ear_report)
@@ -66,7 +70,7 @@ def adapt(sources):
     mesh = mesh.replace(marker,"    result['_applied_vertices'] = vertices\n"+marker,1)
     chunks = [solver,(root/'ear_final_mapping.py').read_text(),mesh,
               (root/'ear_return_cap_solver.py').read_text(),(root/'ear_final_caps.py').read_text(),
-              (root/'ear_flow_geometry.py').read_text(),(root/'ear_front_refinement.py').read_text(),
+              (root/'ear_lower_root_flow.py').read_text(),(root/'ear_flow_geometry.py').read_text(),(root/'ear_front_refinement.py').read_text(),
               (root/'ear_flow_mesh.py').read_text(),stage]
     out['ear_topology.py'] += '\n\n'+'\n\n'.join(chunks)
     source = out['ear_return.py']
