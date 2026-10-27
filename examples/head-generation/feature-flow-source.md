@@ -267,3 +267,41 @@ storage-precision regression replays a captured feasible native solution while
 running the real constraints and final guards; separate tests exercise the
 optimizer and rejection path. This test separation is not a claim that
 cross-platform optimizer convergence has been solved.
+
+## Bounded paired seam depth field
+
+A separately authorized aperture/cavity stage follows the two support solves.
+It leaves every XY station and all support rings fixed. The depth field is
+0.75 mm times (1 - (abs(x)/mouth_half_width)^4)^2: upper and lower seam samples
+at the same x receive the same increment, tapering smoothly to zero at corners.
+The first two cavity boundaries inherit the moved aperture; deeper cavity rings
+remain fixed. This does not reallocate source samples or manually triangulate.
+
+The stage checks both double and float32 geometry against the original aperture
+4.2 mm reference bound, never the upper-support 5.2 mm exception. It commits only
+after finite displacement, original-reference, orientation and quad checks pass.
+The user-authorized seam displacement ceiling is 1.5 mm; the current peak is
+0.75 mm. Native source comparison changed 48 aperture/first-inner-ring points,
+with all XY and other static geometry unchanged. The maximum original-reference
+seam displacement was approximately 1.6512 mm; UVs remained unchanged.
+
+This is a limited process candidate, not final visual acceptance: the central
+side-view lip step is slightly shallower, while the remaining mouth flow issue
+persists. A uniform 0.75 mm translation was not retained because it worsened the
+corner radial turn. The corner-fixed field avoids that specific regression but
+increases some seam circumferential turns by up to about 2.55 degrees.
+
+Actual automatic export triangulation changed four cavity quad diagonals. All
+81 sampled mouth states stayed nondegenerate and unflipped, but the minimum
+normal alignment fell to about 0.06064 in the Open+Spread+Pucker combination.
+This must not be replaced by a more favorable test using older diagonals.
+Two static ear attachment points also lost approximately 0.0012 mm of inherited
+MouthOpen delta during source assembly; the ear source code and static geometry
+were unchanged. Existing welded attribute ownership is a suspected cause, not
+a proven repair. These observations prevent claims of bitwise morph stability,
+global collision freedom, or a fully resolved lip surface.
+
+The native review also captured nine hash-bound engine states, including neutral,
+each individual mouth control, blink checks, and Open+Spread+Pucker at right45.
+This confirms actual runtime loading and those applied controls, not exhaustive
+self-contact exclusion. Keep the prior baseline available for visual comparison.

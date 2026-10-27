@@ -15,6 +15,7 @@ ADAPTERS = (
     'source_lip_relief_flow',
     'source_lip_joint_flow',
     'source_lip_depth_flow',
+    'source_lip_seam_flow',
     'source_quad_export',
     'source_skin_crossings',
     'source_rear_quad_guard',
@@ -34,6 +35,7 @@ DEPENDENCIES = (
     'ear_front_refinement',
     'lip_joint_solver',
     'lip_depth_solver',
+    'lip_seam_shift',
     'ear_flow_mesh',
 )
 
