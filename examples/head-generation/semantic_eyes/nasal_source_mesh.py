@@ -4,7 +4,7 @@ from scipy.spatial import cKDTree
 from nasal_source_geometry import AuthorQuadSurface, canonical_boundary, edge_incidence
 from nasal_source_domain import current_source_features, resolve_outer_anchors, select_source_domain
 from nasal_source_core import make_core
-from nasal_source_binding import validate_domain, bind_patch, validate_patch, extend_nasal_domain
+from nasal_source_binding import validate_domain, bind_patch, validate_patch, extend_nasal_domain, validate_nasal_handoffs
 
 
 def prepare_nasal_patch(vertices, faces, regions, ordinals, authored, edge_groups):
@@ -17,6 +17,7 @@ def prepare_nasal_patch(vertices, faces, regions, ordinals, authored, edge_group
     selected,boundary,extension = extend_nasal_domain(vertices,faces,regions,selected,boundary,features,edge_groups)
     domain.update(final_faces=len(selected),boundary_count=len(boundary),lower_cheek_extension_faces=1)
     points,quads,lineage = bind_patch(surface,vertices,core,weights,boundary)
+    handoffs = validate_nasal_handoffs(boundary,anchors,quads)
     quality = validate_patch(surface,vertices[boundary],points,quads)
     distances,mirrors = cKDTree(vertices).query(vertices*np.array([-1,1,1]),k=2)
     used = {i for j in selected for i in faces[j]}
@@ -41,6 +42,7 @@ def prepare_nasal_patch(vertices, faces, regions, ordinals, authored, edge_group
     validate_domain(vertices,faces,mirrored,other_boundary,edge_groups)
     reflected = vertices*np.array([-1,1,1])
     other_surface = AuthorQuadSurface(reflected,[tuple(reversed(f)) for f in faces],regions)
+    validate_nasal_handoffs(other_boundary,[int(mirror[i]) for i in anchors],quads)
     other_quality = validate_patch(other_surface,reflected[other_boundary],points,quads)
     other_extension = lookup[tuple(sorted(int(mirror[i]) for i in faces[extension]))]
     if set(faces[other_extension]) & features['protected']:
@@ -51,6 +53,7 @@ def prepare_nasal_patch(vertices, faces, regions, ordinals, authored, edge_group
                  quads=[q[::-1] for q in quads],lineage=other_lineage,extension=other_extension)], {
         'domain':domain,'quality':[quality,other_quality],
         'primary_flow_count':len(lines),'primary_flow_local_paths':lines,
+        'primary_flow_boundary_slots':handoffs,'lateral_handoffs_verified':True,
         'protected_current_vertices':len(features['protected']),
         'source_surface':'Current authoring quad bilinear surface; not export triangles',
         'scope':'Native visual trial, not final character acceptance'}

@@ -659,3 +659,42 @@ but lateral handoffs still bend abruptly into the older outer-cheek rows.
 Therefore 223 is a retained improvement, not final five-flow similarity
 acceptance; subsequent work should address that continuation rather than
 resampling the already validated nasal core again.
+
+## Explicit lateral guide continuation
+
+The next trial leaves all 78 core points, their original frozen nasal samples
+and every retained old vertex unchanged. Its annulus must contain five
+explicit two-sided bridge edges from the current semantic outer anchors to
+the corresponding core row starts. The canonical boundary mapping is checked
+on both mirrored halves; five internal curves alone are not sufficient.
+
+A constrained cover adds one local shoulder convexification unit rather than
+moving protected or retained geometry. The annulus has 16 supports and the
+whole patch 114 quads per side. This increases localized extraordinary nodes
+relative to 223 while correcting the five wrong lateral correspondences.
+A single same-unit refinement reduces maximum edge ratio from 9.547 to
+3.168 locally; the whole patch is 5.727 versus 223's 5.903. The final float32
+angle range is 10.1009–169.9004 degrees, close to the unchanged 10–170 limits,
+and the sampled author-surface bound is 0.926432 mm. These narrow margins and
+the pole tradeoff remain explicit visual-review requirements.
+
+CPU full-field reconstruction, 729 pose states and 99 sampled strict crossing
+cases pass for the frozen proposal. This section records a CPU proposal,
+not a completed native build or final similarity acceptance.
+
+Native trial 224 reproduces the frozen proposal exactly: 2642 Face points,
+3011 source faces and 4700 actual runtime triangles. All three complete UV
+corner sets, point/deform fields and six Face-owned shape keys match the
+independent oracle. Both mirrored sets of five two-sided lateral handoffs
+are present. All 729 sampled poses and the continuous blink/open orientation
+gate pass. Across 99 pose cases (95 distinct weights), 480 changed-scope
+triangles against all 4700 actual runtime triangles have no strict crossings,
+with the previously stated contact exclusions and no continuous guarantee.
+
+The verified opaque-wire views and five-color actual-edge comparison now
+show the intended upward nasal-to-outer-cheek flow and resolve the wrong-row
+lateral connection. For that specific five-flow objective, the structure is
+reasonably similar to the inferred reference. This does not certify identical
+artist topology, the remaining local pole distribution, whole-face beauty,
+all expressions, or a completed character/product. The localized shoulder
+angle/pole tradeoff remains documented rather than hidden by the comparison.

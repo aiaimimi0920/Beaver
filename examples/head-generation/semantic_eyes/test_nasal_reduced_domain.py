@@ -2,7 +2,7 @@
 import unittest
 from unittest.mock import patch
 import numpy as np
-from nasal_source_binding import extend_nasal_domain
+from nasal_source_binding import extend_nasal_domain, validate_nasal_handoffs
 from nasal_source_geometry import edge_incidence
 from nasal_source_template import TEMPLATE
 from nasal_source_mesh import claim_nasal_source_face
@@ -19,8 +19,8 @@ class ReducedNasalDomainTests(unittest.TestCase):
             paths.append(p)
         self.assertEqual(len(set(sum(paths,[]))),sum(map(len,paths)))
         self.assertEqual([len(p)-1 for p in paths],[11,12,11,12,11])
-        self.assertEqual(len(TEMPLATE['centers']),9)
-        self.assertEqual(len(TEMPLATE['quads']),107)
+        self.assertEqual(len(TEMPLATE['centers']),16)
+        self.assertEqual(len(TEMPLATE['quads']),114)
 
     def test_reusing_selected_quad_requires_same_orientation_and_single_claim(self):
         class Face:
@@ -32,6 +32,19 @@ class ReducedNasalDomainTests(unittest.TestCase):
                                       (set(),set(),[0,1,2,3]),
                                       ({face},set(),[0,3,2,1])):
             with self.assertRaises(ValueError):claim_nasal_source_face(face,order,selected,reused)
+
+    def test_lateral_handoffs_require_semantic_row_and_two_sided_real_edges(self):
+        n=TEMPLATE['boundary_count'];boundary=list(range(100,100+n))
+        slots=TEMPLATE['semantic_outer_anchor_slots'];anchors=[boundary[i] for i in slots]
+        quads=[tuple(i if kind=='outer' else n+i+(78 if kind=='center' else 0)
+                     for kind,i in q) for q in TEMPLATE['quads']]
+        self.assertEqual(validate_nasal_handoffs(boundary,anchors,quads),slots)
+        with self.assertRaisesRegex(ValueError,'ownership'):
+            validate_nasal_handoffs(boundary,anchors[::-1],quads)
+        bridge=set((slots[0],n))
+        broken=[q for q in quads if not bridge<=set(q)]
+        with self.assertRaisesRegex(ValueError,'missing'):
+            validate_nasal_handoffs(boundary,anchors,broken)
 
     def fixture(self):
         v=np.array([(1,0,0),(2,0,0),(2,0,1),(1,0,1),(3,0,0),(3,0,1)],float)

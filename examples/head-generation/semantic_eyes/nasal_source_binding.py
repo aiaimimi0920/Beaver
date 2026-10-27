@@ -124,3 +124,20 @@ def extend_nasal_domain(vertices, faces, regions, selected, boundary, features, 
     boundary=canonical_boundary(vertices,faces,selected)
     validate_domain(vertices,faces,selected,boundary,groups)
     return selected,boundary,index
+
+
+def validate_nasal_handoffs(boundary, anchors, quads):
+    """Every current semantic outer guide must join its own core row directly."""
+    slots=TEMPLATE['semantic_outer_anchor_slots']
+    required=TEMPLATE['required_handoff_edges']
+    if (len(slots)!=5 or len(required)!=5 or len(set(slots))!=5
+            or [boundary[i] for i in slots]!=list(anchors)):
+        raise ValueError('Nasal lateral handoff source ownership changed')
+    edges=edge_incidence(quads)
+    for row,(slot,refs) in enumerate(zip(slots,required)):
+        if refs!=[['outer',slot],['core',row*12]]:
+            raise ValueError('Nasal lateral handoff does not match its semantic row')
+        edge=tuple(sorted((slot,len(boundary)+row*12)))
+        if edge not in edges or len(edges[edge])!=2:
+            raise ValueError('Nasal lateral guide bridge is missing or not two-sided')
+    return slots.copy()
