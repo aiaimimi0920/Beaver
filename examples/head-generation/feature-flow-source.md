@@ -394,3 +394,22 @@ All 4492 actually exported triangles passed 81 sampled mouth combinations
 without flips or degeneracy. Actual opaque wire views support retaining this
 small improvement, not final reference-level acceptance. Mouth-to-cheek
 patch connectivity and lower-jaw strip allocation still require review.
+
+## Lower mouth-frame connection
+
+The second density transition in the uppermost graded-chin strip now rotates
+one shared quad edge through its authored transition point. The change is
+expressed in source row/slot roles before mirroring and compaction; it is not
+a final vertex-ID patch. Native comparison kept all 2538 vertex positions,
+all morph coordinates and per-vertex UV sets unchanged, while replacing four
+quads bilaterally. The boundary is identical and no nonmanifold edge appeared.
+Each side replaces two valence-five points and one valence-three point with
+one valence-five point. The new connection is 11.76 mm versus 13.13 mm before.
+
+The 4492 actually exported triangles passed 81 sampled mouth combinations;
+four triangles changed. Fixed vertex positions do not imply identical surfaces:
+local sampled depth interpolation changed by up to about 0.386 mm. One original
+corner's fan-normal spread rises from 3.04 to 6.83 degrees. Actual front and
+right45 opaque-wire views support a modestly more direct lower-mouth-to-chin
+transition, not final likeness. The upper frame and broad lower-cheek strips
+remain unresolved; no global artistic or collision acceptance is claimed.

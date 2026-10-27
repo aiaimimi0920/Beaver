@@ -39,7 +39,18 @@ def feature_chin_front_strip(vertices, row, levels, columns, sample):
         left,middle,right = range(len(vertices),len(vertices)+3)
         for t,col in params[pi:pi+3]:
             vertices.append(sample(levels[row]+t*(levels[row+1]-levels[row]),col))
-        faces.extend(((a0,a1,middle,left),(middle,b2,b1,left),(b1,b0,a0,left),
+        bridge = (b1,b0,a0,left)
+        if row == 2 and k == 4:
+            # Redirect the lower mouth-frame strip through its authored
+            # transition point, not through a final assembled vertex ID.
+            previous = (row*columns+low[k-1], a0, b0,
+                        (row+1)*columns+high[j-1])
+            if not faces or faces[-1] != previous:
+                raise ValueError('Lower mouth-frame source adjacency changed')
+            aa, bb, cc, dd = previous
+            faces[-1] = (left,b1,cc,dd)
+            bridge = (left,dd,aa,bb)
+        faces.extend(((a0,a1,middle,left),(middle,b2,b1,left),bridge,
                       (a1,a2,right,middle),(middle,right,b3,b2),(right,a2,b4,b3)))
         k += 2; j += 4; pi += 3
     if j != len(high)-1 or pi != len(params):
@@ -151,7 +162,7 @@ def adapt(sources):
             '    if STYLE.get("sampling_outline_refinement",0): chain = flow_chains[3]\n'
             '    face = mesh("Face shell editable half", verts, shell_faces, SKIN, mirror=True)')
     replace('        "chin_side_quads": len(side_path) - 1,',
-            '        "chin_flow_layout": {"version": 1, "front_row_columns": [len(feature_chin_row_columns(j,cols)) for j in range(4)], "closure_rows": len(under_depth_rows), "side": side_flow_report},\n'
+            '        "chin_flow_layout": {"version": 2, "lower_mouth_strip_rotation": True, "front_row_columns": [len(feature_chin_row_columns(j,cols)) for j in range(4)], "closure_rows": len(under_depth_rows), "side": side_flow_report},\n'
             '        "chin_side_quads": len(side_flow_faces),')
     out['shell.py'] = shell + '\n\n' + inspect.getsource(feature_flow_grid_point)
     helpers = (feature_flow_rows, feature_chin_row_columns, feature_chin_front_strip,

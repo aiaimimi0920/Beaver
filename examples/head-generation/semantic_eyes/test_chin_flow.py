@@ -25,6 +25,24 @@ class ChinFlowTests(unittest.TestCase):
             neighbors[a].add(b);neighbors[b].add(a)
         self.assertLessEqual(max(map(len,neighbors.values())), 5)
 
+    def test_lower_mouth_connection_uses_semantic_transition(self):
+        levels = [1.544, 1.551, 1.560, 1.570]
+        vertices = [(i, 0, y) for y in levels for i in range(13)]
+        faces = feature_chin_front_strip(vertices, 2, levels, 13, lambda y,c: (c,0,y))
+        left = 55  # second authored transition, after the first three samples
+        a, b, c, d, e = 30, 32, 45, 44, 46
+        self.assertIn((left,e,c,d), faces)
+        self.assertIn((left,d,a,b), faces)
+        self.assertNotIn((a,b,c,d), faces)
+        self.assertNotIn((e,c,b,left), faces)
+        self.assertEqual(vertices[left], (6.8,0,1.562))
+        self.assertEqual(len(vertices), 58)
+        self.assertEqual(len(faces), 16)
+        edges = Counter(tuple(sorted((x,y))) for f in faces for x,y in zip(f,f[1:]+f[:1]))
+        self.assertNotIn(tuple(sorted((b,c))), edges)
+        self.assertEqual(edges[tuple(sorted((left,d)))], 2)
+        self.assertEqual(len({tuple(sorted(f)) for f in faces}), len(faces))
+
     def test_side_strip_preserves_physical_boundary(self):
         levels = [1.544,1.551,1.560,1.570,1.580]
         vertices = [(i/12,0,y) for y in levels for i in range(13)]
