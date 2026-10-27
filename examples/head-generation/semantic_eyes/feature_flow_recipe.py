@@ -29,6 +29,7 @@ DEPENDENCIES = (
     'ear_return_cap_solver',
     'ear_final_caps',
     'ear_flow_geometry',
+    'ear_front_refinement',
     'ear_flow_mesh',
 )
 

@@ -35,12 +35,14 @@ their original bytes.
 
 - `feature_flow_recipe.py` owns adapter order and retained source inventory.
 - Feature, mouth, chin, eye and lateral-band modules own their named sampling
-  or connectivity changes. The cheek guide preserves the existing mouth and
+  or connectivity changes. The cheek guide preserves the inner mouth aperture and
   ear attachment boundaries and distributes transverse curvature toward the
   nasal region; it does not create a high-valence nose-tip vertex.
 - Ear geometry separates main/smooth-cap continuity from creased return walls.
   The fit preserves its fixed source anchors and keeps the existing bounded
-  displacement, orientation, diagonal and area guards.
+  displacement, orientation, diagonal and area guards. The opt-in upper-front
+  refinement requires SciPy in the native Blender Python environment; installing
+  it on a separate host interpreter is not evidence of native availability.
 - Weld ownership captures numeric point attributes and named group weights
   before joining. Only matched skin/oral boundary vertices receive skin donor
   fields. Positions, loop-domain UVs and oral-only points are not overwritten.
@@ -156,6 +158,37 @@ its triangulated surface exactly: sampled distances reached 0.117 mm near a
 mouth corner. Narrow ear regions, concentrated nasal turns and final visual
 likeness remain open. None of these measurements, source tests or CI results
 constitutes artistic, global-collision or deployment acceptance.
+
+### Rounded outer mouth frame and bounded upper-ear support
+
+The mouth outer frame now uses a compact C1 source-chart rounding field.
+Amplitude 0.12 and a broad lateral fade of 0.65 distribute the transition across
+nearby cheek columns rather than leaving the next column rigid. The central
+nasal strip, eye/ear attachment heights and original inner aperture references
+stay outside the field. This changes sampling coordinates, not the analytic
+nasal depth function, and adds no vertices or faces. The disabled-strength
+path remains exactly the identity. Actual saved-mesh checks found 80 moving
+skin points, at most 4.592 mm, with UV changes restricted to those points.
+Sampled exported mouth poses passed; two unchanged ear-root points had about
+1.2 micrometers difference in one MouthOpen component, so unrelated morph
+buffers are not claimed byte-identical.
+
+The upper-ear refinement keeps connectivity and authored UV weights. It holds
+the previously repaired three-quad attachment patch fixed while allowing one
+upper outer support point a separate 1 mm design limit. The remaining 18 fixed
+points and all ear roots stay fixed. Existing free points retain their prior
+scale-relative displacement limit; finite-value and float32 post-validation
+checks retain the original diagonal, orientation and area gates. The tested
+outer support moved about 0.886 mm, without moving the attachment patch.
+The narrow cap's maximum required-view angle decreased, but an adjacent front
+face became narrower in one view. This is a documented local tradeoff, not a
+claim that every angle improved or that the ear matches the reference exactly.
+
+The authoring recipe must retain the ear refinement module and its SciPy
+runtime dependency. Source quads remain editable; the exporter automatically
+selects tested diagonals. Passing the sampled exported mesh does not establish
+that arbitrary retriangulation is safe. Inner-lip support concentration and
+final same-camera visual likeness remain separate open review items.
 
 Focused CPU checks, from this directory:
 

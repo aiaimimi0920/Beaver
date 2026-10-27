@@ -1,6 +1,6 @@
 """Source-chart invariants, not native mesh or artistic acceptance."""
 import unittest
-from source_feature_flow import feature_flow_chart, orbital_shell_rounding
+from source_feature_flow import feature_flow_chart, orbital_shell_rounding, mouth_shell_rounding
 
 
 class FeatureFlowTests(unittest.TestCase):
@@ -37,6 +37,22 @@ class FeatureFlowTests(unittest.TestCase):
                 self.assertLess(abs(z-1.6435),abs(y-1.6435))
                 self.assertLessEqual(abs(x-q),.01521)
                 self.assertLessEqual(abs(z-y),.001181)
+
+    def test_mouth_outer_rounding_preserves_protected_domains(self):
+        for y in (1.55,1.56,1.608,1.614,1.673):
+            for q in (0,.18,.34,.44,.55,.67,1):
+                self.assertEqual(mouth_shell_rounding(y,q,q,y,1),(q,y))
+        for y in (1.570,1.580,1.590,1.599):
+            for q in (0,.12,.18,.22,1):
+                self.assertEqual(mouth_shell_rounding(y,q,q,y,1),(q,y))
+            for q in (.34,.44,.55,.67):
+                self.assertEqual(mouth_shell_rounding(y,q,q,y,0),(q,y))
+        for y in (1.570,1.599):
+            q,z=mouth_shell_rounding(y,.44,.44,y,1)
+            self.assertLess(q,.44)
+            self.assertLess(abs(z-1.5845),abs(y-1.5845))
+        for q in (.55,.67):
+            self.assertLess(mouth_shell_rounding(1.599,q,q,1.599,1)[0],q)
 
     def test_landmark_flow_directions(self):
         self.assertLess(feature_flow_chart(1.673, 0)[1], feature_flow_chart(1.673, .55)[1])

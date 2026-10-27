@@ -85,7 +85,7 @@ def source_flow_ear_layout(vertices, faces):
         'review_minimum_corner_angle':float(projected.min()),
         'review_maximum_corner_angle':float(projected.max()),
         'scope':'Source candidate; conforming skin, attributes and native validation required'}
-    return result
+    return flow_refine_upper_front(result, vertices)
 
 
 def flow_chain_weights(chain, u):

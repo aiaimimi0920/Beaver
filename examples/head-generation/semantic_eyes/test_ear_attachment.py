@@ -22,6 +22,7 @@ class EarAttachmentTests(unittest.TestCase):
             namespace = {}
             for name in ('source_ear_quad_solver.py', 'ear_flow_geometry.py'):
                 exec(compile((HERE / name).read_text(), name, 'exec'), namespace)
+            namespace['flow_refine_upper_front'] = lambda result, original: result
             namespace['flow_initialize_ear'] = lambda v, f, b=base: copy.deepcopy(b)
             result = namespace['source_flow_ear_layout'](base['vertices'], [])
             cls.results.append((base, result))

@@ -18,6 +18,7 @@ def flow_stage_source(original):
         skin_reports.append(flow_reconnect_skin(bm,vertices,generated,result))
         ear_report['upper_attachment_flow'] = result['upper_attachment_flow']
         ear_report['source_continuity'] = result['source_continuity']
+        ear_report['upper_front_refinement'] = result['upper_front_refinement']
         ear_report['lower_interface_redefinition'] = result['lower_interface_redefinition']
         output.append(ear_report)
         print('FEATURE_FLOW_EAR_READY',base,result['min_diagonal_pair_dot'],flush=True)
@@ -65,7 +66,8 @@ def adapt(sources):
     mesh = mesh.replace(marker,"    result['_applied_vertices'] = vertices\n"+marker,1)
     chunks = [solver,(root/'ear_final_mapping.py').read_text(),mesh,
               (root/'ear_return_cap_solver.py').read_text(),(root/'ear_final_caps.py').read_text(),
-              (root/'ear_flow_geometry.py').read_text(),(root/'ear_flow_mesh.py').read_text(),stage]
+              (root/'ear_flow_geometry.py').read_text(),(root/'ear_front_refinement.py').read_text(),
+              (root/'ear_flow_mesh.py').read_text(),stage]
     out['ear_topology.py'] += '\n\n'+'\n\n'.join(chunks)
     source = out['ear_return.py']
     marker = "result = {'added_faces':len(new_faces),"

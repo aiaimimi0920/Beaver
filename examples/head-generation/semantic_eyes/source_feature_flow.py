@@ -48,6 +48,18 @@ def orbital_shell_rounding(height, lateral, mapped_q, mapped_y, strength):
             mapped_y-amount*.0295*ny*nx*nx)
 
 
+def mouth_shell_rounding(height, lateral, mapped_q, mapped_y, strength):
+    """Round the oral outer frame and nearby cheek columns, not its aperture."""
+    nx=lateral/.44
+    ny=(height-1.5845)/.0145
+    window=(flow_smoothstep((nx-.5)/.5)
+            *(1-flow_smoothstep((nx-1)/.65))
+            *(1-flow_smoothstep((abs(ny)-1)/.25)))
+    amount=.12*strength*window
+    return (mapped_q-amount*.44*nx*ny*ny,
+            mapped_y-amount*.0145*ny*nx*nx)
+
+
 def feature_flow_chart(height, lateral, strength=1.0):
     """Compose two monotone chart maps, preserving the center seam and lower-mouth boundary.
 
@@ -88,7 +100,8 @@ def feature_flow_chart(height, lateral, strength=1.0):
         if lateral == 1:
             return lateral, height
         targets = old_targets if height <= 1.580 else broad_targets
-        return orbital_shell_rounding(height,lateral,q,flow_monotone_curve(height, old_knots, targets),strength)
+        mapped_q,mapped_y=mouth_shell_rounding(height,lateral,q,flow_monotone_curve(height, old_knots, targets),strength)
+        return orbital_shell_rounding(height,lateral,mapped_q,mapped_y,strength)
     mouth_boundary = flow_monotone_curve(1.580, old_knots, old_targets)
     ear_boundary = flow_monotone_curve(1.608, old_knots, broad_targets)
     knots = [1.551, 1.570, 1.580, 1.599, 1.608, 1.614, 1.673, 1.710]
@@ -96,7 +109,8 @@ def feature_flow_chart(height, lateral, strength=1.0):
                1.599 + strength*(.008*nose - .014*cheek),
                ear_boundary, broad_targets[3], old_targets[4], 1.710]
     yy = flow_monotone_curve(height, knots, targets)
-    return orbital_shell_rounding(height,lateral,q,yy,strength)
+    mapped_q,mapped_y=mouth_shell_rounding(height,lateral,q,yy,strength)
+    return orbital_shell_rounding(height,lateral,mapped_q,mapped_y,strength)
 
 
 def feature_flow_surface_point(height, lateral):
@@ -131,7 +145,7 @@ def adapt(sources):
     replace('boundary_mouth_angles([(verts[i][0],verts[i][2]) for i in boundary])',
             'boundary_mouth_angles([(chart_reference[i][0],chart_reference[i][2]) for i in boundary])')
     replace('        "semantic_rows": levels,',
-            '        "feature_flow_layout": {"version": 1, "chart_samples": chart_samples, "inner_aperture_reference": chart_reference, "scope": "Source chart sampling; native geometry and pose acceptance required"},\n'
+            '        "feature_flow_layout": {"version": 2,"mouth_outer_frame_rounding":.12,"mouth_cheek_fade_width":.65, "chart_samples": chart_samples, "inner_aperture_reference": chart_reference, "scope": "Source chart sampling; native geometry and pose acceptance required"},\n'
             '        "semantic_rows": levels,')
     eye_ring_source = '    if kind == "eye":\n        return [0, 0.30, 0.65]'
     if out['face.py'].count(eye_ring_source) != 1:
@@ -139,6 +153,6 @@ def adapt(sources):
     out['face.py'] = out['face.py'].replace(
         eye_ring_source, '    if kind == "eye":\n        return [0, 0.6, 0.7, 0.9]', 1)
     out['shell.py'] = shell + '\n\n' + inspect.getsource(feature_flow_surface_point)
-    helpers = (flow_smoothstep, flow_monotone_curve, orbital_shell_rounding, feature_flow_chart)
+    helpers = (flow_smoothstep, flow_monotone_curve, orbital_shell_rounding, mouth_shell_rounding, feature_flow_chart)
     out['face.py'] += '\n\n' + '\n\n'.join(inspect.getsource(f) for f in helpers) + '\n'
     return out
