@@ -240,3 +240,23 @@ The mouth-corner turn increased from 29.905 to 30.885 degrees, within the explic
 one-degree limit. This does not fix all outer transitions: turns of about 40.6
 and 44.5 degrees remain. Sampled export pose checks passed, but these checks and
 the source comparison are not a claim of final visual acceptance.
+
+## Depth-only tangent refinement
+
+A subsequent bounded solve adjusts only the upper first and second support-ring
+depths. It leaves XY stations, the aperture, midline, corner, third ring and outer
+boundary fixed. The allowed increment is intersected against both the unchanged
+inherited-reference bound and the total additional-fairness bound; the increment
+itself is never substituted for the total fairness amount.
+
+The native comparison changed 20 points by at most about 0.609 mm. Two radial
+turns decreased from about 47.03/46.13 degrees to 40.89/39.72 degrees. UVs and
+morph deltas were unchanged. These are limited improvements, not a claim that
+the remaining lip ridge is smooth or visually accepted.
+
+The optimizer retains its double-precision constraints. Final stored-geometry
+checks compare the float32 candidate against the float32 baseline, not a mixed
+precision baseline. A native regression fixture records an unchanged lower-ring
+point whose baseline quantization alone changed the measured turn by 0.001564
+degrees. The explicit circumferential numerical comparison tolerance remains
+0.001 degrees; depth, spacing and other geometric limits are not expanded.
