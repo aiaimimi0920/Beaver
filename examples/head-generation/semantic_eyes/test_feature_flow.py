@@ -62,6 +62,24 @@ class FeatureFlowTests(unittest.TestCase):
         for y in (1.570, 1.599, 1.614, 1.673):
             self.assertEqual(feature_flow_chart(y, 0)[0], 0)
 
+    def test_upper_cheek_fade_reaches_next_retained_row_only(self):
+        # Continue rounding into the next real grid row, not eye/mouth interiors.
+        for q in (.25, .34, .44, .55, .67):
+            x, y = mouth_shell_rounding(1.6045, q, q, 1.6045, 1)
+            self.assertLess(x, q)
+            self.assertLess(y, 1.6045)
+        for h in (1.608, 1.614):
+            for q in (.25, .44, .67):
+                self.assertEqual(mouth_shell_rounding(h, q, q, h, 1), (q, h))
+        for h in (1.570, 1.599):
+            q = .44
+            nx, ny = q/.44, (h-1.5845)/.0145
+            from source_feature_flow import flow_smoothstep
+            old_window = (flow_smoothstep((nx-.5)/.5)*(1-flow_smoothstep((nx-1)/.65))
+                          *(1-flow_smoothstep((abs(ny)-1)/.25)))
+            expected = (q-.12*old_window*.44*nx*ny*ny, h-.12*old_window*.0145*ny*nx*nx)
+            self.assertEqual(mouth_shell_rounding(h, q, q, h, 1), expected)
+
     def test_positive_chart_jacobian_and_row_column_order(self):
         epsilon = 1e-6
         smallest = 1.0

@@ -305,3 +305,46 @@ The native review also captured nine hash-bound engine states, including neutral
 each individual mouth control, blink checks, and Open+Spread+Pucker at right45.
 This confirms actual runtime loading and those applied controls, not exhaustive
 self-contact exclusion. Keep the prior baseline available for visual comparison.
+
+## Joint upper support sampling and depth
+
+A later semantic patch stage follows the retained paired seam field. It jointly
+adjusts the first and second upper support rings along their existing rays and
+in depth. Unlike the earlier depth-only solve, the central internal supports
+may move in height/depth while their midline x stays pinned. The aperture,
+corner rays, lower lip, third ring, outer boundary and polygon count stay fixed.
+
+The optimization balances radial turns and support-gap disparity. It checks
+all affected source-quad edges, both triangulation diagonals and station order,
+then independently checks stored float32 spacing, order and tangents. The
+original depth reference and its raw 4.2 mm, upper-local 5.2 mm and total extra
+fairness 1.5 mm bounds are unchanged. First radial turns may not increase; the
+0.001-degree numerical tolerance applies only to circumferential comparisons.
+Failed solves or final guards leave the source vertex list unchanged.
+
+A separate cheek sampling candidate extends only the upper height fade of
+mouth-frame rounding from 0.25 to 0.5 in normalized coordinates. This reaches
+the retained chart row at height 1.6045 and ends before 1.608. The lower fade,
+rounding amplitude, lateral fade, mouth outer boundary and eye frame remain
+unchanged. Chart-plane diagnostics are not native surface acceptance: both
+changes require fresh authored geometry, export-diagonal pose checks and
+front/right45/right90 source-wire comparison before retention.
+
+Native intermediate evidence: joint support reconstruction changed 30 upper
+support vertices, reducing the central radial turn from 27.45 to 20.26 degrees.
+Original total depth stayed below 5.152 mm and total additional fairness below
+1.5 mm. Source UV/motion changes stayed on those vertices. Its white-wire views
+show a modestly softer transition, not elimination of the lip step.
+
+The following cheek-fade reconstruction changed ten skin vertices only. Actual
+3D longitudinal turns at lateral stations .44/.55 decreased from 43.79/36.50
+to 39.20/32.91 degrees; adjacent edge-length ratios improved from 2.32/2.15 to
+1.87/1.81. The target transverse-chain turn increased from 3.38 to 4.62 degrees,
+and a local edge length increased 14.54 percent. The mouth solver's ten-percent
+edge-change guard must not be misreported as a whole-face result. Eye, ear and
+mouth geometry/motion stayed fixed in this cheek-only comparison.
+
+Each intermediate model's actual new export triangulation (4492 triangles)
+passed 81 sampled mouth combinations without flipped or degenerate triangles.
+The prior cavity combination's minimum alignment near 0.06064 persists. These
+checks neither establish collision freedom nor certify reference-level likeness.

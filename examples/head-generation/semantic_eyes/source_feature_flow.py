@@ -54,7 +54,7 @@ def mouth_shell_rounding(height, lateral, mapped_q, mapped_y, strength):
     ny=(height-1.5845)/.0145
     window=(flow_smoothstep((nx-.5)/.5)
             *(1-flow_smoothstep((nx-1)/.65))
-            *(1-flow_smoothstep((abs(ny)-1)/.25)))
+            *(1-flow_smoothstep((abs(ny)-1)/(.5 if ny > 0 else .25))))
     amount=.12*strength*window
     return (mapped_q-amount*.44*nx*ny*ny,
             mapped_y-amount*.0145*ny*nx*nx)
@@ -145,7 +145,7 @@ def adapt(sources):
     replace('boundary_mouth_angles([(verts[i][0],verts[i][2]) for i in boundary])',
             'boundary_mouth_angles([(chart_reference[i][0],chart_reference[i][2]) for i in boundary])')
     replace('        "semantic_rows": levels,',
-            '        "feature_flow_layout": {"version": 2,"mouth_outer_frame_rounding":.12,"mouth_cheek_fade_width":.65, "chart_samples": chart_samples, "inner_aperture_reference": chart_reference, "scope": "Source chart sampling; native geometry and pose acceptance required"},\n'
+            '        "feature_flow_layout": {"version": 3,"mouth_outer_frame_rounding":.12,"mouth_cheek_fade_width":.65,"mouth_upper_height_fade":.5,"mouth_lower_height_fade":.25, "chart_samples": chart_samples, "inner_aperture_reference": chart_reference, "scope": "Source chart sampling; native geometry and pose acceptance required"},\n'
             '        "semantic_rows": levels,')
     eye_ring_source = '    if kind == "eye":\n        return [0, 0.30, 0.65]'
     if out['face.py'].count(eye_ring_source) != 1:
