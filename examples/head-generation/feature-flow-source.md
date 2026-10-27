@@ -348,3 +348,30 @@ Each intermediate model's actual new export triangulation (4492 triangles)
 passed 81 sampled mouth combinations without flipped or degenerate triangles.
 The prior cavity combination's minimum alignment near 0.06064 persists. These
 checks neither establish collision freedom nor certify reference-level likeness.
+
+## Joint C1 cheek chart redistribution
+
+The retained raw13 feature-flow profile also provides a compact two-row chart
+correction between source heights 1.599 and 1.614 and lateral stations .18 and
+.78. The two interior rows, 1.6045 and 1.608, share signed transverse curvature,
+longitudinal-turn and spacing objectives. Piecewise smoothstep interpolation
+has zero correction and zero first derivative at all four support boundaries.
+It is added after the prior complete chart, including orbital rounding. Fixed
+semantic coefficients are used; no final mesh vertex IDs, reference mesh
+coordinates, runtime optimizer or additional topology are introduced.
+
+Native comparison changed exactly 20 skin points. The complete mouth aperture,
+cavity, support rings and outer boundary stayed fixed. Target transverse turns
+improved from 4.618/1.595 to 3.296/1.558 degrees, with neighboring edge ratios
+improving from 1.485/1.572 to 1.368/1.414. Every measured signed transverse turn
+kept its sign without amplification. Two longitudinal turns improved from
+39.195/32.910 to 36.006/29.808 degrees. These metrics support a local improvement,
+not a claim of final likeness or reconstruction of the reference author's quads.
+
+The largest displacement was 1.173 mm and the largest original-reference depth
+offset was 0.3423 mm. Local edge-length change ratios ranged from .857 to 1.244;
+these are sampling redistribution tradeoffs, not a claim of a global ten-percent
+edge bound. All 4492 actually exported triangles passed the 81 sampled mouth
+combinations. The known two ear-root MouthOpen deltas returned from zero to
+approximately 0.001192 mm during assembly, with unchanged static ear geometry.
+Do not claim bitwise attribute ownership stability or complete collision freedom.
