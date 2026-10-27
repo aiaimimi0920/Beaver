@@ -17,6 +17,18 @@ def capture_nasal_source_anchors(vertices, levels, lateral, columns):
     return records
 
 
+def nasal_transverse_stations():
+    """Grade cheek sampling toward the unchanged nasal support stations.
+
+    The five continuous guide curves and their endpoints stay fixed. Only
+    columns 1–12 migrate along those curves; columns 0 and 13–16 are exact.
+    """
+    stations = np.linspace(1/16,1.,17)
+    start,end = stations[0],stations[13]
+    stations[1:13] = start+(end-start)*(np.arange(1,13)/13.)**.9
+    return stations
+
+
 def local_cycle(quads):
     counts = Counter(tuple(sorted((a,b))) for face in quads
                      for a,b in zip(face,face[1:]+face[:1]))
@@ -44,7 +56,7 @@ def local_cycle(quads):
 def make_core(surface, vertices, outer_ids, features):
     full,points,lineage = [],[],[]
     t13 = np.linspace(0.,1.,13)
-    t17 = np.linspace(1/16,1.,17)
+    t17 = nasal_transverse_stations()
     nose_height = float(features['nose_peak'][2])
     eye_height = features['eye_height']
     if eye_height-nose_height <= .01:

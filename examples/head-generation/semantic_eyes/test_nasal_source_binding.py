@@ -4,7 +4,7 @@ from unittest.mock import patch
 import numpy as np
 from nasal_source_binding import bind_patch, validate_patch
 from nasal_source_geometry import AuthorQuadSurface
-from nasal_source_core import capture_nasal_source_anchors
+from nasal_source_core import capture_nasal_source_anchors, nasal_transverse_stations
 from source_nasal_flow import adapt, MODULES
 
 
@@ -41,6 +41,15 @@ class NasalSourceBindingTests(unittest.TestCase):
         records=capture_nasal_source_anchors(points,heights,[.87],1)
         self.assertEqual([r['position'] for r in records],[list(p) for p in points])
         with self.assertRaises(ValueError):capture_nasal_source_anchors(points,heights,[.87,.87],2)
+
+    def test_transverse_grade_preserves_nasal_and_outer_end_stations(self):
+        original=np.linspace(1/16,1.,17)
+        current=nasal_transverse_stations()
+        np.testing.assert_array_equal(current[[0,13,14,15,16]],original[[0,13,14,15,16]])
+        self.assertTrue(np.all(np.diff(current)>0))
+        self.assertTrue(np.all(current[1:13]>original[1:13]))
+        self.assertGreater(current[1]-current[0],original[1]-original[0])
+        self.assertTrue(np.all(np.diff(np.diff(current[:14]))<0))
 
     def test_adapter_captures_before_compaction_and_runs_before_export(self):
         shell='''def build_face():

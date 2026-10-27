@@ -50,6 +50,7 @@ DEPENDENCIES = (
     'nasal_source_domain',
     'nasal_source_core',
     'nasal_source_binding',
+    'nasal_source_boundary',
     'nasal_source_mesh',
 )
 

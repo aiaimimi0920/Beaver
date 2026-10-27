@@ -524,7 +524,9 @@ intersection/notch/narrow-gap rule selects each replacement disk. Boundary
 valence, crease groups, functional-feature exclusions and mirror correspondence
 must match before any edits occur. Every new point samples the containing
 current authoring quad, using the same lineage for numeric point and corner
-fields. Existing boundary coordinates and crease values remain unchanged.
+fields. The initial patch retains existing boundary coordinates and crease values.
+The separately reported shared-cheek coupling below can move eligible
+nonfunctional frame points; actual feature anchors and all creases stay fixed.
 Blink and mouth shape keys are recomputed by the ordinary downstream pipeline;
 old blink deltas must not be interpolated onto the new vertices.
 
@@ -559,3 +561,48 @@ excluding shared-vertex, coplanar, tangent and edge-only contacts.
 The three actual opaque-wire views show the intended five upward nasal flows,
 but their outer annulus still has an abrupt density transition and concentrated
 turns. This is a retained intermediate improvement, not final visual approval.
+
+
+## Graded cheek spacing and bounded shared-frame coupling
+
+Transverse columns 1–12 use an exponent-0.9 spacing progression along the same
+five continuous guides. Columns 0 and 13–16, nasal supports and guide endpoints
+remain exact. This widens the outer cells and grades their density inward
+without adding faces or moving protected facial features.
+
+A subsequent source-relative coupling addresses canonical boundary slots
+18, 19, 21 and 22, with current-source motion caps of 1, 1, 1 and 0.5 mm.
+These slots must be pure skin, crease-free and outside all functional feature
+sets, with aperture graph distances 4, 3, 3 and 2. The last slot is the second
+support ring, never the actual eyelid or first support. Normalized offsets
+scale with the current nasal-peak-to-iris height span and are projected onto
+the immutable original authoring surface. Centers 0/2 are reconstructed from
+current relative parents. Final float32 coordinates must satisfy exact caps.
+
+The complete affected patch includes seven retained outside and eight inside
+quads per side. Patch-wide angle and edge-ratio extrema must not regress; this
+is not a claim that every individual face improves simultaneously. Original
+depth limits and the 1 mm author-surface trial bound still apply. UV corners,
+numeric fields and deform weights of the eight migrated old nodes are blended
+from immutable original donors before any writes; all incident inside/outside
+corners are updated. Actual blink and mouth keys are regenerated afterward.
+
+This limited shared-frame motion does not remove all extraordinary vertices
+or establish final visual acceptance. Native storage, pose and image checks
+are required before retaining a candidate.
+
+Native trial 221 stores the coupled patch exactly with the same 2694 points,
+3063 editable faces and 4804 runtime triangles. A supplemental audit covers
+all 10930 corners in each of the three UV sets, including retained vertices
+on added faces, and binds actual relative shape keys to the Face mesh.
+All 2446 unaffected retained points, eight migrated points and 240 new points
+have exact expected point fields, deform weights and six shape-key deltas.
+The 729 sampled pose combinations and continuous blink/open orientation gate
+pass. The 50 runtime triangles incident to changed nodes have no strict
+crossings against the full Face in 99 pose cases (95 distinct combinations),
+with the same shared-vertex and contact exclusions as above.
+
+Actual front, right-front 45-degree and right-side opaque-wire views retain
+all five nasal guides. The outer patch still has a visible density transition
+and concentrated turns, so this is an intermediate candidate, not a claim of
+SilverWolf topology equivalence or final acceptance.

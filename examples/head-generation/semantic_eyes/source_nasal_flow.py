@@ -3,7 +3,7 @@ import ast
 from pathlib import Path
 
 MODULES = ('nasal_source_geometry','nasal_source_template','nasal_source_domain',
-           'nasal_source_core','nasal_source_binding','nasal_source_mesh')
+           'nasal_source_core','nasal_source_binding','nasal_source_boundary','nasal_source_mesh')
 
 
 def adapt(sources):
