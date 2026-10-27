@@ -14,6 +14,7 @@ MODULE_STAGES = {
     'shell.py': (
         ('shell_surface_geometry.py', None),
         ('shell_source_assembly.py', 'build_face'),
+        ('shell_patch_sampling.py', 'capture_mouth_patch_fields'),
     ),
     'ear_topology.py': (
         ('ear_source_legacy.py', None),
