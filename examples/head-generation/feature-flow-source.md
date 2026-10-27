@@ -375,3 +375,22 @@ edge bound. All 4492 actually exported triangles passed the 81 sampled mouth
 combinations. The known two ear-root MouthOpen deltas returned from zero to
 approximately 0.001192 mm during assembly, with unchanged static ear geometry.
 Do not claim bitwise attribute ownership stability or complete collision freedom.
+
+## Lower lateral cheek redistribution
+
+A second C1 chart field covers heights 1.570–1.599 and lateral stations
+.44–.94, leaving the mouth frame and outer head boundary fixed. It changes
+16 bilateral skin samples, not their quad connectivity. Native comparison
+measured longitudinal turns 25.292→21.363 and 12.652→11.349 degrees, and
+neighboring length ratios 1.649→1.336 and 1.821→1.519. Transverse spacing
+ratios improved 1.756→1.625 and 1.818→1.670; the outer transverse peaks
+near 39.317/37.105 degrees remain, so the long-band problem is not solved.
+
+Maximum point movement was 1.18195 mm; maximum original-reference depth
+offset was 0.69947 mm. Local edge-change ratios were .84127–1.22695, not a
+uniform ten-percent bound. Mouth, eyes and ears stayed fixed, including
+mouth motion; UV and morph changes were confined to the same 16 samples.
+All 4492 actually exported triangles passed 81 sampled mouth combinations
+without flips or degeneracy. Actual opaque wire views support retaining this
+small improvement, not final reference-level acceptance. Mouth-to-cheek
+patch connectivity and lower-jaw strip allocation still require review.
