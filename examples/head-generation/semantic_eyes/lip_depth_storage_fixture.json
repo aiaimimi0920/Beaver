@@ -148,5 +148,22 @@
     ]
   ],
   "source": "Generated Faye authoring-stage float64 diagnostic, candidate203; no third-party geometry.",
-  "positions_file": "lip_depth_storage_positions.json"
+  "positions_file": "lip_depth_storage_positions.json",
+  "captured_feasible_depth_delta_mm": [
+    -0.2959288406995386,
+    5.853234563701903e-10,
+    -0.13112504471629594,
+    0.166768530870387,
+    -0.2504497740432876,
+    0.279768144188286,
+    -0.27669007051310535,
+    0.4784032946406752,
+    -0.1967598705036322,
+    0.6093522844057009,
+    -3.332362163988023e-09,
+    0.3182917242949834,
+    -2.515154751137061e-09,
+    1.336070143409529e-09
+  ],
+  "regression_scope": "Replay the captured feasible solve to isolate storage-precision validation from optimizer convergence."
 }

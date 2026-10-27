@@ -260,3 +260,10 @@ precision baseline. A native regression fixture records an unchanged lower-ring
 point whose baseline quantization alone changed the measured turn by 0.001564
 degrees. The explicit circumferential numerical comparison tolerance remains
 0.001 degrees; depth, spacing and other geometric limits are not expanded.
+
+Solver convergence can differ across Python/NumPy/SciPy environments. The
+runtime still rejects a non-converged solve without writing vertices. The
+storage-precision regression replays a captured feasible native solution while
+running the real constraints and final guards; separate tests exercise the
+optimizer and rejection path. This test separation is not a claim that
+cross-platform optimizer convergence has been solved.

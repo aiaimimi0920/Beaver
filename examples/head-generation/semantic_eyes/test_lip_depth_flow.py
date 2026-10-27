@@ -58,6 +58,13 @@ class LipDepthTest(unittest.TestCase):
         fixture = json.loads(Path(__file__).with_name('lip_depth_storage_fixture.json').read_text())
         positions = Path(__file__).with_name(fixture['positions_file'])
         base = np.array(json.loads(positions.read_text()))
+        def turn_at(points):
+            u, v = points[1]-points[0], points[2]-points[1]
+            return np.degrees(np.arccos(np.clip(np.dot(u, v) /
+                              (np.linalg.norm(u)*np.linalg.norm(v)), -1, 1)))
+        unchanged_lower = base[1, 1:4]
+        mixed_drift = turn_at(unchanged_lower.astype(np.float32).astype(float))-turn_at(unchanged_lower)
+        self.assertGreater(mixed_drift, .001)
         active = fixture['active']
         records = fixture['provenance']
         angles = fixture['a']
@@ -78,7 +85,29 @@ class LipDepthTest(unittest.TestCase):
             return raw+additional_move
         vertices = base.reshape((-1, 3)).tolist()
         rings = np.arange(len(vertices)).reshape((5, -1)).tolist()
-        report = refine_lip_depth(vertices, rings, angles, terms, guarded, 1.,
-                                  {'upper_lip_edge_depth_delta': rim_scale})
+        from types import SimpleNamespace
+        from unittest.mock import patch
+        captured = SimpleNamespace(
+            success=True, x=np.array(fixture['captured_feasible_depth_delta_mm']),
+            nit=0, message='Replayed captured feasible native candidate')
+        # This regression targets storage comparison, not optimizer convergence.
+        # All production feasibility and final geometry/depth guards still run.
+        with patch('scipy.optimize.minimize', return_value=captured):
+            report = refine_lip_depth(vertices, rings, angles, terms, guarded, 1.,
+                                      {'upper_lip_edge_depth_delta': rim_scale})
         self.assertLess(report['max_move_m'], .001)
         self.assertLess(max(report['radial_after_deg']), max(report['radial_before_deg']))
+
+    def test_optimizer_nonconvergence_does_not_write_vertices(self):
+        import numpy as np
+        from types import SimpleNamespace
+        from unittest.mock import patch
+        vertices, rings, angles = self.fixture()
+        before = vertices.copy()
+        count = sum(1 for a in angles[1:-1] if 1e-7 < math.sin(a) < .99999)*2
+        stopped = SimpleNamespace(success=False, x=np.zeros(count), nit=1,
+                                  message='Positive directional derivative for linesearch')
+        with patch('scipy.optimize.minimize', return_value=stopped):
+            with self.assertRaisesRegex(ValueError, 'Joint depth constraints failed'):
+                self.run_solver(vertices, rings, angles, lambda *a, **k: .08)
+        self.assertEqual(vertices, before)
