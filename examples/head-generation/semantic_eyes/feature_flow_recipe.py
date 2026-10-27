@@ -17,6 +17,7 @@ ADAPTERS = (
     'source_lip_depth_flow',
     'source_lip_seam_flow',
     'source_lip_patch_flow',
+    'source_joint_frame_flow',
     'source_quad_export',
     'source_skin_crossings',
     'source_rear_quad_guard',

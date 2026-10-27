@@ -438,3 +438,30 @@ changed triangles had no intersections against the full Face in those samples.
 Actual white-wire views show less lower-root bunching without new visible
 cracks, but an angular side-cheek transition persists. This is local retention,
 not a universal ear-profile or complete artistic acceptance claim.
+
+## Joint outer-frame and cheek sampling
+
+The protected mouth is still constructed with the retained .12 chart through
+all internal lip solvers. A separate source chart subsequently resamples 18
+half-face grid stations, before compaction and mesh/UV/morph generation. It
+combines upper frame rounding and two-row cheek compensation without using
+final vertex IDs. Internal solver evidence is explicitly pre-outer-resample;
+final quad and pose acceptance must inspect the new outer boundary.
+
+Native comparison changed 36 peripheral points, at most 2.717914 mm, matching
+the continuous chart's float32 predictions exactly. The other 2502 points,
+including all 120 mouth seam/support points and the cavity, stayed fixed.
+Their morph coordinates stayed fixed too. Topology/region ownership is unchanged;
+UV changes are confined to 146 corners on those 36 points. Original-reference
+depth offset is at most .39653 mm. The actual new triangulation replaced eight
+triangles and passed all 4492 triangles across 81 sampled mouth combinations.
+Strict local segment/triangle tests found no crossings; coplanar contact is
+outside that particular proof.
+
+The .44/.55 longitudinal spacing ratios improve 1.509→1.207 and 1.775→1.535.
+Two projected columns become consistently directed arcs rather than slight
+S-shaped reversals. This redistributes curvature: transverse peaks increase
+3.296→9.758 and 1.558→6.707 degrees, and a final-support aspect ratio rises
+2.65→3.30. Actual opaque-wire views support retaining a local flow improvement,
+not final reference-level similarity. The outer-mouth corner and coarse-to-fine
+transition remain visible and require further source patch work.
