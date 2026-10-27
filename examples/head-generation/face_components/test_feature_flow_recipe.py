@@ -61,6 +61,9 @@ class FeatureFlowRecipeTests(unittest.TestCase):
         restored = {r['entry_name']: reconstructed(sources, r) for r in ordered}
         self.assertIn('capture_oral_skin_donors', restored['face.py'])
         self.assertIn('build_outer_source_flow', restored['shell.py'])
+        self.assertIn('def replace_nasal_source(', restored['shell.py'])
+        self.assertNotIn('from nasal_source_', restored['shell.py'])
+        self.assertIn('shell_nasal_mesh.py', sources)
         self.assertIn('retopologize_flow_ears', restored['ear_topology.py'])
         for forbidden in ('bound_base_ear', 'apply_bound_lower_attachment', 'apply_bound_cheek_strip', 'EAR_RETURN_MINIMAX_EDIT'):
             self.assertNotIn(forbidden, restored['ear_topology.py'])

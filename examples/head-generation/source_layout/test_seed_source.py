@@ -35,6 +35,25 @@ class SourceSeedTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             seed_retained_bundle('answer = 1\n', 'asset/')
 
+    def test_large_runtime_source_is_readable_hash_bound_and_exact(self):
+        retained,code=self.fixture()
+        runtime='label = '+repr('鼻侧线流 '*9000)+'\nresult = len(label)\n'
+        code += f'exec(compile({runtime!r}, "runtime", "exec"), globals())\n'
+        generation,seed,binding=seed_retained_bundle(code,'asset/')
+        self.assertLess(len(generation),len(code)//2)
+        with tempfile.TemporaryDirectory() as directory:
+            root=Path(directory);(root/'asset').mkdir()
+            scope={'beaver_output':lambda p:str(root/p),'beaver_input':lambda p:str(root/p)}
+            exec(seed['code'],scope)
+            stored=(root/binding['path']).read_text()
+            self.assertTrue(stored.startswith(retained))
+            self.assertIn('NATIVE_RUNTIME_SOURCE = ',stored)
+            exec(generation,scope)
+            self.assertEqual(scope['result'],len('鼻侧线流 '*9000))
+            self.assertEqual((root/'asset/semantic_bundle.py').read_text(),retained)
+            (root/binding['path']).write_text(stored.replace('result = len','result = 1+len'))
+            with self.assertRaisesRegex(ValueError,'seed changed'):exec(generation,scope)
+
 
 if __name__ == '__main__':
     unittest.main()

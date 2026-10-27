@@ -1,10 +1,36 @@
 """Bind a native authored-source seed to generation and source packaging."""
 import copy
+import ast
 import hashlib
 import json
 from pathlib import Path
 from .evidence import native_job, resource, sha
 from .transport_sources import validate_native_frame
+
+
+def verify_retained_source(binding, root, retained_path):
+    """Match the generated recipe to its verified seed, with an optional pool."""
+    root = Path(root).resolve()
+    seeded = resource(root,binding['path']).read_bytes()
+    retained = resource(root,retained_path).read_bytes()
+    if hashlib.sha256(seeded).hexdigest() != binding['sha256']:
+        raise ValueError('Authored source seed content changed')
+    if seeded == retained:
+        return
+    if not retained or not seeded.startswith(retained):
+        raise ValueError('Generation retained bundle differs from native seed')
+    suffix = seeded[len(retained):]
+    if not suffix.startswith(b'\n\nNATIVE_RUNTIME_SOURCE = '):
+        raise ValueError('Invalid appended runtime source framing')
+    nodes = ast.parse(suffix.decode('utf-8')).body
+    if (len(nodes)!=1 or not isinstance(nodes[0],ast.Assign) or len(nodes[0].targets)!=1
+            or not isinstance(nodes[0].targets[0],ast.Name)
+            or nodes[0].targets[0].id!='NATIVE_RUNTIME_SOURCE'
+            or not isinstance(nodes[0].value,ast.Constant)
+            or not isinstance(nodes[0].value.value,str)):
+        raise ValueError('Invalid appended runtime source schema')
+    compile(retained.decode('utf-8'),'<retained source>','exec')
+    compile(ast.literal_eval(nodes[0].value),'<runtime source>','exec')
 
 
 def verify_seed(binding, receipt, root):

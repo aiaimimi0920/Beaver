@@ -9,7 +9,7 @@ import tempfile
 import unittest
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
-from source_layout.seed_evidence import finalize_seed_plan, verify_seed
+from source_layout.seed_evidence import finalize_seed_plan, verify_seed, verify_retained_source
 
 
 class SeedEvidenceTests(unittest.TestCase):
@@ -87,6 +87,25 @@ class SeedEvidenceTests(unittest.TestCase):
         self.receipt.write_bytes(self.receipt.read_bytes() + b'\n')
         with self.assertRaisesRegex(ValueError, 'not the bound native job'):
             verify_seed(bound, self.receipt, self.root)
+
+    def test_retained_prefix_and_optional_runtime_pool_are_exact(self):
+        retained=self.file.with_name('semantic_bundle.py')
+        retained.write_bytes(b'answer = 42\n')
+        relative=str(retained.relative_to(self.root))
+        verify_retained_source(self.binding,self.root,relative)
+        suffix=b'\n\nNATIVE_RUNTIME_SOURCE = "runtime = 12\\n"\n'
+        self.file.write_bytes(retained.read_bytes()+suffix)
+        binding=dict(self.binding,sha256=hashlib.sha256(self.file.read_bytes()).hexdigest())
+        verify_retained_source(binding,self.root,relative)
+        retained.write_bytes(b'answer = 4\n')
+        with self.assertRaises(ValueError):verify_retained_source(binding,self.root,relative)
+        retained.write_bytes(b'answer = 42\n')
+        for suffix in (b'\n\nNATIVE_RUNTIME_SOURCE = 3\n',
+                       b'\n\nNATIVE_RUNTIME_SOURCE = "x=1"\nextra=1\n',
+                       b'\n\nOTHER = "x=1"\n'):
+            self.file.write_bytes(retained.read_bytes()+suffix)
+            binding['sha256']=hashlib.sha256(self.file.read_bytes()).hexdigest()
+            with self.assertRaises(ValueError):verify_retained_source(binding,self.root,relative)
 
 
 if __name__ == '__main__':

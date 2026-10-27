@@ -137,12 +137,15 @@ def verify_packaging(report, root, prefix, generation_receipt, packaging_receipt
         "helper_sha256": wanted,
     }
     if seed_binding:
-        from .seed_evidence import verify_seed
+        from .seed_evidence import verify_seed, verify_retained_source
         if seed_binding.get("schema_version") != 1:
             raise ValueError("Unknown source seed binding schema")
         verified = verify_seed(seed_binding, resource(root,prefix + "source_seed_receipt.json"),root)
-        if verified["job_id"] in (gen["jobId"],packed["jobId"]) or generated.get(prefix + "semantic_bundle.py") != verified["sha256"]:
+        if verified["job_id"] in (gen["jobId"],packed["jobId"]):
             raise ValueError("Invalid native source seed/generation chain")
+        if generated.get(prefix + "semantic_bundle.py") != sha(resource(root,prefix + "semantic_bundle.py")):
+            raise ValueError("Retained source differs from generation receipt")
+        verify_retained_source(verified,root,prefix + "semantic_bundle.py")
         expected_binding["source_seed"] = verified
     if binding != expected_binding:
         raise ValueError("Source packaging not bound to generation receipt")

@@ -27,6 +27,7 @@ ADAPTERS = (
     'source_ear_validation',
     'source_feature_stage_policy',
     'source_weld_ownership',
+    'source_nasal_flow',
 )
 DEPENDENCIES = (
     'source_ear_quad_solver',
@@ -44,6 +45,12 @@ DEPENDENCIES = (
     'mouth_patch_geometry',
     'mouth_patch_sampling',
     'ear_flow_mesh',
+    'nasal_source_geometry',
+    'nasal_source_template',
+    'nasal_source_domain',
+    'nasal_source_core',
+    'nasal_source_binding',
+    'nasal_source_mesh',
 )
 
 

@@ -15,6 +15,11 @@ MODULE_STAGES = {
         ('shell_surface_geometry.py', None),
         ('shell_source_assembly.py', 'build_face'),
         ('shell_patch_sampling.py', 'capture_mouth_patch_fields'),
+        ('shell_nasal_geometry.py', 'cross2'),
+        ('shell_nasal_domain.py', 'connected_components'),
+        ('shell_nasal_core.py', 'capture_nasal_source_anchors'),
+        ('shell_nasal_binding.py', 'validate_domain'),
+        ('shell_nasal_mesh.py', 'prepare_nasal_patch'),
     ),
     'ear_topology.py': (
         ('ear_source_legacy.py', None),

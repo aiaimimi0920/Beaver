@@ -509,3 +509,53 @@ reduced box corners and lower-lip crowding without a visible new lip step or
 nasal silhouette damage. Outer-cheek narrow bands remain; this is not final
 artistic acceptance. Fresh SDF and nine-state Godot runtime validation are
 separate from these geometry/export checks.
+
+## Five nasal-side flow source trial
+
+The next trial replaces a bounded source-quad patch rather than bending five
+old horizontal rows through unrelated nasal stations. The five normalized
+reference paths are analysis guides inferred from a triangulated reference,
+not a claim to recover the original artist's quad topology. No reference mesh
+or historical generated point/face IDs are retained in the production recipe.
+
+Current semantic iris fan centers, the actual source nasal peak, and five
+outer source-grid anchors determine the guide placement. A deterministic
+intersection/notch/narrow-gap rule selects each replacement disk. Boundary
+valence, crease groups, functional-feature exclusions and mirror correspondence
+must match before any edits occur. Every new point samples the containing
+current authoring quad, using the same lineage for numeric point and corner
+fields. Existing boundary coordinates and crease values remain unchanged.
+Blink and mouth shape keys are recomputed by the ordinary downstream pipeline;
+old blink deltas must not be interpolated onto the new vertices.
+
+This stage targets the current bilinear authoring-quad surface, not an arbitrary
+runtime triangulation or an extrapolated procedural residual field. The visual
+trial permits at most 1 mm sampled surface deviation and quad angles between
+10 and 170 degrees; original source depth guards also remain enforced. This is
+not final artistic acceptance, nor a claim that earlier 0.55 mm research targets
+were achieved. Native mesh, UV/field, pose, collision and opaque-wire checks
+must pass before retaining the candidate.
+
+The generated shell retains one shared module frame, split into ordinary,
+hash-bound geometry, domain, core, binding and mesh responsibilities for replay.
+A large direct runtime compile literal may share the existing readable source
+seed with the retained recipe. The full seed hash is verified before parsing;
+only a single string assignment is read with literal evaluation, never executed.
+The original retained recipe bytes and original generation AST are preserved.
+Native request/output limits are unchanged. Prior frozen source packages and
+their matching replay helpers remain untouched.
+
+Native trial 219 realizes this patch exactly: 122 old faces are replaced by
+278 quads, adding 240 sampling points and removing 84 obsolete interior points.
+The complete editable Face has 2694 points and 3063 faces; its runtime has 4804
+triangles. Retained geometry and source-boundary crease data are unchanged.
+Three corner UV sets, point fields, deform weights and all six actual runtime
+shape keys match the independently recomputed expected values exactly.
+Actual runtime triangles pass 729 sampled pose combinations; the native
+continuous blink/open gate has minimum ratio 0.162833. For 552 new nasal
+triangles against the full Face, 99 sampled poses have no strict intersections,
+excluding shared-vertex, coplanar, tangent and edge-only contacts.
+
+The three actual opaque-wire views show the intended five upward nasal flows,
+but their outer annulus still has an abrupt density transition and concentrated
+turns. This is a retained intermediate improvement, not final visual approval.

@@ -185,12 +185,11 @@ def packaging_request(plan, receipt_path, workspace):
     seed_binding = plan.get("source_seed_binding")
     seed_receipt = None
     if seed_binding:
-        from .seed_evidence import verify_seed
+        from .seed_evidence import verify_seed, verify_retained_source
         seed_receipt = Path(plan["source_seed_receipt_path"])
         if verify_seed(seed_binding, seed_receipt, root) != seed_binding or report.get("authored_source_seed") != seed_binding:
             raise ValueError("Generation source seed chain changed")
-        if outputs.get(prefix + "semantic_bundle.py") != seed_binding["sha256"]:
-            raise ValueError("Generation retained bundle differs from native seed")
+        verify_retained_source(seed_binding,root,prefix + "semantic_bundle.py")
     if report.get("source_layout") != plan["layout"]:
         raise ValueError("Source plan not bound to native report")
     wanted = plan["layout"]["helper_sha256"]
