@@ -41,6 +41,11 @@ class LowerRootTests(unittest.TestCase):
             outputs.append((result-points)*[side,1,1])
         self.assertTrue(np.allclose(*outputs,atol=1e-12))
 
+    def test_authoring_recipe_retains_helper_dependency(self):
+        from feature_flow_recipe import retained_sources
+        self.assertEqual(retained_sources()['ear_lower_root_flow.py'],
+                         (HERE/'ear_lower_root_flow.py').read_text())
+
     def test_source_contract_and_budget_fail_closed(self):
         points,base,original,unit = self.fixture(1)
         call = self.scope['flow_lower_root_stations']

@@ -32,6 +32,7 @@ DEPENDENCIES = (
     'ear_final_mesh',
     'ear_return_cap_solver',
     'ear_final_caps',
+    'ear_lower_root_flow',
     'ear_flow_geometry',
     'ear_front_refinement',
     'lip_joint_solver',
