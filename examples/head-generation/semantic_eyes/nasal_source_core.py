@@ -53,7 +53,7 @@ def local_cycle(quads):
     return cycle
 
 
-def make_core(surface, vertices, outer_ids, features):
+def make_nasal_support_core(surface, vertices, outer_ids, features):
     full,points,lineage = [],[],[]
     t13 = np.linspace(0.,1.,13)
     t17 = nasal_transverse_stations()
@@ -123,8 +123,8 @@ def make_core(surface, vertices, outer_ids, features):
             face.reverse()
     if len(points) != 103 or len(quads) != 80:
         raise ValueError('Nasal core slot cardinality changed')
-    expected = [[index for kind,index in face] for face in TEMPLATE['quads'][:80]]
-    if quads != expected or any(kind != 'core' for face in TEMPLATE['quads'][:80] for kind,_ in face):
+    expected = [[index for kind,index in face] for face in TEMPLATE['support_core_quads']]
+    if quads != expected or any(kind != 'core' for face in TEMPLATE['support_core_quads'] for kind,_ in face):
         raise ValueError('Nasal core and transition template disagree')
     cycle = local_cycle(quads)
     if len(cycle) != 44:
@@ -138,4 +138,38 @@ def make_core(surface, vertices, outer_ids, features):
         if any(tuple(sorted((a,b))) not in edges for a,b in zip(line,line[1:])):
             raise ValueError('A primary nasal guide is not an actual edge path')
         lines.append(line)
-    return points,quads,cycle,lineage,seed_cells,lines
+    return points,quads,cycle,lineage,seed_cells,lines,full
+
+
+def make_core(surface, vertices, outer_ids, features):
+    """Resample only the frontal span; retain current-build nasal supports."""
+    base,_,selection_cycle,base_lineage,cells,_,guides = make_nasal_support_core(
+        surface,vertices,outer_ids,features)
+    stations = np.asarray(TEMPLATE['main_stations'],dtype=float)
+    if len(stations)!=12 or stations[0]!=1/16 or stations[-1]!=1 or np.any(np.diff(stations)<=0):
+        raise ValueError('Reduced guide stations are invalid')
+    points,lineage = [],[]
+    for guide in guides:
+        for xy in PchipInterpolator(np.linspace(0,1,13),guide,axis=0)(stations):
+            point = surface.sample(*xy).astype(np.float32).astype(float)
+            ids,weights,_ = surface.lineage(*point[[0,2]])
+            points.append(point);lineage.append((ids,weights))
+    for i in range(85,103):
+        points.append(base[i].astype(np.float32).astype(float));lineage.append(base_lineage[i])
+    for target,source in TEMPLATE['frozen_core_slots']:
+        points[target] = base[source].astype(np.float32).astype(float)
+        lineage[target] = base_lineage[source]
+    quads = [list(index for kind,index in q) for q in TEMPLATE['quads'][:TEMPLATE['core_quads']]]
+    if any(kind!='core' for q in TEMPLATE['quads'][:TEMPLATE['core_quads']] for kind,_ in q):
+        raise ValueError('Reduced core contains non-core slots')
+    points=np.asarray(points);cycle=local_cycle(quads)
+    if len(points)!=TEMPLATE['core_points'] or len(cycle)!=TEMPLATE['core_perimeter']:
+        raise ValueError('Reduced core cardinality changed')
+    lines=[];edges={tuple(sorted((a,b))) for q in quads for a,b in zip(q,q[1:]+q[:1])}
+    for row in range(5):
+        line=list(range(row*12,row*12+12))
+        if row in (1,3):line.insert(9,73 if row==1 else 76)
+        if any(tuple(sorted((a,b))) not in edges for a,b in zip(line,line[1:])):
+            raise ValueError('Reduced guide is not a continuous actual edge path')
+        lines.append(line)
+    return points,quads,cycle,lineage,cells,lines,base[selection_cycle]

@@ -1,23 +1,24 @@
 """Bind a relative nasal patch to this build's validated authoring surface."""
 from collections import Counter
 import numpy as np
-from nasal_source_geometry import edge_incidence, patch_boundary
+from nasal_source_geometry import edge_incidence, patch_boundary, canonical_boundary
 from nasal_source_template import TEMPLATE
 
 
-def validate_domain(vertices, faces, selected, boundary, edge_groups):
+def validate_domain(vertices, faces, selected, boundary, edge_groups, fingerprint=None):
     """Reject topology drift rather than accidentally binding another patch."""
-    if len(selected) != TEMPLATE['domain_faces'] or len(boundary) != TEMPLATE['boundary_count']:
+    fingerprint = TEMPLATE if fingerprint is None else fingerprint
+    if len(selected) != fingerprint['domain_faces'] or len(boundary) != fingerprint['boundary_count']:
         raise ValueError('Nasal source domain cardinality changed')
     all_edges = edge_incidence(faces)
     valence = Counter(i for edge in all_edges for i in edge)
     sub_edges = edge_incidence([faces[i] for i in sorted(selected)])
     sub_valence = Counter(i for edge in sub_edges for i in edge)
-    if [valence[i] for i in boundary] != TEMPLATE['source_valence']:
+    if [valence[i] for i in boundary] != fingerprint['source_valence']:
         raise ValueError('Nasal source global boundary valence changed')
-    if [sub_valence[i] for i in boundary] != TEMPLATE['domain_valence']:
+    if [sub_valence[i] for i in boundary] != fingerprint['domain_valence']:
         raise ValueError('Nasal source local boundary valence changed')
-    if [k for k,i in enumerate(boundary) if abs(vertices[i,0]) < 1e-8] != TEMPLATE['axis_slots']:
+    if [k for k,i in enumerate(boundary) if abs(vertices[i,0]) < 1e-8] != fingerprint['axis_slots']:
         raise ValueError('Nasal source central-axis ownership changed')
     expected = []
     for a,b in zip(boundary,boundary[1:]+boundary[:1]):
@@ -25,7 +26,7 @@ def validate_domain(vertices, faces, selected, boundary, edge_groups):
         if len(all_edges[edge]) != 2 or edge not in edge_groups:
             raise ValueError('Nasal boundary must retain a two-sided source edge')
         expected.append(edge_groups[edge])
-    if expected != TEMPLATE['boundary_groups']:
+    if expected != fingerprint['boundary_groups']:
         raise ValueError('Nasal protected crease-group ownership changed')
 
 
@@ -47,7 +48,8 @@ def bind_patch(surface, vertices, core, core_lineage, boundary):
         if len(weights) != 3 or min(weights) < 0 or abs(sum(weights)-1) > 1e-9:
             raise ValueError('Invalid nasal transition construction weights')
         xy = weights@np.asarray([position(ref)[[0,2]] for ref in center['parents']])
-        ids,shares,point = surface.lineage(*xy)
+        point = surface.sample(*xy).astype(np.float32).astype(float)
+        ids,shares,_ = surface.lineage(*point[[0,2]])
         points.append(point); lineage.append((ids,shares))
     # Local indices: fixed outer boundary, then new core and transition points.
     def index(ref):
@@ -100,3 +102,25 @@ def validate_patch(surface, boundary_points, new_points, quads):
     return {'min_angle_degrees':min(angles),'max_angle_degrees':max(angles),
             'max_author_surface_error_mm':max(errors)*1000,'samples':len(errors),
             'visual_trial_only':True}
+
+
+def extend_nasal_domain(vertices, faces, regions, selected, boundary, features, groups):
+    """Absorb one eligible lower-cheek quad using a verified current boundary."""
+    validate_domain(vertices,faces,selected,boundary,groups,TEMPLATE['base_domain'])
+    slots=TEMPLATE['extension_edge_slots']
+    edge=tuple(sorted(boundary[i] for i in slots))
+    incidence=edge_incidence(faces)
+    adjacent=[i for i in incidence[edge] if i not in selected]
+    if len(adjacent)!=1:
+        raise ValueError('Lower-cheek extension has no unique adjacent quad')
+    index=adjacent[0];face=faces[index]
+    edges=[tuple(sorted((a,b))) for a,b in zip(face,face[1:]+face[:1])]
+    old_boundary=patch_boundary(faces,selected)
+    if (regions[index]!=1 or len(face)!=4 or set(face)&features['protected']
+            or sum(e in old_boundary for e in edges)!=1 or any(groups[e] for e in edges)
+            or min(vertices[list(face),0])<=0):
+        raise ValueError('Lower-cheek extension crosses a protected interface')
+    selected=set(selected)|{index}
+    boundary=canonical_boundary(vertices,faces,selected)
+    validate_domain(vertices,faces,selected,boundary,groups)
+    return selected,boundary,index

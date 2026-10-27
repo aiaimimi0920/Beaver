@@ -606,3 +606,56 @@ Actual front, right-front 45-degree and right-side opaque-wire views retain
 all five nasal guides. The outer patch still has a visible density transition
 and concentrated turns, so this is an intermediate candidate, not a claim of
 SilverWolf topology equivalence or final acceptance.
+
+## Lower-density frontal guide patch
+
+The full reference side-cheek-to-nose paths span substantially farther than
+our frontal guide patch. Reusing their whole-path station count over only the
+frontal span made the replacement too dense. The reduced recipe uses twelve
+main stations, preserving all five continuous curves and the current-build
+nasal support geometry. Original 17-column support construction remains a
+local computation for exact nasal samples and their original donor lineage;
+it is not published as a second mesh or read from a historical model.
+
+The unchanged 44-node support boundary selects the original 61-face domain.
+After validating that canonical fingerprint, exactly one unselected skin quad
+on boundary edge slots 6–7 is absorbed. It must share exactly one domain edge,
+have no protected vertices or crease values/groups, and have a valid mirrored
+counterpart. The resulting disk has 62 faces and 42 boundary vertices.
+
+The reduced core has 78 points and 60 quads. Nine positive, source-relative
+support constructions join it to the outer frame, yielding 107 quads and
+87 new points per side. Every retained original point remains unchanged.
+The previous shared-frame movement is intentionally not applied: its edge
+ratio regressed on this new template. This is a topology replacement, not a
+relaxation of the motion or no-regression gate. New centers are quantized
+before their immutable-source field lineage is evaluated; frozen nasal
+samples retain their original lineage. Both diagonals, original depth limits,
+functional features, source topology and exact old attributes remain guarded.
+
+CPU reconstruction matches the independent low-density candidate exactly.
+Native generation, stored fields, poses and opaque-wire visual verification
+are still required before treating a new build as retained or accepted.
+
+The exact-cover patch can retain the eligible extension quad itself. The
+atomic writer reuses an identical original selected face only when its cyclic
+orientation matches, and rejects unrelated, reversed or repeated reuse.
+Logical domain/patch counts include these retained quads; a separate reuse
+count distinguishes physical creation/removal from topology accounting.
+
+Native trial 223 realizes the reduced patch with 2628 Face points, 2997
+editable faces and 4672 runtime triangles. Logical 62-face envelopes retain
+one original extension quad per side: 122 original faces are physically
+removed, 212 new quads are created, and two identical selected quads reused.
+All retained geometry, three full corner UV sets, point/deform attributes
+and six stored runtime morphs match the independently reconstructed oracle.
+The 729 sampled poses and continuous blink/open orientation gate pass.
+In 99 pose cases (95 distinct combinations), 452 changed-scope runtime
+triangles against all 4672 have no strict crossings, with the same excluded
+shared-vertex, coplanar and contact cases. This is not a continuous proof.
+
+Actual opaque-wire front/right45/right90 views show lower frontal density,
+but lateral handoffs still bend abruptly into the older outer-cheek rows.
+Therefore 223 is a retained improvement, not final five-flow similarity
+acceptance; subsequent work should address that continuation rather than
+resampling the already validated nasal core again.
