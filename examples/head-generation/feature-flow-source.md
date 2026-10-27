@@ -218,3 +218,25 @@ unrun/blocked rather than treating these tests as its result.
 
 Shape, edge direction, connectivity, shading and deformation must be evaluated
 separately. Quad-only authoring by itself does not fix any of the latter four.
+
+## Joint first-support-ring refinement
+
+The source recipe now solves the first mouth support ring jointly on the current
+semantic rays. It does not use historical vertex IDs or a saved solution table.
+The aperture, midline endpoints, second and third rings, and outer boundary stay
+fixed. Upper first-ring fairness uses 0.33, while pinned midline points retain
+the previous value and the other upper rings retain 0.35.
+
+The optimizer reads a pure pair of current depth and the unchanged inherited
+reference. Every accepted point is checked again through the strict depth
+function before any vertex is written. The existing 4.2 mm raw-depth gate,
+upper-local 5.2 mm total-reference bound and 1.5 mm additional move bound remain.
+Ring gaps, projected orientation, both 3D diagonals and float32 output are checked.
+An infeasible solve raises rather than partially updating the ring.
+
+In the native process comparison, only 28 first-ring points changed. Upper
+shoulder height above the intended ridge decreased from about 6.422 to 0.618 mm.
+The mouth-corner turn increased from 29.905 to 30.885 degrees, within the explicit
+one-degree limit. This does not fix all outer transitions: turns of about 40.6
+and 44.5 degrees remain. Sampled export pose checks passed, but these checks and
+the source comparison are not a claim of final visual acceptance.

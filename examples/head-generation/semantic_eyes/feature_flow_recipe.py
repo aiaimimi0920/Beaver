@@ -13,6 +13,7 @@ ADAPTERS = (
     'source_orbital_continuity',
     'source_eye_ring_flow',
     'source_lip_relief_flow',
+    'source_lip_joint_flow',
     'source_quad_export',
     'source_skin_crossings',
     'source_rear_quad_guard',
@@ -30,6 +31,7 @@ DEPENDENCIES = (
     'ear_final_caps',
     'ear_flow_geometry',
     'ear_front_refinement',
+    'lip_joint_solver',
     'ear_flow_mesh',
 )
 
