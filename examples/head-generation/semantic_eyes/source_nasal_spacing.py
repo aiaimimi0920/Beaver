@@ -4,7 +4,7 @@ from pathlib import Path
 from source_nasal_flow import MODULES as NASAL_MODULES
 from source_chin_retile import CHIN_MODULES
 
-SPACING_MODULES = ('nasal_spacing_rule', 'nasal_spacing_shape',
+SPACING_MODULES = ('nasal_spacing_rule', 'nasal_rear_rule', 'nasal_return_provenance', 'nasal_spacing_shape',
                    'nasal_spacing_mesh', 'nasal_spacing_joint')
 
 
@@ -18,10 +18,14 @@ def adapt(sources):
     if pipeline.index(prior) > pipeline.index(marker):
         raise ValueError('Five-rail spacing source stages changed order')
     out['pipeline.py'] = pipeline.replace(marker,
-        '        from shell import refine_nasal_bridge_spacing\n'
+        '        from shell import refine_nasal_bridge_spacing, capture_nasal_spacing_baseline\n'
+        '        _spacing_baseline = capture_nasal_spacing_baseline(data)\n'
         '        report.update(refine_nasal_bridge_spacing(data,semantic_part_ordinals,\n'
         '            report["nasal_inner_source"],\n'
-        '            report["nasal_five_flow_source"]["allocated_flow_records"]))\n' + marker, 1)
+        '            report["nasal_five_flow_source"]["allocated_flow_records"]))\n'
+        '        report.update(refine_nasal_bridge_spacing(data,semantic_part_ordinals,\n'
+        '            report["nasal_inner_source"], report["nasal_five_flow_source"]["allocated_flow_records"],\n'
+        '            generated_return=report["ear_post_return"], baseline=_spacing_baseline))\n' + marker, 1)
     shell = out['shell.py']
     existing = {node.name for node in ast.parse(shell).body
                 if isinstance(node, (ast.FunctionDef, ast.ClassDef))}

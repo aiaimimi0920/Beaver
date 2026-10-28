@@ -75,6 +75,8 @@ DEPENDENCIES = (
     'chin_source_mesh',
     'chin_joint_mesh',
     'nasal_spacing_rule',
+    'nasal_rear_rule',
+    'nasal_return_provenance',
     'nasal_spacing_shape',
     'nasal_spacing_mesh',
     'nasal_spacing_joint',

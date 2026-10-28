@@ -1017,3 +1017,42 @@ quote delimiters remain explicit concatenations; CR/CRLF use `repr` because
 Python otherwise normalizes line endings. Both source hashes, seed-script and
 receipt identities, original generation AST and unchanged one-MiB complete
 request limit are verified. This changes quoting overhead, not source contents.
+
+### Bounded posterior rail continuation
+
+After the weld prerequisite, a second detached transaction redistributes three
+rear stations of the fourth rail and one adjacent generated-return rim station
+per side. The last station has a real continuation into that rim: an earlier
+2 mm endpoint-only trial improved spacing but made its return turn almost ten
+degrees worse, so it was rejected. The retained rule optimizes current adjacent
+gap contrast while constraining the full continuation, including the return.
+Reference spacing remains diagnostic rather than an anatomical equality target.
+
+The native caller certifies the surviving generator-authored return strip,
+local mirror correspondence, named owners and exact donor-group membership
+before transport. It preserves existing boundary incidence, backward-facing
+return normals and all protected supports. Current-stage and cumulative
+pre-bridge sampled shape checks run before each commit. Frozen donor snapshots
+are independent for the two transactions; their coefficients are not composed
+across unrelated original quads.
+
+Actual Faye233 moves eight vertices and transports fields across 16 affected
+quads without changing topology. Its terminal four-gap ratio changes from
+4.657 to 3.376, not to uniform spacing. Full return turn changes from 71.220 to
+71.215 degrees; local rim curvature is redistributed by about +0.520/-2.618
+degrees at two neighboring turns. The open rim moves geometrically, with a
+measured curve deviation below 0.146 mm; it is not described as an unchanged
+silhouette or a mathematically invariant boundary.
+
+Independent native readback verifies exact eight-point frozen transport,
+unchanged non-owned fields and topology, preserved Faye232 group repairs and
+all six runtime keys. Actual GLB geometry/winding and position morphs match the
+saved runtime mesh. All 729 sampled orientation states and 99 strict-crossing
+states pass under the existing contact exclusions. Full bilateral 20-quad
+shape checks at 32 subdivisions with worst-case 96 refinement remain below
+0.341 mm relative to Faye232 and 0.778 mm cumulatively relative to Faye230.
+These are sampled certificates. Five actual source-wire views were inspected.
+Nine actual engine expression captures were hash-verified; representative open,
+right-blink and mixed right-45-degree views were inspected. Existing diagnostic
+faceting and the cheek outline artifact remain. Whole-face artistic acceptance
+and other regions remain open.

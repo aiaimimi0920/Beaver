@@ -2,13 +2,15 @@
 from collections import Counter
 import numpy as np
 from nasal_spacing_rule import propose_nasal_bridge_spacing
+from nasal_rear_rule import propose_nasal_rear_spacing
+from nasal_return_provenance import verify_nasal_return_provenance
 from nasal_source_domain import current_source_features
 from nasal_spacing_shape import guard_nasal_spacing_shape
 from chin_source_fields import (chin_snapshot_point_fields, chin_apply_point_fields,
                                chin_validate_face_fields)
 
 
-def stage_nasal_bridge_spacing(data, ordinals, inner, records):
+def stage_nasal_bridge_spacing(data, ordinals, inner, records, generated_return=None, baseline=None):
     import bmesh
     from ear_topology import ear_loop_values, assign_ear_loop
     from ear_surface import polygon_diagonals
@@ -41,13 +43,48 @@ def stage_nasal_bridge_spacing(data, ordinals, inner, records):
         if len(ear_bases) != 2:
             raise ValueError('Nasal spacing needs two explicit current ear owners')
         ear_regions = {base + offset for base in ear_bases for offset in (0, 100, 110)}
-        spec = propose_nasal_bridge_spacing(vertices, faces, regions, paths, ear_regions,
-                                             outer_anchor_offset=next(iter(offsets)))
+        features = current_source_features(vertices, faces, regions, ordinals)
+        provenance = None
+        if generated_return is None:
+            spec = propose_nasal_bridge_spacing(vertices, faces, regions, paths, ear_regions,
+                                                 outer_anchor_offset=next(iter(offsets)))
+            edit_budget = 4
+        else:
+            from scipy.spatial import cKDTree
+            distance, matches = cKDTree(vertices).query(vertices * [-1, 1, 1], k=2)
+            mirror = matches[:, 0]
+            spec = propose_nasal_rear_spacing(vertices, faces, regions,
+                [list(reversed(path)) for path in paths], mirror,
+                ear_regions=ear_regions, protected_vertices=features['protected'])
+            required = set(spec['roles']['moved']) | set(spec['roles']['donors']) | set(spec['roles']['rim_path'])
+            required |= {i for fi in spec['affected_faces'] for i in faces[fi]}
+            required |= {int(mirror[i]) for i in list(required)}
+            left, right = (ordinals['Ear hollow pinna -1'], ordinals['Ear hollow pinna 1'])
+            owners = {a + offset: b + offset for a, b in ((left, right), (right, left))
+                      for offset in (0, 100, 110)}
+            for i in required:
+                partner = int(mirror[i])
+                if distance[i, 0] > 2e-6 or distance[i, 1] <= 2e-6 or int(mirror[partner]) != i:
+                    raise ValueError('Rear neighborhood has ambiguous mirror correspondence')
+                if {owners.get(r, r) for r in features['membership'][i]} != features['membership'][partner]:
+                    raise ValueError('Rear mirrored source owners disagree')
+            cycle = lambda q: min(tuple(q[k:]) + tuple(q[:k]) for k in range(len(q)))
+            face_owners = {cycle(q): r for q, r in zip(faces, regions)}
+            for fi in spec['affected_faces']:
+                mirrored = [int(mirror[i]) for i in reversed(faces[fi])]
+                if face_owners.get(cycle(mirrored)) != regions[fi]:
+                    raise ValueError('Rear mirrored support topology disagrees')
+            parent, rim = map(int, spec['roles']['flow_with_return'][-2:])
+            provenance = verify_nasal_return_provenance(vertices, faces, regions, generated_return,
+                [(parent, rim), (int(mirror[parent]), int(mirror[rim]))])
+            spec['faces'], spec['edited_faces'] = faces, {}
+            spec['metrics'] = {k: spec[k] for k in ('positive_move_mm', 'old_turns', 'new_turns',
+                'old_rim_turns', 'new_rim_turns', 'max_turn_increase_deg', 'objective')}
+            edit_budget = 0
         points = np.asarray(spec['vertices'], dtype=np.float32).astype(float)
         final_faces = [tuple(face) for face in spec['faces']]
         lineage = spec['lineage']
         affected, edited = set(spec['affected_faces']), spec['edited_faces']
-        features = current_source_features(vertices, faces, regions, ordinals)
         peak = {i for i, membership in enumerate(features['membership'])
                 if 1 in membership and np.linalg.norm(vertices[i] - features['nose_peak']) < 1e-9}
         protected = features['apertures'] | features['first_lids'] | features['oral']
@@ -56,7 +93,7 @@ def stage_nasal_bridge_spacing(data, ordinals, inner, records):
             raise ValueError('Nasal spacing moved a peak, aperture, support or attachment')
         if any(set(faces[i]) & protected for i in edited):
             raise ValueError('Nasal bridge retile changes a functional attachment fan')
-        if len(points) != len(vertices) or len(final_faces) != len(faces) or len(edited) != 4:
+        if len(points) != len(vertices) or len(final_faces) != len(faces) or len(edited) != edit_budget:
             raise ValueError('Nasal spacing changed its source topology budget')
         if any(tuple(final_faces[i]) != face for i, face in enumerate(faces) if i not in edited):
             raise ValueError('Nasal spacing changed an unowned face')
@@ -95,8 +132,21 @@ def stage_nasal_bridge_spacing(data, ordinals, inner, records):
         if len(set(map(frozenset, final_faces))) != len(final_faces):
             raise ValueError('Nasal spacing introduced duplicate faces')
         changed_faces = {original[i] for i in edited}
-        chin_validate_face_fields(bm, changed_faces)
+        if changed_faces:
+            chin_validate_face_fields(bm, changed_faces)
+        else:
+            for kind in ('int', 'float', 'string', 'float_vector'):
+                accessor = getattr(bm.loops.layers, kind, None)
+                if accessor is not None and list(accessor.values()):
+                    raise ValueError('Unsupported rear spacing corner field')
         fields, deforms = chin_snapshot_point_fields(bm, parents)
+        if generated_return is not None:
+            if not deforms or any(not any(values[index] for _, values in deforms) for index in weights):
+                raise ValueError('Rear spacing has no authored semantic membership')
+            for _, values in deforms:
+                for index, donors in weights.items():
+                    if any(values[donor] != values[index] for donor, share in donors.items() if share > 0):
+                        raise ValueError('Rear spacing donor semantic membership is inconsistent')
         donor_ids = set(weights) | {i for row in weights.values() for i in row}
         donor_ids |= {i for fi in affected for i in faces[fi]}
         donor_faces = {face for i in donor_ids for face in parents[i].link_faces if face[region] == 1}
@@ -114,8 +164,23 @@ def stage_nasal_bridge_spacing(data, ordinals, inner, records):
             new_normal = np.cross(b, np.roll(b, -1, axis=0)).sum(axis=0)
             if old_normal @ new_normal <= 0:
                 raise ValueError('Nasal spacing reversed source face orientation')
+            if provenance is not None and any(set(final_faces[index]) == set(q) for pair in provenance['pairs'] for q in pair['support_cycles']):
+                moved = posed[list(final_faces[index])]
+                posed_normal = np.cross(moved, np.roll(moved, -1, axis=0)).sum(axis=0)
+                if new_normal[1] <= 0 or posed_normal[1] <= 0:
+                    raise ValueError('Generated posterior strip no longer faces backward')
         shape_proof = guard_nasal_spacing_shape(vertices, faces, points, final_faces, affected,
                                                 old_delta, delta, polygon_diagonals)
+        cumulative_proof = None
+        if generated_return is not None:
+            if baseline is None or len(baseline['vertices']) != len(vertices):
+                raise ValueError('Rear spacing requires a frozen pre-spacing shape baseline')
+            canonical = lambda q: min(tuple(q[k:]) + tuple(q[:k]) for k in range(len(q)))
+            old_cycles = {canonical(q) for q in baseline['faces']}
+            if any(canonical(faces[i]) not in old_cycles for i in affected):
+                raise ValueError('Cumulative rear source support changed topology')
+            cumulative_proof = guard_nasal_spacing_shape(baseline['vertices'], faces, points,
+                final_faces, affected, baseline['mouth_delta'], delta, polygon_diagonals)
         for index in lineage:
             parents[index].co = points[index]
         replacement = {}
@@ -139,7 +204,8 @@ def stage_nasal_bridge_spacing(data, ordinals, inner, records):
             for loop in face.loops:
                 i = loop.vert.index
                 assign_ear_loop(loop, weights.get(i, {i: 1.}), old_loops, values, uv, colors)
-            if any(len(edge.link_faces) != 2 for edge in face.edges):
+            if any(len(edge.link_faces) != (old_edges.get(tuple(sorted(v.index for v in edge.verts)), 2)
+                   if generated_return is not None else 2) for edge in face.edges):
                 raise ValueError('Nasal spacing native edit is not manifold')
         for edge in bm.edges:
             key = tuple(sorted(v.index for v in edge.verts))
@@ -154,9 +220,19 @@ def stage_nasal_bridge_spacing(data, ordinals, inner, records):
         return {'source_lineage': lineage, 'affected_old_cycles': [faces[i] for i in sorted(affected)],
                 'affected_final_cycles': [final_faces[i] for i in sorted(affected)],
                 'edited_faces': edited, 'final_full_paths': paths, 'roles': spec['roles'],
-                'metrics': spec['metrics'], 'axis_tangent': spec['axis_tangent'], 'fade': spec['fade'],
-                'sampled_shape_guard': shape_proof,
-                'scope': 'Five-rail metric spacing and upper bridge; inherited rear branch ambiguity remains',
+                'metrics': spec['metrics'], 'axis_tangent': spec.get('axis_tangent'), 'fade': spec.get('fade'),
+                'sampled_shape_guard': shape_proof, 'cumulative_shape_guard': cumulative_proof,
+                'generated_return_provenance': provenance,
+                'scope': spec.get('scope', 'Five-rail metric spacing and upper bridge; inherited rear branch ambiguity remains'),
                 'acceptance': 'Pending actual export, field, expression and visual verification'}
     finally:
         bm.free()
+
+
+def capture_nasal_spacing_baseline(data):
+    motion = data.attributes.get('MouthOpenDelta')
+    if motion is None or motion.domain != 'POINT' or motion.data_type != 'FLOAT_VECTOR':
+        raise ValueError('Spacing baseline lacks authored MouthOpenDelta')
+    return {'vertices': np.asarray([tuple(v.co) for v in data.vertices], dtype=np.float32),
+            'faces': [tuple(face.vertices) for face in data.polygons],
+            'mouth_delta': np.asarray([tuple(row.vector) for row in motion.data], dtype=np.float32)}
