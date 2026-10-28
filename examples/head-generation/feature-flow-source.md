@@ -1098,3 +1098,34 @@ Representative open-mouth, right-blink and combined-expression views were
 inspected; existing white diagnostic faceting and the right-blink cheek outline
 artifact remain unresolved. This local improvement is not whole-face artistic
 or cross-character acceptance.
+
+### Bounded post-chin mouth-corner support
+
+The shared mouth-corner stage requires the completed current chin transaction,
+then binds the lower circumoral support from live oral adjacency rather than
+saved vertex IDs. Faye235 redistributes two stations per side: four vertices and
+12 affected quads, without adding density or changing source connectivity. The
+support peak turn falls from 28.678 to 21.509 degrees, while the neighboring
+exit rises from 3.240 to 9.876 degrees. Along-path maximum/minimum interval ratio
+improves from 3.497 to 3.428; adjacent interval growth does not worsen. The two
+circumoral ratios change from 1.2277/1.1285 to 1.2276/1.0811. Transverse ports
+have an explicit +2-degree regression budget, nearly reached by one port;
+this is a bounded redistribution, not improvement at every interface. Frozen
+bilinear donors transport positions, three UV layers and MouthOpenDelta. Saved
+MouthOpen keys equal float32(Basis + transported attribute), while Round,
+Spread and Pucker are regenerated from the current positions through the
+frozen `researched_mouth_runtime.motion_delta`; their local deltas must not be
+assumed unchanged. Independent readback verifies that these four mouth targets
+change only at the four owned stations, both blink deltas remain exact, and
+semantic memberships and all other point fields are preserved. Two local
+automatic export diagonals change, with all retained triangle/edge fields
+unchanged; source topology remains exact. The accepted chin's 74 faces and
+97 vertices, nasal corrections, posterior return and orbital support remain
+protected. Five actual opaque source-wire views have been inspected. Saved-export
+shape checks at 64 subdivisions with local 96 refinement are below 0.247 mm;
+729 sampled orientation states and 99 strict-crossing states pass with the
+existing contact exclusions. Nine engine expression captures passed same-model,
+pose and hash checks. Representative open-mouth, right-blink and combined
+expression views were inspected; existing white diagnostic faceting and the
+right-blink cheek outline artifact remain unresolved. These checks establish a local corner transition,
+not whole-mouth or whole-face artistic acceptance.

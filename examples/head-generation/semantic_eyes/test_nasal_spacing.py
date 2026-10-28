@@ -34,17 +34,20 @@ class NasalSpacingContractTests(unittest.TestCase):
     def test_source_hook_is_after_core_before_chin(self):
         pipeline = ('def run():\n    if True:\n'
                     '        report.update(refine_nasal_source(data))\n'
-                    '        from shell import refine_chin_source\n')
+                    '        from shell import refine_chin_source\n'
+                    '        report.update(refine_chin_source(data,report["chin_source_anchors"]))\n')
         result = adapt({'pipeline.py': pipeline, 'shell.py': ''})
         p = result['pipeline.py']
         self.assertLess(p.index('refine_nasal_source(data)'), p.index('refine_nasal_bridge_spacing(data'))
         self.assertLess(p.index('refine_nasal_bridge_spacing(data'), p.index('from shell import refine_chin_source'))
         self.assertNotIn('from chin_source_shape import', result['shell.py'])
+        self.assertLess(p.index('report.update(refine_chin_source'), p.index('mouth_context='))
 
     def test_helper_collision_fails_closed(self):
         pipeline = ('def run():\n    if True:\n'
                     '        report.update(refine_nasal_source(data))\n'
-                    '        from shell import refine_chin_source\n')
+                    '        from shell import refine_chin_source\n'
+                    '        report.update(refine_chin_source(data,report["chin_source_anchors"]))\n')
         with self.assertRaisesRegex(ValueError, 'collides'):
             adapt({'pipeline.py': pipeline, 'shell.py': 'def propose_nasal_bridge_spacing(): pass\n'})
 
