@@ -857,3 +857,79 @@ field transfer is invariant. All 9,538 untouched UV loops and all 5,190 retained
 edge crease/group records are exact. No tolerance was relaxed to obtain this
 result. Six final morph keys are procedural outputs, not interpolated from
 nonexistent pre-nasal Key datablocks.
+
+## Lower-mouth source flow and conditional shape preservation
+
+The lower-mouth/chin correction is part of the shared one-click recipe, not a
+manual edit to an exported model. It captures this build's graded row stations,
+four transition units, outer transition and lower mouth-ring roles. Only the
+51 roles used by the original/replacement 37-quad disk are bound through native
+assembly. Historical vertex IDs and saved Faye coordinates are not production
+inputs. The unchanged aperture and first support rings are outside this domain.
+
+The same-count retile adjusts 25 interior stations per half. It reduces redundant
+pole concentration and extends genuine opposite-edge paths; it does not make
+every path pole-free or turn chart-row labels into regular continuations.
+A two-quad outer-mouth interface extension avoids forcing a sharp turn at an
+arbitrary earlier disk boundary. The final native gate checks both halves,
+including three mirrored-axis ports, source winding, actual paired-pose quad
+validity, frozen bilinear lineage, and unchanged outside geometry.
+
+Coordinates, UVs, point fields and deform weights are sampled from immutable
+current-source donors. `MouthOpenDelta` is transported, not analytically
+regenerated during this stage. `SmoothChinJoin` is structural membership:
+interior targets remain zero even if a donor corner belongs to the fixed seam.
+Other mixed discrete ownership still fails closed. A detached transaction uses
+payload readback and rollback; the saved editable inputs tested here had no
+pre-existing shape keys. The six expression keys are generated downstream.
+
+The numerical proposer recomputes its harmonic initialization and bounded
+quality/flow fitting from the current source. A conditional shape guard compares
+freshly selected neutral/MouthOpen triangles with the frozen authoring patch in
+both directions. Initial/no-op and final checks use at least 32 subdivisions.
+The local active-set optimizer uses the verified 16-grid witnesses, but cannot
+accept without a fresh dense check after numerical-no-op pruning. Failing dense
+witnesses extend the next bounded active set. The 1 mm sampled acceptance target
+is not relaxed; the correction aims below it. These finite samples are not a
+continuous Hausdorff certificate. A passing proposal is returned unchanged.
+
+Native Faye229 retained the original polygon and vertex budgets. Exactly 50
+intended vertices moved; the other 2,550 positions and 2,895 outside faces are
+exact. All 10,554 corners in each of UVMap/UV2/DetailUV, point attributes, deform
+records and material slots match frozen lineage exactly. All 5,490 retained
+edge fields are exact. Thirty replacement-face UI selection flags differ;
+this is recorded separately from semantic geometry and field preservation.
+All 54 other Mesh payloads remain exact. Mouth/eye apertures and first supports,
+as well as the previously retained nasal geometry, are unchanged by this stage.
+
+Actual exported triangles and six morph targets match the native runtime data.
+All 729 sampled orientation cases and 99 changed-region strict-crossing cases
+pass. Crossing checks exclude shared-vertex, tangent and coplanar contacts;
+they are not whole-face or continuous collision clearance. Dense export checks
+at 32 subdivisions, with the nearest-limit triangles checked at 96, measure
+at most 0.932 mm forward and 0.905 mm reverse. Five actual opaque source-wire
+views and nine actual engine expression states were inspected. Residual central
+and lower-bridge bends remain; this is a bounded flow improvement, not artistic
+acceptance of the whole face.
+
+Native Faye230 adds the dense conditional guard. It is an actual no-op on this
+profile: all 55 source and runtime Mesh payloads match Faye229 after normalizing
+60 reordered Face edge indices, and the GLB is byte-identical. This reuses the
+verified Faye229 engine result; it does not claim a new set of Faye230 captures.
+
+A freshly regenerated `research-compact-rounded` CPU source is a meaningful
+counterprofile, with a wider chin and independently recomputed source field.
+Its uncorrected proposal fails the sampled shape target. The generic conditional
+correction changes five existing stations by at most 0.555 mm; the latest dense
+64 check is below 0.968 mm in both directions and both tested poses. Optimizer
+convergence metadata is kept separate from geometric acceptance. The full native
+23001 run currently stops earlier, at the existing ear lower-root turn guard,
+before this nasal/chin stage executes. Thus compact-rounded is CPU-validated
+here, not a second successful end-to-end native profile. That upstream ear
+blocker must not be hidden by weakening its guard or by calling the partial
+run a completed model.
+
+Subsequent visual feedback reopens the nasal bridge junction and uneven spacing
+between the five nose-to-cheek rails. Those corrections are separate ongoing
+work; the retained nasal checks above are historical, not final acceptance of
+that appearance.

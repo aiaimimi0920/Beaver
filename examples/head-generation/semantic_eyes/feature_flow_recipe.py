@@ -28,6 +28,7 @@ ADAPTERS = (
     'source_feature_stage_policy',
     'source_weld_ownership',
     'source_nasal_flow',
+    'source_chin_retile',
 )
 DEPENDENCIES = (
     'source_ear_quad_solver',
@@ -63,6 +64,14 @@ DEPENDENCIES = (
     'nasal_inner_mesh',
     'nasal_mesh_snapshot',
     'nasal_joint_mesh',
+    'chin_source_roles',
+    'chin_source_fields',
+    'chin_source_contract',
+    'chin_source_template',
+    'chin_source_solver',
+    'chin_source_shape',
+    'chin_source_mesh',
+    'chin_joint_mesh',
 )
 
 
