@@ -4,6 +4,7 @@ from scipy.spatial import cKDTree
 from nasal_source_geometry import AuthorQuadSurface, canonical_boundary, edge_incidence
 from nasal_source_domain import current_source_features, resolve_outer_anchors, select_source_domain
 from nasal_source_core import make_core
+from nasal_parameter_adaptation import adapt_nasal_patch_parameters
 from nasal_source_binding import validate_domain, bind_patch, validate_patch, extend_nasal_domain, validate_nasal_handoffs
 
 
@@ -18,7 +19,9 @@ def prepare_nasal_patch(vertices, faces, regions, ordinals, authored, edge_group
     domain.update(final_faces=len(selected),boundary_count=len(boundary),lower_cheek_extension_faces=1)
     points,quads,lineage = bind_patch(surface,vertices,core,weights,boundary)
     handoffs = validate_nasal_handoffs(boundary,anchors,quads)
-    quality = validate_patch(surface,vertices[boundary],points,quads)
+    points,lineage,adaptation = adapt_nasal_patch_parameters(
+        surface,vertices[boundary],points,quads,lineage,validate_patch)
+    quality = adaptation["quality"]
     distances,mirrors = cKDTree(vertices).query(vertices*np.array([-1,1,1]),k=2)
     used = {i for j in selected for i in faces[j]}
     if any(distances[i,0]>1e-7 or distances[i,1]<2e-6 for i in used):
@@ -52,6 +55,7 @@ def prepare_nasal_patch(vertices, faces, regions, ordinals, authored, edge_group
             dict(selected=mirrored,boundary=other_boundary,points=points*[-1,1,1],
                  quads=[q[::-1] for q in quads],lineage=other_lineage,extension=other_extension)], {
         'domain':domain,'quality':[quality,other_quality],
+        'parameter_adaptation':adaptation,
         'primary_flow_count':len(lines),'primary_flow_local_paths':lines,
         'primary_flow_boundary_slots':handoffs,'lateral_handoffs_verified':True,
         'protected_current_vertices':len(features['protected']),

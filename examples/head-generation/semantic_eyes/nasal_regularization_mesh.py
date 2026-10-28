@@ -7,9 +7,10 @@ checks must inspect the automatically exported result, not a preferred diagonal.
 import numpy as np
 from nasal_regularization_solver import propose_nasal_rule
 from nasal_regularization_trace import trace_outer_flow
+from nasal_joint_contract import nasal_oriented_cycle, nasal_quad_quality
 
 
-def regularize_nasal_source(data, ordinals, records):
+def regularize_nasal_source(data, ordinals, records, joint_preflight=None):
     import bmesh
     from ear_topology import ear_loop_values, assign_ear_loop
     bm = bmesh.new()
@@ -39,28 +40,27 @@ def regularize_nasal_source(data, ordinals, records):
         moved = set(map(int, result['moved_vertex_ids']))
         changed = {int(i): q for i, q in result['new_faces'].items()}
         affected = {int(i) for i in result['affected_faces']}
-        stored = proposed[np.asarray([changed.get(i, faces[i]) for i in sorted(affected)])]
-        before, after = np.roll(stored, 1, axis=1)-stored, np.roll(stored, -1, axis=1)-stored
-        lengths = np.linalg.norm(before, axis=2)
-        denom = lengths*np.linalg.norm(after, axis=2)
-        if np.any(denom < 1e-12):
-            raise ValueError('Float32 nasal edge collapsed')
-        angles = np.degrees(np.arccos(np.clip(np.sum(before*after,axis=2)/denom,-1,1)))
-        xy = stored[:, :, [0,2]]
-        e = np.roll(xy,-1,axis=1)-xy
-        turn = e[:,:,0]*np.roll(e[:,:,1],-1,axis=1)-e[:,:,1]*np.roll(e[:,:,0],-1,axis=1)
-        if (angles.min()<10 or angles.max()>170 or
-                np.any(~(np.all(turn>1e-12,axis=1)|np.all(turn< -1e-12,axis=1))) or
-                np.linalg.norm(proposed-vertices,axis=1).max()>.00250001):
+        final_intermediate = [changed.get(i,q) for i,q in enumerate(faces)]
+        checked = set(affected)
+        if joint_preflight is not None:
+            proof = joint_preflight(proposed, final_intermediate, regions, paths, result)
+            removed_cycles = {tuple(q) for q in proof['removed_cycles']}
+            checked = {i for i in affected if nasal_oriented_cycle(final_intermediate[i]) not in removed_cycles}
+            result['joint_final_domain'] = proof
+        stored_quality = (nasal_quad_quality(proposed,[final_intermediate[i] for i in sorted(checked)])
+                          if checked else dict(min_angle=None,max_angle=None,invalid_faces=[],checked_faces=0))
+        maximum_move = float(np.linalg.norm(proposed-vertices,axis=1).max())
+        if stored_quality['invalid_faces'] or maximum_move>.00250001:
             raise ValueError('Float32 expanded nasal geometry failed')
-        result['stored_geometry'] = dict(min_angle=float(angles.min()),max_angle=float(angles.max()),
-                                        max_move_m=float(np.linalg.norm(proposed-vertices,axis=1).max()))
+        result['stored_geometry'] = dict(min_angle=stored_quality['min_angle'],
+                                        max_angle=stored_quality['max_angle'],max_move_m=maximum_move,
+                                        checked_faces=stored_quality['checked_faces'])
         lineage = {int(i): {int(k): float(w) for k, w in zip(row['donors'], row['weights'])
                             if w > 1e-12} for i, row in result['lineage'].items()}
         quality = result['candidate_quality']
         if (not result['outer_boundary_fixed'] or not result['protected_vertices_unchanged']
-                or quality['min_angle'] < 10 or quality['max_angle'] > 170
-                or quality['nonconvex_front_faces'] or result['maximum_move_m'] > .00250001):
+                or (joint_preflight is None and (quality['min_angle'] < 10 or quality['max_angle'] > 170
+                    or quality['nonconvex_front_faces'])) or result['maximum_move_m'] > .00250001):
             raise ValueError('Expanded nasal trial violated geometric bounds')
         for weights in lineage.values():
             if not weights or abs(sum(weights.values())-1) > 1e-8 or min(weights.values()) < 0:

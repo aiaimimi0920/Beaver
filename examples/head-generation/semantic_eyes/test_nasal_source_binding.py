@@ -70,7 +70,7 @@ class NasalSourceBindingTests(unittest.TestCase):
         self.assertNotIn('from nasal_source_',result['shell.py'])
         self.assertLess(result['shell.py'].index('capture_nasal_source_anchors(verts'),
                         result['shell.py'].index('compact()'))
-        self.assertLess(result['pipeline.py'].index('replace_nasal_source(data'),
+        self.assertLess(result['pipeline.py'].index('refine_nasal_source(data'),
                         result['pipeline.py'].index('# Automatic runtime'))
         with self.assertRaises(ValueError):adapt(result)
 

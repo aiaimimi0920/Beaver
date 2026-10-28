@@ -4,7 +4,7 @@ from nasal_inner_rule import propose_inner_nasal
 from nasal_source_mesh import claim_nasal_source_face
 
 
-def rebuild_inner_nasal_source(data, ordinals, paths):
+def rebuild_inner_nasal_source(data, ordinals, paths, proposal=None):
     import bmesh
     from mathutils import Vector
     from ear_topology import flow_point_fields, ear_loop_values, assign_ear_loop
@@ -23,7 +23,7 @@ def rebuild_inner_nasal_source(data, ordinals, paths):
         group = bm.edges.layers.int.get('FacialCreaseGroup')
         if region is None or crease is None or group is None:
             raise ValueError('Inner nasal source ownership missing')
-        spec, proposed, _ = propose_inner_nasal(vertices, faces,
+        spec, proposed, _ = (proposal or propose_inner_nasal)(vertices, faces,
                                                [f[region] for f in old_faces],ordinals,paths)
         stored = proposed.astype(np.float32).astype(float)[np.asarray(spec['new_quads'])]
         a,b = np.roll(stored,1,axis=1)-stored,np.roll(stored,-1,axis=1)-stored

@@ -758,3 +758,102 @@ reasonably similar to the inferred reference. This does not certify identical
 artist topology, the remaining local pole distribution, whole-face beauty,
 all expressions, or a completed character/product. The localized shoulder
 angle/pole tradeoff remains documented rather than hidden by the comparison.
+
+## Reopened review: complete paths and reusable nasal repair
+
+The earlier localized 224 judgment was superseded by later user review. The
+outer-cheek continuation, inner nasal ladder, tangent distribution and other
+facial regions were not accepted as complete. Trials 225 and 226 revise the
+shared source recipe rather than hand-editing a generated mesh.
+
+225 traces the current connected skin chart and regularizes the full lateral
+continuation while preserving functional supports. 226 replaces the crowded
+inner nasal patch with a bounded longitudinal-rail grid and a separate nasal
+tip bridge. It removes 76 quads and adds 34, removes 60 points and adds 18.
+All new points retain current-source edge lineage; retained points stay exact.
+The five main paths reach their distinct central-axis levels, not one common
+nose-tip endpoint. Original reference triangles constrain inferred flow, but
+do not prove recovery of the artist's original quads.
+
+For Faye226, actual native source/runtime audits, stored fields, 729 sampled
+poses, 99 sampled crossing cases and nine captured engine states passed their
+stated checks. Five actual opaque source-wire views were inspected. These are
+local nasal evidence, not approval of all facial regions or all new characters.
+
+A different nose preset exposed two old-patch construction failures before the
+new stages could execute. The new bounded fallback runs only after the exact
+original angle/surface gate fails, and never changes that gate. It adjusts
+source-surface parameters of failing generated cells, preserves the boundary,
+recomputes lineage and reruns the original float32/both-diagonal validator.
+Valid original inputs are an exact no-op; folds and unsupported domains still
+fail closed.
+
+The shared nasal stages now use one detached mesh transaction. A pure final
+proposal checks surviving regularization faces, all boundary-adjacent faces
+and new inner quads. A bad intermediate face may be deferred only if its exact
+oriented cycle is removed by the validated final patch. The standalone
+regularization checks remain active. Face indices cannot authorize deletion
+across BMesh reorderings. Native recomputation must agree exactly with the
+preflight geometry and oriented topology, including final vertex compaction.
+
+For profiles requiring the old-patch fallback, source-shape misses inside new
+inner cells can move their new points by at most 0.5 mm along connected real
+source rails, including an adjacent edge when needed. This preserves density,
+outer/axis points and protected supports, and updates exact donor weights.
+Uneditable or uncorrected misses fail closed. This additional sampled source
+probe guard does not replace full bidirectional actual-export verification.
+Already-valid Faye inputs keep their existing actual-export contract; a
+hypothetical unused export diagonal is not silently imposed as a new gate.
+
+The original mesh is unchanged until final validation. Transfer snapshots
+compare supported custom attributes, UVs, deform weights, shape-key payloads,
+materials and topology. A backup is restored if final transfer fails. Input
+mesh coordinates must equal their reference Basis; unsupported mixed-key
+inputs fail before editing. Animation/driver data and derived normal caches
+are not certified by payload snapshots. Native fault-injection and alternate
+preset validation must still complete before this transaction is retained.
+
+Native Faye227 verification of this transaction completed with 64 outputs
+hash-checked. The isolated Key-copy test, deliberate preflight failure and
+failure injected after the real final native write all passed. The latter
+performed exactly one commit write and one rollback write, preserving the
+full original payload and leaving no staged Mesh datablock. The ordinary
+third refinement committed with all 14 snapshot sections equal. The final
+GLB is byte-identical to verified Faye226; this is a valid-input no-regression
+result, not yet an alternate-preset success. The reproducible native probe is
+retained in `source_layout/nasal_transaction_probe.py`; its fake-runtime tests
+only test injection behavior and are not a substitute for the native result.
+
+The saved editable source at this stage has no Key datablocks; the Key-copy
+check used a disposable synthetic keyed mesh. Thus this run does not establish
+retopology of an arbitrary already-keyed input. The downstream six runtime
+morph targets are covered by the byte-identical final GLB comparison. Direct
+source comparison found all 55 meshes unchanged in geometry and authored
+fields. Face edge-array ordering changed, but canonical edge connectivity and
+crease/group fields remained exact.
+
+Native alternate-profile trial 22701 changes only the selected nose to
+`research-balanced`, with no hand-edit of the generated model. Both bounded
+fallbacks execute. The final 186-face domain and adjacent-neighbor guard has
+zero invalid faces (24.3276–151.0198 degrees); the native transfer snapshot
+passes. Actual runtime-to-original author surface and reverse sampled maxima
+are 0.865036 and 0.960674 mm. All 729 sampled orientation cases pass. Across
+99 pose cases, the exact changed nasal scope (232 skin quads, 464 runtime
+triangles) has zero strict crossings. A broader box also includes preexisting
+skin/attachment overlay contacts; this is explicitly not a whole-face
+collision-free result. Five actual opaque-wire views and nine actual engine
+states were captured and inspected. These checks establish a second working
+nose profile, not arbitrary topology or all-preset generalization.
+
+The alternate-profile field audit uses a separately captured full native
+pre-nasal donor mesh. A direct CPU replay initially differed by 11/19 float32
+ULPs in changed UVMap/UV2 values. Native intermediate positions were then
+reconstructed from geometry and donor equations, without fitting UV values.
+Eight changed source points were uniquely recovered. The remaining mirrored
+pair has four symmetry-consistent inverse-rounding candidates; every candidate
+produces exactly the same stored UVMap, UV2, DetailUV, point fields and deform
+weights. Their exact XYZ within those rounding cells remains ambiguous, but
+field transfer is invariant. All 9,538 untouched UV loops and all 5,190 retained
+edge crease/group records are exact. No tolerance was relaxed to obtain this
+result. Six final morph keys are procedural outputs, not interpolated from
+nonexistent pre-nasal Key datablocks.
