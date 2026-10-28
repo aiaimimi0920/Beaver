@@ -56,6 +56,8 @@ DEPENDENCIES = (
     'nasal_regularization_trace',
     'nasal_regularization_solver',
     'nasal_regularization_mesh',
+    'nasal_inner_rule',
+    'nasal_inner_mesh',
 )
 
 

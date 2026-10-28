@@ -65,6 +65,8 @@ class FeatureFlowRecipeTests(unittest.TestCase):
         self.assertIn('def regularize_nasal_source(', restored['shell.py'])
         self.assertIn('allocated_flow_records', restored['shell.py'])
         self.assertIn('class ConnectedQuadChart', restored['shell.py'])
+        self.assertIn('def rebuild_inner_nasal_source(', restored['shell.py'])
+        self.assertIn('def propose_inner_nasal(', restored['shell.py'])
         self.assertNotIn('from nasal_source_', restored['shell.py'])
         self.assertIn('shell_nasal_mesh.py', sources)
         self.assertIn('retopologize_flow_ears', restored['ear_topology.py'])

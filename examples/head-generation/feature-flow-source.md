@@ -1,5 +1,30 @@
 # Experimental quad source flow
 
+## Inner nasal band checkpoint (226)
+
+The subsequent shared stage replaces the doubled inner support strip with a
+regular five-row band and a separate tip support quad. The domain is resolved
+from current real flow paths and axis adjacency; new points sample existing
+longitudinal source edges with two-donor lineage, not historical vertex IDs.
+Each half replaces 38 quads with 17. Sixty original interior points are removed
+and eighteen added, for 42 fewer source vertices and faces overall. All retained
+positions, eye/mouth first supports and outer-cheek paths remain unchanged.
+
+Native 226 source/UV/deform/morph ownership checks passed. Actual automatic
+runtime surface differences against 225 were at most 0.581 mm; cumulative
+differences against 224 were at most 0.731 mm in the sampled nasal/cheek region.
+All 729 sampled orientations and 99 strict crossing cases passed under the
+documented exclusions. Five native opaque wire views support a provisional
+local Faye nasal-geometry freeze: the doubled ladder and central clustered
+connections are removed. This is not whole-character or user artistic approval.
+
+Cross-profile support is still unresolved. A native pilot selecting the
+research-balanced nose without Faye's nose overrides failed the PRECEDING
+five-flow patch angle/depth guard, before either new regularization stage.
+No model outputs were published. That failure is retained for diagnosis; the
+guard has not been skipped or relaxed. Successful Faye regeneration, indexing
+invariance and expression checks do not establish arbitrary preset support.
+
 ## Expanded nasal regularization checkpoint (225, incomplete visual work)
 
 The shared opt-in generator now traces its current allocated five core paths
