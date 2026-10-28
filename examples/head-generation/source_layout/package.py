@@ -125,7 +125,9 @@ def modular_plan(request, prefix, *, source_seed=False):
     seed, seed_binding = None, None
     if source_seed:
         request["code"], seed, seed_binding = seed_retained_bundle(request["code"], prefix)
-        validate_native_frame(seed)
+        seed_jobs = seed if isinstance(seed, list) else [seed]
+        for request_seed in seed_jobs:
+            validate_native_frame(request_seed)
     compile(request["code"], "<modular generation>", "exec")
     if (
         len(request["outputs"]) > 64
@@ -144,7 +146,9 @@ def modular_plan(request, prefix, *, source_seed=False):
         },
     }
     if source_seed:
-        result["source_seed"] = seed
+        result["source_seed"] = seed_jobs[0]
+        if len(seed_jobs) > 1:
+            result["source_seed_jobs"] = seed_jobs
         result["source_seed_binding"] = seed_binding
         result["source_packaging"]["source_seed_binding"] = seed_binding
     return result
@@ -183,12 +187,19 @@ def packaging_request(plan, receipt_path, workspace):
             raise ValueError("Changed generation output")
     report = json.loads(resource(root, prefix + "generation_report.json").read_text())
     seed_binding = plan.get("source_seed_binding")
-    seed_receipt = None
+    seed_receipts = []
     if seed_binding:
         from .seed_evidence import verify_seed, verify_retained_source
-        seed_receipt = Path(plan["source_seed_receipt_path"])
-        if verify_seed(seed_binding, seed_receipt, root) != seed_binding or report.get("authored_source_seed") != seed_binding:
+        multiple = seed_binding.get('schema_version') == 3
+        seed_receipts = [Path(path) for path in plan['source_seed_receipt_paths']] if multiple else [Path(plan['source_seed_receipt_path'])]
+        receipt_argument = seed_receipts if multiple else seed_receipts[0]
+        if verify_seed(seed_binding, receipt_argument, root) != seed_binding or report.get("authored_source_seed") != seed_binding:
             raise ValueError("Generation source seed chain changed")
+        seed_jobs = {seed_binding['job_id']}
+        if multiple:
+            seed_jobs.add(seed_binding['runtime_job_id'])
+        if job['jobId'] in seed_jobs:
+            raise ValueError('Generation must be distinct from every native seed job')
         verify_retained_source(seed_binding,root,prefix + "semantic_bundle.py")
     if report.get("source_layout") != plan["layout"]:
         raise ValueError("Source plan not bound to native report")
@@ -224,11 +235,14 @@ def packaging_request(plan, receipt_path, workspace):
         **plan["helpers"],
         prefix + "source_layout_binding.json": json.dumps(binding, indent=2),
     }
-    if seed_receipt:
-        seed_raw = seed_receipt.read_bytes()
-        if hashlib.sha256(seed_raw).hexdigest() != seed_binding["receipt_sha256"]:
-            raise ValueError("Seed receipt changed before packaging")
-        payload[prefix + "source_seed_receipt.json"] = seed_raw
+    if seed_receipts:
+        names = ['source_seed_receipt.json', 'source_seed_runtime_receipt.json']
+        fields = ['receipt_sha256', 'runtime_receipt_sha256']
+        for index, receipt in enumerate(seed_receipts):
+            seed_raw = receipt.read_bytes()
+            if hashlib.sha256(seed_raw).hexdigest() != seed_binding[fields[index]]:
+                raise ValueError("Seed receipt changed before packaging")
+            payload[prefix + names[index]] = seed_raw
     declared = []
     for path, content in payload.items():
         if resource(root, path).exists():

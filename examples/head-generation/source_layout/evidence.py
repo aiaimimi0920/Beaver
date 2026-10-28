@@ -122,6 +122,8 @@ def verify_packaging(report, root, prefix, generation_receipt, packaging_receipt
     binding_path = prefix + "source_layout_binding.json"
     seed_binding = report.get("authored_source_seed")
     seed_sidecar = {prefix + "source_seed_receipt.json"} if seed_binding else set()
+    if seed_binding and seed_binding.get('schema_version') == 3:
+        seed_sidecar.add(prefix + 'source_seed_runtime_receipt.json')
     if set(outputs) != set(wanted) | {binding_path} | seed_sidecar:
         raise ValueError("Incomplete or unexpected source packaging outputs")
     for name, digest in outputs.items():
@@ -138,10 +140,16 @@ def verify_packaging(report, root, prefix, generation_receipt, packaging_receipt
     }
     if seed_binding:
         from .seed_evidence import verify_seed, verify_retained_source
-        if seed_binding.get("schema_version") not in (1, 2):
+        if seed_binding.get("schema_version") not in (1, 2, 3):
             raise ValueError("Unknown source seed binding schema")
-        verified = verify_seed(seed_binding, resource(root,prefix + "source_seed_receipt.json"),root)
-        if verified["job_id"] in (gen["jobId"],packed["jobId"]):
+        receipt = resource(root, prefix + 'source_seed_receipt.json')
+        if seed_binding.get('schema_version') == 3:
+            receipt = [receipt, resource(root, prefix + 'source_seed_runtime_receipt.json')]
+        verified = verify_seed(seed_binding, receipt, root)
+        seed_jobs = {verified['job_id']}
+        if verified.get('schema_version') == 3:
+            seed_jobs.add(verified['runtime_job_id'])
+        if seed_jobs & {gen['jobId'], packed['jobId']}:
             raise ValueError("Invalid native source seed/generation chain")
         if generated.get(prefix + "semantic_bundle.py") != sha(resource(root,prefix + "semantic_bundle.py")):
             raise ValueError("Retained source differs from generation receipt")

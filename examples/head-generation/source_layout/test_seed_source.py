@@ -83,6 +83,33 @@ class SourceSeedTests(unittest.TestCase):
             exec(generation, scope)
             self.assertEqual(scope['result'], len('curve '*6000))
 
+    def test_two_native_jobs_keep_exact_sources_and_loader(self):
+        retained, code = self.fixture()
+        runtime = 'label = ' + repr('curve '*6000) + '\nresult = len(label)\n'
+        code += f'exec(compile({runtime!r}, "runtime", "exec"), globals())\n'
+        from source_layout.transport_sources import validate_native_frame
+        calls = []
+        def force_two_jobs(request):
+            calls.append(request)
+            if len(calls) <= 3:
+                raise ValueError('Synthetic oversized combined source jobs')
+            validate_native_frame(request)
+        with patch('source_layout.source_seed.validate_native_frame', force_two_jobs):
+            generation, jobs, binding = seed_retained_bundle(code, 'asset/')
+        self.assertEqual(binding['schema_version'], 3)
+        self.assertEqual(len(jobs), 2)
+        self.assertTrue(all(len(job['outputs']) == 1 for job in jobs))
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory); (root/'asset').mkdir()
+            scope = {'beaver_output': lambda p:str(root/p), 'beaver_input': lambda p:str(root/p)}
+            exec(jobs[0]['code'], scope)
+            with self.assertRaises(FileNotFoundError): exec(generation, scope)
+            exec(jobs[1]['code'], scope)
+            self.assertEqual((root/binding['path']).read_bytes(), retained.encode())
+            self.assertEqual((root/binding['runtime_path']).read_bytes(), runtime.encode())
+            exec(generation, scope)
+            self.assertEqual(scope['result'], len('curve '*6000))
+
     def test_readable_literal_preserves_every_character(self):
         values = ['', "'", "''", "'"*3, "'"*12, chr(92), chr(92)+"'"*3,
                   chr(92)+'\n', '中🙂\n', 'a\rb', 'a\r\nb', '\x00', '"""x"""']

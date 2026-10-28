@@ -17,6 +17,32 @@ ordinary Python files, not ignored files or encoded strings used to evade checki
 The migration record stores original and split source hashes. Byte reconstruction
 must reproduce the complete original source, including comments and whitespace.
 
+## Optional native source-seed preflight
+
+With `source_seed=True`, one or two seed jobs precede the generation/packaging
+protocol below. Schema one keeps the runtime source in the seeded bundle;
+schema two writes the bundle and runtime as two ordinary Python files in one
+native job. If their combined readable request still exceeds the unchanged
+one-MiB limit, schema three declares two independent native requests, one per
+file. Each complete request must pass the same size/output checks. Schemas one
+and two remain supported; no compression or limit increase is used.
+
+For schema three, execute both ordered `source_seed_jobs` and pass their two
+original successful RPC receipts to `finalize_seed_plan` before generation.
+The verifier independently checks each frozen script hash, exact declared
+output/path/hash, current source bytes and receipt identity. The jobs, paths and
+receipts must be distinct. Missing, swapped, reused or altered receipts fail
+closed; journal copies and synthetic aggregate receipts are not authoritative.
+Generation and packaging must also be distinct from both seed jobs. Exact
+source/AST restoration remains part of the existing execution contract.
+
+Packaging preserves the original receipt bytes as `source_seed_receipt.json`
+and `source_seed_runtime_receipt.json`, and binds both identities through the
+report and final verifier. This is two seed jobs plus one generation and one
+packaging job, not two model generations. Faye234's actual schema-three pair
+passes the independent receipt/source verification. The source chain proves
+provenance and reproducibility checks, not visual or engine-pose acceptance.
+
 ## Native two-job protocol
 
 `face_components.bundle.build_plan(...)` returns `generation` and

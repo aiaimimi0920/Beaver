@@ -72,16 +72,22 @@ detail budget 1, and subdivision, surface fairing and outline refinement 0.
 Other profiles fail closed rather than partially applying the adapters.
 
 Call `face_components.bundle.build_plan(..., source_seed=True)` or its CLI
-with `--source-seed` and a sampling-controls JSON file. This explicitly selects
-three native jobs; the default recipe still uses two. `build_request` rejects
+with `--source-seed` and a sampling-controls JSON file. The default recipe still
+uses generation and source packaging. Seed mode adds one native seed job for
+schemas one/two, or two independent seed jobs for schema three: three or four
+jobs in total, excluding downstream SDF and captures. `build_request` rejects
 seed mode because it cannot carry the complete receipt-bound plan.
 
-1. Run the emitted source-seed request through the existing Beaver workflow.
-2. Preserve its original successful receipt and call
-   `source_layout.seed_evidence.finalize_seed_plan` before running generation.
-3. Preserve the generation receipt and use `packaging_request` for the source
-   packaging job. Do not rebuild a finalized plan or manufacture receipts.
-4. Verify the full seed/generation/packaging chain before downstream SDF work.
+1. Run the emitted `source_seed` request, or every ordered request in
+   `source_seed_jobs` when present, through the existing Beaver workflow.
+2. Preserve the original successful RPC receipt for each job. Call
+   `source_layout.seed_evidence.finalize_seed_plan` before generation, passing
+   the single receipt for schemas one/two or the ordered pair of bundle/runtime
+   receipts for schema three.
+3. Preserve the generation receipt and use `packaging_request` for source
+   packaging. Do not rebuild a finalized plan, reuse a seed job as generation,
+   or manufacture a combined receipt.
+4. Verify the complete seed/generation/packaging chain before downstream SDF.
 
 Full serialized native requests remain limited to 1 MiB. Transport sharing
 deduplicates identical readable source literals; it does not compress code,
@@ -1056,3 +1062,39 @@ Nine actual engine expression captures were hash-verified; representative open,
 right-blink and mixed right-45-degree views were inspected. Existing diagnostic
 faceting and the cheek outline artifact remain. Whole-face artistic acceptance
 and other regions remain open.
+
+### Bounded medial infraorbital support
+
+The shared orbital-support stage binds current aperture adjacency and semantic
+support roles, then redistributes five interior stations per side on their
+frozen bilinear source quads. It runs after nasal/rear spacing and before chin
+refinement, through the existing detached transaction. Faye234 moves ten
+vertices across 22 affected quads, with no added density or connectivity change.
+Aperture/first-lid supports, the nasal rails, ear attachments, posterior correction
+and chin remain fixed. The three-, five- and six-valence poles remain; this is
+not a recovered regular artist loop.
+
+The actual same-support peak turn falls from 60.345 to 24.817 degrees. Curvature
+is redistributed rather than eliminated: the neighboring exit turn rises from
+1.832 to 24.131 degrees, and the support-edge maximum/minimum length ratio rises
+from 1.815 to 2.022. One lower exit quad per side changes from a 42.498-degree
+minimum/131.958-degree maximum angle to 34.687/153.628 degrees; its edge ratio
+rises from 2.160 to 2.400. The existing domain-wide quality envelope is retained,
+not every cell improved. Thin transition wedges and uneven spacing remain.
+
+Independent saved-file readback verifies exact frozen point/UV transport,
+unchanged semantic memberships, all non-owned fields and all six runtime
+expression deltas. The moved stations have zero generated blink before and
+after the edit in the explicit native assembly frame; neighboring boundary
+blink remains active and is checked using the actual saved keys. Actual GLB
+positions, winding and six position morphs match the runtime mesh. All 729
+sampled orientation states and 99 strict-crossing states pass under the
+existing contact exclusions. Bilateral saved-export checks at 64 subdivisions,
+with worst-case 96 refinement, remain below 0.434 mm for neutral, MouthOpen,
+symmetric blink and their combination. These are sampled checks, not continuous
+shape or collision guarantees. Five actual source-wire views were inspected;
+Faye234's nine engine expression captures passed same-model/pose/hash checks.
+Representative open-mouth, right-blink and combined-expression views were
+inspected; existing white diagnostic faceting and the right-blink cheek outline
+artifact remain unresolved. This local improvement is not whole-face artistic
+or cross-character acceptance.

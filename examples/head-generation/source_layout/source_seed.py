@@ -53,6 +53,7 @@ def seed_retained_bundle(code, prefix):
                  f'Path(beaver_output({path!r})).write_text({seed_source!r},encoding="utf-8",newline="\\n")\n')
     seed = {'code':seed_code,'outputs':[output],'timeoutSeconds':120}
     split_runtime = False
+    split_jobs = False
     try:
         validate_native_frame(seed)
     except ValueError:
@@ -77,7 +78,22 @@ def seed_retained_bundle(code, prefix):
                          f'Path(beaver_output({path!r})).write_text({readable_source_literal(source)},encoding="utf-8",newline="\\n")\n'
                          f'Path(beaver_output({runtime_path!r})).write_text({readable_source_literal(runtime_source)},encoding="utf-8",newline="\\n")\n')
             seed['code'] = seed_code
-            validate_native_frame(seed)
+            try:
+                validate_native_frame(seed)
+            except ValueError:
+                # Each ordinary source file gets its own declared native job.
+                # Both original receipts are required before generation starts.
+                split_jobs = True
+                seeds = []
+                for destination, text in ((path, source), (runtime_path, runtime_source)):
+                    script = ('from pathlib import Path\n'
+                              f'Path(beaver_output({destination!r})).write_text({readable_source_literal(text)},encoding="utf-8",newline="\\n")\n')
+                    request = {'code': script, 'outputs': [{'path': destination, 'expectedSha256': None}],
+                               'timeoutSeconds': 120}
+                    validate_native_frame(request)
+                    seeds.append(request)
+                seed = seeds
+                seed_code = seeds[0]['code']
     name = '_beaver_verified_source_seed_'
     while name in unicodedata.normalize('NFKC', code):
         name += '_'
@@ -138,6 +154,8 @@ def seed_retained_bundle(code, prefix):
                'native_seed_script_sha256':hashlib.sha256(seed_code.encode()).hexdigest()}
     if split_runtime:
         binding.update(schema_version=2, runtime_path=runtime_path, runtime_sha256=runtime_digest)
+    if split_jobs:
+        binding.update(schema_version=3, runtime_seed_script_sha256=hashlib.sha256(seed[1]['code'].encode()).hexdigest())
     result += f'\nreport["authored_source_seed"] = {binding!r}\n'
     result += f'Path(beaver_output({prefix+"generation_report.json"!r})).write_text(json.dumps(report,indent=2),encoding="utf-8",newline="\\n")\n'
     compile(result, '<hash-bound source seed>', 'exec')

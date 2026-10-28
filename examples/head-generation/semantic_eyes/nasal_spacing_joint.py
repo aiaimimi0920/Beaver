@@ -4,7 +4,7 @@ from nasal_mesh_snapshot import nasal_mesh_snapshot, assert_nasal_mesh_snapshot_
 from nasal_spacing_mesh import stage_nasal_bridge_spacing
 
 
-def refine_nasal_bridge_spacing(data, ordinals, inner, records, generated_return=None, baseline=None):
+def refine_nasal_bridge_spacing(data, ordinals, inner, records, generated_return=None, baseline=None, orbital_calibration=None, assembly_offset=None):
     import bpy
     import bmesh
     if data.shape_keys is not None:
@@ -18,7 +18,8 @@ def refine_nasal_bridge_spacing(data, ordinals, inner, records, generated_return
         raise ValueError('Nasal spacing copy shares original shape-key storage')
     transfer = backup = None
     try:
-        result = stage_nasal_bridge_spacing(staged, ordinals, inner, records, generated_return, baseline)
+        result = stage_nasal_bridge_spacing(staged, ordinals, inner, records, generated_return, baseline,
+                                            orbital_calibration, assembly_offset)
         assert_nasal_mesh_snapshot_equal(original, nasal_mesh_snapshot(data),
                                          'Original during nasal spacing staging')
         expected = nasal_mesh_snapshot(staged)
@@ -40,7 +41,9 @@ def refine_nasal_bridge_spacing(data, ordinals, inner, records, generated_return
             raise
         result['transaction'] = {'committed': True, 'transfer_payload': proof,
                                  'original_untouched_until_final_validation': True}
-        return {'nasal_spacing_source' if generated_return is None else 'nasal_rear_spacing_source': result}
+        key = ('orbital_support_source' if orbital_calibration is not None else
+               'nasal_spacing_source' if generated_return is None else 'nasal_rear_spacing_source')
+        return {key: result}
     finally:
         if backup is not None:
             backup.free()

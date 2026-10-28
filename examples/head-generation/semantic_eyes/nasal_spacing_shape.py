@@ -4,7 +4,7 @@ from chin_source_shape import ChinFrozenDistance, chin_shape_exact_distance
 
 
 def guard_nasal_spacing_shape(old, old_faces, new, new_faces, affected,
-                              old_delta, new_delta, selector, subdivisions=32):
+                              old_delta, new_delta, selector, subdivisions=32, *, selector_delta=None, pose_name="MouthOpen"):
     if int(subdivisions) != subdivisions or subdivisions < 32:
         raise ValueError('Nasal spacing shape verification requires at least 32 subdivisions')
     count = int(subdivisions)
@@ -18,12 +18,20 @@ def guard_nasal_spacing_shape(old, old_faces, new, new_faces, affected,
         raise ValueError('Nonfinite nasal spacing shape field')
     old_poses = [old.astype(float), (old + old_delta).astype(float)]
     new_poses = [new.astype(float), (new + new_delta).astype(float)]
+    selection_pose = new_poses[1]
+    if selector_delta is not None:
+        selection_delta = np.asarray(selector_delta, dtype=np.float32)
+        if selection_delta.shape != new.shape or not np.isfinite(selection_delta).all():
+            raise ValueError('Invalid actual export-selection pose')
+        selection_pose = (new + selection_delta).astype(float)
+    if not isinstance(pose_name, str) or not pose_name:
+        raise ValueError('Shape verification pose must be named')
     indices = sorted(affected)
     source_quads = [old_faces[i] for i in indices]
     triangles, selected = [], []
     for index in indices:
         face = new_faces[index]
-        options = selector(new_poses[0], face, new_poses[1])
+        options = selector(new_poses[0], face, selection_pose)
         if not options:
             raise ValueError('No paired export diagonal for nasal spacing shape verification')
         diagonal = max(options, key=lambda value: options[value])
@@ -43,7 +51,7 @@ def guard_nasal_spacing_shape(old, old_faces, new, new_faces, affected,
             maximum = float(np.max(distances))
             if not np.isfinite(maximum) or maximum > .001:
                 raise ValueError('Nasal spacing exceeds the 1 mm sampled source-shape bound')
-            cases.append({'pose': 'neutral' if pose == 0 else 'MouthOpen',
+            cases.append({'pose': 'neutral' if pose == 0 else pose_name,
                           'direction': direction, 'max_mm': maximum * 1000,
                           'samples': len(distances)})
     return {'subdivisions': count, 'limit_mm': 1., 'cases': cases,

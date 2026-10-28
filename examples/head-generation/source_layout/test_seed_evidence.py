@@ -97,6 +97,39 @@ class SeedEvidenceTests(unittest.TestCase):
             bad = dict(bound); bad[key] = 'wrong'
             with self.assertRaises(ValueError): verify_seed(bad, self.receipt, self.root)
 
+    def test_two_job_binding_requires_both_original_receipts(self):
+        runtime = self.file.with_name('source_seed_runtime.py')
+        runtime.write_bytes(b'runtime_answer = 17\n')
+        binding = dict(self.binding, schema_version=3, runtime_path=str(runtime.relative_to(self.root)),
+            runtime_sha256=hashlib.sha256(runtime.read_bytes()).hexdigest(),
+            runtime_seed_script_sha256=hashlib.sha256(b'runtime seed').hexdigest())
+        second = copy.deepcopy(self.job)
+        second['jobId'] = 'second-native-seed'
+        second['process']['scriptSha256'] = binding['runtime_seed_script_sha256']
+        second['result']['outputs'] = [{'path': binding['runtime_path'], 'sha256': binding['runtime_sha256']}]
+        receipt2 = self.root/'synthetic-runtime-receipt.json'
+        receipt2.write_text(json.dumps({'response': {'result': {'result': second}}}))
+        receipts = [self.receipt, receipt2]
+        bound = verify_seed(binding, receipts, self.root)
+        self.assertEqual(bound['runtime_job_id'], second['jobId'])
+        plan = {'source_seed_binding': binding,
+                'generation': {'code': f'report["authored_source_seed"] = {binding!r}\n', 'outputs': [], 'timeoutSeconds':120},
+                'source_packaging': {}}
+        complete = finalize_seed_plan(plan, receipts, self.root)
+        self.assertEqual(complete['source_seed_binding'], bound)
+        self.assertEqual(complete['source_packaging']['source_seed_receipt_paths'], list(map(str, receipts)))
+        for bad in (self.receipt, [self.receipt], receipts[::-1], [self.receipt, self.receipt]):
+            with self.assertRaises(ValueError): verify_seed(binding, bad, self.root)
+        duplicate = copy.deepcopy(second); duplicate['jobId'] = self.job['jobId']
+        receipt2.write_text(json.dumps({'response': {'result': {'result': duplicate}}}))
+        with self.assertRaises(ValueError): verify_seed(binding, receipts, self.root)
+        receipt2.write_text(json.dumps({'response': {'result': {'result': second}}}))
+        runtime.write_bytes(b'runtime_answer = 18\n')
+        with self.assertRaises(ValueError): verify_seed(bound, receipts, self.root)
+        runtime.write_bytes(b'runtime_answer = 17\n')
+        receipt2.write_bytes(receipt2.read_bytes()+b'\n')
+        with self.assertRaises(ValueError): verify_seed(bound, receipts, self.root)
+
     def test_wrong_native_identity_or_outputs_are_rejected(self):
         cases = []
         script = copy.deepcopy(self.job)

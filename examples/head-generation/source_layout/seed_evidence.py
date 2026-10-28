@@ -15,7 +15,7 @@ def verify_retained_source(binding, root, retained_path):
     retained = resource(root,retained_path).read_bytes()
     if hashlib.sha256(seeded).hexdigest() != binding['sha256']:
         raise ValueError('Authored source seed content changed')
-    if binding.get('schema_version', 1) == 2:
+    if binding.get('schema_version', 1) in (2, 3):
         runtime = resource(root, binding['runtime_path']).read_bytes()
         if hashlib.sha256(runtime).hexdigest() != binding['runtime_sha256']:
             raise ValueError('Runtime source seed content changed')
@@ -44,6 +44,8 @@ def verify_retained_source(binding, root, retained_path):
 
 def verify_seed(binding, receipt, root):
     root = Path(root).resolve()
+    if binding.get('schema_version') == 3:
+        return verify_two_seed_jobs(binding, receipt, root)
     snapshot = Path(receipt).read_bytes()
     if "response" not in json.loads(snapshot):
         raise ValueError("Source seed requires an original RPC receipt; journal copies are not authoritative")
@@ -84,6 +86,30 @@ def finalize_seed_plan(plan, receipt, workspace):
     result['source_seed_binding'] = binding
     packing = result['source_packaging']
     packing['source_seed_binding'] = binding
-    packing['source_seed_receipt_path'] = str(Path(receipt).resolve())
+    if binding.get('schema_version') == 3:
+        packing['source_seed_receipt_paths'] = [str(Path(path).resolve()) for path in receipt]
+    else:
+        packing['source_seed_receipt_path'] = str(Path(receipt).resolve())
     packing['generation_script_sha256'] = hashlib.sha256(result['generation']['code'].encode()).hexdigest()
     return result
+
+
+def verify_two_seed_jobs(binding, receipts, root):
+    """Verify two untouched native receipts; never synthesize a combined receipt."""
+    if not isinstance(receipts, (list, tuple)) or len(receipts) != 2:
+        raise ValueError('Two ordered original native seed receipts required')
+    if binding['path'] == binding['runtime_path']:
+        raise ValueError('Two seed files must have distinct paths')
+    first = {'path': binding['path'], 'sha256': binding['sha256'],
+             'native_seed_script_sha256': binding['native_seed_script_sha256']}
+    second = {'path': binding['runtime_path'], 'sha256': binding['runtime_sha256'],
+              'native_seed_script_sha256': binding['runtime_seed_script_sha256']}
+    a = verify_seed(first, receipts[0], root)
+    b = verify_seed(second, receipts[1], root)
+    if a['job_id'] == b['job_id'] or a['receipt_sha256'] == b['receipt_sha256']:
+        raise ValueError('Distinct native source seed jobs required')
+    complete = dict(binding, job_id=a['job_id'], receipt_sha256=a['receipt_sha256'],
+                    runtime_job_id=b['job_id'], runtime_receipt_sha256=b['receipt_sha256'])
+    if 'job_id' in binding and complete != binding:
+        raise ValueError('Seed receipts are not the two bound native jobs')
+    return complete

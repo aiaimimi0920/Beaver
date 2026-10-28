@@ -4,7 +4,9 @@ from pathlib import Path
 from source_nasal_flow import MODULES as NASAL_MODULES
 from source_chin_retile import CHIN_MODULES
 
-SPACING_MODULES = ('nasal_spacing_rule', 'nasal_rear_rule', 'nasal_return_provenance', 'nasal_spacing_shape',
+SPACING_MODULES = ('nasal_spacing_rule', 'nasal_rear_rule', 'nasal_return_provenance',
+                   'orbital_support_rule', 'orbital_support_bind', 'orbital_support_native',
+                   'nasal_spacing_shape',
                    'nasal_spacing_mesh', 'nasal_spacing_joint')
 
 
@@ -25,7 +27,10 @@ def adapt(sources):
         '            report["nasal_five_flow_source"]["allocated_flow_records"]))\n'
         '        report.update(refine_nasal_bridge_spacing(data,semantic_part_ordinals,\n'
         '            report["nasal_inner_source"], report["nasal_five_flow_source"]["allocated_flow_records"],\n'
-        '            generated_return=report["ear_post_return"], baseline=_spacing_baseline))\n' + marker, 1)
+        '            generated_return=report["ear_post_return"], baseline=_spacing_baseline))\n'
+        '        report.update(refine_nasal_bridge_spacing(data,semantic_part_ordinals,\n'
+        '            report["nasal_inner_source"], report["nasal_five_flow_source"]["allocated_flow_records"],\n'
+        '            orbital_calibration=C, assembly_offset=report["head_assembly_y_offset_m"]))\n' + marker, 1)
     shell = out['shell.py']
     existing = {node.name for node in ast.parse(shell).body
                 if isinstance(node, (ast.FunctionDef, ast.ClassDef))}

@@ -3,6 +3,7 @@ from collections import Counter
 import numpy as np
 from nasal_spacing_rule import propose_nasal_bridge_spacing
 from nasal_rear_rule import propose_nasal_rear_spacing
+from orbital_support_native import prepare_orbital_support
 from nasal_return_provenance import verify_nasal_return_provenance
 from nasal_source_domain import current_source_features
 from nasal_spacing_shape import guard_nasal_spacing_shape
@@ -10,7 +11,7 @@ from chin_source_fields import (chin_snapshot_point_fields, chin_apply_point_fie
                                chin_validate_face_fields)
 
 
-def stage_nasal_bridge_spacing(data, ordinals, inner, records, generated_return=None, baseline=None):
+def stage_nasal_bridge_spacing(data, ordinals, inner, records, generated_return=None, baseline=None, orbital_calibration=None, assembly_offset=None):
     import bmesh
     from ear_topology import ear_loop_values, assign_ear_loop
     from ear_surface import polygon_diagonals
@@ -45,7 +46,16 @@ def stage_nasal_bridge_spacing(data, ordinals, inner, records, generated_return=
         ear_regions = {base + offset for base in ear_bases for offset in (0, 100, 110)}
         features = current_source_features(vertices, faces, regions, ordinals)
         provenance = None
-        if generated_return is None:
+        if orbital_calibration is not None:
+            if generated_return is not None or baseline is not None or not np.isfinite(float(assembly_offset)):
+                raise ValueError('Orbital transaction has conflicting source modes or frame')
+            if float(assembly_offset) != -.021:
+                raise ValueError('Current native blink generator requires its explicit -0.021 assembly frame')
+            from semantic_eye_runtime import closure_delta
+            spec = prepare_orbital_support(vertices, faces, regions, features, paths,
+                lambda point: closure_delta(point[0], point[2] - assembly_offset, 'skin', orbital_calibration))
+            edit_budget = 0
+        elif generated_return is None:
             spec = propose_nasal_bridge_spacing(vertices, faces, regions, paths, ear_regions,
                                                  outer_anchor_offset=next(iter(offsets)))
             edit_budget = 4
@@ -89,6 +99,7 @@ def stage_nasal_bridge_spacing(data, ordinals, inner, records, generated_return=
                 if 1 in membership and np.linalg.norm(vertices[i] - features['nose_peak']) < 1e-9}
         protected = features['apertures'] | features['first_lids'] | features['oral']
         protected |= features['first_lips'] | features['attachments'] | peak
+        protected |= spec.get('additional_protected', set())
         if len(peak) != 1 or set(lineage) & protected:
             raise ValueError('Nasal spacing moved a peak, aperture, support or attachment')
         if any(set(faces[i]) & protected for i in edited):
@@ -140,7 +151,7 @@ def stage_nasal_bridge_spacing(data, ordinals, inner, records, generated_return=
                 if accessor is not None and list(accessor.values()):
                     raise ValueError('Unsupported rear spacing corner field')
         fields, deforms = chin_snapshot_point_fields(bm, parents)
-        if generated_return is not None:
+        if generated_return is not None or orbital_calibration is not None:
             if not deforms or any(not any(values[index] for _, values in deforms) for index in weights):
                 raise ValueError('Rear spacing has no authored semantic membership')
             for _, values in deforms:
@@ -171,6 +182,11 @@ def stage_nasal_bridge_spacing(data, ordinals, inner, records, generated_return=
                     raise ValueError('Generated posterior strip no longer faces backward')
         shape_proof = guard_nasal_spacing_shape(vertices, faces, points, final_faces, affected,
                                                 old_delta, delta, polygon_diagonals)
+        blink_proof = None
+        if orbital_calibration is not None:
+            blink_proof = guard_nasal_spacing_shape(vertices, faces, points, final_faces, affected,
+                spec['old_blink_delta'], spec['new_blink_delta'], polygon_diagonals,
+                selector_delta=delta, pose_name='blink.L+blink.R')
         cumulative_proof = None
         if generated_return is not None:
             if baseline is None or len(baseline['vertices']) != len(vertices):
@@ -222,7 +238,8 @@ def stage_nasal_bridge_spacing(data, ordinals, inner, records, generated_return=
                 'edited_faces': edited, 'final_full_paths': paths, 'roles': spec['roles'],
                 'metrics': spec['metrics'], 'axis_tangent': spec.get('axis_tangent'), 'fade': spec.get('fade'),
                 'sampled_shape_guard': shape_proof, 'cumulative_shape_guard': cumulative_proof,
-                'generated_return_provenance': provenance,
+                'generated_return_provenance': provenance, 'generated_blink_guard': spec.get('generated_blink_guard'),
+                'generated_blink_shape_guard': blink_proof,
                 'scope': spec.get('scope', 'Five-rail metric spacing and upper bridge; inherited rear branch ambiguity remains'),
                 'acceptance': 'Pending actual export, field, expression and visual verification'}
     finally:
