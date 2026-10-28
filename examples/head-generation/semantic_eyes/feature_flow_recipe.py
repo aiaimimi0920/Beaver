@@ -29,6 +29,7 @@ ADAPTERS = (
     'source_weld_ownership',
     'source_nasal_flow',
     'source_chin_retile',
+    'source_nasal_spacing',
 )
 DEPENDENCIES = (
     'source_ear_quad_solver',
@@ -72,6 +73,10 @@ DEPENDENCIES = (
     'chin_source_shape',
     'chin_source_mesh',
     'chin_joint_mesh',
+    'nasal_spacing_rule',
+    'nasal_spacing_shape',
+    'nasal_spacing_mesh',
+    'nasal_spacing_joint',
 )
 
 

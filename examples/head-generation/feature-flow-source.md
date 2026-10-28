@@ -933,3 +933,49 @@ Subsequent visual feedback reopens the nasal bridge junction and uneven spacing
 between the five nose-to-cheek rails. Those corrections are separate ongoing
 work; the retained nasal checks above are historical, not final acceptance of
 that appearance.
+
+### Five-rail spacing and upper-bridge junction
+
+The next shared-source stage derives its five paths, current outer handoff and
+actual ear ownership from the preceding semantic report. It does not contain
+historic vertex IDs or reference-model coordinates. Three interior rails move
+65% toward current surface-arc quartiles, retaining 35% of their anatomical
+variation; the correction fades toward fixed ear ports. A separate four-quad
+upper-bridge retile changes the central valence from six to four and moves the
+paired three/five poles into neighboring fans. It is a pole relocation, not a
+claim that the entire facial grid is regular.
+
+Faye231 regenerates through this stage: 102 vertices move, four quads are
+retiled, and 144 quads form the affected domain, without increasing vertex or
+face counts. All actual stored positions match the CPU proposal at float32
+precision. The axis junction turn changes from 97.649 to 73.873 degrees.
+The four-interval maximum/minimum spacing ratios are 1.165 at the axis, 1.323
+midway and 1.475 at the lateral handoff. The fixed rear endpoint still has a
+4.657 ratio; rear branch ambiguities and other facial regions are not solved
+by this bounded correction.
+
+The native detached transaction preserves immutable donor fields, exact
+non-owned geometry, chin topology and every retained edge field. Independent
+readback checks all three UV layers, point/deform/face fields and six runtime
+keys. Two replacement-face UI selection flags change, with none outside;
+these are not semantic model attributes. Actual GLB positions, winding and all
+six position morph targets match the saved runtime mesh exactly. All 729
+sampled expression orientation cases pass, as do 99 strict-crossing cases
+under the documented exclusions above. The mandatory 32-subdivision local
+shape guard remains below 0.635 mm in both directions for neutral/MouthOpen;
+independent full-bilateral saved-export checks reproduce those values and
+remain below 0.635 mm when the worst four triangles are sampled at 96
+subdivisions. This is a sampled bound, not a continuous shape or collision
+certificate. Five actual source-wire views and nine hash-bound actual engine
+expression captures were inspected. White diagnostic lighting still shows
+faceting, and the right blink view retains a cheek outline artifact; these
+functional checks do not accept whole-face appearance.
+
+The enlarged readable source seed exceeds the unchanged one-MiB native frame
+limit when its runtime source is nested inside another Python string literal.
+A version-two seed therefore writes two plain Python files in the same native
+job, each independently hash-bound. Version-one seeds remain supported.
+Exact AST restoration is checked before execution; the native seed receipt,
+script hash, both file hashes, generation identity and packaging receipt remain
+part of the verification chain. No code compression or limit relaxation is
+used. Faye231's actual seed/generation/packaging chain verifies both files.

@@ -15,6 +15,15 @@ def verify_retained_source(binding, root, retained_path):
     retained = resource(root,retained_path).read_bytes()
     if hashlib.sha256(seeded).hexdigest() != binding['sha256']:
         raise ValueError('Authored source seed content changed')
+    if binding.get('schema_version', 1) == 2:
+        runtime = resource(root, binding['runtime_path']).read_bytes()
+        if hashlib.sha256(runtime).hexdigest() != binding['runtime_sha256']:
+            raise ValueError('Runtime source seed content changed')
+        if seeded != retained:
+            raise ValueError('Generation retained bundle differs from native seed')
+        compile(retained.decode('utf-8'), '<retained source>', 'exec')
+        compile(runtime.decode('utf-8'), '<runtime source>', 'exec')
+        return
     if seeded == retained:
         return
     if not retained or not seeded.startswith(retained):
@@ -39,13 +48,22 @@ def verify_seed(binding, receipt, root):
     if "response" not in json.loads(snapshot):
         raise ValueError("Source seed requires an original RPC receipt; journal copies are not authoritative")
     job, outputs = native_job(receipt, root, raw_bytes=snapshot)
-    if outputs != {binding['path']:binding['sha256']}:
+    version = binding.get('schema_version', 1)
+    if version not in (1, 2):
+        raise ValueError('Unknown source seed binding schema')
+    expected = {binding['path']: binding['sha256']}
+    if version == 2:
+        if binding['runtime_path'] == binding['path']:
+            raise ValueError('Duplicate native seed paths')
+        expected[binding['runtime_path']] = binding['runtime_sha256']
+    if outputs != expected:
         raise ValueError('Unexpected native seed outputs')
     if job['process']['scriptSha256'] != binding['native_seed_script_sha256']:
         raise ValueError('Native seed script differs from frozen plan')
-    if sha(resource(root,binding['path'])) != binding['sha256']:
-        raise ValueError('Authored source seed content changed')
-    complete = dict(binding, schema_version=1, job_id=job['jobId'], receipt_sha256=hashlib.sha256(snapshot).hexdigest())
+    for path, digest in expected.items():
+        if sha(resource(root, path)) != digest:
+            raise ValueError('Authored source seed content changed')
+    complete = dict(binding, schema_version=version, job_id=job['jobId'], receipt_sha256=hashlib.sha256(snapshot).hexdigest())
     if 'job_id' in binding and complete != binding:
         raise ValueError('Seed receipt is not the bound native job')
     return complete

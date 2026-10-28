@@ -138,7 +138,7 @@ def verify_packaging(report, root, prefix, generation_receipt, packaging_receipt
     }
     if seed_binding:
         from .seed_evidence import verify_seed, verify_retained_source
-        if seed_binding.get("schema_version") != 1:
+        if seed_binding.get("schema_version") not in (1, 2):
             raise ValueError("Unknown source seed binding schema")
         verified = verify_seed(seed_binding, resource(root,prefix + "source_seed_receipt.json"),root)
         if verified["job_id"] in (gen["jobId"],packed["jobId"]):

@@ -59,6 +59,44 @@ class SeedEvidenceTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, 'already finalized'):
             finalize_seed_plan(result, self.receipt, self.root)
 
+    def test_split_runtime_seed_exact_and_tamper_rejection(self):
+        runtime = self.file.with_name('source_seed_runtime.py')
+        runtime.write_bytes(b'runtime_answer = 17\n')
+        self.binding.update(schema_version=2, runtime_path=str(runtime.relative_to(self.root)),
+                            runtime_sha256=hashlib.sha256(runtime.read_bytes()).hexdigest())
+        self.job['result']['outputs'].append({'path': self.binding['runtime_path'],
+                                            'sha256': self.binding['runtime_sha256']})
+        self.write_receipt(self.job)
+        bound = verify_seed(self.binding, self.receipt, self.root)
+        retained = self.file.with_name('semantic_bundle.py')
+        retained.write_bytes(self.file.read_bytes())
+        relative = str(retained.relative_to(self.root))
+        verify_retained_source(bound, self.root, relative)
+        code = f'report["authored_source_seed"] = {self.binding!r}\n'
+        plan = {'source_seed_binding': self.binding,
+                'generation': {'code': code, 'outputs': [], 'timeoutSeconds': 120},
+                'source_packaging': {}}
+        result = finalize_seed_plan(plan, self.receipt, self.root)
+        self.assertEqual(result['source_seed_binding'], bound)
+        runtime.write_bytes(b'runtime_answer = 18\n')
+        with self.assertRaises(ValueError): verify_seed(bound, self.receipt, self.root)
+        with self.assertRaises(ValueError): verify_retained_source(bound, self.root, relative)
+        runtime.write_bytes(b'runtime_answer = 17\n')
+        for rows in (self.job['result']['outputs'][:1],
+                     self.job['result']['outputs'] * 2,
+                     self.job['result']['outputs'] + [{'path':'extra.py','sha256':'0'*64}]):
+            bad = copy.deepcopy(self.job); bad['result']['outputs'] = rows
+            self.write_receipt(bad)
+            with self.assertRaises(ValueError): verify_seed(bound, self.receipt, self.root)
+        self.write_receipt(self.job)
+        bad = dict(bound, runtime_path=bound['path'])
+        with self.assertRaises(ValueError): verify_seed(bad, self.receipt, self.root)
+        bad = dict(bound, path=bound['runtime_path'], runtime_path=bound['path'])
+        with self.assertRaises(ValueError): verify_seed(bad, self.receipt, self.root)
+        for key in ('job_id', 'receipt_sha256', 'native_seed_script_sha256'):
+            bad = dict(bound); bad[key] = 'wrong'
+            with self.assertRaises(ValueError): verify_seed(bad, self.receipt, self.root)
+
     def test_wrong_native_identity_or_outputs_are_rejected(self):
         cases = []
         script = copy.deepcopy(self.job)

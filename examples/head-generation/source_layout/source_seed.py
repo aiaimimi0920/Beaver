@@ -3,6 +3,7 @@ import ast
 import hashlib
 import json
 import unicodedata
+from .transport_sources import validate_native_frame
 
 
 def seed_retained_bundle(code, prefix):
@@ -37,6 +38,23 @@ def seed_retained_bundle(code, prefix):
     seed_code = ('from pathlib import Path\n'
                  f'Path(beaver_output({path!r})).write_text({seed_source!r},encoding="utf-8",newline="\\n")\n')
     seed = {'code':seed_code,'outputs':[output],'timeoutSeconds':120}
+    split_runtime = False
+    try:
+        validate_native_frame(seed)
+    except ValueError:
+        if runtime_source is None:
+            raise
+        # Separate readable files avoid nesting a Python string literal inside
+        # another literal. Both outputs remain exact, independently hash-bound.
+        split_runtime = True
+        digest = hashlib.sha256(source.encode('utf-8')).hexdigest()
+        runtime_path = prefix + 'source_seed_runtime.py'
+        runtime_digest = hashlib.sha256(runtime_source.encode('utf-8')).hexdigest()
+        seed_code = ('from pathlib import Path\n'
+                     f'Path(beaver_output({path!r})).write_text({source!r},encoding="utf-8",newline="\\n")\n'
+                     f'Path(beaver_output({runtime_path!r})).write_text({runtime_source!r},encoding="utf-8",newline="\\n")\n')
+        seed = {'code': seed_code, 'outputs': [output, {'path': runtime_path, 'expectedSha256': None}], 'timeoutSeconds': 120}
+        validate_native_frame(seed)
     name = '_beaver_verified_source_seed_'
     while name in unicodedata.normalize('NFKC', code):
         name += '_'
@@ -67,7 +85,11 @@ def seed_retained_bundle(code, prefix):
               f'{name}bytes = {name}Path(beaver_input({path!r})).read_bytes()\n'
               f'if {name}hashlib.sha256({name}bytes).hexdigest() != {digest!r}:\n    raise ValueError("Authored source seed changed")\n'
               f'{name}text = {name}bytes[:{len(source.encode("utf-8"))}].decode("utf-8")\n')
-    if runtime_source is not None:
+    if split_runtime:
+        header += (f'{name}runtime_bytes = {name}Path(beaver_input({runtime_path!r})).read_bytes()\n'
+                   f'if {name}hashlib.sha256({name}runtime_bytes).hexdigest() != {runtime_digest!r}:\n    raise ValueError("Runtime source seed changed")\n'
+                   f'{name}runtime = {name}runtime_bytes.decode("utf-8")\n')
+    elif runtime_source is not None:
         header += (f'import ast as {name}ast\n'
                    f'{name}pool = {name}ast.parse({name}bytes[{len(source.encode("utf-8"))}:].decode("utf-8")).body\n'
                    f'if len({name}pool)!=1 or not isinstance({name}pool[0],{name}ast.Assign) '
@@ -91,6 +113,8 @@ def seed_retained_bundle(code, prefix):
         raise AssertionError('Seed binding changed original program AST')
     binding = {'path':path,'sha256':digest,
                'native_seed_script_sha256':hashlib.sha256(seed_code.encode()).hexdigest()}
+    if split_runtime:
+        binding.update(schema_version=2, runtime_path=runtime_path, runtime_sha256=runtime_digest)
     result += f'\nreport["authored_source_seed"] = {binding!r}\n'
     result += f'Path(beaver_output({prefix+"generation_report.json"!r})).write_text(json.dumps(report,indent=2),encoding="utf-8",newline="\\n")\n'
     compile(result, '<hash-bound source seed>', 'exec')

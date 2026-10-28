@@ -37,6 +37,10 @@ MODULE_STAGES = {
         ('shell_chin_shape.py', 'chin_shape_closest_triangles'),
         ('shell_chin_mesh.py', 'stage_chin_source_retile'),
         ('shell_chin_transaction.py', 'refine_chin_source'),
+        ('shell_nasal_spacing_rule.py', 'propose_nasal_bridge_spacing'),
+        ('shell_nasal_spacing_shape.py', 'guard_nasal_spacing_shape'),
+        ('shell_nasal_spacing_mesh.py', 'stage_nasal_bridge_spacing'),
+        ('shell_nasal_spacing_transaction.py', 'refine_nasal_bridge_spacing'),
     ),
     'ear_topology.py': (
         ('ear_source_legacy.py', None),
