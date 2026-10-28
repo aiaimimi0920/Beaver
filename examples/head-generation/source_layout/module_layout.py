@@ -10,6 +10,7 @@ MODULE_STAGES = {
         ('face_feature_parts.py', 'mesh'),
         ('face_source_sampling.py', 'density_rows'),
         ('face_source_corrections.py', 'orbital_endpoint_weight'),
+        ('face_source_ear_membership.py', 'ear_shell_boundary_edges'),
     ),
     'shell.py': (
         ('shell_surface_geometry.py', None),

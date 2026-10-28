@@ -27,6 +27,7 @@ ADAPTERS = (
     'source_ear_validation',
     'source_feature_stage_policy',
     'source_weld_ownership',
+    'source_ear_weld_ownership',
     'source_nasal_flow',
     'source_chin_retile',
     'source_nasal_spacing',

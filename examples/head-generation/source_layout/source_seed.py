@@ -6,6 +6,20 @@ import unicodedata
 from .transport_sources import validate_native_frame
 
 
+
+def readable_source_literal(text):
+    """Ordinary multiline text, with exact bytes; no encoding or compression."""
+    if '\r' in text or '\x00' in text:
+        return repr(text)
+    delimiter = "'" * 3
+    chunks = ["r" + delimiter + chunk + "\n" + delimiter + "[:-1]"
+              for chunk in text.split(delimiter)]
+    expression = "(\n" + (" + " + repr(delimiter) + " +\n").join(chunks) + "\n)"
+    if eval(compile(expression, '<readable source literal>', 'eval'), {'__builtins__': {}}) != text:
+        raise AssertionError('Readable source literal changed exact input text')
+    return expression
+
+
 def seed_retained_bundle(code, prefix):
     tree = ast.parse(code)
     candidates = [node for node in ast.walk(tree)
@@ -54,7 +68,16 @@ def seed_retained_bundle(code, prefix):
                      f'Path(beaver_output({path!r})).write_text({source!r},encoding="utf-8",newline="\\n")\n'
                      f'Path(beaver_output({runtime_path!r})).write_text({runtime_source!r},encoding="utf-8",newline="\\n")\n')
         seed = {'code': seed_code, 'outputs': [output, {'path': runtime_path, 'expectedSha256': None}], 'timeoutSeconds': 120}
-        validate_native_frame(seed)
+        try:
+            validate_native_frame(seed)
+        except ValueError:
+            # Plain raw multiline literals reduce quoting overhead while leaving
+            # the authored modules readable and byte-identical. Limits stay fixed.
+            seed_code = ('from pathlib import Path\n'
+                         f'Path(beaver_output({path!r})).write_text({readable_source_literal(source)},encoding="utf-8",newline="\\n")\n'
+                         f'Path(beaver_output({runtime_path!r})).write_text({readable_source_literal(runtime_source)},encoding="utf-8",newline="\\n")\n')
+            seed['code'] = seed_code
+            validate_native_frame(seed)
     name = '_beaver_verified_source_seed_'
     while name in unicodedata.normalize('NFKC', code):
         name += '_'

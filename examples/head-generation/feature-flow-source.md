@@ -979,3 +979,41 @@ Exact AST restoration is checked before execution; the native seed receipt,
 script hash, both file hashes, generation identity and packaging receipt remain
 part of the verification chain. No code compression or limit relaxation is
 used. Faye231's actual seed/generation/packaging chain verifies both files.
+
+### Authored shell membership at the shared ear weld
+
+Rear-spacing investigation exposed inherited semantic selection-group loss at
+the original skin/ear weld. `Continuous facial shell` is a vertex group, not a
+bone weight; this example's GLB is unskinned. Ear geometry copies authored shell
+root positions but does not carry that group's records. The weld can retain the
+empty ear record, and posterior-return construction then copies the loss.
+
+The shared recipe now captures uniquely coincident shell/ear boundary ports
+before joining, checks one nonbranching common boundary chain per named ear,
+and restores only the existing named shell membership after the weld. Complete
+post-weld correspondence and source ownership are validated before writes.
+Other groups, geometry and fields remain untouched. Generated fractional
+ear-only memberships are left to the existing donor interpolation, not forced
+to one.
+
+Native Faye232 verifies 18 captured ports, nine weld restorations and exactly
+20 final membership changes through their descendants. Three legitimate
+fractional results are 0.22853455, 0.5 and 0.5. Independent saved-file readback
+finds all other editable/runtime fields, UVs, six keys and transforms unchanged
+(after edge-index normalization); its GLB is byte-identical to Faye231. Thus
+Faye231's render/expression evidence is reused, not relabeled as new captures.
+No rear-spacing position correction is included in Faye232.
+
+The posterior-return generator also records exact parent/rim coordinates,
+oriented support cycles and existing open boundary edges in the input mesh's
+local frame. A separate fail-closed verifier can certify surviving local strips;
+it rejects moved/ambiguous points, changed ownership/cycles or boundary
+incidence. Actual232 certifies both prospective rear-strip pairs. This does not
+authorize arbitrary open boundaries based only on their current shape.
+
+For larger ordinary source text, seed serialization can use readable raw
+multiline Python string literals with exact UTF-8 roundtrip checks. Literal
+quote delimiters remain explicit concatenations; CR/CRLF use `repr` because
+Python otherwise normalizes line endings. Both source hashes, seed-script and
+receipt identities, original generation AST and unchanged one-MiB complete
+request limit are verified. This changes quoting overhead, not source contents.

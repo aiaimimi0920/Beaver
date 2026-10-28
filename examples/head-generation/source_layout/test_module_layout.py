@@ -26,6 +26,8 @@ def orbital_endpoint_weight(value):
     return mesh(value)
 offset = 3
 trace.append(orbital_endpoint_weight(4))
+def ear_shell_boundary_edges(value):
+    return orbital_endpoint_weight(value)
 '''
 
 

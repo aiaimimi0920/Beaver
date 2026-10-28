@@ -73,5 +73,17 @@ def adapt(sources):
     if source.count(marker) != 1:
         raise ValueError('Posterior source validation stage changed')
     source = source.replace(marker,"    assert all(len(face.verts)==4 for face in new_faces), 'Posterior source must retain finite quad ends'\n"+marker,1)
+    marker = "    bm.to_mesh(data)"
+    if source.count(marker) != 1:
+        raise ValueError('Posterior source provenance insertion contract changed')
+    source = source.replace(marker, """    result['generated_strip_provenance'] = {
+        'schema_version': 1,
+        'coordinate_frame': 'input Mesh local; unchanged coordinates required at consumption',
+        'parent_rim_pairs': [{'parent': tuple(v.co), 'rim': tuple(maps[-1][v].co)} for v in ids],
+        'support_cycles': [{'positions': [tuple(v.co) for v in face.verts],
+                            'region': int(face[regions])} for face in new_faces],
+        'boundary_edges': [[tuple(v.co) for v in edge.verts] for edge in bm.edges
+                           if edge.is_boundary and any(v in set(maps[-1].values()) for v in edge.verts)]}
+""" + marker, 1)
     out['ear_return.py'] = source+'\n\n'+inspect.getsource(feature_return_offsets)
     return out
