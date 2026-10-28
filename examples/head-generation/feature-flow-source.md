@@ -1,5 +1,40 @@
 # Experimental quad source flow
 
+## Expanded nasal regularization checkpoint (225, incomplete visual work)
+
+The shared opt-in generator now traces its current allocated five core paths
+through real outer-cheek edges, rather than using a previous file's point IDs.
+A bounded semantic nasal-axis search reconnects three six-valence junctions
+with symmetric quad pairs. Local source-surface redistribution spreads tangent
+changes at the cheek handoff; it does not globally smooth the face or change
+the automatic export triangulation policy. Ambiguous connected donor charts
+reject the attempted move and retain the original point.
+
+Native checkpoint 225 changed twelve source faces and moved 84 points. The
+three axis junctions became four-valence. Maximum turns on the five measured
+paths changed from 31.39/45.50/41.84/43.82/36.63 degrees to
+22.86/23.67/24.30/27.22/25.09 degrees. Three UV layers, numeric point fields,
+deform weights, protected boundaries and retained crease ownership were checked
+against recorded immutable donor lineage. All 729 sampled pose orientations
+and 99 strict crossing cases passed; shared vertices, coplanar and tangent
+contacts are excluded, so this is not continuous collision safety.
+
+The original nasal patch fixed-XY depth gate is unchanged. This additional,
+expanded region uses a separate sampled Euclidean preservation check against
+the actual automatic runtime export: 225-to-224 and reverse maxima were
+0.692 and 0.729 mm. Source-bilinear comparisons and five-view silhouettes were
+also below 1 mm. Alternate unused quad diagonals remain diagnostics: an unused
+diagonal on an unchanged 224 face already differs from its actual runtime by
+1.406 mm. No preferred diagonal was forced to pass the check.
+
+Actual opaque wire views at front, right 30/45/60/90 degrees show that the
+central diamond chain improved, but the narrow, dense inner nasal support band
+and transition poles remain visually unresolved. This checkpoint is NOT nasal
+completion. New-character native parameter combinations, engine pose captures
+for this checkpoint, and the remaining regional flow improvements are still
+pending. Reindexing tests and one-character expression tests are not evidence
+of cross-character artistic generalization.
+
 This is an opt-in authoring path, not a visually approved character preset.
 The ordinary composition recipe remains the default. No reference mesh, UV,
 texture, or private project artifact is included in this change.

@@ -3,7 +3,9 @@ import ast
 from pathlib import Path
 
 MODULES = ('nasal_source_geometry','nasal_source_template','nasal_source_domain',
-           'nasal_source_core','nasal_source_binding','nasal_source_boundary','nasal_source_mesh')
+           'nasal_source_core','nasal_source_binding','nasal_source_boundary','nasal_source_mesh',
+           'nasal_regularization_chart','nasal_regularization_trace',
+           'nasal_regularization_solver','nasal_regularization_mesh')
 
 
 def adapt(sources):
@@ -24,6 +26,9 @@ def adapt(sources):
     out['pipeline.py'] = pipeline.replace(marker,
         '        from shell import replace_nasal_source\n'
         '        report["nasal_five_flow_source"] = replace_nasal_source(data,semantic_part_ordinals,report["nasal_source_anchors"])\n'+marker,1)
+    out['pipeline.py'] = out['pipeline.py'].replace(marker,
+        '        from shell import regularize_nasal_source\n'
+        '        report["nasal_expanded_regularization"] = regularize_nasal_source(data,semantic_part_ordinals,report["nasal_five_flow_source"]["allocated_flow_records"])\n'+marker,1)
     root = Path(__file__).parent
     existing = {n.name for n in ast.parse(shell).body if isinstance(n,(ast.FunctionDef,ast.ClassDef))}
     chunks = []

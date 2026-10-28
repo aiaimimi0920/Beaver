@@ -135,6 +135,7 @@ def replace_nasal_source(data, ordinals, authored):
         donors = {f for i in donor_ids for f in parents[i].link_faces if f[region] == 1}
         old_loops,values = ear_loop_values(donors,{v:i for i,v in enumerate(parents)},uv_layers,colors)
         added,reused = [],set()
+        live_paths = []
         for spec in specs:
             allocated = [parents[i] for i in spec['boundary']]
             lineage = [{i:1.} for i in spec['boundary']]
@@ -145,6 +146,10 @@ def replace_nasal_source(data, ordinals, authored):
                 vertex = bm.verts.new(Vector(point),parents[max(weights,key=weights.get)])
                 flow_point_fields(bm,vertex,parents,weights)
                 allocated.append(vertex); lineage.append(weights)
+            for row, path in enumerate(report['primary_flow_local_paths']):
+                anchor = allocated[report['primary_flow_boundary_slots'][row]]
+                core_path = [allocated[len(spec['boundary'])+i] for i in path]
+                live_paths.append((anchor,core_path))
             example = original_faces[min(spec['selected'])]
             for quad in spec['quads']:
                 ordered = [allocated[i] for i in quad]
@@ -184,6 +189,10 @@ def replace_nasal_source(data, ordinals, authored):
                       reused_domain_faces=len(reused),
                       new_sampling_points=sum(len(s['points']) for s in specs),
                       euler_preserved=euler_before,open_edges_preserved=open_edges_before)
+        bm.verts.index_update()
+        report['allocated_flow_records'] = [
+            {'anchor':anchor.index,'core':[v.index for v in path]}
+            for anchor,path in live_paths]
         bm.to_mesh(data)
         data.update()
         return report

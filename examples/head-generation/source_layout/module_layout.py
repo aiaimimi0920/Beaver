@@ -20,6 +20,8 @@ MODULE_STAGES = {
         ('shell_nasal_core.py', 'capture_nasal_source_anchors'),
         ('shell_nasal_binding.py', 'validate_domain'),
         ('shell_nasal_mesh.py', 'prepare_nasal_patch'),
+        ('shell_nasal_flow_trace.py', 'trace_outer_flow'),
+        ('shell_nasal_regularization.py', 'regularize_nasal_source'),
     ),
     'ear_topology.py': (
         ('ear_source_legacy.py', None),

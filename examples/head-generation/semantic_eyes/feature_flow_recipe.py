@@ -52,6 +52,10 @@ DEPENDENCIES = (
     'nasal_source_binding',
     'nasal_source_boundary',
     'nasal_source_mesh',
+    'nasal_regularization_chart',
+    'nasal_regularization_trace',
+    'nasal_regularization_solver',
+    'nasal_regularization_mesh',
 )
 
 
