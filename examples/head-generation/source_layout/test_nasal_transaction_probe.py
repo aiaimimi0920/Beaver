@@ -3,7 +3,10 @@ import sys
 import types
 import unittest
 from unittest.mock import patch
-from nasal_transaction_probe import install
+if __package__:
+    from .nasal_transaction_probe import install
+else:
+    from nasal_transaction_probe import install
 
 class Vector:
     def __init__(self,x=0.,y=0.,z=0.):self.x,self.y,self.z=x,y,z
