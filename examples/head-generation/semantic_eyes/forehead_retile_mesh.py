@@ -1,23 +1,16 @@
 """Current-source forehead retile, native transport and pose validation."""
 import numpy as np
-from nasal_source_domain import current_source_features
-from forehead_retile_roles import prepare_forehead_star_topology
-from forehead_retile_fair import fair_forehead_guides
-from forehead_retile_support import refine_forehead_supports
-from forehead_retile_mirror import mirror_forehead_retile
+from forehead_author_surface import regularize_forehead_author_surface
+from forehead_author_pose_guard import guard_forehead_author_poses
+from forehead_current_recipe import prepare_current_forehead
+from forehead_flow_acceptance import validate_forehead_flow_result
 from forehead_retile_apply import apply_forehead_retile_data
 from forehead_retile_shape import guard_forehead_retile_poses
 
 
 def prepare_forehead_source_retile(vertices, faces, regions, ordinals, report, open_delta):
-    features = current_source_features(vertices, faces, regions, ordinals)
-    topology = prepare_forehead_star_topology(vertices, faces, regions, report, features)
-    proposal = fair_forehead_guides(vertices, faces, regions, topology, features)
-    proposal = refine_forehead_supports(vertices, open_delta, proposal)
-    bases = [ordinals['Ear hollow pinna '+str(side)] for side in (-1, 1)]
-    owners = {a+offset: b+offset for a, b in ((bases[0], bases[1]), (bases[1], bases[0]))
-              for offset in (0, 100, 110)}
-    return mirror_forehead_retile(vertices, faces, regions, proposal, owners, open_delta)
+    """Input is the explicitly verified author surface, before retile allocation."""
+    return prepare_current_forehead(vertices, faces, regions, ordinals, report, open_delta)
 
 
 def stage_forehead_retile(data, ordinals, context, assembly_offset):
@@ -35,16 +28,33 @@ def stage_forehead_retile(data, ordinals, context, assembly_offset):
     faces = [list(q.vertices) for q in data.polygons]
     regions = [int(row.value) for row in region.data]
     old_open = np.asarray([tuple(row.vector) for row in motion.data], dtype=np.float32)
-    proposal = prepare_forehead_source_retile(old, faces, regions, ordinals, context['report'], old_open)
+    calibration = context['calibration']
+    blink = lambda point: closure_delta(point[0], point[2]-assembly_offset, 'skin', calibration)
+    mouth = lambda point, name: motion_delta(point, calibration, name)
+    author, author_change = regularize_forehead_author_surface(old, faces, regions, ordinals)
+    author_change['pose_correspondence'] = guard_forehead_author_poses(
+        old, author, faces, author_change['changed_vertices'], old_open, blink, mouth)
+    author_change['changed_points'] = [
+        {'vertex': i, 'original': old[i].tolist(), 'author': author[i].tolist()}
+        for i in author_change['changed_vertices']]
+    proposal = prepare_forehead_source_retile(author, faces, regions, ordinals, context['report'], old_open)
+    flow_acceptance = validate_forehead_flow_result(old_open, proposal)
+    # The caller owns a detached mesh transaction. Do not reset or obscure the
+    # original baseline: both changes are reported and verified separately.
+    for vertex, position in zip(data.vertices, author):
+        vertex.co = position
+    data.update()
     print('Forehead source retile:', proposal['metrics'], flush=True)
     transport = apply_forehead_retile_data(data, proposal)
     calibration = context['calibration']
-    poses = guard_forehead_retile_poses(old, faces, proposal['vertices'], proposal['faces'],
+    poses = guard_forehead_retile_poses(author, faces, proposal['vertices'], proposal['faces'],
         proposal['affected_old'], proposal['affected_new'], old_open, transport['new_open_delta'],
         polygon_diagonals,
-        lambda point: closure_delta(point[0], point[2]-assembly_offset, 'skin', calibration),
-        lambda point, name: motion_delta(point, calibration, name))
+        blink, mouth)
+    poses['baseline'] = 'Explicit regularized author surface, not the original input geometry'
     return {'source_lineage': proposal['lineage'],
+            'source_lineage_baseline': 'Apply author_shape_change.changed_points to original input first',
+            'author_shape_change': author_change, 'flow_acceptance': flow_acceptance,
             'affected_old_cycles': [faces[i] for i in proposal['affected_old']],
             'affected_final_cycles': [proposal['faces'][i] for i in proposal['affected_new']],
             'guide_paths': proposal['guide_paths'],
@@ -54,6 +64,6 @@ def stage_forehead_retile(data, ordinals, context, assembly_offset):
             'native_fields': {key: value for key, value in transport.items()
                               if key not in ('old_open_delta', 'new_open_delta')},
             'sampled_shape_guard': poses,
-            'scope': 'Current-source conforming quad retile and full guide fairing; '
+            'scope': 'Explicit bounded author-shape correction, conforming quad retile and full guide fairing; '
                      'no reference coordinates or saved model identifiers',
             'acceptance': 'Pending actual saved export, source fields and visual verification'}

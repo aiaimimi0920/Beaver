@@ -69,7 +69,6 @@ def mirror_forehead_retile(vertices, faces, regions, proposal, owner_mirror, old
     old_ids = sorted(set(proposal['affected_old']) | set(face_mirror.values()))
     new_ids = sorted(set(proposal['affected_new']) | set(negative_new))
     protected = set(proposal['protected'])
-    protected |= {mirror[i] for i in topology['roles']['original_binding']['ear_root_star']}
     if set(lineage) & protected or not np.array_equal(points[sorted(protected)], old[sorted(protected)]):
         raise ValueError('Mirrored forehead edit crosses a functional boundary')
     edge_parents = {tuple(row['edge']): row['parent'] for row in topology['edge_lineage']}

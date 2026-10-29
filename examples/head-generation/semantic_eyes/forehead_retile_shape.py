@@ -1,7 +1,8 @@
 """Paired-export and generated-pose checks for different-size source retiles."""
 import itertools
 import numpy as np
-from chin_source_shape import ChinFrozenDistance, chin_shape_exact_distance
+from chin_source_shape import ChinFrozenDistance
+from forehead_exact_distance import forehead_exact_distance
 
 
 def guard_forehead_retile_poses(old, old_faces, new, new_faces, old_ids, new_ids,
@@ -55,14 +56,21 @@ def guard_forehead_retile_poses(old, old_faces, new, new_faces, old_ids, new_ids
     count = int(subdivisions)
     barycentric = np.asarray([[i/count, j/count, 1-(i+j)/count]
                              for i in range(count+1) for j in range(count+1-i)])
-    proofs = []
+    proofs, exact_cache = [], {}
     for name, source_delta, target_delta in cases:
         source = (old+source_delta).astype(float)
         target = (new+target_delta).astype(float)
+        key = (source[old_used].tobytes(), target[new_used].tobytes())
+        if key in exact_cache:
+            previous = exact_cache[key]
+            row = dict(previous, pose=name, reused_from_pose=previous['pose'])
+            proofs.append(row)
+            print('Forehead source pose (identical geometry reused):', row, flush=True)
+            continue
         field = ChinFrozenDistance(source, source_quads, count)
         samples = np.einsum('ij,kjl->kil', barycentric, target[triangles]).reshape(-1, 3)
         forward = field.distance(samples)
-        reverse = chin_shape_exact_distance(field.points, target, triangles)
+        reverse = forehead_exact_distance(field.points, target, triangles)
         row = {'pose': name, 'forward_mm': float(forward.max()*1000),
                'reverse_mm': float(reverse.max()*1000),
                'forward_samples': len(forward), 'reverse_samples': len(reverse)}
@@ -71,6 +79,7 @@ def guard_forehead_retile_poses(old, old_faces, new, new_faces, old_ids, new_ids
                 row['forward_mm'], row['reverse_mm']) > 1:
             raise ValueError('Forehead retile exceeds the 1 mm sampled source-shape bound: '+name)
         proofs.append(row)
+        exact_cache[key] = row
 
     def normals(points):
         q = points[triangles]
@@ -91,6 +100,7 @@ def guard_forehead_retile_poses(old, old_faces, new, new_faces, old_ids, new_ids
             raise ValueError('Forehead expression combination reversed a triangle')
         minimum = min(minimum, float(cosine.min()))
     return {'subdivisions': count, 'limit_mm': 1., 'cases': proofs,
+            'unique_geometry_queries': len(exact_cache), 'exact_pose_cache': True,
             'paired_selected_diagonals': diagonals,
             'orientation_states': 3**len(names), 'minimum_orientation_cosine': minimum,
             'old_patch_quads': len(old_ids), 'new_patch_quads': len(new_ids),
