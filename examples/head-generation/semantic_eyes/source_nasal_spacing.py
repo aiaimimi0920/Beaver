@@ -8,6 +8,17 @@ SPACING_MODULES = ('nasal_spacing_rule', 'nasal_rear_rule', 'nasal_return_proven
                    'orbital_support_rule', 'orbital_support_bind', 'orbital_support_native',
                    'mouth_corner_rule', 'mouth_corner_native', 'mouth_corner_shapes',
                    'forehead_flow_bind', 'forehead_flow_rule', 'forehead_flow_refine', 'forehead_flow_native',
+                   'forehead_star_topology',
+                   'forehead_retile_roles',
+                   'forehead_surface_batch',
+                   'forehead_retile_fair',
+                   'forehead_retile_support',
+                   'forehead_retile_mirror',
+                   'forehead_retile_contract',
+                   'forehead_retile_fields',
+                   'forehead_retile_shape',
+                   'forehead_retile_apply',
+                   'forehead_retile_mesh',
                    'nasal_spacing_shape',
                    'nasal_spacing_mesh', 'nasal_spacing_joint')
 

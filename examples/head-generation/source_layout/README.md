@@ -38,8 +38,8 @@ source/AST restoration remains part of the existing execution contract.
 
 Packaging preserves the original receipt bytes as `source_seed_receipt.json`
 and `source_seed_runtime_receipt.json`, and binds both identities through the
-report and final verifier. This is two seed jobs plus one generation and one
-packaging job, not two model generations. Faye234's actual schema-three pair
+report and final verifier. This is two seed jobs plus one generation and one or more
+packaging jobs, not multiple model generations. Faye234's actual schema-three pair
 passes the independent receipt/source verification. The source chain proves
 provenance and reproducibility checks, not visual or engine-pose acceptance.
 
@@ -80,3 +80,14 @@ acceptance must use fresh native generation, source packaging, SDF and captures.
 Run contract tests with:
 
     python -m unittest discover -s examples/head-generation/source_layout -p 'test_*.py'
+
+
+When the retained layout needs more than 64 packaging outputs, prepare it with
+`pack_request.py --batch`. The output is an ordered JSON list of ordinary native
+requests. Prepare all batches before executing the first one. Execute each separately
+and retain every untouched original receipt.
+Pass the receipt list to `verify_packaging`, or repeat
+`--source-packaging-receipt` for `sdf_request.py`. Every batch rechecks the same
+frozen generation hashes; verification rejects duplicate jobs, overlapping or
+missing outputs, changed sources and broken seed provenance. Do not synthesize
+an aggregate native receipt. This batching does not rerun model generation.

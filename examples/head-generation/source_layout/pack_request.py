@@ -6,7 +6,7 @@ from pathlib import Path
 import sys
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
-from source_layout.package import packaging_request
+from source_layout.package import packaging_request, packaging_requests
 
 
 def main():
@@ -15,6 +15,7 @@ def main():
     parser.add_argument("--generation-receipt", type=Path, required=True)
     parser.add_argument("--workspace", type=Path, required=True)
     parser.add_argument("--output", type=Path, required=True)
+    parser.add_argument("--batch", action="store_true", help="Write a requests list for bounded native batches")
     args = parser.parse_args()
     target = args.output.resolve()
     if target.is_relative_to(args.workspace.resolve()) or target.is_relative_to(
@@ -23,7 +24,8 @@ def main():
         raise ValueError(
             "Request output must be outside the task and recipe directories"
         )
-    request = packaging_request(
+    build = packaging_requests if args.batch else packaging_request
+    request = build(
         json.loads(args.source_plan.read_text()),
         args.generation_receipt,
         args.workspace,

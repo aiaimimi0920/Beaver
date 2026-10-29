@@ -2,6 +2,7 @@
 import numpy as np
 from nasal_mesh_snapshot import nasal_mesh_snapshot, assert_nasal_mesh_snapshot_equal
 from nasal_spacing_mesh import stage_nasal_bridge_spacing
+from forehead_retile_mesh import stage_forehead_retile
 
 
 def refine_nasal_bridge_spacing(data, ordinals, inner, records, generated_return=None, baseline=None, orbital_calibration=None, assembly_offset=None, mouth_context=None, forehead_context=None):
@@ -18,8 +19,13 @@ def refine_nasal_bridge_spacing(data, ordinals, inner, records, generated_return
         raise ValueError('Nasal spacing copy shares original shape-key storage')
     transfer = backup = None
     try:
-        result = stage_nasal_bridge_spacing(staged, ordinals, inner, records, generated_return, baseline,
-                                            orbital_calibration, assembly_offset, mouth_context, forehead_context)
+        if forehead_context is not None:
+            if any(value is not None for value in (generated_return, baseline, orbital_calibration, mouth_context)):
+                raise ValueError('Forehead retile conflicts with another source stage')
+            result = stage_forehead_retile(staged, ordinals, forehead_context, assembly_offset)
+        else:
+            result = stage_nasal_bridge_spacing(staged, ordinals, inner, records, generated_return, baseline,
+                                                orbital_calibration, assembly_offset, mouth_context, None)
         assert_nasal_mesh_snapshot_equal(original, nasal_mesh_snapshot(data),
                                          'Original during nasal spacing staging')
         expected = nasal_mesh_snapshot(staged)

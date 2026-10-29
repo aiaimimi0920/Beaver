@@ -131,13 +131,13 @@ def build_plan(
                 "stage": "source_packaging",
                 "status": "pending",
                 "entry": "../source_layout/pack_request.py",
-                "required": "Use the companion source plan and successful generation receipt; execute the packaging request through Beaver and retain its separate successful native receipt",
+                "required": "Use the companion source plan and successful generation receipt; use --batch when needed and prepare all requests before the first write; execute each through Beaver and retain every separate original successful native receipt",
             },
             {
                 "stage": "sdf",
                 "status": "pending",
                 "entry": "sdf_request.py",
-                "required": "Successful generation and source-packaging receipts bound to exact report and sources; pass --source-packaging-receipt and retain successful SDF receipt",
+                "required": "Successful generation and source-packaging receipts bound to exact report and sources; repeat --source-packaging-receipt for multiple original packaging receipts and retain successful SDF receipt",
             },
             {
                 "stage": "capture",

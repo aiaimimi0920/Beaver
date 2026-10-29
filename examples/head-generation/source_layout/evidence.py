@@ -116,9 +116,8 @@ def verify_packaging(report, root, prefix, generation_receipt, packaging_receipt
     wanted = layout["helper_sha256"]
     validate_layout_set(layout, prefix)
     gen, generated = native_job(generation_receipt, root)
-    packed, outputs = native_job(packaging_receipt, root)
-    if packed["jobId"] == gen["jobId"]:
-        raise ValueError("Source packaging must be a separate native job")
+    from .pack_batches import original_packaging_jobs
+    packed_ids, outputs = original_packaging_jobs(packaging_receipt, root, gen["jobId"])
     binding_path = prefix + "source_layout_binding.json"
     seed_binding = report.get("authored_source_seed")
     seed_sidecar = {prefix + "source_seed_receipt.json"} if seed_binding else set()
@@ -149,7 +148,7 @@ def verify_packaging(report, root, prefix, generation_receipt, packaging_receipt
         seed_jobs = {verified['job_id']}
         if verified.get('schema_version') == 3:
             seed_jobs.add(verified['runtime_job_id'])
-        if seed_jobs & {gen['jobId'], packed['jobId']}:
+        if seed_jobs & ({gen['jobId']} | packed_ids):
             raise ValueError("Invalid native source seed/generation chain")
         if generated.get(prefix + "semantic_bundle.py") != sha(resource(root,prefix + "semantic_bundle.py")):
             raise ValueError("Retained source differs from generation receipt")

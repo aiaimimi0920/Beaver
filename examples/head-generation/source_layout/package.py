@@ -154,7 +154,7 @@ def modular_plan(request, prefix, *, source_seed=False):
     return result
 
 
-def packaging_request(plan, receipt_path, workspace):
+def packaging_payload(plan, receipt_path, workspace):
     root = Path(workspace).resolve()
     prefix = plan["prefix"]
     if not re.fullmatch(r"assets/aster/general_face_eyes_combo[a-z0-9_]+/", prefix):
@@ -243,16 +243,20 @@ def packaging_request(plan, receipt_path, workspace):
             if hashlib.sha256(seed_raw).hexdigest() != seed_binding[fields[index]]:
                 raise ValueError("Seed receipt changed before packaging")
             payload[prefix + names[index]] = seed_raw
-    declared = []
-    for path, content in payload.items():
+    for path in payload:
         if resource(root, path).exists():
             raise ValueError("Source packaging requires fresh outputs")
-        method = "write_bytes" if isinstance(content, bytes) else "write_text"
-        options = '' if isinstance(content, bytes) else ", encoding='utf-8', newline='\\n'"
-        source += f"Path(beaver_output({path!r})).{method}({content!r}{options})\n"
-        declared.append({"path": path, "expectedSha256": None})
-    if len(declared) > 64 or len(source.encode()) > 1024 * 1024:
-        raise ValueError("Native packaging limit exceeded")
-    request = {"code": source, "outputs": declared, "timeoutSeconds": 120}
-    validate_native_frame(request)
-    return request
+    return source, payload
+
+
+def packaging_requests(plan, receipt_path, workspace):
+    from .pack_batches import source_packaging_batches
+    source, payload = packaging_payload(plan, receipt_path, workspace)
+    return source_packaging_batches(source, payload)
+
+
+def packaging_request(plan, receipt_path, workspace):
+    requests = packaging_requests(plan, receipt_path, workspace)
+    if len(requests) != 1:
+        raise ValueError("Source packaging needs multiple native jobs; use packaging_requests")
+    return requests[0]

@@ -88,7 +88,7 @@ if __name__ == "__main__":
     parser.add_argument("--prefix", required=True)
     parser.add_argument("--workspace", type=Path, required=True)
     parser.add_argument("--generation-receipt", type=Path, required=True)
-    parser.add_argument("--source-packaging-receipt", type=Path)
+    parser.add_argument("--source-packaging-receipt", type=Path, action="append")
     parser.add_argument("--output", type=Path, required=True)
     args = parser.parse_args()
     if HERE.parent.resolve() in args.output.resolve().parents:
