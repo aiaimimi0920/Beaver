@@ -4,7 +4,7 @@ from nasal_mesh_snapshot import nasal_mesh_snapshot, assert_nasal_mesh_snapshot_
 from nasal_spacing_mesh import stage_nasal_bridge_spacing
 
 
-def refine_nasal_bridge_spacing(data, ordinals, inner, records, generated_return=None, baseline=None, orbital_calibration=None, assembly_offset=None, mouth_context=None):
+def refine_nasal_bridge_spacing(data, ordinals, inner, records, generated_return=None, baseline=None, orbital_calibration=None, assembly_offset=None, mouth_context=None, forehead_context=None):
     import bpy
     import bmesh
     if data.shape_keys is not None:
@@ -19,7 +19,7 @@ def refine_nasal_bridge_spacing(data, ordinals, inner, records, generated_return
     transfer = backup = None
     try:
         result = stage_nasal_bridge_spacing(staged, ordinals, inner, records, generated_return, baseline,
-                                            orbital_calibration, assembly_offset, mouth_context)
+                                            orbital_calibration, assembly_offset, mouth_context, forehead_context)
         assert_nasal_mesh_snapshot_equal(original, nasal_mesh_snapshot(data),
                                          'Original during nasal spacing staging')
         expected = nasal_mesh_snapshot(staged)
@@ -41,7 +41,8 @@ def refine_nasal_bridge_spacing(data, ordinals, inner, records, generated_return
             raise
         result['transaction'] = {'committed': True, 'transfer_payload': proof,
                                  'original_untouched_until_final_validation': True}
-        key = ('mouth_corner_source' if mouth_context is not None else
+        key = ('forehead_five_flow_source' if forehead_context is not None else
+               'mouth_corner_source' if mouth_context is not None else
                'orbital_support_source' if orbital_calibration is not None else
                'nasal_spacing_source' if generated_return is None else 'nasal_rear_spacing_source')
         return {key: result}

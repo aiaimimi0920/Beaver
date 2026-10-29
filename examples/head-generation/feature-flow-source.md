@@ -1129,3 +1129,60 @@ pose and hash checks. Representative open-mouth, right-blink and combined
 expression views were inspected; existing white diagnostic faceting and the
 right-blink cheek outline artifact remain unresolved. These checks establish a local corner transition,
 not whole-mouth or whole-face artistic acceptance.
+
+### Five forehead flows and the green upper-ear transition
+
+The raw13 shared source recipe binds five upper facial paths from current
+centerline stations, quad adjacency and authored ear provenance. Red and orange
+continue across the forehead; green reaches the upper ear-root chain; blue and
+purple descend the original shell-side cheek/jaw rails rather than circling
+back around the eye apertures. The lower continuation remains guide-only:
+28 vertices per side are fixed. Reference imagery informs direction and curve
+character, but no reference-model coordinates or third-party assets are embedded
+in the generator. Unsupported source contracts fail closed.
+
+`forehead_flow_bind` owns graph binding and mirror validation. `forehead_flow_rule`
+fairs the five paths on frozen authoring quads. `forehead_flow_refine` jointly
+solves the terminal green/orange/red strip, with 20 chart degrees of freedom,
+original cell-quality limits, per-edge 0.65–1.35 source-length bounds and an
+explicit green peak-turn limit. Upstream green stations are fixed in this second
+solve: stretching their adjacent blue-green export chord exceeded the existing
+1 mm shape envelope in a rejected experiment. `forehead_flow_native` protects
+prior facial transactions and mirrors the result before field transport through
+the existing detached native transaction. The work is retained as readable
+source, with four dedicated `shell_forehead_*` packaged responsibilities; it is
+not a manual post-export mesh patch.
+
+The native Faye240 output has 126 bilateral lineage entries and 124 actually moved
+vertices across 164 quads. Connectivity and source density are unchanged. All
+original open boundaries, ear-root attachments and previously accepted nasal,
+chin and mouth corrections remain fixed. Green peak turn changes from 69.474 to
+41.103 degrees; red/orange/blue/purple peaks change from
+12.590/14.476/75.195/105.778 to 11.581/12.322/56.134/78.440 degrees. Per-cell
+tradeoffs remain: on one half, 37 aspect ratios worsen and nine minimum angles
+drop by over five degrees, while the existing global angle/aspect envelope is
+retained. This is not an assertion that every cell or every view improves.
+
+Independent saved-file readback verifies exact donor-derived point fields,
+three UV layers, semantic memberships, unchanged protected boundaries and all
+54 unrelated meshes. Runtime positions and all six exported morph targets match
+the GLB exactly. All 729 sampled orientation combinations remain positive. Nine
+actual saved poses pass bidirectional frozen-quad sampling at 32 subdivisions,
+with worst-four local refinement at 96; maximum sampled deviation is 0.910 mm.
+This is sampled evidence, not a continuous surface or collision guarantee.
+
+A rejected native run exposed solver/float32 rounding at the global angle bound.
+The repair adds conservative margins inside optimization, without relaxing final
+quality, spacing, orientation or shape limits. The solver residual explicitly
+refers to pre-quantization points. An independent native probe reproduces the
+final saved positions exactly; a CPU run with a different SciPy version differs
+by up to 2.298 micrometers and is diagnostic, not a bit-identity certificate.
+
+Native source packaging and model-bound SDF passed. Three opaque source-wire
+views were inspected and delivered. Nine actual engine expression captures pass
+same-model, pose, texture and renderer binding checks. Representative right
+blink, combined blink/open and right45 mouth-open views were inspected. Existing
+white diagnostic faceting and the right-blink cheek/nose outline artifact remain.
+The green earward turn is reduced, but some flat/kinked segments and uneven
+cells remain; this is a bounded five-flow improvement, not whole-face artistic,
+cross-character or final product acceptance.

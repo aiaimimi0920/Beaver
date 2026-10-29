@@ -7,6 +7,7 @@ from source_chin_retile import CHIN_MODULES
 SPACING_MODULES = ('nasal_spacing_rule', 'nasal_rear_rule', 'nasal_return_provenance',
                    'orbital_support_rule', 'orbital_support_bind', 'orbital_support_native',
                    'mouth_corner_rule', 'mouth_corner_native', 'mouth_corner_shapes',
+                   'forehead_flow_bind', 'forehead_flow_rule', 'forehead_flow_refine', 'forehead_flow_native',
                    'nasal_spacing_shape',
                    'nasal_spacing_mesh', 'nasal_spacing_joint')
 
@@ -40,6 +41,14 @@ def adapt(sources):
         '            report["nasal_inner_source"], report["nasal_five_flow_source"]["allocated_flow_records"],\n'
         '            assembly_offset=report["head_assembly_y_offset_m"],\n'
         '            mouth_context={"calibration": C, "chin": report["chin_source_retile"]}))', 1)
+    forehead_marker = '            mouth_context={"calibration": C, "chin": report["chin_source_retile"]}))'
+    if out['pipeline.py'].count(forehead_marker) != 1:
+        raise ValueError('Forehead stage requires unique completed mouth source stage')
+    out['pipeline.py'] = out['pipeline.py'].replace(forehead_marker, forehead_marker + '\n'
+        '        report.update(refine_nasal_bridge_spacing(data,semantic_part_ordinals,\n'
+        '            report["nasal_inner_source"], report["nasal_five_flow_source"]["allocated_flow_records"],\n'
+        '            assembly_offset=report["head_assembly_y_offset_m"],\n'
+        '            forehead_context={"calibration": C, "report": report}))', 1)
     shell = out['shell.py']
     existing = {node.name for node in ast.parse(shell).body
                 if isinstance(node, (ast.FunctionDef, ast.ClassDef))}

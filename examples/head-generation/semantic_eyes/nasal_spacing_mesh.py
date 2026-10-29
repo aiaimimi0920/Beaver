@@ -6,6 +6,7 @@ from nasal_rear_rule import propose_nasal_rear_spacing
 from orbital_support_native import prepare_orbital_support
 from mouth_corner_native import prepare_mouth_corner
 from mouth_corner_shapes import guard_mouth_corner_shapes
+from forehead_flow_native import prepare_forehead_flow
 from nasal_return_provenance import verify_nasal_return_provenance
 from nasal_source_domain import current_source_features
 from nasal_spacing_shape import guard_nasal_spacing_shape
@@ -13,7 +14,7 @@ from chin_source_fields import (chin_snapshot_point_fields, chin_apply_point_fie
                                chin_validate_face_fields)
 
 
-def stage_nasal_bridge_spacing(data, ordinals, inner, records, generated_return=None, baseline=None, orbital_calibration=None, assembly_offset=None, mouth_context=None):
+def stage_nasal_bridge_spacing(data, ordinals, inner, records, generated_return=None, baseline=None, orbital_calibration=None, assembly_offset=None, mouth_context=None, forehead_context=None):
     import bmesh
     from ear_topology import ear_loop_values, assign_ear_loop
     from ear_surface import polygon_diagonals
@@ -48,7 +49,18 @@ def stage_nasal_bridge_spacing(data, ordinals, inner, records, generated_return=
         ear_regions = {base + offset for base in ear_bases for offset in (0, 100, 110)}
         features = current_source_features(vertices, faces, regions, ordinals)
         provenance = None
-        if mouth_context is not None:
+        if forehead_context is not None:
+            if any(x is not None for x in (mouth_context, orbital_calibration, generated_return, baseline)):
+                raise ValueError('Forehead source mode conflicts with another stage')
+            if assembly_offset != -.021:
+                raise ValueError('Forehead source requires explicit current assembly frame')
+            from semantic_eye_runtime import closure_delta
+            spec = prepare_forehead_flow(vertices, faces, regions, features, paths,
+                forehead_context['report'], ordinals,
+                lambda point: closure_delta(point[0], point[2]-assembly_offset,
+                    'skin', forehead_context['calibration']))
+            edit_budget = 0
+        elif mouth_context is not None:
             if orbital_calibration is not None or generated_return is not None or baseline is not None:
                 raise ValueError('Mouth corner has conflicting source modes')
             if assembly_offset != -.021:
@@ -164,7 +176,7 @@ def stage_nasal_bridge_spacing(data, ordinals, inner, records, generated_return=
                 if accessor is not None and list(accessor.values()):
                     raise ValueError('Unsupported rear spacing corner field')
         fields, deforms = chin_snapshot_point_fields(bm, parents)
-        if generated_return is not None or orbital_calibration is not None or mouth_context is not None:
+        if generated_return is not None or orbital_calibration is not None or mouth_context is not None or forehead_context is not None:
             if not deforms or any(not any(values[index] for _, values in deforms) for index in weights):
                 raise ValueError('Rear spacing has no authored semantic membership')
             for _, values in deforms:
@@ -196,16 +208,16 @@ def stage_nasal_bridge_spacing(data, ordinals, inner, records, generated_return=
         shape_proof = guard_nasal_spacing_shape(vertices, faces, points, final_faces, affected,
                                                 old_delta, delta, polygon_diagonals)
         blink_proof = None
-        if orbital_calibration is not None:
+        if orbital_calibration is not None or forehead_context is not None:
             blink_proof = guard_nasal_spacing_shape(vertices, faces, points, final_faces, affected,
                 spec['old_blink_delta'], spec['new_blink_delta'], polygon_diagonals,
                 selector_delta=delta, pose_name='blink.L+blink.R')
         mouth_proof = None
-        if mouth_context is not None:
+        if mouth_context is not None or forehead_context is not None:
             from researched_mouth_runtime import motion_delta
             mouth_proof = guard_mouth_corner_shapes(vertices, faces, points, affected,
                 old_delta, delta, polygon_diagonals,
-                lambda point, target: motion_delta(point, mouth_context['calibration'], target))
+                lambda point, target: motion_delta(point, (mouth_context or forehead_context)['calibration'], target))
         cumulative_proof = None
         if generated_return is not None:
             if baseline is None or len(baseline['vertices']) != len(vertices):
@@ -240,7 +252,7 @@ def stage_nasal_bridge_spacing(data, ordinals, inner, records, generated_return=
                 i = loop.vert.index
                 assign_ear_loop(loop, weights.get(i, {i: 1.}), old_loops, values, uv, colors)
             if any(len(edge.link_faces) != (old_edges.get(tuple(sorted(v.index for v in edge.verts)), 2)
-                   if generated_return is not None else 2) for edge in face.edges):
+                   if generated_return is not None or forehead_context is not None else 2) for edge in face.edges):
                 raise ValueError('Nasal spacing native edit is not manifold')
         for edge in bm.edges:
             key = tuple(sorted(v.index for v in edge.verts))
@@ -255,7 +267,7 @@ def stage_nasal_bridge_spacing(data, ordinals, inner, records, generated_return=
         return {'source_lineage': lineage, 'affected_old_cycles': [faces[i] for i in sorted(affected)],
                 'affected_final_cycles': [final_faces[i] for i in sorted(affected)],
                 'edited_faces': edited, 'final_full_paths': paths, 'roles': spec['roles'],
-                'metrics': spec['metrics'], 'axis_tangent': spec.get('axis_tangent'), 'fade': spec.get('fade'),
+                'metrics': spec['metrics'], 'guide_paths': spec.get('guide_paths'), 'axis_tangent': spec.get('axis_tangent'), 'fade': spec.get('fade'),
                 'sampled_shape_guard': shape_proof, 'cumulative_shape_guard': cumulative_proof,
                 'generated_return_provenance': provenance, 'generated_blink_guard': spec.get('generated_blink_guard'),
                 'generated_blink_shape_guard': blink_proof,
