@@ -11,12 +11,15 @@ def make_forehead_surface_batch(chart, vertices, quads):
 
 class ForeheadSurfaceBatch:
     """Batch inversion of current convex authoring quads, with no index hints."""
-    def __init__(self, chart, vertices, quads):
+    def __init__(self, chart, vertices, quads, cache_limit=4096):
+        if not isinstance(cache_limit, int) or cache_limit < 0:
+            raise ValueError('Invalid frozen surface candidate cache capacity')
+        self.cache_limit, self.candidate_cache = cache_limit, {}
         self.xy = np.asarray(chart)[quads][:, :, [0, 2]]
         self.vertices = np.asarray(vertices)[quads]
         self.lower, self.upper = self.xy.min(axis=1), self.xy.max(axis=1)
 
-    def sample(self, points):
+    def _fill_candidates(self, points, keys):
         points = np.asarray(points)
         sample_ids, quad_ids = np.where(
             np.all(points[:, None, :] >= self.lower[None, :, :]-1e-8, axis=2)
@@ -40,6 +43,30 @@ class ForeheadSurfaceBatch:
         valid = (margin >= -1e-7) & (error < 1e-8)
         sample_ids, quad_ids = sample_ids[valid], quad_ids[valid]
         weights, margin = weights[valid], margin[valid]
+        for i, key in enumerate(keys):
+            chosen = sample_ids == i
+            self.candidate_cache[key] = (quad_ids[chosen], weights[chosen], margin[chosen])
+
+    def sample(self, points):
+        # Cache inversion candidates, NOT selected positions. Global unstable
+        # argsort tie ordering is retained exactly, including boundary queries
+        # reordered or repeated between finite-difference evaluations.
+        points = np.asarray(points)
+        keys = [(points.dtype.str, row.tobytes()) for row in points]
+        unknown = {key: i for i, key in enumerate(keys) if key not in self.candidate_cache}
+        if unknown:
+            self._fill_candidates(points[list(unknown.values())], list(unknown))
+        entries = [self.candidate_cache[key] for key in keys]
+        counts = np.asarray([len(row[0]) for row in entries], dtype=int)
+        sample_ids = np.repeat(np.arange(len(points)), counts)
+        if entries:
+            quad_ids = np.concatenate([row[0] for row in entries])
+            weights = np.concatenate([row[1] for row in entries])
+            margin = np.concatenate([row[2] for row in entries])
+        else:
+            quad_ids, weights, margin = np.empty(0,int), np.empty((0,4)), np.empty(0)
+        while len(self.candidate_cache) > self.cache_limit:
+            self.candidate_cache.pop(next(iter(self.candidate_cache)))
         interior_counts = np.bincount(sample_ids[margin > 1e-7], minlength=len(points))
         if np.any(interior_counts > 1):
             return None
