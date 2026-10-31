@@ -3,6 +3,32 @@
 BROW_GEOMETRY_REPORT = []
 
 
+def brow_strip_triangles(polygon):
+    # Paired monotone lower/upper contours, retaining the two shared tips.
+    count = len(polygon)
+    if count % 2:
+        raise ValueError("Unexpected paired brow contour")
+    stations = count // 2 + 1
+    def upper(i):
+        return i if i in (0, stations - 1) else count - i
+    result = []
+    for i in range(stations - 1):
+        a, b, c, d = i, i + 1, upper(i + 1), upper(i)
+        if abs(polygon[a][0] - polygon[d][0]) > 1e-10 or abs(polygon[b][0] - polygon[c][0]) > 1e-10:
+            raise ValueError("Brow contour stations do not align")
+        if a == d:
+            result.append((a, b, c))
+        elif b == c:
+            result.append((a, b, d))
+        else:
+            ac = sum((polygon[a][k]-polygon[c][k])**2 for k in (0,1))
+            bd = sum((polygon[b][k]-polygon[d][k])**2 for k in (0,1))
+            result.extend([(a,b,c),(a,c,d)] if ac <= bd else [(a,b,d),(b,c,d)])
+    return result
+
+
+
+
 def brow_refine(points, triangles):
     points, cache, result = list(points), {}, []
     def midpoint(a, b):
@@ -47,12 +73,14 @@ def build_designed_brow(side, design):
     from face import H, C, STYLE, mesh
 
     span = H * (C["brow_outer_x"] - C["brow_inner_x"])
-    polygons = brow_polygons(design, span, H * C["brow_thickness"])
+    divisions = brow_sampling_divisions(design, STYLE)
+    polygons = brow_polygons(design, span, H * C["brow_thickness"], divisions)
     vertices, faces = [], []
     areas, refinements, clearances, sample_counts = [], [], [], []
     for polygon in polygons:
         vectors = [Vector((x, y, 0)) for x, y in polygon]
-        triangles = [tuple(tri) for tri in tessellate_polygon([vectors])]
+        triangles = (brow_strip_triangles(polygon) if design["kind"] == "angled" and divisions
+                     else [tuple(tri) for tri in tessellate_polygon([vectors])])
         if any(len(tri) != 3 or any(type(i) is not int or not 0 <= i < len(polygon) for i in tri) for tri in triangles):
             raise ValueError("Unexpected Blender tessellation index contract")
         if len(triangles) != len(polygon) - 2:

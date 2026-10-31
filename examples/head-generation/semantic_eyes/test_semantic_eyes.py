@@ -135,6 +135,19 @@ class SemanticEyeTests(unittest.TestCase):
                     request.update(upper_arch=0.7, lower_arch=0.5)
                 if key == "lateral_guide_regularization" and bound != 1:
                     request["lateral_aperture_follow"] = 1
+                if (key == "sampling_surface_subdivision" and bound == 0) or (key in ("sampling_budget_trial", "sampling_surface_fairing", "sampling_detail_budget", "sampling_outline_refinement") and bound):
+                    request["sampling_density_layout"] = 1
+                if key in ("sampling_surface_fairing", "sampling_outline_refinement") and bound:
+                    request["sampling_surface_subdivision"] = 0
+                if key == "sampling_feature_flow" and bound:
+                    request.update(
+                        sampling_density_layout=1,
+                        sampling_shell_columns=13,
+                        sampling_detail_budget=1,
+                        sampling_surface_subdivision=0,
+                        sampling_surface_fairing=0,
+                        sampling_outline_refinement=0,
+                    )
                 adapt_style(self.style, request)
 
     def test_nasal_spacing_extension_preserves_width_and_local_features(self):

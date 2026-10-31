@@ -23,7 +23,9 @@ class ResearchedBrowTests(unittest.TestCase):
             self.assertEqual(verify_snapshot(result), result)
             for field in ("surface_parameters", "silhouette_parameters", "lip_parameters", "component_parameters"):
                 self.assertEqual(result[field], old[field])
-            self.assertEqual({k: v for k, v in result["eye_parameters"].items() if k not in BROW_KEYS}, {k: v for k, v in old["eye_parameters"].items() if k not in BROW_KEYS})
+            self.assertEqual({k: v for k, v in result["eye_parameters"].items() if k not in BROW_KEYS | {"sampling_brow_divisions"}}, {k: v for k, v in old["eye_parameters"].items() if k not in BROW_KEYS | {"sampling_brow_divisions"}})
+            self.assertEqual(result["eye_parameters"]["sampling_brow_divisions"], 16 if "brow_design" in result else 0)
+            self.assertEqual(old["eye_parameters"]["sampling_brow_divisions"], 0)
             if id.startswith("research-"):
                 self.assertEqual(len(result["brow_source_sha256"]), 4)
 
@@ -45,6 +47,8 @@ class ResearchedBrowTests(unittest.TestCase):
             root = Path(directory)
             component = root / "face_components"
             shutil.copytree(HERE, component)
+            (root / "semantic_eyes").mkdir()
+            shutil.copy2(HERE.parent / "semantic_eyes/sampling_contract.py", root / "semantic_eyes/sampling_contract.py")
             library = root / "brow_library"
             shutil.copytree(HERE.parent / "brow_library", library)
             for name in expected:

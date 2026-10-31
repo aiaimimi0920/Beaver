@@ -8,6 +8,6 @@ _previous_path = sys.path[:]
 try:
     sys.path.insert(0, _parent)
     from source_layout.package import modular_plan, packaging_request
-    from source_layout.evidence import verify_packaging
+    from source_layout.evidence import verify_packaging, native_job
 finally:
     sys.path[:] = _previous_path

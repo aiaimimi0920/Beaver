@@ -111,6 +111,8 @@ def adapt_pipeline(source, design):
     insertion = '\nfrom researched_nose_runtime import build_attachment\n_nose_prior_ordinals = dict(semantic_part_ordinals)\nbuild_attachment(STYLE["nose_design"], shell)\nfor _part in PARTS:\n    if _part.name not in semantic_part_ordinals:\n        semantic_part_ordinals[_part.name] = max(semantic_part_ordinals.values(), default=9)+1\nassert all(semantic_part_ordinals[k]==v for k,v in _nose_prior_ordinals.items()), "Original semantic regions changed"\n'
     source = source.replace(anchor, anchor + insertion, 1)
     check_anchor = '        report["ear_shared_seams"] = verify_ear_seams(data, report["ear_root_fit"])'
+    if "oral_skin_point_ownership" in source:
+        check_anchor = "        report['automatic_export_triangle_verification'] = verify_skin_triangles(data)"
     if source.count(check_anchor) != 1:
         raise ValueError("Final skin attachment validation hook changed")
     return source.replace(

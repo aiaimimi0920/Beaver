@@ -1,7 +1,6 @@
 """Package experimental fresh geometry; requires an explicitly reviewed bound."""
 
 import argparse
-import hashlib
 import importlib.util
 import json
 import math

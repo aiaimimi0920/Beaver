@@ -259,6 +259,8 @@ for part_index, part in enumerate(PARTS):
         vertex.co.z -= 0.021
 report["head_assembly_y_offset_m"] = -0.021
 # Save editable source before export joining. Body fingerprint is unchanged.
+from copy import deepcopy
+report["ear_root_fit_authored"] = deepcopy(report["ear_root_fit"])
 report.update(
     body_objects=len(body),
     body_fingerprints=body,
@@ -337,7 +339,8 @@ for role in ["Face"]:
         from ear_fold import fair_attachment_folds
         report["ear_lower_attachment_fold_fairing"]=fair_attachment_folds(data,report["ear_root_fit"])
 
-        from ear_topology import improve_lower_root_diagonals
+        from ear_topology import improve_lower_root_diagonals, reflow_source_fans
+        report["ear_source_fan_reflow"]=reflow_source_fans(data,report["ear_root_fit"])
         report["ear_root_diagonal_quality"]=improve_lower_root_diagonals(data,report["ear_root_fit"])
         from nose_refine import refine_nose
         report["nose_refinement"] = refine_nose(data)
@@ -351,6 +354,7 @@ for role in ["Face"]:
         report["accepted_non_eye_preservation"] = preserve_non_eye(data,ROOT,report)
         from eye_rim_refine import refine_outer_eye
         report["outer_eye_local_depth"] = refine_outer_eye(data)
+        data = members[0].data
         report["ear_shared_seams"] = verify_ear_seams(data, report["ear_root_fit"])
         normals = [Vector((0, 0, 0)) for _ in data.vertices]
         region_normals = {}

@@ -128,6 +128,18 @@ def build_blink_shapes(obj, ordinals, calibration, ink_floor_closure=False):
             if abs(dy) > 1e-10:
                 key.data[vertex.index].co.z += dy
                 changed.append(abs(dy))
+        station_attribute = data.attributes.get("BlinkSection")
+        if station_attribute is not None:
+            groups = {}
+            for vertex in data.vertices:
+                section_id = station_attribute.data[vertex.index].value
+                if section_id > 0 and side*vertex.co.x > 0 and "lateral" in memberships[vertex.index]:
+                    groups.setdefault(section_id, []).append(vertex.index)
+            for ids in groups.values():
+                delta = sum(key.data[i].co.z-data.vertices[i].co.z for i in ids)/len(ids)
+                for i in ids:
+                    key.data[i].co.z = data.vertices[i].co.z+delta
+        changed = [abs(key.data[v.index].co.z-v.co.z) for v in data.vertices if abs(key.data[v.index].co.z-v.co.z)>1e-10]
         key.value = 0.0
         assert changed, "Blink did not affect any eyelid vertices"
         report[name] = {

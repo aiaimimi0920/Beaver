@@ -8,6 +8,7 @@ import re
 import sys
 from compose import HERE, SURFACE, resolve
 from source_layout_bridge import modular_plan
+from source_layout.plan_files import write_plan_files
 
 
 def load_module(path, name):
@@ -27,13 +28,14 @@ def build_raw_request(
     mouth_overrides=None,
     face_overrides=None,
     ear_overrides=None,
+    sampling_overrides=None,
 ):
     if not re.fullmatch(r"assets/aster/general_face_eyes_combo[a-z0-9_]+/", prefix):
         raise ValueError("Use a fresh general_face_eyes_combo prefix")
     if (Path(workspace) / prefix).exists():
         raise ValueError("Composition must use a fresh directory")
     snapshot = resolve(
-        selection, fit_policy, brow_overrides, nose_overrides, mouth_overrides, face_overrides, ear_overrides
+        selection, fit_policy, brow_overrides, nose_overrides, mouth_overrides, face_overrides, ear_overrides, sampling_overrides
     )
     old_path = sys.path[:]
     sys.path.insert(0, str(SURFACE))
@@ -69,13 +71,15 @@ def build_raw_request(
     return request
 
 
-def build_plan(*args, **kwargs):
+def build_plan(*args, source_seed=False, **kwargs):
     prefix = kwargs.get("prefix", args[1] if len(args) > 1 else None)
-    return modular_plan(build_raw_request(*args, **kwargs), prefix)
+    return modular_plan(build_raw_request(*args, **kwargs), prefix, source_seed=source_seed)
 
 
 def build_request(*args, **kwargs):
     """First native job; callers must retain build_plan's source packaging plan."""
+    if kwargs.get("source_seed", False):
+        raise ValueError("Source seed requires build_plan and finalize_seed_plan, not build_request")
     return build_plan(*args, **kwargs)["generation"]
 
 
@@ -88,6 +92,7 @@ if __name__ == "__main__":
     parser.add_argument("--prefix", required=True)
     parser.add_argument("--workspace", type=Path, required=True)
     parser.add_argument("--output", type=Path, required=True)
+    parser.add_argument("--source-seed", action="store_true", help="Emit a seed request and complete plan; finalize after native seed succeeds")
     parser.add_argument(
         "--brow-controls", type=Path, help="Bounded researched-brow overrides JSON"
     )
@@ -99,6 +104,7 @@ if __name__ == "__main__":
     )
     parser.add_argument("--face-controls", type=Path, help="Bounded researched-face overrides JSON")
     parser.add_argument("--ear-controls", type=Path, help="Bounded researched-ear overrides JSON")
+    parser.add_argument("--sampling-controls", type=Path, help="Explicit first-pass lash sampling JSON")
     args = parser.parse_args()
     target = args.output.resolve()
     if HERE.parent.resolve() in target.parents:
@@ -113,8 +119,8 @@ if __name__ == "__main__":
         (json.loads(args.mouth_controls.read_text()) if args.mouth_controls else None),
         (json.loads(args.face_controls.read_text()) if args.face_controls else None),
         (json.loads(args.ear_controls.read_text()) if args.ear_controls else None),
+        (json.loads(args.sampling_controls.read_text()) if args.sampling_controls else None),
+        source_seed=args.source_seed,
     )
-    args.output.write_text(json.dumps(plan["generation"]))
-    args.output.with_suffix(".source-plan.json").write_text(
-        json.dumps(plan["source_packaging"])
-    )
+    for kind, path in write_plan_files(plan, args.output).items():
+        print(f"{kind}: {path}")

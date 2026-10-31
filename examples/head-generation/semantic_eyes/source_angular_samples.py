@@ -1,13 +1,18 @@
 """Opt-in exact shoulder stations for eyelids, pocket and primary ink."""
 
 
-def adapt_angular_samples(sources, enabled):
-    if not enabled:
+import ast
+from sampling_contract import lid_station_plan
+
+
+def adapt_angular_samples(sources, enabled, sampling=None):
+    count = (sampling or {}).get("sampling_lid_stations", 0)
+    if not enabled and not count:
         return sources
     result = dict(sources)
     face = result["face.py"]
     old = "        cols = 33"
-    new = "        stations=sorted([-1+2*i/32 for i in range(33)]+[-.55,.55])\n        cols=len(stations)"
+    new = "        stations=" + repr(list(lid_station_plan(count, enabled))) + "\n        cols=len(stations)"
     if face.count(old) != 1:
         raise ValueError("Angular lid station contract changed")
     face = face.replace(old,new,1)
@@ -15,13 +20,24 @@ def adapt_angular_samples(sources, enabled):
     if face.count(old) != 2:
         raise ValueError("Angular lid sample contract changed")
     face = face.replace(old,"                    t = stations[i]")
+    result["face.py"] = face
+    if not enabled:
+        return result
     anchor = "    h = xs[i + 1] - xs[i]"
-    if face.count(anchor) != 1:
+    curves = [node for node in ast.parse(face).body
+              if isinstance(node, ast.FunctionDef) and node.name == "curve"]
+    if len(curves) != 1:
+        raise ValueError("Expected one primary ink curve function")
+    lines = face.splitlines(keepends=True)
+    first, last = curves[0].lineno - 1, curves[0].end_lineno
+    primary = "".join(lines[first:last])
+    if primary.count(anchor) != 1:
         raise ValueError("Angular ink interpolation contract changed")
-    face = face.replace(anchor,anchor+"\n"
+    primary = primary.replace(anchor,anchor+"\n"
         '    if points is globals().get("STYLE",{}).get("upper_lash_rails"):\n'
         '        if abs(abs(xs[i])-.55)<1e-10: ds[i]=slopes[i]\n'
         '        if abs(abs(xs[i+1])-.55)<1e-10: ds[i+1]=slopes[i]',1)
+    face = "".join(lines[:first]) + primary + "".join(lines[last:])
     result["face.py"] = face
     socket = result["eye_socket.py"]
     old = "    contours = [eye_contour(side, cos(2 * pi * k / n), sin(2 * pi * k / n) >= 0) for k in range(n)]"
