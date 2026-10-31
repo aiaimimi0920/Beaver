@@ -95,6 +95,40 @@ class ForeheadRetileTests(unittest.TestCase):
         np.testing.assert_allclose(batch.sample(xy), expected, atol=1e-9)
         self.assertIsNone(batch.sample([[99., 99.]]))
 
+    def test_cross_face_owner_is_mirrored_independently_of_output_slot(self):
+        from forehead_retile_mirror import mirror_forehead_retile
+        v, positive_faces = self.grid()
+        n, count = len(v), len(positive_faces)
+        old = np.vstack((v, v*[-1, 1, 1]))
+        faces = positive_faces + [[j+n for j in reversed(q)] for q in positive_faces]
+        owners = list(range(len(faces)))
+        owners[0], owners[1] = 1, 0
+        proposal = {'vertices': old.copy(), 'faces': faces, 'lineage': {},
+                    'affected_old': [0, 1], 'affected_new': [0, 1],
+                    'protected': [], 'paths': {'guide': [0, 1]}, 'metrics': {},
+                    'topology': {'face_owners': owners, 'retiled_old_faces': [0, 1],
+                        'roles': {'original_binding': {'ear_root_star': []}},
+                        'edge_lineage': [{'edge': list(e), 'parent': list(e)}
+                                         for e in forehead_edge_counts(faces)]}}
+        result = mirror_forehead_retile(old, faces, [1]*len(faces), proposal, {},
+                                         np.zeros_like(old))
+        self.assertEqual(result['face_owners'][count], count+1)
+        self.assertEqual(result['face_owners'][count+1], count)
+
+    def test_non_neutral_edges_need_complete_unbranched_child_chains(self):
+        from forehead_retile_fields import validate_forehead_edge_chains
+        original = {(0, 1): (.25, 2, False, True), (3, 4): (0., 0, False, True)}
+        chain = [{'edge': [0, 2], 'parent': [0, 1]},
+                 {'edge': [1, 2], 'parent': [0, 1]}]
+        self.assertEqual(validate_forehead_edge_chains(chain, original), 1)
+        for rows in ([], chain[:1], chain+chain[:1],
+                     chain+[{'edge': [2, 5], 'parent': [0, 1]}],
+                     chain+[{'edge': list(e), 'parent': [0, 1]}
+                            for e in ((5, 6), (6, 7), (5, 7))]):
+            with self.assertRaises(ValueError):
+                validate_forehead_edge_chains(rows, original)
+        self.assertEqual(validate_forehead_edge_chains([], {(3, 4): (0., 0, False, True)}), 0)
+
     def test_all_new_modules_remain_readable_sources(self):
         sources = retained_sources()
         for name in ('forehead_star_topology', 'forehead_retile_roles', 'forehead_retile_fair',

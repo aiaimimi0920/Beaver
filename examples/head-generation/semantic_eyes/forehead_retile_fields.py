@@ -85,7 +85,42 @@ def snapshot_forehead_edges(bm):
     return values, crease, group
 
 
+def validate_forehead_edge_chains(provenance, original):
+    """Every non-neutral original edge survives as one complete child chain."""
+    from collections import defaultdict
+    keys = [tuple(row['edge']) for row in provenance]
+    if len(keys) != len(set(keys)):
+        raise ValueError('Duplicate forehead edge provenance')
+    children = defaultdict(list)
+    for row in provenance:
+        if row['parent'] is not None:
+            children[tuple(row['parent'])].append(tuple(row['edge']))
+    required = 0
+    for parent, fields in original.items():
+        if fields == (0., 0, False, True):
+            continue
+        required += 1
+        adjacent = defaultdict(set)
+        for a, b in children[parent]:
+            adjacent[a].add(b)
+            adjacent[b].add(a)
+        a, b = parent
+        if (len(adjacent[a]) != 1 or len(adjacent[b]) != 1
+                or any(len(neighbors) != 2 for node, neighbors in adjacent.items()
+                       if node not in parent)):
+            raise ValueError('Forehead retile lost or branched a non-neutral edge chain')
+        seen, queue = {a}, [a]
+        for node in queue:
+            for neighbor in adjacent[node]-seen:
+                seen.add(neighbor)
+                queue.append(neighbor)
+        if b not in seen or seen != set(adjacent):
+            raise ValueError('Forehead edge provenance has a disconnected child chain')
+    return required
+
+
 def restore_forehead_edges(bm, provenance, original, crease, group):
+    required = validate_forehead_edge_chains(provenance, original)
     parents = {tuple(row['edge']): row['parent'] for row in provenance}
     seen = set()
     inherited = 0
@@ -110,6 +145,7 @@ def restore_forehead_edges(bm, provenance, original, crease, group):
     if seen != set(parents):
         raise ValueError('Forehead native edge topology differs from proposal')
     return {'all_edges_bound': True, 'nonzero_inherited_child_edges': inherited,
+            'non_neutral_original_edge_chains_preserved': required,
             'original_seam_and_sharp_flags_inherited': True}
 
 

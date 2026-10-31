@@ -57,7 +57,7 @@ def mirror_forehead_retile(vertices, faces, regions, proposal, owner_mirror, old
     for i in topology['retiled_old_faces']:
         partner = face_mirror[i]
         final_faces[partner] = [mirror[j] for j in reversed(final_faces[i])]
-        final_owners[partner] = partner
+        final_owners[partner] = face_mirror[topology['face_owners'][i]]
     for i in range(old_count, len(proposal['faces'])):
         final_faces.append([mirror[j] for j in reversed(proposal['faces'][i])])
         final_owners.append(face_mirror[topology['face_owners'][i]])

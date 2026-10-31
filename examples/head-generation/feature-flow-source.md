@@ -1280,3 +1280,22 @@ These measurement and reference fixes do not establish a finished Faye layout.
 Current generation, saved-export, complete-expression and visual evidence must
 be obtained separately. In particular, preserving closely spaced boundary
 endpoints can prevent an interior-only solver from equalizing the whole guide.
+
+### Retile field-chain and mirrored-owner safeguards
+
+A cavity retile can replace a face slot with a quad whose original field owner
+is a different face. Mirroring now resolves that actual owner through the
+verified original face correspondence instead of assuming slot identity.
+
+Every original edge with a crease, group, seam or sharp flag must remain as one
+complete, connected, unbranched chain of explicitly attributed child edges.
+Neutral edges may be replaced, but omitting or fragmenting a non-neutral chain
+fails before native edge values are written. Per-edge value verification and
+per-corner UV/color transport remain separate checks.
+
+The focused regression batch passes on the retained repository baseline plus
+these safeguards: 11 retile tests and 102 source-layout tests. A fresh native
+component diagnostic also preserves all 168 non-neutral source chains, the
+three UV layers, discrete point fields and deform memberships. That diagnostic
+uses an unaccepted appearance proposal. It is not evidence of final shape,
+GLB, expression, engine or visual acceptance for a new character model.
