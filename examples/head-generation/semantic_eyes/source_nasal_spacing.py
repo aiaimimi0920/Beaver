@@ -23,6 +23,8 @@ SPACING_MODULES = ('nasal_spacing_rule', 'nasal_rear_rule', 'nasal_return_proven
                    'forehead_fit_supports',
                    'forehead_surface_supports',
                    'forehead_fit_density',
+    'forehead_spacing',
+    'forehead_gap_measure',
                    'forehead_current_recipe',
                    'forehead_flow_acceptance',
                    'forehead_exact_distance',

@@ -66,6 +66,8 @@ MODULE_STAGES = {
         ('shell_forehead_fit_supports.py', 'fit_forehead_supports'),
         ('shell_forehead_surface_supports.py', 'refine_forehead_surface_supports'),
         ('shell_forehead_fit_density.py', 'fit_forehead_density'),
+        ('shell_forehead_spacing.py', 'forehead_station_residuals'),
+        ('shell_forehead_gap_measure.py', 'sample_forehead_polyline'),
         ('shell_forehead_current_recipe.py', 'prepare_current_forehead'),
         ('shell_forehead_flow_acceptance.py', 'measure_forehead_flow'),
         ('shell_forehead_exact_distance.py', 'forehead_exact_distance'),

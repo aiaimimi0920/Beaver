@@ -1260,3 +1260,23 @@ Three actual opaque source-wire views show smoother marked turns and lower
 continuations, with some local density concentration and discrete angularity
 remaining. This completes the bounded five-flow correction and repeatable source
 integration, not whole-face artistic or cross-character acceptance.
+
+## Whole-guide spacing evidence (unfinished topology work)
+
+Spacing reports now include each complete guide's segment min/max, mean and
+coefficient of variation. A gradual adjacent-length progression is not evidence
+of near-equal spacing. Adjacent guide distances are sampled by physical arc
+length in both directions, with every source vertex also checked for extrema.
+No common angular span truncates longer curves or their returning cheek tails.
+Samples beyond a target endpoint are flagged but retained in the full report;
+these Euclidean distances do not prove anatomical correspondence or geodesic
+spacing, and are not an artistic acceptance threshold.
+
+Original-vertex MouthOpen field references remain cumulative across support and
+density fitting. Intermediate donor lineage cannot reset an original point's
+transport allowance. New points retain the existing frozen-author donor policy.
+
+These measurement and reference fixes do not establish a finished Faye layout.
+Current generation, saved-export, complete-expression and visual evidence must
+be obtained separately. In particular, preserving closely spaced boundary
+endpoints can prevent an interior-only solver from equalizing the whole guide.

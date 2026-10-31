@@ -1,5 +1,7 @@
 """Fixed physical-scale flow evidence, distinct from solver objective samples."""
 import numpy as np
+from forehead_spacing import measure_forehead_station_spacing
+from forehead_gap_measure import measure_forehead_transverse_spacing
 
 
 def measure_forehead_flow(points, path, step=.01):
@@ -42,6 +44,9 @@ def validate_forehead_flow_result(old_open, proposal):
     maximum = float(np.linalg.norm(current[:len(previous)]-previous, axis=1).max()*1000)
     if maximum > .50001:
         raise ValueError('Original-vertex cumulative MouthOpen transport exceeds 0.5 mm')
-    return {'flows': metrics, 'original_vertex_cumulative_open_delta_mm': maximum,
+    return {'flows': metrics,
+            'whole_guide_spacing': measure_forehead_station_spacing(points, paths),
+            'full_curve_distances': measure_forehead_transverse_spacing(points, paths),
+            'original_vertex_cumulative_open_delta_mm': maximum,
             'new_vertex_field_policy': 'Frozen author-surface donor interpolation',
             'style_thresholds_are_recipe_guards_not_user_acceptance': True}

@@ -5,6 +5,7 @@ from nasal_source_geometry import AuthorQuadSurface
 from orbital_support_rule import orbital_quad_quality, orbital_turns
 from forehead_flow_rule import forehead_chart, forehead_convex_chart, forehead_no_chart_crossings
 from forehead_surface_batch import make_forehead_surface_batch
+from forehead_spacing import forehead_frozen_field
 
 def fit_forehead_density(vertices, old_open_delta, proposal, focus=False):
     old = np.asarray(vertices, float)
@@ -40,10 +41,7 @@ def fit_forehead_density(vertices, old_open_delta, proposal, focus=False):
     surface = AuthorQuadSurface(source_chart, donors, [1] * len(donors))
     surface.vertices = old.copy()
     signs = np.sign(forehead_convex_chart(forehead_chart(initial), quads))
-    frozen_delta = np.zeros_like(initial)
-    frozen_delta[:len(old)] = old_delta
-    for i, row in proposal['topology']['lineage'].items():
-        frozen_delta[i] = np.asarray(row['weights']) @ old_delta[row['donors']]
+    frozen_delta = forehead_frozen_field(old_delta, len(initial), proposal['topology']['lineage'])
     cache, best = ({}, {})
     iterations = [0]
 
