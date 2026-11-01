@@ -1,0 +1,27 @@
+# Whole-guide fairing stages
+
+`fit_forehead_shared_constraints(..., objective_mode='fairing', solver_mode='linearized', fairing_reduction=.001)` adds an actual energy-reduction inequality and a constraint for **every consecutive guide triple**. This is not merely the existing ±10 mm chord measurement. Legacy `fairing_reduction=None` retains the prior objective/constraint contract.
+
+The energy is the positive weighted mean of dimensionless bending / frozen bending and curvature variation / frozen variation. `whole_guide_fairing_reference` stores original coefficients and whole-path lengths once; repeated stages retain these exact coefficients. Role weights default equally; explicit positive caller weights must cover all paths and cannot silently change mid-phase. A topology/path change requires explicit reference migration, not automatic renormalization.
+
+In the default `pointwise-v1` mode, individual local turns cannot increase. Optional `fairing_turn_goals`, `fairing_turn_roles`, and `fairing_turn_reduction` tighten only selected above-goal triples. Goals are caller-owned semantic targets, not a universal prohibition on inflections. `continue_forehead_fairing` selects the role with the largest above-goal local peak, tries bounded 1/.5/.25 reductions, and preserves the last admitted state on rejection. If one role blocks at all bounded fractions, it tries the remaining violating roles; per-role successful-fraction hints avoid repeatedly retrying slow full steps. It does not schedule or loosen station/gap/physical caps.
+
+The energy row uses an exact world gradient and source sampler differential, with explicit donor-boundary central-FD fallback. Other local-turn rows retain sparse FD. Initial row scaling is fixed. Quantized working margins may strengthen targets, never relax saved-geometry acceptance. Callback success means the **current** coordinates were admitted; the existence of a historical best is insufficient.
+
+A stage must pass existing author-domain, original frozen-field, quad, lower-guide, physical/front/station/arc, and dense matched-gap gates, plus scalar/float32 energy and local-turn checks. Per-role bending, variation, and local peaks are reported before and after. Component success does **not** establish independent bidirectional dense 1 mm/full-pose, native transport, or visual acceptance. Those remain mandatory and separate. The default full generation recipe is not automatically wired to run this optional fairing continuation; registering these helpers is not an end-to-end pipeline success claim.
+
+## Cross-phase composition
+
+In default `pointwise-v1` mode, `whole_guide_fairing_guard` stores the achieved saved energy and every achieved local turn, bound to actual topology and the immutable normalization. Explicit v2 instead retains role-max and separate per-role B/V caps, as described below. Ordinary shared flow/gap fitting retains these rows even with `fairing_reduction=None`; it keeps its original movement/fairing objective. Removing the guard while retaining the reference fails closed. `forehead_capture_fairing_guard` is the explicit, evidence-checked upgrade for older admitted fairing checkpoints.
+
+For support-only topology transactions, call `forehead_migrate_support_fairing_guard(before, after)` explicitly. It requires identical guide paths/coordinates, unchanged normalization, and identical existing frozen donor rows. It only rebinds the topology identity; it does not certify new quality, field, UV or shape correctness. Guide-path changes remain rejected pending a separate coverage/migration proof.
+
+Continuation output has `component_admitted=True`, `checkpoint_status='admitted_component'` and `fit_complete=True` only after a successfully admitted component. `full_model_success` remains false. With no admitted step the original input is returned with `component_admitted=False` and `checkpoint_status='unchanged_input'`. These flags are not permission to bypass independent model gates.
+
+## Explicit role-max/B/V mode (v2)
+
+The default/legacy guard is `pointwise-v1`. `forehead_migrate_fairing_guard_v2(proposal)` returns an explicitly versioned replacement only if the actual input still passes **all old v1 rows**, reference and topology identity. It changes no coordinates or phase normalizers, and records the old guard hash, old semantics and complete retired guard. Unknown versions fail closed.
+
+V2 caps every local triple by its role's achieved maximum and separately caps each role's dimensionless bending and curvature variation. It retains the achieved aggregate energy cap. Neighboring small turns may increase as a bend redistributes; such results must not be called pointwise-v1 passes. The existing lower20°, physical/front/station/arc/gap, field, protected-coordinate, quad and independent shape gates are unchanged.
+
+Shared-fit `fairing_guard_mode` and fairing-driver `guard_mode` may explicitly assert `pointwise-v1` or `role-max-bv-v2`; a mismatched existing guard requires the separate migration, never automatic retirement. Both modes are retained through ordinary flow/gap fits. V2's additional B/V rows use exact world/source gradients with boundary fallback, fixed scaling, and no dense FD-coloring row. Scalar/float32 admission checks every B/V bound.

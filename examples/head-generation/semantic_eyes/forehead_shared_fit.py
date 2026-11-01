@@ -1,5 +1,8 @@
 """Quality and posed-field fitting of quad supports and lower guide continuations."""
 from forehead_fit_density import forehead_constraint_layout, forehead_quantized_quality_pass
+from forehead_role_fairing import ForeheadRoleFairingStage
+from forehead_fairing_stage import forehead_current_checkpoint
+from forehead_fairing_guard import forehead_prepare_fairing_stage, forehead_capture_fairing_guard
 from forehead_fairing_solver import make_forehead_fairing_objective, solve_forehead_fairing
 from forehead_working_targets import ForeheadWorkingFlowStage
 from forehead_matched_gap_stage import ForeheadMatchedGapStage
@@ -27,7 +30,9 @@ from forehead_lp_restore import forehead_restore_linearized, forehead_quantizati
 from forehead_anchor_domain import ForeheadAnchorDomain
 from forehead_aspect_constraints import forehead_aspect_reference, forehead_pairwise_aspect
 
-def fit_forehead_shared_constraints(vertices, old_open_delta, proposal, focus=False, restore=False, max_iterations=200, diagnostic=None, active_guides=None, physical_stage=False, progress_names=None, progress_scale=1.0, author_context=None, active_gap_pair=None, gap_reduction=0.025, gap_sample_count=129, objective_mode='restore', minimum_improvement=0., solver_mode='trust', seam_active_set_growth=False):
+def fit_forehead_shared_constraints(vertices, old_open_delta, proposal, focus=False, restore=False, max_iterations=200, diagnostic=None, active_guides=None, physical_stage=False, progress_names=None, progress_scale=1.0, author_context=None, active_gap_pair=None, gap_reduction=0.025, gap_sample_count=129, objective_mode='restore', minimum_improvement=0., solver_mode='trust', seam_active_set_growth=False, fairing_reduction=None, fairing_role_weights=None, fairing_turn_reduction=0., fairing_turn_goals=None, fairing_turn_roles=None, fairing_guard_mode=None):
+    if fairing_reduction is not None and (objective_mode != 'fairing' or minimum_improvement):
+        raise ValueError('Fairing stage requires fairing objective and its own reduction target')
     if type(seam_active_set_growth) is not bool:
         raise ValueError('Invalid optional seam active-set mode')
     if solver_mode not in ('trust', 'linearized'):
@@ -103,6 +108,12 @@ def fit_forehead_shared_constraints(vertices, old_open_delta, proposal, focus=Fa
         params[np.asarray(ids), 2] = values.reshape(-1, 2)[:, 1] / 1000
         return params
     gap_stage = ForeheadMatchedGapStage(author_context, proposal, original_params, active_pair=active_gap_pair, reduction=gap_reduction, count=gap_sample_count)
+    fairing_stage = forehead_prepare_fairing_stage(proposal, initial, fairing_reduction,
+        fairing_role_weights, fairing_turn_reduction, fairing_turn_goals, fairing_turn_roles, fairing_guard_mode)
+    if fairing_stage:
+        offset = layout['count']
+        layout['whole_guide_fairing'] = (offset, offset + fairing_stage.count)
+        layout['count'] += fairing_stage.count
     anchor_domain = ForeheadAnchorDomain(gap_stage.fast, author_parameters(start), ids)
     offset = layout['count']
     layout['anchor_domain'] = (offset, offset + len(anchor_domain.specs))
@@ -147,7 +158,8 @@ def fit_forehead_shared_constraints(vertices, old_open_delta, proposal, focus=Fa
         points, a, ratio, cross, delta = result
         aspect = forehead_pairwise_aspect(points, quads, 6.998, aspect_reference)
         result = np.r_[(a - 25.003).ravel(), (149.997 - a).ravel(), aspect, (cross * signs * 1000000.0).ravel(), 0.499 - np.linalg.norm(delta - frozen_delta[ids], axis=1) * 1000, 19.99 - orbital_turns(points, lower_triples)]
-        return np.r_[result, flow_stage.constraints(points), anchor_domain.values(values)]
+        extra = [] if fairing_stage is None else fairing_stage.constraints(points)
+        return np.r_[result, flow_stage.constraints(points), extra, anchor_domain.values(values)]
 
     def constraints(values):
         base = base_constraints(values)
@@ -165,6 +177,9 @@ def fit_forehead_shared_constraints(vertices, old_open_delta, proposal, focus=Fa
         objective, objective_derivative, fairing_metadata = make_forehead_fairing_objective(
             evaluate, batch, ids, proposal['paths'],
             proposal['uniform_station_reference_length_mm'], start)
+    if fairing_stage and fairing_reduction is not None:
+        objective = lambda values: fairing_stage.energy_gradient(evaluate(values)[0])[0]
+        objective_derivative = lambda values: fairing_stage.energy_parameter_gradient(values, evaluate, batch, ids)
     initial_objective = objective(start)
 
     def guarded_lower_peak(points):
@@ -196,9 +211,11 @@ def fit_forehead_shared_constraints(vertices, old_open_delta, proposal, focus=Fa
                 feasible = flow_stage.accepts(quantized)
             if feasible:
                 feasible = gap_stage.accepts(quantized, author_parameters(values))
+            if feasible and fairing_stage:
+                feasible = fairing_stage.accepts(quantized)
             if feasible:
                 best.update(values=values.copy(), cost=float(cost), iteration=iterations[0])
-        return bool(best and (not minimum_improvement or best['cost'] <=
+        return bool(forehead_current_checkpoint(best, values) and (not minimum_improvement or best['cost'] <=
                     (1-minimum_improvement)*initial_objective)
                     and np.all(constraints(best['values']) >= -1e-09))
     from scipy.sparse import lil_matrix
@@ -223,6 +240,10 @@ def fit_forehead_shared_constraints(vertices, old_open_delta, proposal, focus=Fa
     if flow_stage:
         for a, b, nodes in flow_stage.groups:
             mark(range(layout['physical_flow'][0] + a, layout['physical_flow'][0] + b), nodes)
+    if fairing_stage:
+        for k, triple in enumerate(fairing_stage.triples):
+            mark([layout['whole_guide_fairing'][0]+k], triple)
+        # Dense energy row is replaced analytically, not finite-difference colored.
     for row, (_, _, first, last) in enumerate(anchor_domain.specs):
         mark([layout['anchor_domain'][0] + row], [first, last])
     for a, b, nodes in gap_stage.groups:
@@ -240,6 +261,12 @@ def fit_forehead_shared_constraints(vertices, old_open_delta, proposal, focus=Fa
         first, last = layout['anchor_domain']
         from scipy.sparse import diags
         result[first:last] = diags(1 / scales[first:last]) @ anchor_domain.jacobian(values)
+        if fairing_stage:
+            row = layout['whole_guide_fairing'][1]-1
+            result[row] = -fairing_stage.energy_parameter_gradient(values, evaluate, batch, ids)/scales[row]
+            if isinstance(fairing_stage, ForeheadRoleFairingStage):
+                first = layout['whole_guide_fairing'][0]+len(fairing_stage.triples)
+                result[first:row] = fairing_stage.bv_parameter_jacobian(values,evaluate,batch,ids)/scales[first:row,None]
         state = evaluate(values)
         if state is not None:
             differential = delta_batch.sample_differential(values.reshape(-1, 2) / 1000)
@@ -300,6 +327,9 @@ def fit_forehead_shared_constraints(vertices, old_open_delta, proposal, focus=Fa
                 'rounding_repairs': [row for row in orientation_evidence if row['rounding_failed']],
                 'fixed_source_radius_m': chart_radius,
                 'original_accepted_reference_retained': True}
+            if fairing_stage:
+                targets = np.maximum(targets, fairing_stage.quantization_targets(
+                    state[0], layout['whole_guide_fairing'][0], scales))
             arc_evidence = []
             if flow_stage:
                 arc_targets, arc_evidence = forehead_arc_quantization_targets(
@@ -423,6 +453,10 @@ def fit_forehead_shared_constraints(vertices, old_open_delta, proposal, focus=Fa
     final_parameters = reconstructed_params[ids][:, [0, 2]].ravel() * 1000
     if np.min(anchor_domain.values(final_parameters)) < 0:
         raise ValueError('Final scalar reconstruction fails anchor domain')
+    if fairing_stage:
+        if not fairing_stage.accepts(points):
+            raise ValueError('Final scalar geometry fails whole-guide energy/raw-turn stage')
+        proposal['whole_guide_fairing_reference'] = fairing_stage.reference
     final_lower_guard = forehead_update_lower_guard(proposal, points, lower_guard)
     proposal['lower_turn_guard'] = final_lower_guard
     proposal.update(vertices=points, open_delta=new_delta, metrics={'solver_phase': 'feasibility' if restore else 'spacing', 'solver_iteration_budget': max_iterations, 'uniform_station_stage': stage_metadata, 'objective_gradient': gradient_metadata, 'objective_before': float(objective(start)), 'objective_after': float(best['cost']), 'quality_after': [float(angles.min()), float(angles.max()), float(ratios.max())], 'peak_turn_after': [float(max(t)) for t in turns], 'support_solver_converged': bool(solved.success), 'support_solver_status': str(solved.message), 'selected_feasible_iteration': best['iteration'], 'quantized_quality_pass': True, 'posed_field_change_limit_mm': 0.5, 'lower_turn_limit_degrees': 20.0, 'lower_peak_turn_after': guarded_lower_peak(points), 'dense_shape_and_native_fields_required_separately': True})
@@ -445,7 +479,9 @@ def fit_forehead_shared_constraints(vertices, old_open_delta, proposal, focus=Fa
     proposal['metrics']['lower_turn_guard_before'] = forehead_shared_copy.deepcopy(lower_guard)
     proposal['metrics']['lower_turn_guard_after'] = forehead_shared_copy.deepcopy(final_lower_guard)
     proposal['metrics']['objective_mode'] = objective_mode
-    proposal['metrics']['guide_fairing'] = fairing_metadata
+    proposal['metrics']['guide_fairing'] = fairing_metadata if fairing_stage is None else fairing_stage.evidence(points)
+    if fairing_stage:
+        proposal['whole_guide_fairing_guard'] = forehead_capture_fairing_guard(proposal, fairing_stage)
     proposal['metrics']['minimum_objective_improvement_requested'] = minimum_improvement
     proposal['matched_gap_caps_v2'] = gap_stage.caps
     if minimum_improvement:

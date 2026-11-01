@@ -5,6 +5,7 @@ import numpy as np
 from forehead_shared_fit import fit_forehead_shared_constraints
 from forehead_flow_acceptance import measure_forehead_flow
 from forehead_physical_stage import ForeheadPhysicalFlowStage
+from forehead_fairing_guard import forehead_fairing_guard_retains
 from forehead_lower_guard import forehead_lower_guard_retains
 
 
@@ -116,6 +117,7 @@ def forehead_continuation_retains(before, after, selected):
         if not np.array_equal(np.asarray(before['vertices'])[ids], np.asarray(after['vertices'])[ids]):
             raise ValueError('Continuation moved protected coordinates')
     forehead_lower_guard_retains(before, after)
+    forehead_fairing_guard_retains(before, after)
     old_caps = before.get('joint_stage_caps')
     if old_caps is not None:
         new_caps = after.get('joint_stage_caps')
