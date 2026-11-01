@@ -121,6 +121,31 @@ class SharedConsumerTests(unittest.TestCase):
         result['author_shape_change']['changed_points'].clear()
         self.assertEqual(len(evidence['changed_points']),1)
 
+    def test_skin_receipt_serialized_resume_and_native_label_change(self):
+        from test_forehead_skin_ownership import SkinOwnershipTests
+        receipt = SkinOwnershipTests().receipt()
+        self.author['regions'] = [71, 72, 94]
+        self.author['report'] = {'ear_shell_membership': {'authored_skin_ownership': receipt}}
+        first = json.loads(consumer.forehead_consumer_checkpoint_bytes(
+            self.run_consumer({'mode': 'fresh', 'flow_steps': 0})))
+        self.assertEqual(first['authored_skin_ownership']['source_face_ids'], [0, 1])
+        resumed = self.run_consumer({'mode': 'resume', 'resume': first, 'flow_steps': 0})
+        self.assertEqual(resumed['authored_skin_ownership'], first['authored_skin_ownership'])
+        altered = copy.deepcopy(first)
+        altered['authored_skin_ownership']['source_face_ids'] = [2]
+        with self.assertRaisesRegex(ValueError, 'receipt mismatch'):
+            self.run_consumer({'mode': 'resume', 'resume': altered, 'flow_steps': 0})
+        self.author['regions'] = [94, 72, 71]
+        with self.assertRaisesRegex(ValueError, 'binding mismatch'):
+            self.run_consumer({'mode': 'resume', 'resume': first, 'flow_steps': 0})
+
+    def test_missing_ownership_old_checkpoint_remains_legacy_compatible(self):
+        first = self.run_consumer({'mode': 'fresh', 'flow_steps': 0})
+        first.pop('authored_skin_ownership')
+        result = self.run_consumer({'mode': 'resume', 'resume': first, 'flow_steps': 0})
+        self.assertFalse(result['authored_skin_ownership']['available'])
+        self.assertFalse(result['native_ready'])
+
     def test_uv_value_only_binding_change_rejects_resume(self):
         raw=copy.deepcopy(self.author)
         raw['stable_native_source_values']={'uv':{'UVMap':'value-hash-A'}}
@@ -166,8 +191,12 @@ class NativeStageDispatchTests(unittest.TestCase):
             ('researched_mouth_runtime','motion_delta'))}
     def test_live_stage_dispatch_before_any_native_write(self):
         payload={'status':'partial','native_ready':False}
+        from test_forehead_skin_ownership import SkinOwnershipTests
+        self.context['report'] = SkinOwnershipTests().report(SkinOwnershipTests().receipt())
+        self.data.attributes['NormalRegion'].data = [types.SimpleNamespace(value=r) for r in (71,72,94)]
+        self.data.polygons = [types.SimpleNamespace(vertices=[0], material_index=0) for _ in range(3)]
         with patch.dict(sys.modules,self.modules), \
-             patch.object(stage,'regularize_forehead_author_surface',side_effect=lambda p,*a:(p,{'changed_vertices':[]})), \
+             patch.object(stage,'regularize_forehead_author_surface',side_effect=lambda p,*a:(p + .0001,{'changed_vertices':[0]})), \
              patch.object(stage,'guard_forehead_author_poses',return_value={}), \
              patch.object(stage,'nasal_mesh_snapshot',return_value={k:{} for k in ('counts','positions','edges','polygons','loops','face_smooth','edge_flags','deform','uv','active_uv','color_settings','attributes')}), \
              patch.object(stage,'capture_forehead_source_fields',return_value={'live':True}) as capture, \
@@ -178,6 +207,11 @@ class NativeStageDispatchTests(unittest.TestCase):
         capture.assert_called_once_with(self.data);self.assertEqual(shared.call_args.args[2],{'live':True})
         self.assertIn('pose_correspondence',shared.call_args.args[0]['author_shape_change'])
         self.assertIn('changed_points',shared.call_args.args[0]['author_shape_change'])
+        raw, author = shared.call_args.args[:2]
+        self.assertEqual(raw['authored_skin_ownership'], author['authored_skin_ownership'])
+        self.assertEqual(raw['authored_skin_ownership']['source_face_ids'], [0,1])
+        self.assertEqual(raw['vertices'].tolist(), [[0.,0.,0.]])
+        self.assertGreater(float(author['vertices'][0,0]), 0.)
         apply.assert_not_called();legacy.assert_not_called();self.assertEqual(self.data.vertices[0].co,[0.,0.,0.])
     def test_detached_transaction_unwinds_without_transfer(self):
         detached=types.SimpleNamespace(shape_keys=None);self.data.copy=lambda:detached

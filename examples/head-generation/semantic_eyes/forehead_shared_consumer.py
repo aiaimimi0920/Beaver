@@ -46,6 +46,51 @@ def forehead_consumer_checkpoint_bytes(checkpoint):
         separators=(',', ':'), allow_nan=False).encode('utf-8')
 
 
+def forehead_consumer_skin_ownership(regions, report):
+    """Resolve live labels only with complete authored-role provenance; never infer skin."""
+    receipt = report.get('ear_shell_membership', {}).get('authored_skin_ownership')
+    if receipt is None:
+        return {'available': False, 'reason': 'authored_skin_ownership_receipt_missing'}
+    if not isinstance(receipt, dict) or receipt.get('schema_version') != 1:
+        raise ValueError('Invalid authored skin ownership receipt')
+    if (receipt.get('role') != 'authored_continuous_facial_shell'
+            or receipt.get('group_name') != 'Continuous facial shell'
+            or receipt.get('selection') != 'unique skin_detail object with explicit shell group'
+            or not isinstance(receipt.get('object_name'), str)
+            or not receipt['object_name'] or type(receipt.get('validated')) is not bool):
+        raise ValueError('Invalid authored skin role provenance')
+    def labels(values):
+        if not isinstance(values, (list, tuple)) or any(type(v) is not int for v in values):
+            raise ValueError('Invalid authored skin region labels')
+        if len(set(values)) != len(values):
+            raise ValueError('Duplicate authored skin region labels')
+        return set(values)
+    skin = labels(receipt.get('skin_regions'))
+    others = receipt.get('other_members')
+    issues = receipt.get('issues')
+    if not isinstance(others, list) or not isinstance(issues, list):
+        raise ValueError('Incomplete authored skin ownership receipt')
+    collision = False
+    for member in others:
+        if not isinstance(member, dict) or not isinstance(member.get('object_name'), str):
+            raise ValueError('Invalid non-shell ownership member')
+        collision |= bool(skin & labels(member.get('regions')))
+    if not receipt['validated']:
+        return {'available': False, 'reason': 'authored_skin_ownership_ambiguous',
+                'receipt': forehead_consumer_copy.deepcopy(receipt)}
+    if not skin or issues or collision:
+        raise ValueError('False validated authored skin ownership receipt')
+    native_regions = forehead_pattern_plain_records(regions)
+    if not isinstance(native_regions, list) or any(type(v) is not int for v in native_regions):
+        raise ValueError('Invalid live native face ownership labels')
+    if not skin <= set(native_regions):
+        raise ValueError('Authored skin labels missing from live native source')
+    return {'available': True, 'schema_version': 1,
+            'scope': 'authored shell labels, not export-skin or proximity membership',
+            'receipt': forehead_consumer_copy.deepcopy(receipt),
+            'source_face_ids': [i for i, region in enumerate(native_regions) if region in skin]}
+
+
 def forehead_consumer_binding(raw_source, author, native_capture, pose_context):
     value = forehead_consumer_canonical(dict(raw_source=raw_source, author=author,
         native_capture=native_capture, pose_context=pose_context))
@@ -117,8 +162,16 @@ def prepare_forehead_shared_consumer(raw_source, author, native_capture, pose_co
         paired_diagonal_guidance=opts['paired_diagonal_guidance'])
     a=forehead_consumer_copy.deepcopy(author)
     capture=forehead_consumer_copy.deepcopy(native_capture)
+    ownership=forehead_consumer_skin_ownership(a.get('regions', []), a.get('report', {}))
+    for source in (raw_source, a):
+        if ownership.get('available') and list(source.get('regions', [])) != list(a['regions']):
+            raise ValueError('Raw and author face ownership labels differ')
+        if ('authored_skin_ownership' in source and forehead_consumer_canonical(
+                source['authored_skin_ownership']) != forehead_consumer_canonical(ownership)):
+            raise ValueError('Authored skin ownership context mismatch')
     binding=forehead_consumer_binding(raw_source,a,capture,pose_context)
     out=dict(schema_version=1,status='initializing',source_binding=binding,
+        authored_skin_ownership=forehead_consumer_copy.deepcopy(ownership),
         baseline_names={'raw':'original native source','author':'regularized author source',
                         'current':'positive current proposal with immutable frozen rows'},
         native_ready=False,full_model_success=False,shape_checked=False,
@@ -147,6 +200,9 @@ def prepare_forehead_shared_consumer(raw_source, author, native_capture, pose_co
         saved=opts.get('resume')
         if not isinstance(saved,dict) or saved.get('schema_version')!=1 or saved.get('source_binding')!=binding:
             raise ValueError('Resume source/raw/author/native/context binding mismatch')
+        if ('authored_skin_ownership' in saved and forehead_consumer_canonical(
+                saved['authored_skin_ownership']) != forehead_consumer_canonical(ownership)):
+            raise ValueError('Resume authored skin ownership receipt mismatch')
         current=forehead_consumer_copy.deepcopy(saved.get('positive_proposal'))
         if not isinstance(current,dict) or 'guide_paths' in current or 'face_owners' in current:
             raise ValueError('Resume requires an unmirrored positive proposal')

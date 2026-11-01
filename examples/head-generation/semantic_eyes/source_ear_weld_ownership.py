@@ -32,6 +32,32 @@ def validate_ear_shell_port_chain(vertices, edges):
         raise ValueError('Disconnected shared ear boundary')
 
 
+def capture_authored_skin_ownership(members, shell):
+    """Record live role provenance; ambiguity disables future support, not legacy welds."""
+    regions, others, issues = [], [], []
+    attribute = shell.data.attributes.get('NormalRegion')
+    if attribute is None or attribute.domain != 'FACE' or attribute.data_type != 'INT':
+        issues.append('Authored shell lacks face ownership authority')
+    else:
+        regions = sorted({int(row.value) for row in attribute.data})
+    for obj in members:
+        if obj is shell:
+            continue
+        attribute = obj.data.attributes.get('NormalRegion')
+        if attribute is None or attribute.domain != 'FACE' or attribute.data_type != 'INT':
+            issues.append('Missing face ownership on non-shell member: ' + obj.name)
+            continue
+        owned = sorted({int(row.value) for row in attribute.data})
+        others.append({'object_name': obj.name, 'regions': owned})
+        if set(owned) & set(regions):
+            issues.append('Shell region collision with non-shell member: ' + obj.name)
+    return {'schema_version': 1, 'role': 'authored_continuous_facial_shell',
+            'object_name': shell.name, 'group_name': 'Continuous facial shell',
+            'selection': 'unique skin_detail object with explicit shell group',
+            'skin_regions': regions, 'other_members': others,
+            'validated': not issues and bool(regions), 'issues': issues}
+
+
 def capture_ear_shell_membership(members, target):
     from mathutils.kdtree import KDTree
     name = 'Continuous facial shell'
@@ -86,6 +112,7 @@ def capture_ear_shell_membership(members, target):
     if len({row['source_index'] for row in records}) != len(records):
         raise ValueError('Authored shell donor shared by multiple ears')
     return {'group_name': name, 'skin_regions': sorted(skin_regions),
+            'authored_skin_ownership': capture_authored_skin_ownership(members, shell),
             'records': records, 'ears': ear_rows,
             'coordinate_frame': 'joined target Mesh local via captured object transforms'}
 
@@ -147,6 +174,7 @@ def restore_ear_shell_membership(obj, snapshot):
                 group.remove([i])
         raise
     return {'group_name': name, 'captured_ears': snapshot['ears'], 'boundary_vertices': len(pending),
+            'authored_skin_ownership': snapshot.get('authored_skin_ownership'),
             'changed': [{'target': i, 'position': positions[i], 'source_index': records[donor]['source_index'],
                          'ear_name': records[donor]['ear_name'], 'before': before[i].get(name), 'after': weight}
                         for i, weight, donor in pending if before[i].get(name) != weight],
@@ -165,6 +193,6 @@ def adapt(sources):
         '    _ear_shell_membership = capture_ear_shell_membership(members,members[0])\n' + before, 1).replace(after,
         after + '\n        report["ear_shell_membership"] = restore_ear_shell_membership(members[0],_ear_shell_membership)', 1)
     out['face.py'] += '\n\n' + '\n\n'.join(inspect.getsource(f) for f in
-        (ear_shell_boundary_edges, validate_ear_shell_port_chain,
+        (ear_shell_boundary_edges, validate_ear_shell_port_chain, capture_authored_skin_ownership,
          capture_ear_shell_membership, restore_ear_shell_membership)) + '\n'
     return out

@@ -63,19 +63,30 @@ class ChinFrozenDistance:
             self.inc[i, :len(js)] = js
 
     def distance(self, pts, details=False):
-        out = []
-        bestids = []
-        hits = []
+        out, bestids, hits = [], [], []
         for a in range(0, len(pts), 200):
             p = pts[a:a + 200]
             ns = self.tree.query(p, k=12)[1]
             ids = self.inc[ns].reshape(len(p), -1)
-            valid = ids >= 0
-            tr = self.tri[np.maximum(ids, 0)]
-            pp = np.repeat(p, ids.shape[1], axis=0)
-            hit = chin_shape_closest_triangles(tr.reshape(-1, 3, 3), pp).reshape(len(p), -1, 3)
+            # Invalid -1 slots originally evaluate triangle 0 then mask its distance.
+            # Include mapped triangle 0 to preserve hit selection even in all-invalid
+            # rows or nonfinite/degenerate existing-input behavior.
+            mapped = np.maximum(ids, 0)
+            order = np.argsort(mapped, axis=1, kind='stable')
+            ordered = np.take_along_axis(mapped, order, axis=1)
+            first = np.ones(ordered.shape, dtype=bool)
+            first[:, 1:] = ordered[:, 1:] != ordered[:, :-1]
+            row, col = np.nonzero(first)
+            unique_ids = ordered[row, col]
+            unique_hits = chin_shape_closest_triangles(self.tri[unique_ids], p[row])
+            # Group numbers are global (row-major); inverse permutation returns
+            # every repeated triangle to exactly its original candidate position.
+            sorted_group = np.cumsum(first.ravel()).reshape(first.shape) - 1
+            original_group = np.empty_like(sorted_group)
+            np.put_along_axis(original_group, order, sorted_group, axis=1)
+            hit = unique_hits[original_group]
             d = np.linalg.norm(hit - p[:, None], axis=2)
-            d[~valid] = np.inf
+            d[ids < 0] = np.inf
             j = d.argmin(1)
             out.extend(d[np.arange(len(p)), j])
             bestids.extend(ids[np.arange(len(p)), j])

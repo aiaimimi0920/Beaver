@@ -8,7 +8,8 @@ from forehead_retile_apply import apply_forehead_retile_data
 from forehead_retile_shape import guard_forehead_retile_poses
 from forehead_source_fields import capture_forehead_source_fields
 from nasal_mesh_snapshot import nasal_mesh_snapshot
-from forehead_shared_consumer import prepare_forehead_shared_consumer, ForeheadSharedPending
+from forehead_shared_consumer import (prepare_forehead_shared_consumer, ForeheadSharedPending,
+                                      forehead_consumer_skin_ownership)
 
 
 def prepare_forehead_source_retile(vertices, faces, regions, ordinals, report, open_delta):
@@ -58,6 +59,10 @@ def stage_forehead_retile(data, ordinals, context, assembly_offset):
             author_shape_change=author_change, stable_native_source_values=stable_native)
         author_source = dict(vertices=author, faces=faces, regions=regions,
             ordinals=ordinals, report=context['report'], open_delta=old_open)
+        ownership = forehead_consumer_skin_ownership(regions, context['report'])
+        if ownership.get('available') or 'receipt' in ownership:
+            raw_source['authored_skin_ownership'] = ownership
+            author_source['authored_skin_ownership'] = ownership
         checkpoint = prepare_forehead_shared_consumer(raw_source, author_source, capture,
             dict(calibration=calibration, assembly_offset=assembly_offset),
             shared_options, checkpoint=context['shared_checkpoint'])
