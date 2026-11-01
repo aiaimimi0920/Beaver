@@ -104,7 +104,7 @@ MODULE_STAGES = {
         ('shell_forehead_seam_hint.py', 'forehead_revalidate_seam_hint'),
         ('shell_forehead_lp_restore.py', 'forehead_restore_linearized'),
         ('shell_forehead_seam_restore.py', 'forehead_restore_seam_stage'),
-        ('shell_forehead_seam_growth.py', 'forehead_validate_seam_growth_selection'),
+        ('shell_forehead_seam_growth.py', 'forehead_validate_seam_budget'),
         ('shell_forehead_arc_quantization.py', 'forehead_arc_quantization_targets'),
         ('shell_forehead_orientation_margin.py', 'forehead_orientation_integer_array'),
         ('shell_forehead_field_jacobian.py', 'forehead_field_parameter_jacobian'),
@@ -123,6 +123,7 @@ MODULE_STAGES = {
         ('shell_forehead_lower_rail_capacity.py', 'forehead_lower_rail_capacity'),
         ('shell_forehead_lower_rail_recovery.py', 'forehead_lower_rail_recover'),
         ('shell_forehead_lower_rail_rebind.py', 'forehead_lower_rail_rebind_guard'),
+        ('shell_forehead_shared_consumer.py', 'ForeheadSharedPending'),
         ('shell_forehead_current_recipe.py', 'prepare_current_forehead'),
         ('shell_forehead_flow_acceptance.py', 'measure_forehead_flow'),
         ('shell_forehead_exact_distance.py', 'forehead_exact_distance'),
@@ -165,9 +166,9 @@ def module_layout(source, entry_name):
         raise ValueError('Reserved source module frame name collision')
     functions = {}
     for node in tree.body:
-        if isinstance(node, ast.FunctionDef):
+        if isinstance(node, (ast.FunctionDef, ast.ClassDef)):
             if node.name in functions:
-                raise ValueError('Duplicate source function boundary: ' + node.name)
+                raise ValueError('Duplicate source function/class boundary: ' + node.name)
             functions[node.name] = node
     boundaries = [0]
     for _, name in stages[1:]:

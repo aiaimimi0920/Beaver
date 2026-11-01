@@ -6,6 +6,9 @@ from forehead_current_recipe import prepare_current_forehead
 from forehead_flow_acceptance import validate_forehead_flow_result
 from forehead_retile_apply import apply_forehead_retile_data
 from forehead_retile_shape import guard_forehead_retile_poses
+from forehead_source_fields import capture_forehead_source_fields
+from nasal_mesh_snapshot import nasal_mesh_snapshot
+from forehead_shared_consumer import prepare_forehead_shared_consumer, ForeheadSharedPending
 
 
 def prepare_forehead_source_retile(vertices, faces, regions, ordinals, report, open_delta):
@@ -19,6 +22,9 @@ def stage_forehead_retile(data, ordinals, context, assembly_offset):
     from researched_mouth_runtime import motion_delta
     if assembly_offset != -.021 or data.shape_keys is not None:
         raise ValueError('Forehead source retile requires the current pre-morph assembly frame')
+    shared_options = context.get('shared_workflow')
+    if shared_options is not None and not callable(context.get('shared_checkpoint')):
+        raise ValueError('Opt-in shared forehead requires a durable checkpoint sink')
     region = data.attributes.get('NormalRegion')
     motion = data.attributes.get('MouthOpenDelta')
     if (region is None or region.domain != 'FACE' or region.data_type != 'INT'
@@ -37,6 +43,28 @@ def stage_forehead_retile(data, ordinals, context, assembly_offset):
     author_change['changed_points'] = [
         {'vertex': i, 'original': old[i].tolist(), 'author': author[i].tolist()}
         for i in author_change['changed_vertices']]
+    if shared_options is not None:
+        # Live original native authority, captured before any allocation/write.
+        capture = capture_forehead_source_fields(data)
+        snapshot = nasal_mesh_snapshot(data)
+        stable_native = {key: snapshot[key] for key in
+            ('counts','positions','edges','polygons','loops','face_smooth','edge_flags',
+             'deform','uv','active_uv','color_settings','attributes')}
+        # Session-specific RNA material pointers are intentionally not bindings.
+        stable_native['material_slots'] = [None if material is None else material.name
+                                           for material in data.materials]
+        stable_native['material_indices'] = [int(face.material_index) for face in data.polygons]
+        raw_source = dict(vertices=old, faces=faces, regions=regions, open_delta=old_open,
+            author_shape_change=author_change, stable_native_source_values=stable_native)
+        author_source = dict(vertices=author, faces=faces, regions=regions,
+            ordinals=ordinals, report=context['report'], open_delta=old_open)
+        checkpoint = prepare_forehead_shared_consumer(raw_source, author_source, capture,
+            dict(calibration=calibration, assembly_offset=assembly_offset),
+            shared_options, checkpoint=context['shared_checkpoint'])
+        # The first opt-in slice deliberately has no native-ready path. The
+        # durable sink has confirmed the checkpoint before this typed unwind;
+        # outer detached staging cleans up without transferring native geometry.
+        raise ForeheadSharedPending(checkpoint)
     proposal = prepare_forehead_source_retile(author, faces, regions, ordinals, context['report'], old_open)
     flow_acceptance = validate_forehead_flow_result(old_open, proposal)
     # The caller owns a detached mesh transaction. Do not reset or obscure the

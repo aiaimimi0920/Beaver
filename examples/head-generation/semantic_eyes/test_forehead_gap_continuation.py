@@ -29,6 +29,12 @@ class GapContinuationTests(unittest.TestCase):
     def run_driver(self,fit=None,**kw):
         with patch.object(g,'measure_forehead_shared_acceptance',side_effect=self.measure),patch.object(g,'fit_forehead_shared_constraints',side_effect=fit or self.fit):
             return g.continue_forehead_gaps(self.author,self.p,**kw)
+    def test_explicit_fitter_adapter(self):
+        with patch.object(g,'measure_forehead_shared_acceptance',side_effect=self.measure),patch.object(g,'fit_forehead_shared_constraints',side_effect=AssertionError('default must not run')):
+            out=g.continue_forehead_gaps(self.author,self.p,max_steps=1,fitter=self.fit)
+        self.assertEqual(len(out['stages']),1)
+        with self.assertRaises(ValueError):g.continue_forehead_gaps(self.author,self.p,fitter=1)
+
     def test_all_domains_component_only_and_input_isolation(self):
         prior=copy.deepcopy((self.author,self.p))
         out=self.run_driver(max_steps=10)

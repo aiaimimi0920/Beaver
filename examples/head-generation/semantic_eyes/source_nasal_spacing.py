@@ -81,6 +81,7 @@ SPACING_MODULES = ('nasal_spacing_rule', 'nasal_rear_rule', 'nasal_return_proven
     'forehead_lower_rail_recovery',
     'forehead_lower_rail_rebind',
 
+    'forehead_shared_consumer',
                    'forehead_current_recipe',
                    'forehead_flow_acceptance',
                    'forehead_exact_distance',

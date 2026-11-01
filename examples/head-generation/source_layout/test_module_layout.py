@@ -130,5 +130,36 @@ class OrderedModuleTests(unittest.TestCase):
                 validate_layout_set(changed, 'x/')
 
 
+class SharedConsumerBoundaryTests(unittest.TestCase):
+    def test_actual_consumer_class_boundary(self):
+        consumer = (Path(__file__).resolve().parent.parent / 'semantic_eyes' /
+                    'forehead_shared_consumer.py').read_text()
+        chunks = ['# Synthetic surrounding stages; actual consumer source.\n']
+        for filename, boundary in MODULE_STAGES['shell.py'][1:]:
+            if filename == 'shell_forehead_shared_consumer.py':
+                chunks.append(consumer+'\n')
+            else:
+                chunks.append('def '+boundary+'():\n    pass\n')
+        source=''.join(chunks)
+        files, record=module_layout(source,'shell.py')
+        owned=files['shell_forehead_shared_consumer.py']
+        self.assertIn('class ForeheadSharedPending',owned)
+        self.assertIn('def forehead_consumer_canonical',owned)
+        self.assertEqual(''.join(files[row['path']] for row in record['stages']),source)
+
+    def test_class_boundary_rejects_decorators_and_duplicate_names(self):
+        stages=(('face_surface_core.py',None),('face_owned_class.py','Boundary'))
+        with mock.patch.dict(MODULE_STAGES,{'face.py':stages}):
+            files,record=module_layout('value=1\nclass Boundary:\n    pass\n','face.py')
+            self.assertIn('class Boundary',files['face_owned_class.py'])
+            for source in (
+                '@decorate\nclass Boundary:\n    pass\n',
+                'class Boundary:\n    pass\nclass Boundary:\n    pass\n',
+                'def Boundary():\n    pass\nclass Boundary:\n    pass\n',
+                'class Boundary:\n    pass\ndef Boundary():\n    pass\n'):
+                with self.subTest(source=source),self.assertRaises(ValueError):
+                    module_layout(source,'face.py')
+
+
 if __name__ == '__main__':
     unittest.main()

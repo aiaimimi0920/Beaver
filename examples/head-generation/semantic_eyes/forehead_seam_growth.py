@@ -7,6 +7,20 @@ from forehead_seam_restore import forehead_restore_seam_stage
 from forehead_seam_support import forehead_seam_integer_vector
 
 
+def forehead_validate_seam_budget(wall_seconds, initial_held_seconds, active_set_growth):
+    """Pure optional execution-budget validation; no geometry or baseline access."""
+    if type(active_set_growth) is not bool:
+        raise ValueError('Invalid optional seam active-set mode')
+    def scalar(value):
+        return isinstance(value, (int, float, np.integer, np.floating)) and not isinstance(value, (bool, np.bool_)) and np.isfinite(value)
+    if not scalar(wall_seconds) or not 0 < wall_seconds <= 300:
+        raise ValueError('Invalid bounded total wall budget')
+    if initial_held_seconds is not None and (not scalar(initial_held_seconds) or not 0 < initial_held_seconds < wall_seconds):
+        raise ValueError('Initial held budget must reserve fallback time')
+    if not active_set_growth and (wall_seconds > 120 or initial_held_seconds is not None):
+        raise ValueError('Extended held budget requires active-set growth')
+
+
 def forehead_validate_seam_growth_selection(selection, start, context):
     """Validate evidence against ORIGINAL accepted frame, never failed coordinates."""
     out=copy.deepcopy(selection)
@@ -43,7 +57,7 @@ def forehead_validate_seam_growth_selection(selection, start, context):
 def forehead_restore_seam_growth(start,radii,constraints,jacobian,admit,
         orientation_rows,domain,selection,margin_callback,orientation_floor,
         max_iterations=24,wall_seconds=120.,failed_selection=None,
-        *,active_set_growth=False,growth_context=None,max_holds=4):
+        *,active_set_growth=False,growth_context=None,max_holds=4,initial_held_seconds=None):
     """Legacy two-leg default, or <=3 legs/ONE deadline with evidence-only growth.
 
     growth_context contains ORIGINAL variable_ids, frozen_field_reference_m,
@@ -53,11 +67,11 @@ def forehead_restore_seam_growth(start,radii,constraints,jacobian,admit,
     identity/frame/eligibility, not donor mathematics. Caller still enforces
     exact successful held WORLD coordinates after scalar reconstruction.
     """
+    forehead_validate_seam_budget(wall_seconds, initial_held_seconds, active_set_growth)
     if not active_set_growth:
         return forehead_restore_seam_stage(start,radii,constraints,jacobian,admit,
             orientation_rows,domain,selection,margin_callback,orientation_floor,
             max_iterations,wall_seconds,failed_selection)
-    if not np.isfinite(wall_seconds) or not 0<wall_seconds<=120:raise ValueError('Invalid shared deadline')
     if type(max_iterations)is not int or not 1<=max_iterations<=30:raise ValueError('Invalid iteration budget')
     if type(max_holds)is not int or not 1<=max_holds<=4:raise ValueError('Invalid hold capacity')
     initial=np.asarray(start,float).copy();radius=np.asarray(radii,float).copy()
@@ -82,6 +96,8 @@ def forehead_restore_seam_growth(start,radii,constraints,jacobian,admit,
         tried.add(key)
         # Fair reservation across remaining potential legs; last consumes remainder.
         budget=remaining/(3-number) if failed_selection is not None or key else remaining
+        if number == 0 and key and initial_held_seconds is not None:
+            budget=min(remaining, initial_held_seconds)
         solved,metadata=forehead_restore_linearized(initial.copy(),radius.copy(),constraints,jacobian,admit,orientation_rows,domain,
             margin_callback=None if margin_callback is None else margin,max_iterations=max_iterations,wall_seconds=budget,
             soc_source_domain=domain,soc_orientation_floor=orientation_floor,temporary_held_columns=current['held_columns'])
@@ -114,6 +130,7 @@ def forehead_restore_seam_growth(start,radii,constraints,jacobian,admit,
     metadata=copy.deepcopy(metadata);metadata.update(seam_selection=original,seam_restore_legs=legs,failed_seam_selection_history=history,
         successful_selection=successful,successful_held_columns=[]if successful is None else successful['held_columns'],
         total_major_iterations=major,total_soc_corrections=soc,total_work_iterations=major+soc,total_elapsed_seconds=time.monotonic()-began,
-        active_set_growth=True,maximum_legs=3,maximum_holds=max_holds,original_accepted_start_and_bounds_retained=True,
+        active_set_growth=True,maximum_legs=3,maximum_holds=max_holds,
+        total_wall_budget_seconds=wall_seconds,initial_held_budget_seconds=initial_held_seconds,original_accepted_start_and_bounds_retained=True,
         permanent_protection_unchanged=True,positive_working_targets_retained_across_legs=True)
     return solved,metadata

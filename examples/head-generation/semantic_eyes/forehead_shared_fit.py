@@ -19,7 +19,7 @@ from forehead_solver_restore import restore_forehead_feasibility
 from forehead_fairing_restore import forehead_restore_fairing_iterate, forehead_minimum_improvement_passes
 from forehead_guide_fairing import forehead_guides_fairing
 from forehead_lower_guard import forehead_build_lower_guard, forehead_update_lower_guard
-from forehead_seam_growth import forehead_restore_seam_growth
+from forehead_seam_growth import forehead_restore_seam_growth, forehead_validate_seam_budget
 from forehead_arc_quantization import forehead_arc_quantization_targets
 from forehead_seam_support import forehead_select_seam_supports
 from forehead_failed_seam_support import forehead_select_failed_seam_supports
@@ -30,7 +30,8 @@ from forehead_lp_restore import forehead_restore_linearized, forehead_quantizati
 from forehead_anchor_domain import ForeheadAnchorDomain
 from forehead_aspect_constraints import forehead_aspect_reference, forehead_pairwise_aspect
 
-def fit_forehead_shared_constraints(vertices, old_open_delta, proposal, focus=False, restore=False, max_iterations=200, diagnostic=None, active_guides=None, physical_stage=False, progress_names=None, progress_scale=1.0, author_context=None, active_gap_pair=None, gap_reduction=0.025, gap_sample_count=129, objective_mode='restore', minimum_improvement=0., solver_mode='trust', seam_active_set_growth=False, fairing_reduction=None, fairing_role_weights=None, fairing_turn_reduction=0., fairing_turn_goals=None, fairing_turn_roles=None, fairing_guard_mode=None):
+def fit_forehead_shared_constraints(vertices, old_open_delta, proposal, focus=False, restore=False, max_iterations=200, diagnostic=None, active_guides=None, physical_stage=False, progress_names=None, progress_scale=1.0, author_context=None, active_gap_pair=None, gap_reduction=0.025, gap_sample_count=129, objective_mode='restore', minimum_improvement=0., solver_mode='trust', seam_active_set_growth=False, fairing_reduction=None, fairing_role_weights=None, fairing_turn_reduction=0., fairing_turn_goals=None, fairing_turn_roles=None, fairing_guard_mode=None, seam_wall_seconds=120., seam_initial_held_seconds=None):
+    forehead_validate_seam_budget(seam_wall_seconds, seam_initial_held_seconds, seam_active_set_growth)
     if fairing_reduction is not None and (objective_mode != 'fairing' or minimum_improvement):
         raise ValueError('Fairing stage requires fairing objective and its own reduction target')
     if type(seam_active_set_growth) is not bool:
@@ -377,7 +378,8 @@ def fit_forehead_shared_constraints(vertices, old_open_delta, proposal, focus=Fa
             start, radii, scaled_constraints, constraint_jacobian,
             remember_feasible, layout['orientation'], complete_domain,
             seam_selection, quantization_margins, orientation_floor,
-            max_iterations=min(24, max_iterations), wall_seconds=120.,
+            max_iterations=min(24, max_iterations), wall_seconds=seam_wall_seconds,
+            initial_held_seconds=seam_initial_held_seconds,
             failed_selection=failed_selection, active_set_growth=seam_active_set_growth,
             growth_context={'variable_ids': ids, 'frozen_field_reference_m': frozen_delta[ids],
                             'support_ids': proposal['support'], 'protected_ids': proposal['protected'],

@@ -16,6 +16,16 @@ class ForeheadFlowContinuationTests(unittest.TestCase):
         self.proposal = {'vertices': vertices, 'paths': {n: [0, 1, 2] for n in names},
                          'uniform_station_reference_length_mm': {n: 2. for n in names}}
 
+    def test_explicit_fitter_adapter(self):
+        calls=[]
+        def reject(*args,**kwargs):
+            calls.append(kwargs)
+            raise ValueError('bounded diagnostic rejection')
+        with patch('forehead_flow_continuation.forehead_flow_progress',return_value=({},['orange'])),patch('forehead_flow_continuation.fit_forehead_shared_constraints',side_effect=AssertionError('default must not run')):
+            continue_forehead_flows(self.author,self.proposal,max_steps=1,fitter=reject)
+        self.assertTrue(calls)
+        with self.assertRaises(ValueError):continue_forehead_flows(self.author,self.proposal,fitter=1)
+
     def test_optional_seam_growth_forwarding_and_default(self):
         for options, expected in (({}, False), ({'seam_active_set_growth': True}, True)):
             with patch('forehead_flow_continuation.forehead_flow_progress', return_value=({}, ['orange'])), patch('forehead_flow_continuation.fit_forehead_shared_constraints', side_effect=ValueError('diagnostic')) as fit:

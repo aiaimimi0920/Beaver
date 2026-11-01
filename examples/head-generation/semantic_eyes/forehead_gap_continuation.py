@@ -69,7 +69,7 @@ def forehead_gap_fraction_record(fraction, fractions, metrics):
 
 def continue_forehead_gaps(author, proposal, max_steps=20, max_iterations=120,
                            reduction=.025, fractions=(1., .5, .25, .1, .05),
-                           checkpoint=None, seam_active_set_growth=False):
+                           checkpoint=None, seam_active_set_growth=False, fitter=None):
     """Operate only on an explicitly accepted input with all ten frozen caps.
 
     The caller owns durable atomic checkpoint writing. Callback receives a
@@ -78,6 +78,9 @@ def continue_forehead_gaps(author, proposal, max_steps=20, max_iterations=120,
     No source/atlas/target clipping, inferred cap reset, or baseline refresh.
     Along-flow final readiness is reported independently, not assumed here.
     """
+    solve = fit_forehead_shared_constraints if fitter is None else fitter
+    if not callable(solve):
+        raise ValueError('Invalid continuation fitter adapter')
     if type(seam_active_set_growth) is not bool:
         raise ValueError('Invalid seam active-set option')
     if type(max_steps) is not int or not 1 <= max_steps <= 100:
@@ -127,7 +130,7 @@ def continue_forehead_gaps(author, proposal, max_steps=20, max_iterations=120,
             for fraction in (x for x in fractions if x <= schedule[domain]['next_fraction']):
                 try:
                     trial_author = copy.deepcopy(frozen_author)
-                    candidate = fit_forehead_shared_constraints(
+                    candidate = solve(
                         np.array(trial_author['vertices'], copy=True),
                         np.array(trial_author['open_delta'], copy=True),
                         copy.deepcopy(accepted), restore=True, physical_stage=True,

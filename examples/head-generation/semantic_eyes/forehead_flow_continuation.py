@@ -249,13 +249,16 @@ def forehead_continuation_step_schedule(proposal):
 
 
 def continue_forehead_flows(author, proposal, max_steps=40, max_iterations=120,
-                            grouped=True, checkpoint=None, seam_active_set_growth=False):
+                            grouped=True, checkpoint=None, seam_active_set_growth=False, fitter=None):
     """Return admitted progress or a diagnostic stop, never final model success.
 
     Each rejected trial is isolated. The caller may diagnose capacity and apply a
     source-owned topology transaction before calling again on the accepted state.
     A checkpoint callback receives a detached snapshot, not mutable solver state.
     """
+    solve = fit_forehead_shared_constraints if fitter is None else fitter
+    if not callable(solve):
+        raise ValueError('Invalid continuation fitter adapter')
     if type(seam_active_set_growth) is not bool:
         raise ValueError('Invalid optional seam active-set mode')
     if type(max_steps) is not int or not 1 <= max_steps <= 100:
@@ -310,7 +313,7 @@ def continue_forehead_flows(author, proposal, max_steps=40, max_iterations=120,
 
             try:
                 trial_author = copy.deepcopy(author)
-                candidate = fit_forehead_shared_constraints(
+                candidate = solve(
                     np.array(trial_author['vertices'], copy=True), np.array(trial_author['open_delta'], copy=True),
                     copy.deepcopy(accepted), restore=True, physical_stage=True,
                     author_context=trial_author, progress_names=list(selected), progress_scale=scale,
