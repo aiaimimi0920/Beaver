@@ -144,6 +144,8 @@ DEPENDENCIES = (
     'forehead_arc_quantization',
     'forehead_orientation_margin',
     'forehead_field_jacobian',
+    'forehead_paired_export',
+    'forehead_paired_stage',
     'forehead_shared_fit',
     'forehead_fairing_continuation',
     'forehead_flow_continuation',

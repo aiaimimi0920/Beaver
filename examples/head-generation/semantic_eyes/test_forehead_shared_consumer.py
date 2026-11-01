@@ -84,6 +84,7 @@ class SharedConsumerTests(unittest.TestCase):
         def fit(*args,**kwargs):
             self.assertEqual(kwargs['seam_wall_seconds'],240.)
             self.assertEqual(kwargs['seam_initial_held_seconds'],180.)
+            self.assertIs(kwargs['paired_diagonal_guidance'],True)
             calls.append(kwargs)
             return self.restore(*args,**kwargs)
         def driver(*args,**kwargs):
@@ -94,10 +95,21 @@ class SharedConsumerTests(unittest.TestCase):
         with patch.object(consumer,'initialize_forehead_shared',return_value={'admitted':True,'status':'initial_atlas_ready','proposal':self.proposal}), patch.object(consumer,'fit_forehead_shared_constraints',side_effect=fit), patch.object(consumer,'continue_forehead_flows',side_effect=driver), patch.object(consumer,'continue_forehead_fairing',side_effect=driver), patch.object(consumer,'continue_forehead_gaps',side_effect=driver), patch.object(consumer,'measure_forehead_shared_acceptance',return_value={'passed':False}):
             consumer.prepare_forehead_shared_consumer(self.author,self.author,{}, {},
                 {'mode':'fresh','flow_steps':1,'fairing_stages':1,'gap_steps':1,
-                 'seam_active_set_growth':True,'seam_wall_seconds':240.,'seam_initial_held_seconds':180.},self.sink)
+                 'seam_active_set_growth':True,'seam_wall_seconds':240.,'seam_initial_held_seconds':180.,
+                 'paired_diagonal_guidance':True},self.sink)
         self.assertEqual(len(calls),4)
         with self.assertRaises(ValueError):
             consumer.forehead_consumer_options({'mode':'fresh','seam_wall_seconds':240.})
+
+    def test_paired_guidance_default_and_strict_bool(self):
+        self.assertIs(consumer.forehead_consumer_options({'mode':'fresh'})['paired_diagonal_guidance'],False)
+        for value in (None,0,1,'true',[],{}):
+            with self.subTest(value=value), self.assertRaises(ValueError):
+                consumer.forehead_consumer_options({'mode':'fresh','paired_diagonal_guidance':value})
+        with patch.object(consumer,'initialize_forehead_shared',return_value={'admitted':True,'status':'initial_atlas_ready','proposal':self.proposal}), patch.object(consumer,'fit_forehead_shared_constraints',side_effect=self.restore) as fit, patch.object(consumer,'measure_forehead_shared_acceptance',return_value={'passed':False}):
+            consumer.prepare_forehead_shared_consumer(self.author,self.author,{}, {},
+                {'mode':'fresh','flow_steps':0},self.sink)
+        self.assertIs(fit.call_args.kwargs['paired_diagonal_guidance'],False)
 
     def test_author_change_evidence_is_owned_and_persisted(self):
         evidence={'changed_points':[{'vertex':0,'original':[0.,0.,0.],'author':[0.,0.,.0001]}],

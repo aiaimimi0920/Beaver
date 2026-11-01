@@ -108,6 +108,8 @@ MODULE_STAGES = {
         ('shell_forehead_arc_quantization.py', 'forehead_arc_quantization_targets'),
         ('shell_forehead_orientation_margin.py', 'forehead_orientation_integer_array'),
         ('shell_forehead_field_jacobian.py', 'forehead_field_parameter_jacobian'),
+        ('shell_forehead_paired_export.py', 'forehead_paired_export_report'),
+        ('shell_forehead_paired_stage.py', 'forehead_require_paired_input'),
         ('shell_forehead_shared_fit.py', 'fit_forehead_shared_constraints'),
         ('shell_forehead_fairing_continuation.py', 'continue_forehead_fairing'),
         ('shell_forehead_flow_continuation.py', 'forehead_flow_progress'),

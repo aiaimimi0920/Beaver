@@ -1,6 +1,7 @@
 """Quality and posed-field fitting of quad supports and lower guide continuations."""
 from forehead_fit_density import forehead_constraint_layout, forehead_quantized_quality_pass
 from forehead_role_fairing import ForeheadRoleFairingStage
+from forehead_paired_stage import forehead_install_paired_stage, forehead_require_paired_input
 from forehead_fairing_stage import forehead_current_checkpoint
 from forehead_fairing_guard import forehead_prepare_fairing_stage, forehead_capture_fairing_guard
 from forehead_fairing_solver import make_forehead_fairing_objective, solve_forehead_fairing
@@ -30,7 +31,7 @@ from forehead_lp_restore import forehead_restore_linearized, forehead_quantizati
 from forehead_anchor_domain import ForeheadAnchorDomain
 from forehead_aspect_constraints import forehead_aspect_reference, forehead_pairwise_aspect
 
-def fit_forehead_shared_constraints(vertices, old_open_delta, proposal, focus=False, restore=False, max_iterations=200, diagnostic=None, active_guides=None, physical_stage=False, progress_names=None, progress_scale=1.0, author_context=None, active_gap_pair=None, gap_reduction=0.025, gap_sample_count=129, objective_mode='restore', minimum_improvement=0., solver_mode='trust', seam_active_set_growth=False, fairing_reduction=None, fairing_role_weights=None, fairing_turn_reduction=0., fairing_turn_goals=None, fairing_turn_roles=None, fairing_guard_mode=None, seam_wall_seconds=120., seam_initial_held_seconds=None):
+def fit_forehead_shared_constraints(vertices, old_open_delta, proposal, focus=False, restore=False, max_iterations=200, diagnostic=None, active_guides=None, physical_stage=False, progress_names=None, progress_scale=1.0, author_context=None, active_gap_pair=None, gap_reduction=0.025, gap_sample_count=129, objective_mode='restore', minimum_improvement=0., solver_mode='trust', seam_active_set_growth=False, fairing_reduction=None, fairing_role_weights=None, fairing_turn_reduction=0., fairing_turn_goals=None, fairing_turn_roles=None, fairing_guard_mode=None, seam_wall_seconds=120., seam_initial_held_seconds=None, paired_diagonal_guidance=False):
     forehead_validate_seam_budget(seam_wall_seconds, seam_initial_held_seconds, seam_active_set_growth)
     if fairing_reduction is not None and (objective_mode != 'fairing' or minimum_improvement):
         raise ValueError('Fairing stage requires fairing objective and its own reduction target')
@@ -58,6 +59,7 @@ def fit_forehead_shared_constraints(vertices, old_open_delta, proposal, focus=Fa
     old = np.asarray(vertices, float)
     old_delta = np.asarray(old_open_delta, float)
     initial = np.asarray(proposal['vertices'], float)
+    forehead_require_paired_input(proposal, author_context)
     tails = [proposal['paths'][name] for name in ('blue', 'purple')]
     lower = {i for path in tails for i in path[1:-1] if initial[i, 2] < proposal['mouth_height'] + 0.03}
     lower &= set(proposal['moving']) - set(proposal['protected'])
@@ -115,6 +117,7 @@ def fit_forehead_shared_constraints(vertices, old_open_delta, proposal, focus=Fa
         offset = layout['count']
         layout['whole_guide_fairing'] = (offset, offset + fairing_stage.count)
         layout['count'] += fairing_stage.count
+    paired_export, paired_stage = forehead_install_paired_stage(proposal, author_context, ids, layout, paired_diagonal_guidance)
     anchor_domain = ForeheadAnchorDomain(gap_stage.fast, author_parameters(start), ids)
     offset = layout['count']
     layout['anchor_domain'] = (offset, offset + len(anchor_domain.specs))
@@ -160,7 +163,7 @@ def fit_forehead_shared_constraints(vertices, old_open_delta, proposal, focus=Fa
         aspect = forehead_pairwise_aspect(points, quads, 6.998, aspect_reference)
         result = np.r_[(a - 25.003).ravel(), (149.997 - a).ravel(), aspect, (cross * signs * 1000000.0).ravel(), 0.499 - np.linalg.norm(delta - frozen_delta[ids], axis=1) * 1000, 19.99 - orbital_turns(points, lower_triples)]
         extra = [] if fairing_stage is None else fairing_stage.constraints(points)
-        return np.r_[result, flow_stage.constraints(points), extra, anchor_domain.values(values)]
+        return np.r_[result, flow_stage.constraints(points), extra, paired_stage.constraints(points, delta), anchor_domain.values(values)]
 
     def constraints(values):
         base = base_constraints(values)
@@ -208,6 +211,8 @@ def fit_forehead_shared_constraints(vertices, old_open_delta, proposal, focus=Fa
                     feasible = bool(np.all(qc * signs > 0))
                 except ValueError:
                     feasible = False
+            if feasible:
+                feasible = paired_export.accepts(quantized, ids, delta)
             if feasible and flow_stage:
                 feasible = flow_stage.accepts(quantized)
             if feasible:
@@ -245,6 +250,8 @@ def fit_forehead_shared_constraints(vertices, old_open_delta, proposal, focus=Fa
         for k, triple in enumerate(fairing_stage.triples):
             mark([layout['whole_guide_fairing'][0]+k], triple)
         # Dense energy row is replaced analytically, not finite-difference colored.
+    for a, b, nodes in paired_stage.groups:
+        mark(range(layout['paired_diagonal'][0]+a, layout['paired_diagonal'][0]+b), nodes)
     for row, (_, _, first, last) in enumerate(anchor_domain.specs):
         mark([layout['anchor_domain'][0] + row], [first, last])
     for a, b, nodes in gap_stage.groups:
@@ -439,6 +446,7 @@ def fit_forehead_shared_constraints(vertices, old_open_delta, proposal, focus=Fa
     new_delta[:len(old)] = old_delta
     for i, row in proposal['lineage'].items():
         new_delta[i] = np.asarray(row['weights']) @ old_delta[row['donors']]
+    paired_export.require(points, new_delta)
     if np.linalg.norm(new_delta - frozen_delta, axis=1).max() * 1000 > 0.5:
         raise ValueError('Quantized forehead support changed its posed field excessively')
     if not np.array_equal(points[proposal['protected']], old[proposal['protected']]):

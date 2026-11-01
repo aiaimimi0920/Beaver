@@ -55,7 +55,8 @@ def forehead_consumer_binding(raw_source, author, native_capture, pose_context):
 
 def forehead_consumer_options(options):
     allowed = {'mode','resume','flow_steps','fairing_stages','gap_steps','max_iterations',
-               'initialization_options','seam_active_set_growth','seam_wall_seconds','seam_initial_held_seconds'}
+               'initialization_options','seam_active_set_growth','seam_wall_seconds','seam_initial_held_seconds',
+               'paired_diagonal_guidance'}
     if not isinstance(options, dict) or set(options)-allowed:
         raise ValueError('Unknown shared consumer option')
     result = forehead_consumer_copy.deepcopy(options)
@@ -68,6 +69,8 @@ def forehead_consumer_options(options):
             raise ValueError('Invalid bounded consumer budget: '+key)
     if type(result.setdefault('seam_active_set_growth',False)) is not bool:
         raise ValueError('Invalid seam option')
+    if type(result.setdefault('paired_diagonal_guidance',False)) is not bool:
+        raise ValueError('Invalid paired diagonal guidance option')
     forehead_validate_seam_budget(result.setdefault('seam_wall_seconds',120.),
         result.setdefault('seam_initial_held_seconds',None),result['seam_active_set_growth'])
     if result['mode']=='fresh' and 'resume' in result:
@@ -110,7 +113,8 @@ def prepare_forehead_shared_consumer(raw_source, author, native_capture, pose_co
     if not callable(checkpoint):
         raise ValueError('Opt-in consumer requires an owned durable checkpoint sink')
     solve=forehead_consumer_partial(fit_forehead_shared_constraints,
-        seam_wall_seconds=opts['seam_wall_seconds'],seam_initial_held_seconds=opts['seam_initial_held_seconds'])
+        seam_wall_seconds=opts['seam_wall_seconds'],seam_initial_held_seconds=opts['seam_initial_held_seconds'],
+        paired_diagonal_guidance=opts['paired_diagonal_guidance'])
     a=forehead_consumer_copy.deepcopy(author)
     capture=forehead_consumer_copy.deepcopy(native_capture)
     binding=forehead_consumer_binding(raw_source,a,capture,pose_context)
