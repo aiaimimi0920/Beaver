@@ -5,7 +5,7 @@ from nasal_source_geometry import AuthorQuadSurface
 from orbital_support_rule import orbital_quad_quality, orbital_turns
 from forehead_flow_rule import forehead_chart, forehead_convex_chart, forehead_no_chart_crossings
 from forehead_surface_batch import make_forehead_surface_batch
-from forehead_spacing import forehead_frozen_field
+from forehead_spacing import forehead_initial_parameters, forehead_frozen_field
 
 def fit_forehead_supports(vertices, old_open_delta, proposal, sparse_warm=False):
     old = np.asarray(vertices, float)
@@ -21,9 +21,7 @@ def fit_forehead_supports(vertices, old_open_delta, proposal, sparse_warm=False)
     quads = np.asarray([proposal['faces'][j] for j in proposal['affected_new']], int)
     source_chart = proposal['source_chart']
     donors = np.asarray(proposal['source_faces'], int)
-    radius = np.median(np.linalg.norm(old[:, :2], axis=1))
-    start_chart = np.column_stack((radius * np.arctan2(initial[:, 0], -initial[:, 1]), initial[:, 2]))
-    start = start_chart[ids].ravel() * 1000
+    start = forehead_initial_parameters(old, initial, source_chart, proposal['lineage'], ids).ravel() * 1000
     batch = make_forehead_surface_batch(source_chart, old, donors)
     delta_batch = make_forehead_surface_batch(source_chart, old_delta, donors)
     surface = AuthorQuadSurface(source_chart, donors, [1] * len(donors))

@@ -83,3 +83,26 @@ def measure_forehead_transverse_spacing(points, paths, sample_count=257):
                  'no excluded tails; Euclidean, not geodesic or anatomical-correspondence proof',
         'visual_acceptance': 'Not established by distance statistics',
     }
+
+
+def forehead_gap_objective(initial, paths, sample_count=33):
+    """Freeze overlapping sample roles per solve; never drop errors mid-iteration."""
+    names = ('red', 'orange', 'green', 'blue', 'purple')
+    initial = np.asarray(initial, float)
+    rows = []
+    for first, second in zip(names, names[1:]):
+        target_gap = np.linalg.norm(initial[paths[first][0]]-initial[paths[second][0]])
+        if target_gap <= 1e-9:
+            raise ValueError('Collapsed centerline guide gap')
+        for source, target in ((first, second), (second, first)):
+            samples, _ = sample_forehead_polyline(initial[paths[source]], sample_count)
+            _, beyond = closest_forehead_polyline(samples, initial[paths[target]])
+            rows.append((source, target, ~beyond, target_gap))
+    def objective(points):
+        cost = 0.
+        sampled = {name: sample_forehead_polyline(points[paths[name]], sample_count)[0] for name in names}
+        for source, target, selected, target_gap in rows:
+            gaps, _ = closest_forehead_polyline(sampled[source], points[paths[target]])
+            cost += np.sum((gaps[selected]/target_gap-1)**2)
+        return float(20*cost)
+    return objective

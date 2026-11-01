@@ -2,6 +2,8 @@
 from collections import defaultdict
 import numpy as np
 from forehead_flow_bind import bind_forehead_paths
+from forehead_ear_route import extend_to_fitted_ear
+from forehead_boundary_route import reroute_forehead_boundary_guides
 from forehead_star_topology import (ForeheadStarTopology, forehead_edge_counts,
                                    forehead_guide_corners)
 
@@ -73,6 +75,9 @@ def prepare_forehead_star_topology(vertices, faces, regions, report, features):
     # The outer turn needs support room beside the short, fixed rim edges.
     builder.refine_star(green['vertex'])
     builder.refine_star(lower['opposite'])
+    builder.paths['green'] = extend_to_fitted_ear(
+        builder.points, builder.faces, [regions[i] for i in builder.owners], report, builder.paths['green'])
+    route = reroute_forehead_boundary_guides(builder, features['protected'], binding['ear_root_star'])
     result = builder.finish()
     boundary = {i for edge, count in builder.original_edges.items() if count == 1 for i in edge}
     result['protected'] = sorted(set(features['protected']) | boundary |
@@ -80,6 +85,7 @@ def prepare_forehead_star_topology(vertices, faces, regions, report, features):
                                  {i for path in result['paths'].values() for i in (path[0], path[-1])})
     result['roles'] = {'original_binding': binding,
                        'original_corner_roles': corners,
-                       'green_endpoint_policy': 'Pinned existing interior upper-ear support; not an open-rim continuation',
+                       'green_endpoint_policy': 'Pinned actual fitted upper-ear root; not an open-rim continuation',
+                       'boundary_guide_reassignment': route,
                        'semantic_recipe': 'Current raw13 graph; conforming closed-star quad refinement'}
     return result

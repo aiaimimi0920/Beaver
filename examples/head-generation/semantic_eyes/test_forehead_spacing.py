@@ -1,7 +1,8 @@
 """Whole-path evidence must not conceal gradual density or folded-back tails."""
 import unittest
 import numpy as np
-from forehead_spacing import forehead_station_residuals, measure_forehead_station_spacing, forehead_frozen_field
+from forehead_spacing import forehead_station_residuals, measure_forehead_station_spacing, forehead_frozen_field, forehead_initial_parameters, forehead_physical_turn_residuals, forehead_uniform_stage_target
+from forehead_surface_batch import make_forehead_surface_batch
 from forehead_gap_measure import measure_forehead_transverse_spacing
 
 
@@ -13,6 +14,30 @@ class ForeheadSpacingTests(unittest.TestCase):
     def test_uniform(self):
         points = self.line(np.full(20, .01))
         np.testing.assert_allclose(forehead_station_residuals(points, {'red': range(21)}), 0, atol=1e-14)
+
+    def test_physical_turn_objective_does_not_hide_bend_by_subdivision(self):
+        points = np.array([[0,0,0],[.04,0,0],[.04,.04,0]])
+        refined = np.array([[0,0,0],[.02,0,0],[.04,0,0],[.04,.02,0],[.04,.04,0]])
+        raw = forehead_physical_turn_residuals(points,{'orange':range(3)},{'orange':20.})
+        split = forehead_physical_turn_residuals(refined,{'orange':range(5)},{'orange':20.})
+        np.testing.assert_allclose(raw,split,atol=1e-10)
+        self.assertGreater(np.linalg.norm(raw),0)
+        straight = self.line([.02,.02,.02,.02])
+        np.testing.assert_allclose(forehead_physical_turn_residuals(
+            straight,{'red':range(5)},{'red':18.}),0)
+
+    def test_large_uniform_redistribution_is_bounded_but_not_redefined_as_uniform(self):
+        points = self.line([.001,.099])
+        target, report = forehead_uniform_stage_target(points,points,points,{},
+            {'red':[0,1,2]},[1],[[0,1,2]],{0,2},max_step_mm=6.)
+        np.testing.assert_allclose(target,[7.,0.],atol=1e-12)
+        self.assertAlmostEqual(report['full_uniform_target_maximum_mm'],49.)
+        self.assertLess(report['stage_fraction'],1.)
+        self.assertTrue(report['partial_step_is_not_equal_spacing_acceptance'])
+        final, report = forehead_uniform_stage_target(points,points,points,{},
+            {'red':[0,1,2]},[1],[[0,1,2]],{0,2},max_step_mm=100.)
+        np.testing.assert_allclose(final,[50.,0.],atol=1e-12)
+        self.assertEqual(report['stage_fraction'],1.)
 
     def test_gradient_is_not_equality(self):
         points = self.line(.002*1.07**np.arange(30))
@@ -33,6 +58,22 @@ class ForeheadSpacingTests(unittest.TestCase):
         frozen = forehead_frozen_field(old, 3, lineage)
         np.testing.assert_array_equal(frozen[:2], old)
         np.testing.assert_allclose(frozen[2], [.0005, 0, 0])
+
+    def test_lineage_parameters_reproduce_bilinear_world_sample(self):
+        angle, radius = .8, .1
+        old = np.array([[0.,-radius,1.6], [radius*np.sin(angle),-radius*np.cos(angle),1.6],
+                        [radius*np.sin(angle),-radius*np.cos(angle),1.7], [0.,-radius,1.7]])
+        chart = np.column_stack((radius*np.arctan2(old[:,0],-old[:,1]), old[:,0]*0, old[:,2]))
+        weights = np.array([.18,.42,.28,.12])
+        points = np.vstack((old, weights@old))
+        lineage = {4: {'weights': weights, 'donors': [0,1,2,3]}}
+        parameters = forehead_initial_parameters(old,points,chart,lineage,[4])
+        sampled = make_forehead_surface_batch(chart,old,np.array([[0,1,2,3]])).sample(parameters)
+        np.testing.assert_allclose(sampled[0],points[4],atol=1e-12)
+        inferred = radius*np.arctan2(points[4,0],-points[4,1])
+        self.assertGreater(abs(inferred-parameters[0,0]), .0001)
+        with self.assertRaises(ValueError):
+            forehead_initial_parameters(old,points,chart,{},[4])
 
     def five_curves(self, curves):
         names = ('red', 'orange', 'green', 'blue', 'purple')

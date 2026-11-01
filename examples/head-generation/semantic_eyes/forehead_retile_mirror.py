@@ -1,8 +1,16 @@
 """Reflect a current source-retile proposal with verified owner correspondence."""
 import numpy as np
+from forehead_affected_domain import forehead_close_affected_domain
 
 
 def mirror_forehead_retile(vertices, faces, regions, proposal, owner_mirror, old_open_delta):
+    # Close both original/current impact domains before bilateral allocation.
+    # An untouched halo face can contain a moved original support vertex.
+    closed, coverage = forehead_close_affected_domain(proposal, vertices, faces)
+    coverage['phase'] = 'positive-source domain before mirroring'
+    closed['affected_domain_closure'] = coverage
+    proposal.clear()
+    proposal.update(closed)
     old = np.asarray(vertices, float)
     original = [list(map(int, q)) for q in faces]
     positive = np.asarray(proposal['vertices'], float)

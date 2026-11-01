@@ -106,7 +106,7 @@ class ForeheadRetileTests(unittest.TestCase):
         proposal = {'vertices': old.copy(), 'faces': faces, 'lineage': {},
                     'affected_old': [0, 1], 'affected_new': [0, 1],
                     'protected': [], 'paths': {'guide': [0, 1]}, 'metrics': {},
-                    'topology': {'face_owners': owners, 'retiled_old_faces': [0, 1],
+                    'topology': {'vertices': old.copy(), 'face_owners': owners, 'retiled_old_faces': [0, 1],
                         'roles': {'original_binding': {'ear_root_star': []}},
                         'edge_lineage': [{'edge': list(e), 'parent': list(e)}
                                          for e in forehead_edge_counts(faces)]}}
@@ -114,6 +114,31 @@ class ForeheadRetileTests(unittest.TestCase):
                                          np.zeros_like(old))
         self.assertEqual(result['face_owners'][count], count+1)
         self.assertEqual(result['face_owners'][count+1], count)
+
+    def test_moved_original_halo_faces_are_closed_before_mirroring(self):
+        from forehead_retile_mirror import mirror_forehead_retile
+        v, positive_faces = self.grid()
+        n, count = len(v), len(positive_faces)
+        old = np.vstack((v, v*[-1, 1, 1]))
+        faces = positive_faces + [[j+n for j in reversed(q)] for q in positive_faces]
+        current = old.copy()
+        current[7] = np.asarray(.9*old[7]+.1*old[8], np.float32)
+        proposal = {'vertices': current, 'faces': faces,
+                    'lineage': {7: {'donors': [7, 8], 'weights': [.9, .1]}},
+                    'affected_old': [0, 1], 'affected_new': [0, 1, 5],
+                    'protected': [], 'paths': {'guide': [0, 1]}, 'metrics': {},
+                    'topology': {'vertices': old.copy(),
+                        'face_owners': list(range(len(faces))), 'retiled_old_faces': [],
+                        'roles': {'original_binding': {'ear_root_star': []}},
+                        'edge_lineage': [{'edge': list(e), 'parent': list(e)}
+                                         for e in forehead_edge_counts(faces)]}}
+        result = mirror_forehead_retile(old, faces, [1]*len(faces), proposal, {},
+                                         np.zeros_like(old))
+        self.assertIn(6, result['affected_old'])
+        self.assertIn(6+count, result['affected_old'])
+        self.assertIn(6+count, result['affected_new'])
+        np.testing.assert_array_equal(result['vertices'][7+n],
+            np.asarray(.9*old[7+n]+.1*old[8+n], np.float32))
 
     def test_non_neutral_edges_need_complete_unbranched_child_chains(self):
         from forehead_retile_fields import validate_forehead_edge_chains

@@ -2,7 +2,7 @@
 from collections import defaultdict
 import numpy as np
 from nasal_source_geometry import AuthorQuadSurface
-from forehead_flow_rule import forehead_chart
+from forehead_flow_rule import forehead_chart, forehead_convex_chart
 
 
 def fair_forehead_guides(vertices, faces, regions, topology, features):
@@ -38,7 +38,7 @@ def fair_forehead_guides(vertices, faces, regions, topology, features):
     for iteration in range(8):
         previous = target.copy()
         for row, path in enumerate(paths):
-            if row < 2 and iteration >= 2:
+            if row < 2 and iteration >= 2 and not topology['roles']['boundary_guide_reassignment']['changed']:
                 continue
             for a, b, c in zip(path, path[1:], path[2:]):
                 if b not in moving:
@@ -59,14 +59,34 @@ def fair_forehead_guides(vertices, faces, regions, topology, features):
     fade = np.clip((mouth_height+.02-chart[:, 2])/.03, 0, 1)
     fade = fade*fade*(3-2*fade)
     target = chart+(target-chart)*(1-.7*fade[:, None])
-    lineage = {}
-    for i in sorted(moving):
-        donors, weights, point = surface.lineage(target[i, 0], target[i, 2])
-        points[i] = np.asarray(point, np.float32)
-        lineage[i] = {'donors': list(donors), 'weights': list(weights)}
+    # Newly routed corridors may need a large guide displacement. Start with
+    # a convex, quantized source-chart step instead of handing a folded warm
+    # start to the quality solver. This is initialization, not final acceptance.
+    quads = np.asarray([final_faces[i] for i in new_ids], int)
+    original_cross = forehead_convex_chart(forehead_chart(points), quads)
+    initial = points.copy()
+    for attempt in range(14):
+        fraction = 0.5 ** attempt if attempt < 13 else 0.
+        step = chart + fraction * (target - chart)
+        candidate, lineage = initial.copy(), {}
+        try:
+            for i in sorted(moving):
+                donors, weights, point = surface.lineage(step[i, 0], step[i, 2])
+                candidate[i] = np.asarray(point, np.float32)
+                lineage[i] = {'donors': list(donors), 'weights': list(weights)}
+            cross = forehead_convex_chart(forehead_chart(candidate), quads)
+            if np.any(cross * original_cross <= 0):
+                continue
+        except ValueError:
+            continue
+        points = candidate
+        break
+    else:
+        raise ValueError('No convex frozen-author initialization for the rerouted guides')
     if not np.array_equal(points[sorted(protected)], old[sorted(protected)]):
         raise ValueError('Guide fairing changed an original functional boundary')
     return {'vertices': points, 'faces': final_faces, 'lineage': lineage,
+            'initial_fairing_step_fraction': fraction,
             'affected_old': old_ids, 'affected_new': new_ids,
             'moving': sorted(moving), 'support': sorted(supports),
             'source_faces': donor_faces, 'source_chart': source_chart,

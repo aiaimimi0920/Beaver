@@ -1299,3 +1299,47 @@ component diagnostic also preserves all 168 non-neutral source chains, the
 three UV layers, discrete point fields and deform memberships. That diagnostic
 uses an unaccepted appearance proposal. It is not evidence of final shape,
 GLB, expression, engine or visual acceptance for a new character model.
+
+## Shared source initializer and constrained continuation (unfinished)
+
+The new initializer constructs its guide corridors from semantic ownership and
+live source-field capture, rather than saved candidate coordinates or vertex
+identifiers. Aggregate pattern allocation is followed by dependent birth
+geometry, original parent-chain validation and fixed-author atlas coverage.
+A proved immutable nonterminal sector obstruction can trigger a bounded graph
+rebuild; an arbitrary solver failure cannot authorize moving protected points.
+
+Working flow/station/gap caps are monotone continuation constraints, not final
+acceptance. Final shared-guide acceptance independently checks whole-path
+station deviation, physical turn limits, original arc-length references and
+all ten source-atlas distance domains at 1,025 sections plus source vertices.
+The guide acceptance result does not certify the posed surface, native fields,
+GLB, engine or appearance. Feasible progress and rejected numerical warm starts
+are distinct states; rejected trials cannot mutate accepted baselines.
+
+The physical-turn measurement uses finite-length chords and can average out
+alternating consecutive-edge turns. Actual native views still show local kinks
+even when those chord-angle bounds pass. Local edge turns and curvature
+variation therefore require separate fairing and visual review; equal station
+lengths alone do not establish smooth curves. Linearized feasibility restoration
+does not optimize the fairing objective. An optimizer callback must distinguish
+an admitted improved checkpoint from a lower-cost but infeasible current trial.
+
+The support operator bank retains original fields and non-neutral edge chains
+while providing bounded inset, cross-rail band and local shape operations.
+Pending births require actual geometric and retained-guide admission before
+freezing their field rows. A current subdivided field chain is not evidence
+that its geometric locus still coincides with the original author's edge.
+
+Actual native diagnostics have reproduced the new source-only initialization
+and separately saved/reopened a shape-repaired component with its UV layers,
+point fields and deform weights intact. These are separate development branches.
+The shape-repaired branch still fails final transverse uniformity and visual
+review. The default full recipe has not yet been switched to the new initializer
+and continuation driver. No completed new character or current GLB/engine
+acceptance is claimed by these helper modules or their tests.
+
+Oversized source seeds use schema 4 plain UTF-8 chunks and hash-checked assembly
+inside the unchanged native frame limit. Every original job receipt remains
+ordered, distinct and individually bound; schemas 1–3 retain their existing
+validation. Compression, limit increases and synthesized receipts are not used.
