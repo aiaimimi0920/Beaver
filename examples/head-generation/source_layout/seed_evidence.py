@@ -15,7 +15,11 @@ def verify_retained_source(binding, root, retained_path):
     retained = resource(root,retained_path).read_bytes()
     if hashlib.sha256(seeded).hexdigest() != binding['sha256']:
         raise ValueError('Authored source seed content changed')
-    if binding.get('schema_version', 1) in (2, 3):
+    if binding.get('schema_version') == 4 and 'runtime_path' not in binding:
+        if seeded != retained:raise ValueError('Retained source differs from assembled seed')
+        compile(retained.decode('utf-8'), '<retained source>', 'exec')
+        return
+    if binding.get('schema_version', 1) in (2, 3, 4):
         runtime = resource(root, binding['runtime_path']).read_bytes()
         if hashlib.sha256(runtime).hexdigest() != binding['runtime_sha256']:
             raise ValueError('Runtime source seed content changed')
@@ -44,6 +48,9 @@ def verify_retained_source(binding, root, retained_path):
 
 def verify_seed(binding, receipt, root):
     root = Path(root).resolve()
+    if binding.get('schema_version') == 4:
+        from .seed_chunk_evidence import verify_chunk_seed
+        return verify_chunk_seed(binding, receipt, root)
     if binding.get('schema_version') == 3:
         return verify_two_seed_jobs(binding, receipt, root)
     snapshot = Path(receipt).read_bytes()
@@ -86,7 +93,7 @@ def finalize_seed_plan(plan, receipt, workspace):
     result['source_seed_binding'] = binding
     packing = result['source_packaging']
     packing['source_seed_binding'] = binding
-    if binding.get('schema_version') == 3:
+    if binding.get('schema_version') in (3, 4):
         packing['source_seed_receipt_paths'] = [str(Path(path).resolve()) for path in receipt]
     else:
         packing['source_seed_receipt_path'] = str(Path(receipt).resolve())

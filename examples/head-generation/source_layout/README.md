@@ -91,3 +91,42 @@ Pass the receipt list to `verify_packaging`, or repeat
 frozen generation hashes; verification rejects duplicate jobs, overlapping or
 missing outputs, changed sources and broken seed provenance. Do not synthesize
 an aggregate native receipt. This batching does not rerun model generation.
+
+### Schema 4: ordered plain-text seed chunks
+
+If even one independently readable seed module exceeds the fixed native 1 MiB
+**serialized frame** limit, `seed_retained_bundle` now uses schema 4. This is a
+final fallback only; schemas 1–3 retain their existing receipt and loader paths.
+No source compression, base64, minification, or limit increase is used.
+
+`source_seed_jobs` is an ordered list: UTF-8 `.partNNNN.txt` output jobs followed
+by one assembly job per module. Every request is checked with the existing full
+native-envelope frame validator. Chunks split only at Python Unicode character
+boundaries. Ordinary raw multiline source literals remain readable; densely
+repeated triple quotes use a flat ordinary string join rather than a recursive
+addition AST. Each assembly independently verifies chunk index, unique path,
+byte length, SHA256 and UTF-8 validity, then verifies final byte length/SHA256
+and syntax before writing the normal `.py` file. Assembly is transport only,
+not execution of the authored module.
+
+Run **all jobs in the declared order**, retaining every original native RPC
+receipt, including assembly receipts. `write_plan_files` emits an additional
+`.seed-jobs.json` ordered artifact (the legacy `.seed.json` is just the first
+request). `seed_request --seed-receipt PATH` may be repeated in exact job order.
+Finalization rejects missing/reordered/duplicate/reused jobs or changed receipt
+bytes. Journals and invented merged receipts do not satisfy schema 4.
+
+The schema binds all job script hashes, outputs, module/chunk manifests and
+ordered `{job_id, receipt_sha256}` records. Packaging requires the same complete
+receipt list, rejects reuse of ANY seed job as generation/packaging, and writes
+one `source_seed_receipt_NNNN.json` sidecar per original RPC receipt. Sidecars
+preserve the original bytes, including whitespace/line endings; there is no
+synthetic combined receipt. Keep chunk and assembled source artifacts in the
+workspace through verification: `verify_packaging` rechecks every original
+receipt, chunk, assembly and final retained module hash.
+
+Tests use explicitly synthetic receipts in temporary directories ONLY; they
+are not native execution evidence. The expanded suite checks Unicode, both
+triple-quote delimiters, CRLF, true oversized modules, full frame overhead,
+missing/tampered/reordered/duplicate receipts/chunks, final source hash,
+assembly script binding, and exact sidecars through packaging verification.

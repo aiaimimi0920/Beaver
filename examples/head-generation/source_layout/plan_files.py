@@ -14,6 +14,10 @@ def write_plan_files(plan, output):
     paths = {'source_seed': target.with_suffix('.seed.json'), 'native_plan': target.with_suffix('.native-plan.json')}
     if any(path.exists() for path in [target, target.with_suffix('.source-plan.json'), *paths.values()]):
         raise ValueError('Seed preparation requires fresh request output paths')
+    if plan.get('source_seed_binding', {}).get('schema_version') == 4:
+        paths['source_seed_jobs'] = target.with_suffix('.seed-jobs.json')
+        if paths['source_seed_jobs'].exists():raise ValueError('Seed jobs require fresh output path')
+        paths['source_seed_jobs'].write_text(json.dumps(plan['source_seed_jobs']))
     paths['source_seed'].write_text(json.dumps(plan['source_seed']))
     paths['native_plan'].write_text(json.dumps(plan))
     return paths

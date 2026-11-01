@@ -190,14 +190,13 @@ def packaging_payload(plan, receipt_path, workspace):
     seed_receipts = []
     if seed_binding:
         from .seed_evidence import verify_seed, verify_retained_source
-        multiple = seed_binding.get('schema_version') == 3
+        multiple = seed_binding.get('schema_version') in (3, 4)
         seed_receipts = [Path(path) for path in plan['source_seed_receipt_paths']] if multiple else [Path(plan['source_seed_receipt_path'])]
         receipt_argument = seed_receipts if multiple else seed_receipts[0]
         if verify_seed(seed_binding, receipt_argument, root) != seed_binding or report.get("authored_source_seed") != seed_binding:
             raise ValueError("Generation source seed chain changed")
-        seed_jobs = {seed_binding['job_id']}
-        if multiple:
-            seed_jobs.add(seed_binding['runtime_job_id'])
+        from .seed_chunk_evidence import seed_job_ids
+        seed_jobs = seed_job_ids(seed_binding)
         if job['jobId'] in seed_jobs:
             raise ValueError('Generation must be distinct from every native seed job')
         verify_retained_source(seed_binding,root,prefix + "semantic_bundle.py")
@@ -236,13 +235,13 @@ def packaging_payload(plan, receipt_path, workspace):
         prefix + "source_layout_binding.json": json.dumps(binding, indent=2),
     }
     if seed_receipts:
-        names = ['source_seed_receipt.json', 'source_seed_runtime_receipt.json']
-        fields = ['receipt_sha256', 'runtime_receipt_sha256']
+        from .seed_chunk_evidence import seed_receipt_sidecars
+        sidecars = seed_receipt_sidecars(seed_binding)
         for index, receipt in enumerate(seed_receipts):
             seed_raw = receipt.read_bytes()
-            if hashlib.sha256(seed_raw).hexdigest() != seed_binding[fields[index]]:
+            if hashlib.sha256(seed_raw).hexdigest() != sidecars[index][1]:
                 raise ValueError("Seed receipt changed before packaging")
-            payload[prefix + names[index]] = seed_raw
+            payload[prefix + sidecars[index][0]] = seed_raw
     for path in payload:
         if resource(root, path).exists():
             raise ValueError("Source packaging requires fresh outputs")

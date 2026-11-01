@@ -120,9 +120,8 @@ def verify_packaging(report, root, prefix, generation_receipt, packaging_receipt
     packed_ids, outputs = original_packaging_jobs(packaging_receipt, root, gen["jobId"])
     binding_path = prefix + "source_layout_binding.json"
     seed_binding = report.get("authored_source_seed")
-    seed_sidecar = {prefix + "source_seed_receipt.json"} if seed_binding else set()
-    if seed_binding and seed_binding.get('schema_version') == 3:
-        seed_sidecar.add(prefix + 'source_seed_runtime_receipt.json')
+    from .seed_chunk_evidence import seed_receipt_sidecars, seed_job_ids
+    seed_sidecar = {prefix + name for name, _ in seed_receipt_sidecars(seed_binding)} if seed_binding else set()
     if set(outputs) != set(wanted) | {binding_path} | seed_sidecar:
         raise ValueError("Incomplete or unexpected source packaging outputs")
     for name, digest in outputs.items():
@@ -139,15 +138,13 @@ def verify_packaging(report, root, prefix, generation_receipt, packaging_receipt
     }
     if seed_binding:
         from .seed_evidence import verify_seed, verify_retained_source
-        if seed_binding.get("schema_version") not in (1, 2, 3):
+        if seed_binding.get("schema_version") not in (1, 2, 3, 4):
             raise ValueError("Unknown source seed binding schema")
         receipt = resource(root, prefix + 'source_seed_receipt.json')
-        if seed_binding.get('schema_version') == 3:
-            receipt = [receipt, resource(root, prefix + 'source_seed_runtime_receipt.json')]
+        if seed_binding.get('schema_version') in (3, 4):
+            receipt = [resource(root, prefix + name) for name, _ in seed_receipt_sidecars(seed_binding)]
         verified = verify_seed(seed_binding, receipt, root)
-        seed_jobs = {verified['job_id']}
-        if verified.get('schema_version') == 3:
-            seed_jobs.add(verified['runtime_job_id'])
+        seed_jobs = seed_job_ids(verified)
         if seed_jobs & ({gen['jobId']} | packed_ids):
             raise ValueError("Invalid native source seed/generation chain")
         if generated.get(prefix + "semantic_bundle.py") != sha(resource(root,prefix + "semantic_bundle.py")):

@@ -4,6 +4,7 @@ import hashlib
 import json
 import unicodedata
 from .transport_sources import validate_native_frame
+from .seed_chunks import chunk_seed_jobs
 
 
 
@@ -14,7 +15,10 @@ def readable_source_literal(text):
     delimiter = "'" * 3
     chunks = ["r" + delimiter + chunk + "\n" + delimiter + "[:-1]"
               for chunk in text.split(delimiter)]
-    expression = "(\n" + (" + " + repr(delimiter) + " +\n").join(chunks) + "\n)"
+    if len(chunks) > 64:
+        expression = repr(delimiter) + '.join([\n' + ',\n'.join(chunks) + '\n])'
+    else:
+        expression = "(\n" + (" + " + repr(delimiter) + " +\n").join(chunks) + "\n)"
     if eval(compile(expression, '<readable source literal>', 'eval'), {'__builtins__': {}}) != text:
         raise AssertionError('Readable source literal changed exact input text')
     return expression
@@ -45,55 +49,69 @@ def seed_retained_bundle(code, prefix):
     if runtime_source is not None:
         compile(runtime_source,'<runtime seed syntax>','exec')
         seed_source += '\n\nNATIVE_RUNTIME_SOURCE = '+repr(runtime_source)+'\n'
-    encoded = seed_source.encode('utf-8')
-    digest = hashlib.sha256(encoded).hexdigest()
-    path = prefix + 'source_seed_semantic_bundle.py'
-    output = {'path': path, 'expectedSha256': None}
-    seed_code = ('from pathlib import Path\n'
-                 f'Path(beaver_output({path!r})).write_text({seed_source!r},encoding="utf-8",newline="\\n")\n')
-    seed = {'code':seed_code,'outputs':[output],'timeoutSeconds':120}
-    split_runtime = False
-    split_jobs = False
+    chunk_binding = None
     try:
-        validate_native_frame(seed)
-    except ValueError:
-        if runtime_source is None:
-            raise
-        # Separate readable files avoid nesting a Python string literal inside
-        # another literal. Both outputs remain exact, independently hash-bound.
-        split_runtime = True
-        digest = hashlib.sha256(source.encode('utf-8')).hexdigest()
-        runtime_path = prefix + 'source_seed_runtime.py'
-        runtime_digest = hashlib.sha256(runtime_source.encode('utf-8')).hexdigest()
+        encoded = seed_source.encode('utf-8')
+        digest = hashlib.sha256(encoded).hexdigest()
+        path = prefix + 'source_seed_semantic_bundle.py'
+        output = {'path': path, 'expectedSha256': None}
         seed_code = ('from pathlib import Path\n'
-                     f'Path(beaver_output({path!r})).write_text({source!r},encoding="utf-8",newline="\\n")\n'
-                     f'Path(beaver_output({runtime_path!r})).write_text({runtime_source!r},encoding="utf-8",newline="\\n")\n')
-        seed = {'code': seed_code, 'outputs': [output, {'path': runtime_path, 'expectedSha256': None}], 'timeoutSeconds': 120}
+                     f'Path(beaver_output({path!r})).write_text({seed_source!r},encoding="utf-8",newline="\\n")\n')
+        seed = {'code':seed_code,'outputs':[output],'timeoutSeconds':120}
+        split_runtime = False
+        split_jobs = False
         try:
             validate_native_frame(seed)
         except ValueError:
-            # Plain raw multiline literals reduce quoting overhead while leaving
-            # the authored modules readable and byte-identical. Limits stay fixed.
+            if runtime_source is None:
+                raise
+            # Separate readable files avoid nesting a Python string literal inside
+            # another literal. Both outputs remain exact, independently hash-bound.
+            split_runtime = True
+            digest = hashlib.sha256(source.encode('utf-8')).hexdigest()
+            runtime_path = prefix + 'source_seed_runtime.py'
+            runtime_digest = hashlib.sha256(runtime_source.encode('utf-8')).hexdigest()
             seed_code = ('from pathlib import Path\n'
-                         f'Path(beaver_output({path!r})).write_text({readable_source_literal(source)},encoding="utf-8",newline="\\n")\n'
-                         f'Path(beaver_output({runtime_path!r})).write_text({readable_source_literal(runtime_source)},encoding="utf-8",newline="\\n")\n')
-            seed['code'] = seed_code
+                         f'Path(beaver_output({path!r})).write_text({source!r},encoding="utf-8",newline="\\n")\n'
+                         f'Path(beaver_output({runtime_path!r})).write_text({runtime_source!r},encoding="utf-8",newline="\\n")\n')
+            seed = {'code': seed_code, 'outputs': [output, {'path': runtime_path, 'expectedSha256': None}], 'timeoutSeconds': 120}
             try:
                 validate_native_frame(seed)
             except ValueError:
-                # Each ordinary source file gets its own declared native job.
-                # Both original receipts are required before generation starts.
-                split_jobs = True
-                seeds = []
-                for destination, text in ((path, source), (runtime_path, runtime_source)):
-                    script = ('from pathlib import Path\n'
-                              f'Path(beaver_output({destination!r})).write_text({readable_source_literal(text)},encoding="utf-8",newline="\\n")\n')
-                    request = {'code': script, 'outputs': [{'path': destination, 'expectedSha256': None}],
-                               'timeoutSeconds': 120}
-                    validate_native_frame(request)
-                    seeds.append(request)
-                seed = seeds
-                seed_code = seeds[0]['code']
+                # Plain raw multiline literals reduce quoting overhead while leaving
+                # the authored modules readable and byte-identical. Limits stay fixed.
+                seed_code = ('from pathlib import Path\n'
+                             f'Path(beaver_output({path!r})).write_text({readable_source_literal(source)},encoding="utf-8",newline="\\n")\n'
+                             f'Path(beaver_output({runtime_path!r})).write_text({readable_source_literal(runtime_source)},encoding="utf-8",newline="\\n")\n')
+                seed['code'] = seed_code
+                try:
+                    validate_native_frame(seed)
+                except ValueError:
+                    # Each ordinary source file gets its own declared native job.
+                    # Both original receipts are required before generation starts.
+                    split_jobs = True
+                    seeds = []
+                    for destination, text in ((path, source), (runtime_path, runtime_source)):
+                        script = ('from pathlib import Path\n'
+                                  f'Path(beaver_output({destination!r})).write_text({readable_source_literal(text)},encoding="utf-8",newline="\\n")\n')
+                        request = {'code': script, 'outputs': [{'path': destination, 'expectedSha256': None}],
+                                   'timeoutSeconds': 120}
+                        validate_native_frame(request)
+                        seeds.append(request)
+                    seed = seeds
+                    seed_code = seeds[0]['code']
+    except ValueError:
+        path = prefix + 'source_seed_semantic_bundle.py'
+        digest = hashlib.sha256(source.encode('utf-8')).hexdigest()
+        split_runtime = runtime_source is not None
+        split_jobs = False
+        modules = [(path, source)]
+        if split_runtime:
+            runtime_path = prefix + 'source_seed_runtime.py'
+            runtime_digest = hashlib.sha256(runtime_source.encode('utf-8')).hexdigest()
+            modules.append((runtime_path, runtime_source))
+        seed, chunk_binding = chunk_seed_jobs(modules, readable_source_literal)
+        seed_code = seed[0]['code']
     name = '_beaver_verified_source_seed_'
     while name in unicodedata.normalize('NFKC', code):
         name += '_'
@@ -156,6 +174,8 @@ def seed_retained_bundle(code, prefix):
         binding.update(schema_version=2, runtime_path=runtime_path, runtime_sha256=runtime_digest)
     if split_jobs:
         binding.update(schema_version=3, runtime_seed_script_sha256=hashlib.sha256(seed[1]['code'].encode()).hexdigest())
+    if chunk_binding is not None:
+        binding.update(chunk_binding)
     result += f'\nreport["authored_source_seed"] = {binding!r}\n'
     result += f'Path(beaver_output({prefix+"generation_report.json"!r})).write_text(json.dumps(report,indent=2),encoding="utf-8",newline="\\n")\n'
     compile(result, '<hash-bound source seed>', 'exec')

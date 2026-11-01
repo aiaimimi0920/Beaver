@@ -48,6 +48,21 @@ class ForeheadSurfaceBatch:
             self.candidate_cache[key] = (quad_ids[chosen], weights[chosen], margin[chosen])
 
     def sample(self, points):
+        return self._sample_result(points, False)
+
+    def sample_differential(self, points):
+        """Return (positions, world/chart Jacobian, author-boundary flags).
+
+        Points are Nx2 frozen chart coordinates. The Jacobian is Nx3x2,
+        world metres per chart metre, BEFORE solver-unit conversion. Invalid or
+        ambiguous samples return None exactly as sample does. Boundary flags
+        request finite-difference fallback; selected one-sided derivatives there
+        are not claimed to equal a central derivative. Candidate eviction cannot
+        invalidate this result: metadata is consumed inside the same sampling call.
+        """
+        return self._sample_result(points, True)
+
+    def _sample_result(self, points, with_differential):
         # Cache inversion candidates, NOT selected positions. Global unstable
         # argsort tie ordering is retained exactly, including boundary queries
         # reordered or repeated between finite-difference evaluations.
@@ -73,4 +88,18 @@ class ForeheadSurfaceBatch:
         order = np.argsort(margin)
         out = np.full((len(points), 3), np.nan)
         out[sample_ids[order]] = np.einsum('ij,ijk->ik', weights[order], self.vertices[quad_ids[order]])
-        return out if np.isfinite(out).all() else None
+        if not np.isfinite(out).all():
+            return None
+        if not with_differential:
+            return out
+        selected = np.empty(len(points), dtype=int)
+        selected[sample_ids[order]] = order
+        quad_ids, weights, margin = (quad_ids[selected], weights[selected], margin[selected])
+        u, v = weights[:, 1]+weights[:, 2], weights[:, 2]+weights[:, 3]
+        def derivative(quads):
+            return np.stack(((1-v)[:, None]*(quads[:, 1]-quads[:, 0])
+                             +v[:, None]*(quads[:, 2]-quads[:, 3]),
+                             (1-u)[:, None]*(quads[:, 3]-quads[:, 0])
+                             +u[:, None]*(quads[:, 2]-quads[:, 1])), axis=2)
+        jacobian = derivative(self.vertices[quad_ids]) @ np.linalg.inv(derivative(self.xy[quad_ids]))
+        return out, jacobian, margin <= 1e-7
