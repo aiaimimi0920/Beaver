@@ -3,6 +3,7 @@ on:
   pull_request:
     paths:
       - "examples/head-generation/**"
+      - "tools/shared_facial_rails/**"
       - "resources/packages/npr-characters/addons/npr_character_frame/.ci_script/tools/sdf360/**"
       - "examples/head-review/**"
       - ".github/workflows/head-generation-example.yml"
@@ -20,6 +21,7 @@ on:
       ]
     paths:
       - "examples/head-generation/**"
+      - "tools/shared_facial_rails/**"
       - "examples/head-review/**"
       - "resources/packages/npr-characters/addons/npr_character_frame/.ci_script/tools/sdf360/**"
       - ".github/workflows/head-generation-example.yml"
@@ -39,6 +41,7 @@ jobs:
           python-version: "3.11"
       - run: python -m pip install numpy==2.3.5 scipy==1.17.0 Pillow==12.3.0
       - run: python -m compileall -q examples/head-generation
+      - run: PYTHONPATH=tools python -m unittest discover -s tools/shared_facial_rails/tests -t tools -v
       - run: python -m unittest discover -s examples/head-generation -p 'test_*.py'
       - run: python examples/head-generation/bundle.py --output /tmp/head-recipe.json
       - run: python -m unittest discover -s examples/head-generation/checkpoints/current -p 'test_*.py'
