@@ -1,5 +1,6 @@
 import copy
 import unittest
+from unittest.mock import patch
 
 import numpy as np
 
@@ -151,10 +152,40 @@ class GeneralizedTransportTests(unittest.TestCase):
             generalized_fixed_triangle_poses(self.xyz, [mixed], self.triangles)
 
     def test_source_transport_overflow_rejected(self):
+        # Exercise the derived-result guard deterministically, not by assuming
+        # that a particular BLAS reduction over finite donors must overflow.
+        for nonfinite in (np.inf, -np.inf, np.nan):
+            with self.subTest(nonfinite=nonfinite), patch(
+                    'source_generalized_transport.np.tensordot',
+                    return_value=np.array([0., nonfinite, 1.])) as arithmetic:
+                with self.assertRaisesRegex(ValueError, '^Nonfinite derived source transport$'):
+                    generalized_source_values(self.rows, self.xyz)
+                arithmetic.assert_called_once()
+
+    def test_source_transport_near_limit_is_portable(self):
         rows = [[i, [i + 1, 10]] for i in range(4)]
         values = np.full(4, np.finfo(float).max)
-        with self.assertRaises(ValueError):
-            generalized_source_values(rows, values)
+        # Exact rational weights give finite DBL_MAX. Rounded products/reduction
+        # may instead overflow on some BLAS/CPUs. Observe this SAME arithmetic
+        # call, rather than assuming either result or broad-catching any error.
+        real_tensordot, derived = np.tensordot, []
+
+        def capture(*args, **kwargs):
+            result = real_tensordot(*args, **kwargs)
+            derived.append(result)
+            return result
+
+        with patch('source_generalized_transport.np.tensordot', side_effect=capture):
+            try:
+                result = generalized_source_values(rows, values)
+            except ValueError as error:
+                self.assertEqual(str(error), 'Nonfinite derived source transport')
+                self.assertEqual(len(derived), 1)
+                self.assertFalse(np.isfinite(derived[0]).all())
+            else:
+                self.assertEqual(len(derived), 1)
+                self.assertTrue(np.isfinite(derived[0]).all())
+                np.testing.assert_array_equal(result, derived[0])
 
     def test_sparse_json_key_coercion_rejected(self):
         for key in (1, True, ''):
