@@ -102,3 +102,50 @@ are now rejected.
 
 These utilities preserve a reusable development step. They do not change default
 face generation or substitute synthetic tests for end-to-end model validation.
+
+## Optional all-edge numerical constraints
+
+`shared_facial_rails.envelope_constraints` is an explicitly imported, **optional
+NumPy** module. The package base and its existing tests remain standard-library
+only. No production generator imports or activates these constraints. Existing
+numerical development environments can run:
+
+```sh
+PYTHONPATH=tools python3 -m unittest discover \
+  -s tools/shared_facial_rails/numerical_tests -v
+```
+
+`edge_length_envelope_linearization(saved, exact, world_J, edges, ratio_cap,
+relative_cap)` takes `(vertices, 3)` saved/exact positions and a
+`(vertices, 3, parameters)` world Jacobian. It returns signed slack, exact slack,
+full Jacobian, row labels, first-order activity, rounding delta, reserve and
+`rhs`. Use `A = -result["jacobian"]`, `b = result["rhs"]` for `A @ step <= b`.
+Every ordered distinct edge pair is retained: all ratio rows together are
+exactly equivalent to the max/min cap on positive lengths. Both relative rows
+for every edge use the derivative of the **full-group mean**, not a fixed mean.
+This prevents hiding a new minimum/maximum behind the old active branch.
+Cost is quadratic in edge count; callers must supply the entire real domain,
+not favorable partitions or duplicates that alter the mean.
+
+Saved geometry supplies the slack intercept; continuous exact geometry supplies
+the derivative. Active rows use the explicit rounding heuristic
+`max(8 * abs(saved_slack - exact_slack) + 1e-10, reserve_floor)`, with default
+floor `1e-7`. This is not a certified numerical error bound. Selected columns
+only control reserve/activity; they never remove rows or Jacobian columns.
+Negative inactive slack remains negative. First-order inactivity is **not
+structural invariance**: a stationary constraint can fail at second order.
+Real integer/float arrays only (not complex, object, string or Boolean) are
+accepted for positions/Jacobians. Finite inputs and derived values, valid
+indices/shapes, positive edge lengths
+and finite nonnegative settings are required (ratio cap at least one).
+Overflow/invalid arithmetic and zero computed lengths are rejected; these
+checks do not certify freedom from derivative underflow or rounding error.
+
+These are local linear constraints, not an optimizer or admission policy.
+Callers must retain their frozen source limits, intersect additional step/global
+limits when applicable, and independently re-evaluate nonlinear saved geometry,
+all deformation/quality constraints and complete model acceptance. The original
+1 mm pose limits, 0.5 mm field limits and quality requirements are unchanged.
+Synthetic tests cover branch switching, the full mean derivative, all-envelope
+equivalence, permutation invariance, stationary false admission and fail-closed
+invalid/overflow cases; they do not certify a character model.
