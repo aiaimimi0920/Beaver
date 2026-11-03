@@ -7,7 +7,8 @@ from construction_topology import digest
 
 POLICY = "CONSTRUCTION_IDENTITY_CAPTURE_V1"
 RUNTIME_MODULES = ("construction_topology", "construction_roles", "construction_boundaries", "construction_journal", "construction_mirror_contract",
-                   "construction_markers", "construction_native")
+                   "construction_markers", "construction_native", "construction_weld_contract",
+                   "construction_bmesh_state", "construction_weld_edges", "construction_weld_native")
 SOURCE_MODULES = (*RUNTIME_MODULES, "construction_instrument", "construction_adapter")
 
 
@@ -44,32 +45,23 @@ def adapt_optional(sources, policy):
     pipeline = replace(pipeline, before, '        from construction_native import apply_modifiers\n        apply_modifiers(o)')
     pipeline = replace(pipeline, '    bpy.ops.object.join()',
                        '    from construction_native import join_objects\n    _construction_joined = join_objects(members)')
-    pipeline = replace(pipeline, '        bm = bmesh.new()',
-                       '        from construction_native import invalidate_before_surgery\n'
-                       '        invalidate_before_surgery(_construction_joined, "weld_and_dissolve")\n        bm = bmesh.new()') if pipeline.count('        bm = bmesh.new()') == 1 else insert_before_first_bmesh(pipeline)
+    weld = ('        bm = bmesh.new()\n'
+            '        bm.from_mesh(members[0].data)\n'
+            '        bmesh.ops.remove_doubles(bm, verts=list(bm.verts), dist=0.000001)\n'
+            '        bmesh.ops.dissolve_degenerate(bm, edges=list(bm.edges), dist=0.0000001)\n'
+            '        bm.to_mesh(members[0].data)\n'
+            '        bm.free()')
+    pipeline = replace(pipeline, weld,
+        '        from construction_weld_native import capture_weld\n'
+        '        capture_weld(members[0], _construction_joined)\n'
+        '        from construction_native import invalidate_before_surgery\n'
+        '        invalidate_before_surgery(_construction_joined, "post_weld_field_restoration_and_surgery")')
     out["pipeline.py"] = pipeline
     out["construction_binding.json"] = __import__("json").dumps({"recipe": recipe, "source_inventory": inventory, "capture_inventory": capture_inventory})
     for name, source in out.items():
         if name.endswith(".py"):
             ast.parse(source, filename=name)
     return out
-
-
-def insert_before_first_bmesh(pipeline):
-    tree = ast.parse(pipeline)
-    candidates = [node for node in ast.walk(tree) if isinstance(node, ast.Assign)
-                  and isinstance(node.value, ast.Call) and isinstance(node.value.func, ast.Attribute)
-                  and isinstance(node.value.func.value, ast.Name)
-                  and (node.value.func.value.id, node.value.func.attr) == ("bmesh", "new")]
-    if not candidates:
-        raise ValueError("Missing first native surgery boundary")
-    node = min(candidates, key=lambda item: item.lineno)
-    if node.col_offset != 8:
-        raise ValueError("Changed first native surgery scope")
-    lines = pipeline.splitlines(keepends=True)
-    lines[node.lineno - 1:node.lineno - 1] = ['        from construction_native import invalidate_before_surgery\n',
-        '        invalidate_before_surgery(_construction_joined, "weld_and_dissolve")\n']
-    return "".join(lines)
 
 
 def retain_sources(retained, policy, resolved_sources):

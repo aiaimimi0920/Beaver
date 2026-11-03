@@ -37,7 +37,7 @@ class PackagingTests(unittest.TestCase):
                 self.assertNotIn("bind_forehead_paths", shell[:shell.index("def feature_flow_surface_point")])
                 pipeline = sources["pipeline_runtime.py"]
                 self.assertLess(pipeline.index("join_objects(members)"), pipeline.index("invalidate_before_surgery("))
-                self.assertLess(pipeline.index("invalidate_before_surgery("), pipeline.index("bmesh.ops.remove_doubles("))
+                self.assertLess(pipeline.index("capture_weld(members[0],"), pipeline.index("invalidate_before_surgery("))
                 self.assertIn("finish_source_capture(members[0]", pipeline)
                 for name, source in sources.items():
                     compile(source, name, "exec")

@@ -82,12 +82,36 @@ Join part `face_origins` and `corner_origins` are integer-native-index maps.
 JSON readers must restore those schema-defined keys to exact integers before
 recomputing the canonical source/join hashes; string-key ordering is not equivalent.
 
-**Before the existing weld/dissolve step, current-role admission is explicitly
-invalidated.** Subsequent posterior-return, ear, nasal, chin and forehead surgery
+The opt-in weld boundary observes native `find_doubles` with the same ordered
+vertex inputs as the retained original `remove_doubles` call. It requires pinned
+Blender 4.3.2, exact surviving vertex objects and target coordinates, original
+face-object donors, and a complete mapped oriented point/edge/face/corner
+quotient. Duplicate face classes retain all candidates and the observed donor;
+nonadjacent splits, missing incidence and ambiguous identity fail closed.
+Edge custom-data donors are recorded separately from merged flag contributors.
+No nearest-coordinate binding or surviving marker alone establishes lineage.
+
+The EDGE marker is attached on Mesh before BMesh import and removed on Mesh
+after export, with exact non-marker field checks. No BMesh CustomData layer is
+allocated or removed inside the direct-object proof interval: such allocation
+invalidates native Python pointers. Selection history uses the actual sequence's
+indexed access, preserving order without relying on its non-reiterable iterator.
+
+The original `dissolve_degenerate` call and distance remain unchanged. Full
+identity/connectivity and every Python-exposed layer, geometry value, flag and
+editor state must remain exact, except for an explicit identity-bound receipt
+for the pinned operator's scratch `CORNER.tag` transition. Every existing loop
+must end with tag `True`; all original and observed values are retained. This
+is not a general flag ignore, model-field waiver, or admission of unexposed
+CustomData. Any other change fails closed, including actual degenerate surgery.
+
+**After this bounded weld/dissolve receipt, current-role admission is explicitly
+invalidated before field restoration and subsequent surgery.** Posterior-return,
+ear, nasal, chin and forehead surgery
 currently lack complete constructor replacement/merge receipts. Earlier native
 indices remain historical evidence only. `require_current_roles` always rejects;
-no consumer is permitted to treat the pre-weld map as the current saved mesh.
-Capture-only generation can continue through the unchanged existing pipeline,
+no consumer is permitted to treat the historical constructor map as the current saved mesh.
+Capture-only generation can continue only if its explicit native proofs pass,
 but cannot acquire solver authority by doing so.
 
 ## Packaging and independent boundaries
@@ -135,7 +159,15 @@ guards used the original resolved source and native mathutils. Only the separate
 oral-object creation side effect was intercepted equally, with its detached input
 recorded; the actual shell mesh helper was retained and executed unchanged.
 
-That fixture stops before unreceipted weld/dissolve. Its role admission remains
-false, and it does not connect constructor identities to the later six-key source
+A separate isolated native weld fixture verified those two saved constructor
+results against the exact original native operators and saved/reopened fields.
+Both retained 929 points/849 faces with no weld targets; they do not alone prove
+merging behavior. Native synthetic controls separately verified an external
+point merge, adjacent-corner collapse and duplicate-face coalescence, with INT,
+UV/pins, color, deform weights and editor flags. Nonadjacent splitting and actual
+degenerate dissolve were rejected without changing their source Mesh. All
+exposed data outside the explicit corner scratch-tag receipt remained equal.
+
+Role admission remains false, and it does not connect constructor identities to the later six-key source
 capture or certify anatomy support/source owners. No full generated-face, pose,
 GLB, engine or visual acceptance is claimed here.
