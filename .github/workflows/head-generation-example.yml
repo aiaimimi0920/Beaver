@@ -43,6 +43,21 @@ jobs:
       - run: python -m compileall -q examples/head-generation
       - run: PYTHONPATH=tools python -m unittest discover -s tools/shared_facial_rails/tests -t tools -v
       - run: PYTHONPATH=tools python -m unittest discover -s tools/shared_facial_rails/numerical_tests -v
+      - name: Test shared source capture contracts (CPU only)
+        env:
+          PYTHONPATH: examples/head-generation/shared_source_capture
+        run: |
+          python - <<'PY'
+          import unittest
+          suite = unittest.defaultTestLoader.discover(
+              "examples/head-generation/shared_source_capture/tests",
+              pattern="test_*.py",
+          )
+          if suite.countTestCases() < 33:
+              raise RuntimeError("Expected at least 33 shared-source-capture tests")
+          result = unittest.TextTestRunner(verbosity=2).run(suite)
+          raise SystemExit(0 if result.wasSuccessful() else 1)
+          PY
       - run: python -m unittest discover -s examples/head-generation -p 'test_*.py'
       - run: python examples/head-generation/bundle.py --output /tmp/head-recipe.json
       - run: python -m unittest discover -s examples/head-generation/checkpoints/current -p 'test_*.py'
