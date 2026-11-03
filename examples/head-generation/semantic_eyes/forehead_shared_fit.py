@@ -1,3 +1,4 @@
+from forehead_cache_fit import forehead_install_jacobian_cache
 """Quality and posed-field fitting of quad supports and lower guide continuations."""
 from forehead_complete_guide_fit import (forehead_install_complete_stage, forehead_complete_objective,
     forehead_complete_charge, forehead_complete_saved_accepts, forehead_complete_fit_capture, forehead_complete_fit_publish, forehead_complete_counted_batch, forehead_complete_base_derivative, forehead_complete_counted_derivative)
@@ -283,7 +284,8 @@ def fit_forehead_shared_constraints(vertices, old_open_delta, proposal, focus=Fa
 
     constraint_jacobian, scaling_metadata = forehead_prepare_hybrid_scaling(
         constraint_jacobian, start, scales)
-    constraint_jacobian = forehead_complete_counted_derivative(complete_stage, constraint_jacobian)
+    constraint_jacobian, complete_cache_metadata = forehead_install_jacobian_cache(
+        complete_stage, constraint_jacobian, locals(), globals())
     remember_feasible(start)
     gradient_metadata = {}
     linearized_metadata = {}
@@ -511,4 +513,6 @@ def fit_forehead_shared_constraints(vertices, old_open_delta, proposal, focus=Fa
         except ValueError as error:
             proposal['metrics']['next_stage_hint_unavailable'] = str(error)
     forehead_complete_fit_publish(proposal, complete_result, complete_stage)
+    if complete_cache_metadata is not None:
+        proposal['metrics']['complete_jacobian_cache'] = complete_cache_metadata
     return proposal
