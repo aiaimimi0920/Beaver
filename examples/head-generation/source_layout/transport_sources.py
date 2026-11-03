@@ -116,4 +116,9 @@ def share_overflowing_native_sources(request):
                 return candidate
             except ValueError:
                 if minimum == 512:
-                    raise
+                    from .lossless_transport import encode_sources
+                    try:
+                        return encode_sources(request, validate_native_frame)[0]
+                    except ValueError:
+                        validate_native_frame(candidate)
+                        raise
