@@ -3,6 +3,7 @@ import copy as forehead_guard_copy
 import hashlib as forehead_guard_hashlib
 import json as forehead_guard_json
 import numpy as np
+from forehead_complete_guide_stage import forehead_complete_guide_guard_retains
 from forehead_fairing_stage import ForeheadFairingStage
 from forehead_role_fairing import ForeheadRoleFairingStage
 from orbital_support_rule import orbital_turns
@@ -117,6 +118,7 @@ def forehead_migrate_support_fairing_guard(before, after):
 
 def forehead_fairing_guard_retains(before, after):
     """Independent continuation admission; no scheduling/target policy change."""
+    forehead_complete_guide_guard_retains(before, after)
     if 'whole_guide_fairing_guard' not in before:
         if 'whole_guide_fairing_reference' in before:
             raise ValueError('Missing explicit legacy fairing guard capture')

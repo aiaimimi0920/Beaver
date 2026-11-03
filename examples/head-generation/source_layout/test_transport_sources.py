@@ -9,10 +9,42 @@ import unittest
 
 HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE.parent))
-from source_layout.transport_sources import share_source_literals, validate_native_frame
+from source_layout.transport_sources import share_source_literals, validate_native_frame, share_overflowing_native_sources
 
 
 class TransportSourcesTests(unittest.TestCase):
+    def test_overflow_fallback_preserves_valid_default_request(self):
+        request = {'code': 'answer = 4', 'outputs': [], 'timeoutSeconds': 120}
+        self.assertIs(share_overflowing_native_sources(request), request)
+        self.assertEqual(request['code'], 'answer = 4')
+
+    def test_overflow_fallback_shares_exact_short_source(self):
+        source = '# retained\n' * 140 + 'answer = 42\n'
+        code = ('from pathlib import Path\nexec(compile(' + repr(source) + ', "source.py", "exec"))\n'
+                + 'Path(output).write_text(' + repr(source) + ', encoding="utf-8")\n')
+        request = {'code': code, 'outputs': [], 'timeoutSeconds': 120}
+        size = validate_native_frame(request)
+        request['code'] += '#' + 'x' * (1024*1024-size+500)
+        original = request['code']
+        with self.assertRaises(ValueError):
+            validate_native_frame(request)
+        candidate = share_overflowing_native_sources(request)
+        self.assertEqual(request['code'], original)
+        self.assertLessEqual(validate_native_frame(candidate), 1024*1024)
+        with tempfile.TemporaryDirectory() as directory:
+            output = Path(directory)/'source.py'
+            scope = {'output': str(output)}
+            exec(candidate['code'], scope)
+            self.assertEqual(scope['answer'], 42)
+            self.assertEqual(output.read_bytes(), source.encode())
+
+    def test_unrepairable_overflow_still_rejects_and_preserves_input(self):
+        request = {'code': '#'+'x'*(1024*1024), 'outputs': [], 'timeoutSeconds': 120}
+        original = dict(request)
+        with self.assertRaisesRegex(ValueError, 'serialized request frame'):
+            share_overflowing_native_sources(request)
+        self.assertEqual(request, original)
+
     def test_exact_source_execution_and_written_bytes_with_unicode_offsets(self):
         source = '# 原始源码\n' + '# retained source\n' * 400 + 'answer = 42\n'
         code = ('from __future__ import annotations\nfrom pathlib import Path\n'

@@ -9,7 +9,7 @@ def continue_forehead_fairing(vertices, old_open_delta, proposal, author_context
                               max_stages=1, reduction=.001, max_iterations=80,
                               role_weights=None, turn_reduction_degrees=0., turn_goals=None,
                               seam_active_set_growth=False, checkpoint=None,
-                              diagnostic=None, fitter=None, guard_mode=None):
+                              diagnostic=None, fitter=None, guard_mode=None, complete_guide_fairing=None):
     if type(max_stages) is not int or not 1 <= max_stages <= 20:
         raise ValueError('Invalid bounded fairing stage count')
     solve = fit_forehead_shared_constraints if fitter is None else fitter
@@ -63,7 +63,7 @@ def continue_forehead_fairing(vertices, old_open_delta, proposal, author_context
                     fairing_role_weights=role_weights,
                     fairing_turn_reduction=turn_reduction_degrees*fraction,
                     fairing_turn_goals=turn_goals, fairing_turn_roles=selected, diagnostic=trial_diagnostic,
-                    fairing_guard_mode=guard_mode)
+                    fairing_guard_mode=guard_mode, complete_guide_fairing=complete_guide_fairing)
             except ValueError as error:
                 result['attempts'].append(dict(attempt, admitted=False, reason=str(error)))
                 continue

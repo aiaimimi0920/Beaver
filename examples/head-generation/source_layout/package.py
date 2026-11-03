@@ -9,7 +9,7 @@ from .layout import digest, pipeline_layout, parameter_layout, reconstructed
 from .surface_layout import surface_layout
 from .module_layout import module_layout
 from .evidence import HELPERS, native_job, resource, validate_layout_set
-from .transport_sources import share_source_literals, validate_native_frame
+from .transport_sources import share_source_literals, validate_native_frame, share_overflowing_native_sources
 from .source_seed import seed_retained_bundle
 from .text_outputs import canonical_text_outputs
 import re
@@ -134,7 +134,7 @@ def modular_plan(request, prefix, *, source_seed=False):
         or len(request["code"].encode("utf-8")) > 1024 * 1024
     ):
         raise ValueError("Native generation request limit exceeded")
-    validate_native_frame(request)
+    request = share_overflowing_native_sources(request)
     result = {
         "generation": request,
         "source_packaging": {

@@ -101,7 +101,7 @@ def forehead_consumer_binding(raw_source, author, native_capture, pose_context):
 def forehead_consumer_options(options):
     allowed = {'mode','resume','flow_steps','fairing_stages','gap_steps','max_iterations',
                'initialization_options','seam_active_set_growth','seam_wall_seconds','seam_initial_held_seconds',
-               'paired_diagonal_guidance'}
+               'paired_diagonal_guidance', 'complete_guide_fairing'}
     if not isinstance(options, dict) or set(options)-allowed:
         raise ValueError('Unknown shared consumer option')
     result = forehead_consumer_copy.deepcopy(options)
@@ -118,6 +118,9 @@ def forehead_consumer_options(options):
         raise ValueError('Invalid paired diagonal guidance option')
     forehead_validate_seam_budget(result.setdefault('seam_wall_seconds',120.),
         result.setdefault('seam_initial_held_seconds',None),result['seam_active_set_growth'])
+    if result.get('complete_guide_fairing') is not None:
+        if not result['fairing_stages'] or not isinstance(result['complete_guide_fairing'], dict):
+            raise ValueError('Complete-guide config requires a bounded fairing stage')
     if result['mode']=='fresh' and 'resume' in result:
         raise ValueError('Fresh initialization cannot consume a saved proposal')
     if result['mode']=='resume' and 'initialization_options' in result:
@@ -242,6 +245,7 @@ def prepare_forehead_shared_consumer(raw_source, author, native_capture, pose_co
         kwargs=dict(max_iterations=opts['max_iterations'],checkpoint=stage_checkpoint,fitter=solve,
                     seam_active_set_growth=opts['seam_active_set_growth'])
         if stage=='fairing':
+            kwargs['complete_guide_fairing'] = opts.get('complete_guide_fairing')
             result=continue_forehead_fairing(a['vertices'],a['open_delta'],current,a,max_stages=count,**kwargs)
         elif stage=='flow':result=continue_forehead_flows(a,current,max_steps=count,**kwargs)
         else:result=continue_forehead_gaps(a,current,max_steps=count,**kwargs)

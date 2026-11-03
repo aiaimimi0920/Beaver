@@ -1,4 +1,7 @@
 """Quality and posed-field fitting of quad supports and lower guide continuations."""
+from forehead_complete_guide_fit import (forehead_install_complete_stage, forehead_complete_objective,
+    forehead_complete_charge, forehead_complete_saved_accepts, forehead_complete_fit_capture, forehead_complete_fit_publish)
+from forehead_fit_sparsity import forehead_fit_constraint_sparsity
 from forehead_fit_density import forehead_constraint_layout, forehead_quantized_quality_pass
 from forehead_role_fairing import ForeheadRoleFairingStage
 from forehead_paired_stage import forehead_install_paired_stage, forehead_require_paired_input
@@ -31,7 +34,9 @@ from forehead_lp_restore import forehead_restore_linearized, forehead_quantizati
 from forehead_anchor_domain import ForeheadAnchorDomain
 from forehead_aspect_constraints import forehead_aspect_reference, forehead_pairwise_aspect
 
-def fit_forehead_shared_constraints(vertices, old_open_delta, proposal, focus=False, restore=False, max_iterations=200, diagnostic=None, active_guides=None, physical_stage=False, progress_names=None, progress_scale=1.0, author_context=None, active_gap_pair=None, gap_reduction=0.025, gap_sample_count=129, objective_mode='restore', minimum_improvement=0., solver_mode='trust', seam_active_set_growth=False, fairing_reduction=None, fairing_role_weights=None, fairing_turn_reduction=0., fairing_turn_goals=None, fairing_turn_roles=None, fairing_guard_mode=None, seam_wall_seconds=120., seam_initial_held_seconds=None, paired_diagonal_guidance=False):
+def fit_forehead_shared_constraints(vertices, old_open_delta, proposal, focus=False, restore=False, max_iterations=200, diagnostic=None, active_guides=None, physical_stage=False, progress_names=None, progress_scale=1.0, author_context=None, active_gap_pair=None, gap_reduction=0.025, gap_sample_count=129, objective_mode='restore', minimum_improvement=0., solver_mode='trust', seam_active_set_growth=False, fairing_reduction=None, fairing_role_weights=None, fairing_turn_reduction=0., fairing_turn_goals=None, fairing_turn_roles=None, fairing_guard_mode=None, seam_wall_seconds=120., seam_initial_held_seconds=None, paired_diagonal_guidance=False, complete_guide_fairing=None):
+    if complete_guide_fairing is not None and (objective_mode != 'fairing' or not physical_stage):
+        raise ValueError('Complete-guide stage requires existing physical/fairing gates')
     forehead_validate_seam_budget(seam_wall_seconds, seam_initial_held_seconds, seam_active_set_growth)
     if fairing_reduction is not None and (objective_mode != 'fairing' or minimum_improvement):
         raise ValueError('Fairing stage requires fairing objective and its own reduction target')
@@ -117,6 +122,8 @@ def fit_forehead_shared_constraints(vertices, old_open_delta, proposal, focus=Fa
         offset = layout['count']
         layout['whole_guide_fairing'] = (offset, offset + fairing_stage.count)
         layout['count'] += fairing_stage.count
+    complete_stage = forehead_install_complete_stage(proposal, initial,
+        (old, old_delta, source_chart, donors, frozen_delta), layout, complete_guide_fairing)
     paired_export, paired_stage = forehead_install_paired_stage(proposal, author_context, ids, layout, paired_diagonal_guidance)
     anchor_domain = ForeheadAnchorDomain(gap_stage.fast, author_parameters(start), ids)
     offset = layout['count']
@@ -132,6 +139,7 @@ def fit_forehead_shared_constraints(vertices, old_open_delta, proposal, focus=Fa
     iterations = [0]
 
     def evaluate(values):
+        forehead_complete_charge(complete_stage, 'source_evaluate_including_cached_and_FD')
         key = values.tobytes()
         if key in cache:
             return cache[key]
@@ -163,7 +171,8 @@ def fit_forehead_shared_constraints(vertices, old_open_delta, proposal, focus=Fa
         aspect = forehead_pairwise_aspect(points, quads, 6.998, aspect_reference)
         result = np.r_[(a - 25.003).ravel(), (149.997 - a).ravel(), aspect, (cross * signs * 1000000.0).ravel(), 0.499 - np.linalg.norm(delta - frozen_delta[ids], axis=1) * 1000, 19.99 - orbital_turns(points, lower_triples)]
         extra = [] if fairing_stage is None else fairing_stage.constraints(points)
-        return np.r_[result, flow_stage.constraints(points), extra, paired_stage.constraints(points, delta), anchor_domain.values(values)]
+        complete = [] if complete_stage is None else complete_stage.constraints(points)
+        return np.r_[result, flow_stage.constraints(points), extra, complete, paired_stage.constraints(points, delta), anchor_domain.values(values)]
 
     def constraints(values):
         base = base_constraints(values)
@@ -184,6 +193,8 @@ def fit_forehead_shared_constraints(vertices, old_open_delta, proposal, focus=Fa
     if fairing_stage and fairing_reduction is not None:
         objective = lambda values: fairing_stage.energy_gradient(evaluate(values)[0])[0]
         objective_derivative = lambda values: fairing_stage.energy_parameter_gradient(values, evaluate, batch, ids)
+    objective, objective_derivative = forehead_complete_objective(complete_stage, complete_guide_fairing,
+        objective, objective_derivative, evaluate, start)
     initial_objective = objective(start)
 
     def guarded_lower_peak(points):
@@ -219,45 +230,15 @@ def fit_forehead_shared_constraints(vertices, old_open_delta, proposal, focus=Fa
                 feasible = gap_stage.accepts(quantized, author_parameters(values))
             if feasible and fairing_stage:
                 feasible = fairing_stage.accepts(quantized)
+            feasible = feasible and forehead_complete_saved_accepts(complete_stage, quantized)
             if feasible:
                 best.update(values=values.copy(), cost=float(cost), iteration=iterations[0])
         return bool(forehead_current_checkpoint(best, values) and (not minimum_improvement or best['cost'] <=
                     (1-minimum_improvement)*initial_objective)
                     and np.all(constraints(best['values']) >= -1e-09))
-    from scipy.sparse import lil_matrix
     nc = layout['count']
-    sparse = lil_matrix((nc + len(start), len(start)), dtype=int)
-    index = {i: j for j, i in enumerate(ids)}
-
-    def mark(rows, nodes):
-        columns = [2 * index[i] + d for i in nodes if i in index for d in (0, 1)]
-        for row in rows:
-            sparse[row, columns] = 1
-    Q = len(quads)
-    for k, quad in enumerate(quads):
-        rows = list(range(layout['aspect'][0] + 12*k, layout['aspect'][0] + 12*k + 12))
-        for name in ('angle_lower', 'angle_upper', 'orientation'):
-            rows.extend(range(layout[name][0] + 4 * k, layout[name][0] + 4 * k + 4))
-        mark(rows, quad)
-    for k, i in enumerate(ids):
-        mark([layout['field'][0] + k], [i])
-    for k, triple in enumerate(lower_triples):
-        mark([layout['lower_turn'][0] + k], triple)
-    if flow_stage:
-        for a, b, nodes in flow_stage.groups:
-            mark(range(layout['physical_flow'][0] + a, layout['physical_flow'][0] + b), nodes)
-    if fairing_stage:
-        for k, triple in enumerate(fairing_stage.triples):
-            mark([layout['whole_guide_fairing'][0]+k], triple)
-        # Dense energy row is replaced analytically, not finite-difference colored.
-    for a, b, nodes in paired_stage.groups:
-        mark(range(layout['paired_diagonal'][0]+a, layout['paired_diagonal'][0]+b), nodes)
-    for row, (_, _, first, last) in enumerate(anchor_domain.specs):
-        mark([layout['anchor_domain'][0] + row], [first, last])
-    for a, b, nodes in gap_stage.groups:
-        mark(range(layout['matched_gap'][0] + a, layout['matched_gap'][0] + b), nodes)
-    for k in range(len(start)):
-        sparse[nc + k, k] = 1
+    sparse = forehead_fit_constraint_sparsity(layout, len(start), ids, quads, lower_triples,
+        flow_stage, fairing_stage, complete_stage, paired_stage, anchor_domain, gap_stage)
     scales = np.ones(nc, dtype=float)
     scaled_constraints = lambda values: constraints(values) / scales
     constraint_jacobian, hybrid_metadata = forehead_make_hybrid_gap_jacobian(base_constraints, evaluate, author_parameters, batch, ids, gap_stage, layout['matched_gap'][0], scales, sparse[:nc, :].tocsr())
@@ -265,6 +246,7 @@ def fit_forehead_shared_constraints(vertices, old_open_delta, proposal, focus=Fa
     field_jacobian_stats = {'exact_primal_checks': 0, 'boundary_fallback_rows': 0}
 
     def constraint_jacobian(values):
+        forehead_complete_charge(complete_stage, 'constraint_derivative')
         result = hybrid_derivative(values).tolil()
         first, last = layout['anchor_domain']
         from scipy.sparse import diags
@@ -467,6 +449,7 @@ def fit_forehead_shared_constraints(vertices, old_open_delta, proposal, focus=Fa
         if not fairing_stage.accepts(points):
             raise ValueError('Final scalar geometry fails whole-guide energy/raw-turn stage')
         proposal['whole_guide_fairing_reference'] = fairing_stage.reference
+    complete_result = forehead_complete_fit_capture(complete_stage, proposal, points)
     final_lower_guard = forehead_update_lower_guard(proposal, points, lower_guard)
     proposal['lower_turn_guard'] = final_lower_guard
     proposal.update(vertices=points, open_delta=new_delta, metrics={'solver_phase': 'feasibility' if restore else 'spacing', 'solver_iteration_budget': max_iterations, 'uniform_station_stage': stage_metadata, 'objective_gradient': gradient_metadata, 'objective_before': float(objective(start)), 'objective_after': float(best['cost']), 'quality_after': [float(angles.min()), float(angles.max()), float(ratios.max())], 'peak_turn_after': [float(max(t)) for t in turns], 'support_solver_converged': bool(solved.success), 'support_solver_status': str(solved.message), 'selected_feasible_iteration': best['iteration'], 'quantized_quality_pass': True, 'posed_field_change_limit_mm': 0.5, 'lower_turn_limit_degrees': 20.0, 'lower_peak_turn_after': guarded_lower_peak(points), 'dense_shape_and_native_fields_required_separately': True})
@@ -519,4 +502,5 @@ def fit_forehead_shared_constraints(vertices, old_open_delta, proposal, focus=Fa
                 points, initial, source_identity)
         except ValueError as error:
             proposal['metrics']['next_stage_hint_unavailable'] = str(error)
+    forehead_complete_fit_publish(proposal, complete_result, complete_stage)
     return proposal
