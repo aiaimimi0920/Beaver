@@ -114,6 +114,34 @@ no consumer is permitted to treat the historical constructor map as the current 
 Capture-only generation can continue only if its explicit native proofs pass,
 but cannot acquire solver authority by doing so.
 
+## Bounded oral donor verification
+
+The optional path captures the actual ordered mouth half-ring handoff to the
+real oral constructor. Every oral ring allocation is recorded; first-ring
+stations retain explicit original/reflected skin parents and single seam
+endpoints. Compaction, Mirror, actual join permutations and native weld groups
+must compose exactly. Missing partners, extra contributors, duplicate owners or
+any undeclared merge fail closed. Generic joined point indices or coordinate
+matches cannot substitute for this producer relation.
+
+Pre-join skin POINT fields, named group weights and shared-boundary crease fields
+are frozen independently. The existing donor-restoration function still runs
+unchanged, but its result must equal a complete identity-derived expected native
+state. Only declared shared targets may receive those fields. Geometry, topology,
+UV/corner data, oral-only values, unrelated attributes and editor state remain
+exact. The legacy spatial lookup is not the acceptance authority and this is not
+yet a replacement spatial-free writer. Original allocation, join and weld
+receipt consistency is checked before transfer.
+
+This bounded slice rejects other welds until independently receipted. Ear
+membership, early geometry fairing, posterior return and later nasal/chin stages
+remain unadmitted. The isolated compact and straight oral fixtures have each
+verified 30 actual native skin/oral weld pairs, 30 identity-bound field donors
+and 30 shared crease edges under Blender 4.3.2. Untouched and captured paths
+matched across whole exposed native fields, including saved/reopened artifacts.
+These nonzero-merge fixtures complement the earlier disjoint controls; they do
+not establish complete generator, pose, GLB or visual acceptance.
+
 ## Packaging and independent boundaries
 
 Runtime sources reuse the existing hash-verified source seed and retained

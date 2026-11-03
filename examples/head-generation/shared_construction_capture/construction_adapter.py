@@ -8,8 +8,9 @@ from construction_topology import digest
 POLICY = "CONSTRUCTION_IDENTITY_CAPTURE_V1"
 RUNTIME_MODULES = ("construction_topology", "construction_roles", "construction_boundaries", "construction_journal", "construction_mirror_contract",
                    "construction_markers", "construction_native", "construction_weld_contract",
-                   "construction_bmesh_state", "construction_weld_edges", "construction_weld_native")
-SOURCE_MODULES = (*RUNTIME_MODULES, "construction_instrument", "construction_adapter")
+                   "construction_bmesh_state", "construction_weld_edges", "construction_weld_native",
+                   "construction_oral_contract", "construction_oral_fields", "construction_oral_native")
+SOURCE_MODULES = (*RUNTIME_MODULES, "construction_instrument", "construction_oral_adapter", "construction_adapter")
 
 
 def retained_sources():
@@ -35,7 +36,8 @@ def adapt_optional(sources, policy):
     capture_inventory = {name: hashlib.sha256(value.encode()).hexdigest() for name, value in retained_sources().items()}
     recipe = {"policy": POLICY, "capture_inventory_sha256": digest(capture_inventory), "source_inventory_sha256": digest(inventory), "source_file_count": len(inventory),
               "source_hash_encoding": "SHA256 of UTF8 source text, then canonical JSON inventory"}
-    out = instrument(sources, recipe)
+    from construction_oral_adapter import instrument_oral, donor_boundary
+    out = instrument_oral(instrument(sources, recipe))
     pipeline = out["pipeline.py"]
     before = ('        for m in list(o.modifiers):\n'
               '            if m.type == "SUBSURF" and m.levels == 0:\n'
@@ -44,7 +46,7 @@ def adapt_optional(sources, policy):
               '                bpy.ops.object.modifier_apply(modifier=m.name)')
     pipeline = replace(pipeline, before, '        from construction_native import apply_modifiers\n        apply_modifiers(o)')
     pipeline = replace(pipeline, '    bpy.ops.object.join()',
-                       '    from construction_native import join_objects\n    _construction_joined = join_objects(members)')
+                       '    from construction_oral_native import join_with_oral_capture\n    _construction_joined = join_with_oral_capture(members)')
     weld = ('        bm = bmesh.new()\n'
             '        bm.from_mesh(members[0].data)\n'
             '        bmesh.ops.remove_doubles(bm, verts=list(bm.verts), dist=0.000001)\n'
@@ -56,7 +58,7 @@ def adapt_optional(sources, policy):
         '        capture_weld(members[0], _construction_joined)\n'
         '        from construction_native import invalidate_before_surgery\n'
         '        invalidate_before_surgery(_construction_joined, "post_weld_field_restoration_and_surgery")')
-    out["pipeline.py"] = pipeline
+    out["pipeline.py"] = donor_boundary(pipeline)
     out["construction_binding.json"] = __import__("json").dumps({"recipe": recipe, "source_inventory": inventory, "capture_inventory": capture_inventory})
     for name, source in out.items():
         if name.endswith(".py"):
