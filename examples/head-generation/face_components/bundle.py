@@ -30,6 +30,7 @@ def build_raw_request(
     ear_overrides=None,
     sampling_overrides=None,
     shared_source_capture=None,
+    construction_identity_capture=None,
 ):
     if not re.fullmatch(r"assets/aster/general_face_eyes_combo[a-z0-9_]+/", prefix):
         raise ValueError("Use a fresh general_face_eyes_combo prefix")
@@ -60,6 +61,7 @@ def build_raw_request(
             face_design=snapshot.get("face_design"),
             ear_design=snapshot.get("ear_design"),
             shared_source_capture=shared_source_capture,
+            construction_identity_capture=construction_identity_capture,
         )
     finally:
         sys.path[:] = old_path

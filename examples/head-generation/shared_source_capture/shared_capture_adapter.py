@@ -141,3 +141,47 @@ def guard_capture_interval(pipeline):
     lines[begin.end_lineno:finish.end_lineno] = [indent + "try:\n", *interval,
         indent + "finally:\n", indent + "    clear_markers(members[0].data)\n"]
     return "".join(lines)
+
+
+def load_module(path, name):
+    """Host-only packager loading, preserving the caller's filesystem boundary."""
+    import importlib.util
+    spec = importlib.util.spec_from_file_location(name, path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
+def validate_support_bound(value):
+    import math
+    if isinstance(value, bool) or not isinstance(value, (int, float)) or not math.isfinite(value) or value <= 0:
+        raise ValueError("Supply the explicitly reviewed positive support bound in meters")
+
+
+def validate_output_count(request):
+    paths = [output["path"] for output in request["outputs"]]
+    if len(paths) > 64 or len(set(paths)) != len(paths):
+        raise ValueError("Native request requires at most 64 unique retained outputs")
+
+
+def bind_expected_outputs(request, root):
+    for entry in request["outputs"]:
+        path = root / entry["path"]
+        if path.exists():
+            if not path.is_file():
+                raise ValueError("Non-file output: " + entry["path"])
+            entry["expectedSha256"] = hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def optional_constructor(policy, parameters):
+    """Default requests never import or retain the opt-in constructor runtime."""
+    if policy is None:
+        return None
+    import sys
+    sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "shared_construction_capture"))
+    try:
+        import construction_adapter
+    finally:
+        sys.path.pop(0)
+    construction_adapter.validate_policy(policy, parameters)
+    return construction_adapter

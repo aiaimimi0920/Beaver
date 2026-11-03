@@ -2,7 +2,6 @@
 
 import argparse
 import hashlib
-import importlib.util
 import json
 from pathlib import Path
 import re
@@ -18,7 +17,7 @@ from source_brow_profiles import adapt_brow_profiles
 HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE.parent / "shared_source_capture"))
 try:
-    from shared_capture_adapter import validate_policy, adapt_optional, retain_capture, source_write, replace_once
+    from shared_capture_adapter import validate_policy, adapt_optional, retain_capture, source_write, replace_once, optional_constructor, load_module, bind_expected_outputs
 finally:
     sys.path.pop(0)
 sys.path.insert(0, str(HERE.parent / "brow_library"))
@@ -55,9 +54,11 @@ def build_request(
     brow_design=None,
     mouth_design=None,
     shared_source_capture=None,
+    construction_identity_capture=None,
 ):
     p = validate(parameters)
     validate_policy(shared_source_capture, p, blink, mouth_design)
+    construction_capture = optional_constructor(construction_identity_capture, p)
     brow_design = validate_brow_design(brow_design)
     if p["sampling_brow_divisions"] and brow_design is None:
         raise ValueError("Brow sampling requires a researched brow design")
@@ -88,11 +89,7 @@ def build_request(
     missing = [name for name in REQUIRED if not (root / name).is_file()]
     if missing:
         raise ValueError("Missing fresh recipe inputs: " + ", ".join(missing))
-    spec = importlib.util.spec_from_file_location(
-        "semantic_recipe_builder", RECIPE / "bundle.py"
-    )
-    base = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(base)
+    base = load_module(RECIPE / "bundle.py", "semantic_recipe_builder")
     style = adapt_style(json.loads((RECIPE / "face_style.json").read_text()), p)
     if brow_design is not None:
         style["brow_design"] = brow_design
@@ -393,6 +390,8 @@ def build_request(
         if p["sampling_feature_flow"]:
             from feature_flow_recipe import adapt as adapt_feature_flow_recipe
             sources = adapt_feature_flow_recipe(sources, p)
+    if construction_identity_capture is not None:
+        sources = construction_capture.adapt_optional(sources, construction_identity_capture)
     sources = adapt_optional(sources, shared_source_capture)
     base.OUTPUT_PREFIX = output_prefix
     with tempfile.TemporaryDirectory() as directory:
@@ -470,19 +469,20 @@ def build_request(
     if p["sampling_feature_flow"]:
         from feature_flow_recipe import retained_sources as retained_feature_flow_sources
         retained["semantic_bundle.py"] += "\nRETAINED_FEATURE_FLOW_SOURCES = " + repr(retained_feature_flow_sources()) + "\n"
+    if construction_identity_capture is not None:
+        construction_capture.retain_sources(retained, construction_identity_capture, sources)
     retain_capture(request, retained, shared_source_capture, sources)
+    if construction_identity_capture is not None:
+        construction_capture.bind_bootstrap(request, retained, construction_identity_capture, shared_source_capture)
     for name, source in retained.items():
-        request["code"] += source_write(output_prefix, name, source, shared_source_capture)
+        request["code"] += (source_write(output_prefix, name, source, shared_source_capture)
+                            if construction_identity_capture is None else construction_capture.source_write(
+                                output_prefix, name, source, construction_identity_capture, shared_source_capture))
     for name in [*retained, "semantic_face_export.glb"]:
         request["outputs"].append(
             {"path": output_prefix + name, "expectedSha256": None}
         )
-    for entry in request["outputs"]:
-        path = root / entry["path"]
-        if path.exists():
-            if not path.is_file():
-                raise ValueError("Non-file output: " + entry["path"])
-            entry["expectedSha256"] = hashlib.sha256(path.read_bytes()).hexdigest()
+    bind_expected_outputs(request, root)
     compile(request["code"], "<semantic eye native job>", "exec")
     return request
 
