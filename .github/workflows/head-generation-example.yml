@@ -68,8 +68,8 @@ jobs:
               "examples/head-generation/shared_construction_capture/tests",
               pattern="test_*.py",
           )
-          if suite.countTestCases() < 133:
-              raise RuntimeError("Expected at least 133 shared-construction-capture tests")
+          if suite.countTestCases() < 176:
+              raise RuntimeError("Expected at least 176 shared-construction-capture tests")
           result = unittest.TextTestRunner(verbosity=2).run(suite)
           raise SystemExit(0 if result.wasSuccessful() else 1)
           PYTHON

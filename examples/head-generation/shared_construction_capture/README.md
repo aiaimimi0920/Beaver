@@ -228,3 +228,8 @@ exposed data outside the explicit corner scratch-tag receipt remained equal.
 Role admission remains false, and it does not connect constructor identities to the later six-key source
 capture or certify anatomy support/source owners. No full generated-face, pose,
 GLB, engine or visual acceptance is claimed here.
+
+## Dormant joint identity utilities
+
+See [JOINT_IDENTITY.md](JOINT_IDENTITY.md) for the unhooked producer-footprint,
+directed-corner and return-cap contracts, caller requirements and evidence limits.
