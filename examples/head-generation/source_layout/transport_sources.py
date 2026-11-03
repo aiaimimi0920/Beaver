@@ -109,6 +109,11 @@ def share_overflowing_native_sources(request):
         validate_native_frame(request)
         return request
     except ValueError:
-        candidate = dict(request, code=share_source_literals(request['code'], minimum=1024))
-        validate_native_frame(candidate)
-        return candidate
+        for minimum in (1024, 512):
+            candidate = dict(request, code=share_source_literals(request['code'], minimum=minimum))
+            try:
+                validate_native_frame(candidate)
+                return candidate
+            except ValueError:
+                if minimum == 512:
+                    raise

@@ -13,6 +13,54 @@ from source_layout.transport_sources import share_source_literals, validate_nati
 
 
 class TransportSourcesTests(unittest.TestCase):
+    def test_second_overflow_tier_exact_512_boundary_and_original_data(self):
+        from unittest.mock import patch
+        import source_layout.transport_sources as module
+        for length in (511,512):
+            source = '#'+('x'*(length-len('\nanswer = 42\n')-1))+'\nanswer = 42\n'
+            self.assertEqual(len(source.encode()),length)
+            code=('from pathlib import Path\nexec(compile('+repr(source)+',"source.py","exec"))\n'
+                  +'Path(output).write_text('+repr(source)+',encoding="utf-8")\n')
+            request={'code':code,'outputs':[{'path':'example.py'}],'timeoutSeconds':120}
+            request['code'] += '#'+ 'x'*(1024*1024-validate_native_frame(request)+100)
+            original=dict(request)
+            with patch.object(module,'share_source_literals',wraps=share_source_literals) as share:
+                if length==511:
+                    with self.assertRaisesRegex(ValueError,'serialized request frame'):
+                        share_overflowing_native_sources(request)
+                else:
+                    candidate=share_overflowing_native_sources(request)
+                    tree=ast.parse(candidate['code'])
+                    shared={n.targets[0].id:n.value for n in tree.body if isinstance(n,ast.Assign)
+                            and isinstance(n.targets[0],ast.Name) and n.targets[0].id.startswith('_beaver_shared_source_')}
+                    tree.body=[n for n in tree.body if not (isinstance(n,ast.Assign)
+                               and isinstance(n.targets[0],ast.Name) and n.targets[0].id in shared)]
+                    class Expand(ast.NodeTransformer):
+                        def visit_Name(self,node):return shared.get(node.id,node)
+                    self.assertEqual(ast.dump(Expand().visit(tree)),ast.dump(ast.parse(request['code'])))
+                    self.assertLessEqual(validate_native_frame(candidate),1024*1024)
+                    self.assertEqual({k:v for k,v in candidate.items() if k!='code'},
+                                     {k:v for k,v in request.items() if k!='code'})
+                    with tempfile.TemporaryDirectory() as directory:
+                        output=Path(directory)/'source.py';scope={'output':str(output)}
+                        exec(candidate['code'],scope)
+                        self.assertEqual(scope['answer'],42)
+                        self.assertEqual(output.read_bytes(),source.encode())
+                self.assertEqual([c.kwargs['minimum'] for c in share.call_args_list],[1024,512])
+            self.assertEqual(request,original)
+
+    def test_first_tier_success_does_not_use_second_tier(self):
+        from unittest.mock import patch
+        import source_layout.transport_sources as module
+        source='# retained\n'*140+'answer=42\n'
+        code='exec(compile('+repr(source)+',"source.py","exec"))\ndestination.write_text('+repr(source)+')\n'
+        request={'code':code,'outputs':[],'timeoutSeconds':120}
+        request['code']+='#'+'x'*(1024*1024-validate_native_frame(request)+100)
+        with patch.object(module,'share_source_literals',wraps=share_source_literals) as share:
+            candidate=share_overflowing_native_sources(request)
+            self.assertEqual([c.kwargs['minimum'] for c in share.call_args_list],[1024])
+        self.assertEqual(candidate['code'],share_source_literals(request['code'],minimum=1024))
+
     def test_overflow_fallback_preserves_valid_default_request(self):
         request = {'code': 'answer = 4', 'outputs': [], 'timeoutSeconds': 120}
         self.assertIs(share_overflowing_native_sources(request), request)

@@ -1,6 +1,6 @@
 """Quality and posed-field fitting of quad supports and lower guide continuations."""
 from forehead_complete_guide_fit import (forehead_install_complete_stage, forehead_complete_objective,
-    forehead_complete_charge, forehead_complete_saved_accepts, forehead_complete_fit_capture, forehead_complete_fit_publish)
+    forehead_complete_charge, forehead_complete_saved_accepts, forehead_complete_fit_capture, forehead_complete_fit_publish, forehead_complete_counted_batch, forehead_complete_base_derivative, forehead_complete_counted_derivative)
 from forehead_fit_sparsity import forehead_fit_constraint_sparsity
 from forehead_fit_density import forehead_constraint_layout, forehead_quantized_quality_pass
 from forehead_role_fairing import ForeheadRoleFairingStage
@@ -124,6 +124,8 @@ def fit_forehead_shared_constraints(vertices, old_open_delta, proposal, focus=Fa
         layout['count'] += fairing_stage.count
     complete_stage = forehead_install_complete_stage(proposal, initial,
         (old, old_delta, source_chart, donors, frozen_delta), layout, complete_guide_fairing)
+    batch = forehead_complete_counted_batch(complete_stage, batch, 'geometry')
+    delta_batch = forehead_complete_counted_batch(complete_stage, delta_batch, 'field')
     paired_export, paired_stage = forehead_install_paired_stage(proposal, author_context, ids, layout, paired_diagonal_guidance)
     anchor_domain = ForeheadAnchorDomain(gap_stage.fast, author_parameters(start), ids)
     offset = layout['count']
@@ -163,7 +165,8 @@ def fit_forehead_shared_constraints(vertices, old_open_delta, proposal, focus=Fa
             del cache[next(iter(cache))]
         return result
 
-    def base_constraints(values):
+    def base_constraints(values, include_complete=True):
+        forehead_complete_charge(complete_stage, 'base_constraint_wrapper')
         result = evaluate(values)
         if result is None:
             return np.full(layout['matched_gap'][0], -1000.0)
@@ -171,10 +174,11 @@ def fit_forehead_shared_constraints(vertices, old_open_delta, proposal, focus=Fa
         aspect = forehead_pairwise_aspect(points, quads, 6.998, aspect_reference)
         result = np.r_[(a - 25.003).ravel(), (149.997 - a).ravel(), aspect, (cross * signs * 1000000.0).ravel(), 0.499 - np.linalg.norm(delta - frozen_delta[ids], axis=1) * 1000, 19.99 - orbital_turns(points, lower_triples)]
         extra = [] if fairing_stage is None else fairing_stage.constraints(points)
-        complete = [] if complete_stage is None else complete_stage.constraints(points)
+        complete = [] if complete_stage is None else (complete_stage.constraints(points) if include_complete else np.zeros(complete_stage.count))
         return np.r_[result, flow_stage.constraints(points), extra, complete, paired_stage.constraints(points, delta), anchor_domain.values(values)]
 
     def constraints(values):
+        forehead_complete_charge(complete_stage, 'constraint_wrapper')
         base = base_constraints(values)
         result = evaluate(values)
         gaps = np.full(gap_stage.size, -1000.0) if result is None else gap_stage.constraints(result[0], author_parameters(values))
@@ -194,7 +198,7 @@ def fit_forehead_shared_constraints(vertices, old_open_delta, proposal, focus=Fa
         objective = lambda values: fairing_stage.energy_gradient(evaluate(values)[0])[0]
         objective_derivative = lambda values: fairing_stage.energy_parameter_gradient(values, evaluate, batch, ids)
     objective, objective_derivative = forehead_complete_objective(complete_stage, complete_guide_fairing,
-        objective, objective_derivative, evaluate, start)
+        objective, objective_derivative, evaluate, start, batch, ids)
     initial_objective = objective(start)
 
     def guarded_lower_peak(points):
@@ -241,7 +245,10 @@ def fit_forehead_shared_constraints(vertices, old_open_delta, proposal, focus=Fa
         flow_stage, fairing_stage, complete_stage, paired_stage, anchor_domain, gap_stage)
     scales = np.ones(nc, dtype=float)
     scaled_constraints = lambda values: constraints(values) / scales
-    constraint_jacobian, hybrid_metadata = forehead_make_hybrid_gap_jacobian(base_constraints, evaluate, author_parameters, batch, ids, gap_stage, layout['matched_gap'][0], scales, sparse[:nc, :].tocsr())
+    complete_base = forehead_complete_base_derivative(complete_stage,
+        lambda x: base_constraints(x, False), evaluate, batch, ids,
+        layout.get('complete_guide_fairing'), scales[:layout['matched_gap'][0]], sparse[:layout['matched_gap'][0]].tocsr())
+    constraint_jacobian, hybrid_metadata = forehead_make_hybrid_gap_jacobian(base_constraints, evaluate, author_parameters, batch, ids, gap_stage, layout['matched_gap'][0], scales, sparse[:nc, :].tocsr(), complete_base)
     hybrid_derivative = constraint_jacobian
     field_jacobian_stats = {'exact_primal_checks': 0, 'boundary_fallback_rows': 0}
 
@@ -276,6 +283,7 @@ def fit_forehead_shared_constraints(vertices, old_open_delta, proposal, focus=Fa
 
     constraint_jacobian, scaling_metadata = forehead_prepare_hybrid_scaling(
         constraint_jacobian, start, scales)
+    constraint_jacobian = forehead_complete_counted_derivative(complete_stage, constraint_jacobian)
     remember_feasible(start)
     gradient_metadata = {}
     linearized_metadata = {}
