@@ -16,6 +16,11 @@ from source_return_order import adapt_return_order
 from source_brow_profiles import adapt_brow_profiles
 
 HERE = Path(__file__).resolve().parent
+sys.path.insert(0, str(HERE.parent / "shared_source_capture"))
+try:
+    from shared_capture_adapter import validate_policy, adapt_optional, retain_capture, source_write, replace_once
+finally:
+    sys.path.pop(0)
 sys.path.insert(0, str(HERE.parent / "brow_library"))
 try:
     from brow_design import validate as validate_brow_design
@@ -41,12 +46,6 @@ REQUIRED = ["project.godot", "authoring/head_generation_guide.md"] + [
 ]
 
 
-def replace_once(source, old, new):
-    if source.count(old) != 1:
-        raise ValueError("Inherited source contract changed: " + old[:70])
-    return source.replace(old, new, 1)
-
-
 def build_request(
     parameters,
     output_prefix,
@@ -55,8 +54,10 @@ def build_request(
     blink=False,
     brow_design=None,
     mouth_design=None,
+    shared_source_capture=None,
 ):
     p = validate(parameters)
+    validate_policy(shared_source_capture, p, blink, mouth_design)
     brow_design = validate_brow_design(brow_design)
     if p["sampling_brow_divisions"] and brow_design is None:
         raise ValueError("Brow sampling requires a researched brow design")
@@ -392,6 +393,7 @@ def build_request(
         if p["sampling_feature_flow"]:
             from feature_flow_recipe import adapt as adapt_feature_flow_recipe
             sources = adapt_feature_flow_recipe(sources, p)
+    sources = adapt_optional(sources, shared_source_capture)
     base.OUTPUT_PREFIX = output_prefix
     with tempfile.TemporaryDirectory() as directory:
         snapshot = Path(directory)
@@ -468,10 +470,9 @@ def build_request(
     if p["sampling_feature_flow"]:
         from feature_flow_recipe import retained_sources as retained_feature_flow_sources
         retained["semantic_bundle.py"] += "\nRETAINED_FEATURE_FLOW_SOURCES = " + repr(retained_feature_flow_sources()) + "\n"
+    retain_capture(request, retained, shared_source_capture, sources)
     for name, source in retained.items():
-        request[
-            "code"
-        ] += f"Path(beaver_output({(output_prefix + name)!r})).write_text({source!r})\n"
+        request["code"] += source_write(output_prefix, name, source, shared_source_capture)
     for name in [*retained, "semantic_face_export.glb"]:
         request["outputs"].append(
             {"path": output_prefix + name, "expectedSha256": None}

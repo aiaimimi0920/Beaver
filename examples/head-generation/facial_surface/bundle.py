@@ -1,6 +1,7 @@
 """Package experimental fresh geometry; requires an explicitly reviewed bound."""
 
 import argparse
+from functools import partial
 import importlib.util
 import json
 import math
@@ -13,12 +14,6 @@ from source_optional_bridges import adapt_bridge_pair_source, adapt_ear_boundary
 
 HERE = Path(__file__).resolve().parent
 EYES = HERE.parent / "semantic_eyes"
-
-
-def once(source, old, new):
-    if source.count(old) != 1:
-        raise ValueError("Inherited source contract changed: " + old[:60])
-    return source.replace(old, new, 1)
 
 
 from source_styles import apply_style_profile
@@ -43,6 +38,7 @@ def build_request(
     mouth_design=None,
     face_design=None,
     ear_design=None,
+    shared_source_capture=None,
 ):
     if (
         silhouette_parameters
@@ -79,6 +75,7 @@ def build_request(
         )
         builder = importlib.util.module_from_spec(spec)
         spec.loader.exec_module(builder)
+        once = partial(builder.replace_once, preview=60)
         recipe = builder.RECIPE
         baseline_style = apply_style_profile(
             json.loads((recipe / "face_style.json").read_text()), style_profile
@@ -375,6 +372,7 @@ def depth(x, y):"""
                 blink=blink,
                 brow_design=brow_design,
                 mouth_design=mouth_design,
+                shared_source_capture=shared_source_capture,
             )
     finally:
         sys.path.remove(str(EYES))
