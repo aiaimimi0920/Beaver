@@ -4,11 +4,14 @@ from pathlib import Path
 import sys
 import tempfile
 import unittest
+from unittest.mock import patch
 from bundle import build_plan
 
 PARENT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(PARENT))
 from source_layout.package import literal_writes
+from source_layout.lossless_transport import decoder_source, expanded_ast
+from source_layout.transport_sources import share_overflowing_native_sources
 from source_layout.layout import reconstructed
 from source_layout.python_lines import conservative_effective_lines
 
@@ -32,9 +35,35 @@ def fixture_root(root):
 
 def emitted_sources(plan):
     tree = ast.parse(plan['generation']['code'])
-    values = {n.targets[0].id: n.value for n in tree.body
-              if isinstance(n, ast.Assign) and isinstance(n.targets[0], ast.Name)
-              and isinstance(n.value, ast.Constant) and isinstance(n.value.value, str)}
+    values = {}
+    decoders = [node.name.removesuffix('inflate') for node in tree.body
+                if isinstance(node, ast.FunctionDef)
+                and node.name.startswith('_beaver_lossless_') and node.name.endswith('inflate')]
+    for prefix in decoders:
+        records = []
+        for node in tree.body:
+            if not (isinstance(node, ast.Assign) and len(node.targets) == 1
+                    and isinstance(node.targets[0], ast.Name)
+                    and isinstance(node.value, ast.Call)
+                    and isinstance(node.value.func, ast.Name)
+                    and node.value.func.id == prefix + 'inflate'):
+                continue
+            encoded, size, digest = [ast.literal_eval(arg) for arg in node.value.args]
+            records.append(dict(name=node.targets[0].id, encoded=encoded, bytes=size, sha256=digest))
+        # Validate the actual header and payload before executing only the known decoder.
+        expanded_ast(plan['generation']['code'], dict(prefix=prefix, records=records))
+        namespace = {}
+        exec(decoder_source(prefix), namespace)
+        for record in records:
+            value = namespace[prefix + 'inflate'](record['encoded'], record['bytes'], record['sha256'])
+            values[record['name']] = ast.Constant(value)
+    for node in tree.body:
+        if not (isinstance(node, ast.Assign) and len(node.targets) == 1
+                and isinstance(node.targets[0], ast.Name)):
+            continue
+        value = values.get(node.value.id) if isinstance(node.value, ast.Name) else node.value
+        if isinstance(value, ast.Constant) and isinstance(value.value, str):
+            values[node.targets[0].id] = value
     class Expand(ast.NodeTransformer):
         def visit_Name(self, node):
             return values.get(node.id, node) if isinstance(node.ctx, ast.Load) else node
@@ -83,6 +112,52 @@ class FeatureFlowRecipeTests(unittest.TestCase):
         self.assertEqual(calls.count('restore_oral_skin_donors'), 1)
         self.assertLess(pipeline.index("report['automatic_export_triangle_verification']"),
                         pipeline.index('report["nose_final_attachment_checks"]'))
+
+    def test_compressed_real_capture_preserves_all_emitted_sources(self):
+        for face in ('research-compact-rounded', 'research-straight-tapered'):
+            originals = []
+
+            def capture(request):
+                originals.append(dict(request))
+                return share_overflowing_native_sources(request)
+
+            with self.subTest(face=face), tempfile.TemporaryDirectory() as directory:
+                root = Path(directory)
+                fixture_root(root)
+                capture_path = str(PARENT / 'shared_construction_capture')
+                with patch.object(sys, 'path', [capture_path, *sys.path]), patch(
+                        'source_layout.package.share_overflowing_native_sources', side_effect=capture):
+                    plan = build_plan({**SELECTION, 'face': face},
+                                      'assets/aster/general_face_eyes_combo_ccreview/', root,
+                                      sampling_overrides=FLOW, construction_identity_capture="CONSTRUCTION_IDENTITY_CAPTURE_V1",
+                                      shared_source_capture='POST_MORPH_SOURCE_CAPTURE_V1', source_seed=True)
+                self.assertEqual(len(originals), 1)
+                self.assertIn('def _beaver_lossless_inflate(', plan['generation']['code'])
+                before = emitted_sources({**plan, 'generation': originals[0]})
+                after = emitted_sources(plan)
+                self.assertTrue({'ears.py', 'shell.py'} <= before.keys())
+                self.assertEqual(after, before)
+                for record in plan['source_packaging']['layout']['records']:
+                    self.assertEqual(reconstructed(after, record), reconstructed(before, record))
+
+    def test_compressed_extraction_rejects_changed_decoder_and_payload(self):
+        from source_layout.lossless_transport import encode_sources
+        value = '# UTF-8 曲面 retained source\n' * 1000
+        original = {'code': 'shared = ' + repr(value) +
+                    "\nPath(beaver_output('source.py')).write_text(shared)\n"}
+
+        def limit(request):
+            if len(request['code'].encode()) > 6000:
+                raise ValueError('test frame limit')
+            return len(request['code'].encode())
+
+        encoded, receipt = encode_sources(original, limit)
+        plan = {'generation': encoded, 'source_packaging': {'helpers': {}}}
+        self.assertEqual(emitted_sources(plan), {'source.py': value})
+        for old, new in [('raw.decode(', 'raw.fake_decode('),
+                         (repr(receipt['records'][0]['sha256']), repr('0' * 64))]:
+            with self.subTest(tamper=old[:30]), self.assertRaises(ValueError):
+                emitted_sources({**plan, 'generation': {**encoded, 'code': encoded['code'].replace(old, new, 1)}})
 
     def test_unsupported_source_profiles_fail_before_execution(self):
         for name, value in [('sampling_shell_columns', 9), ('sampling_detail_budget', 0),
