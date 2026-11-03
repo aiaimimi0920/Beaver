@@ -105,9 +105,10 @@ must end with tag `True`; all original and observed values are retained. This
 is not a general flag ignore, model-field waiver, or admission of unexposed
 CustomData. Any other change fails closed, including actual degenerate surgery.
 
-**After this bounded weld/dissolve receipt, current-role admission is explicitly
-invalidated before field restoration and subsequent surgery.** Posterior-return,
-ear, nasal, chin and forehead surgery
+**The bounded weld/dissolve receipt does not admit current solver roles.**
+Verified oral/ear field restoration and lower-ear identity lookup may follow;
+current-role admission is explicitly invalidated before later support surgery.
+Posterior-return, later ear retopology, nasal, chin and forehead surgery
 currently lack complete constructor replacement/merge receipts. Earlier native
 indices remain historical evidence only. `require_current_roles` always rejects;
 no consumer is permitted to treat the historical constructor map as the current saved mesh.
@@ -133,22 +134,50 @@ exact. The legacy spatial lookup is not the acceptance authority and this is not
 yet a replacement spatial-free writer. Original allocation, join and weld
 receipt consistency is checked before transfer.
 
-This bounded slice rejects other welds until independently receipted. Ear
-membership, early geometry fairing, posterior return and later nasal/chin stages
-remain unadmitted. The isolated compact and straight oral fixtures have each
+The oral-only contract rejects other welds until independently receipted. The
+combined ear contract below verifies its specific additional contributors and
+membership. Posterior return and later nasal/chin stages remain unadmitted. The isolated compact and straight oral fixtures have each
 verified 30 actual native skin/oral weld pairs, 30 identity-bound field donors
 and 30 shared crease edges under Blender 4.3.2. Untouched and captured paths
 matched across whole exposed native fields, including saved/reopened artifacts.
 These nonzero-merge fixtures complement the earlier disjoint controls; they do
 not establish complete generator, pose, GLB or visual acceptance.
 
+## Bounded bilateral ear verification
+
+The opt-in path observes the actual evaluated Mirror before ear creation and
+binds each original root station plus both neighboring bridge allocations to
+constructor identities. It retains the original ear geometry, modifier timing
+and allocation order. Combined oral and bilateral ear weld groups must account
+for every actual native merge; unrelated or undeclared contributors reject.
+
+The original oral restoration and ear membership functions still run unchanged.
+Their entire exposed result must match the identity-derived expected state.
+Before the original lower-ear fairing, explicit constructor and weld IDs replace
+only its spatial identity lookup. Original fairing arithmetic, backtracking,
+displacement bounds and locked roots remain unchanged. Unknown report fields
+cannot be silently discarded to obtain equality.
+
+Compact and straight native fixtures each verified 48 weld pairs: 30 oral and
+nine per ear. All baseline fields, reports and saved/reopened fields matched;
+independent recomputation verified allocation, join/weld, donor and membership
+receipts and the saved lower-fairing coordinates. This does not make a complete
+facial optimization. In particular, the existing roughly 4 mm lower-fairing
+step is not evidence of meeting the independent original AUTHOR 1 mm gate.
+Later support, width, return and retopology operations remain unadmitted, and
+no current-role or solver authority follows from this bounded fixture.
+
 ## Packaging and independent boundaries
 
 Runtime sources reuse the existing hash-verified source seed and retained
 semantic bundle. Their exact implementation inventory is checked both when
 retained and again before runtime bootstrap; a between-read source change or
-changed/duplicate binding rejects. Output count, source-size and serialized-frame
-limits are unchanged. A long output prefix can still exceed the frame guard;
+changed/duplicate binding rejects. The readable constructor bootstrap is stored
+in that same source seed and checked against its independently pinned SHA before
+execution. The generation frame carries only the loader, without changing the
+source inventory or shortening source text. Missing, duplicate or modified
+bootstrap entries reject. Output count, source-size and serialized-frame limits
+are unchanged. A long output prefix can still exceed the frame guard;
 callers must retain the existing seed plan and obey the actual measured limits.
 
 The constructor option is independent of `POST_MORPH_SOURCE_CAPTURE_V1`; they can

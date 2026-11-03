@@ -36,10 +36,12 @@ class PackagingTests(unittest.TestCase):
                 self.assertIn("_construction.compact(verts, shell_faces, flow_remap)", shell)
                 self.assertNotIn("bind_forehead_paths", shell[:shell.index("def feature_flow_surface_point")])
                 pipeline = sources["pipeline_runtime.py"]
-                self.assertLess(pipeline.index("join_with_oral_capture(members)"), pipeline.index("invalidate_before_surgery("))
+                self.assertLess(pipeline.index("join_with_ear_capture(members)"), pipeline.index("invalidate_before_surgery("))
                 self.assertLess(pipeline.index("capture_weld(members[0],"), pipeline.index("invalidate_before_surgery("))
                 self.assertIn("finish_source_capture(members[0]", pipeline)
-                self.assertIn("verify_oral_transfer(", pipeline)
+                self.assertIn("verify_combined_oral_transfer(", pipeline)
+                self.assertIn("verify_ear_membership(", pipeline)
+                self.assertIn("prepare_reports(", pipeline)
                 self.assertIn("construction=begin_oral(_construction, rings[0])", shell)
                 for name, source in sources.items():
                     compile(source, name, "exec")

@@ -9,8 +9,10 @@ POLICY = "CONSTRUCTION_IDENTITY_CAPTURE_V1"
 RUNTIME_MODULES = ("construction_topology", "construction_roles", "construction_boundaries", "construction_journal", "construction_mirror_contract",
                    "construction_markers", "construction_native", "construction_weld_contract",
                    "construction_bmesh_state", "construction_weld_edges", "construction_weld_native",
-                   "construction_oral_contract", "construction_oral_fields", "construction_oral_native")
-SOURCE_MODULES = (*RUNTIME_MODULES, "construction_instrument", "construction_oral_adapter", "construction_adapter")
+                   "construction_oral_contract", "construction_oral_fields", "construction_oral_native",
+                   "ear_contract", "ear_evaluated", "ear_join", "ear_lower_context")
+SOURCE_MODULES = (*RUNTIME_MODULES, "construction_instrument", "construction_oral_adapter", "ear_adapter", "ear_lower_adapter",
+                  "construction_ear_adapter", "construction_adapter")
 
 
 def retained_sources():
@@ -36,8 +38,9 @@ def adapt_optional(sources, policy):
     capture_inventory = {name: hashlib.sha256(value.encode()).hexdigest() for name, value in retained_sources().items()}
     recipe = {"policy": POLICY, "capture_inventory_sha256": digest(capture_inventory), "source_inventory_sha256": digest(inventory), "source_file_count": len(inventory),
               "source_hash_encoding": "SHA256 of UTF8 source text, then canonical JSON inventory"}
-    from construction_oral_adapter import instrument_oral, donor_boundary
-    out = instrument_oral(instrument(sources, recipe))
+    from construction_oral_adapter import instrument_oral
+    from construction_ear_adapter import instrument_ear_sources, attachment_boundaries
+    out = instrument_ear_sources(instrument_oral(instrument(sources, recipe)))
     pipeline = out["pipeline.py"]
     before = ('        for m in list(o.modifiers):\n'
               '            if m.type == "SUBSURF" and m.levels == 0:\n'
@@ -46,7 +49,7 @@ def adapt_optional(sources, policy):
               '                bpy.ops.object.modifier_apply(modifier=m.name)')
     pipeline = replace(pipeline, before, '        from construction_native import apply_modifiers\n        apply_modifiers(o)')
     pipeline = replace(pipeline, '    bpy.ops.object.join()',
-                       '    from construction_oral_native import join_with_oral_capture\n    _construction_joined = join_with_oral_capture(members)')
+                       '    from ear_join import join_with_ear_capture\n    _construction_joined = join_with_ear_capture(members)')
     weld = ('        bm = bmesh.new()\n'
             '        bm.from_mesh(members[0].data)\n'
             '        bmesh.ops.remove_doubles(bm, verts=list(bm.verts), dist=0.000001)\n'
@@ -55,10 +58,8 @@ def adapt_optional(sources, policy):
             '        bm.free()')
     pipeline = replace(pipeline, weld,
         '        from construction_weld_native import capture_weld\n'
-        '        capture_weld(members[0], _construction_joined)\n'
-        '        from construction_native import invalidate_before_surgery\n'
-        '        invalidate_before_surgery(_construction_joined, "post_weld_field_restoration_and_surgery")')
-    out["pipeline.py"] = donor_boundary(pipeline)
+        '        capture_weld(members[0], _construction_joined)')
+    out["pipeline.py"] = attachment_boundaries(pipeline)
     out["construction_binding.json"] = __import__("json").dumps({"recipe": recipe, "source_inventory": inventory, "capture_inventory": capture_inventory})
     for name, source in out.items():
         if name.endswith(".py"):
@@ -77,6 +78,7 @@ def retain_sources(retained, policy, resolved_sources):
         raise ValueError("Constructor implementation changed during source packaging")
     retained["semantic_bundle.py"] += "\nRETAINED_CONSTRUCTION_SOURCES = " + repr(sources) + "\n"
     retained["semantic_bundle.py"] += "\nRETAINED_CONSTRUCTION_BINDING = " + repr(binding) + "\n"
+    retained["semantic_bundle.py"] += "\nRETAINED_CONSTRUCTION_BOOTSTRAP = " + repr(bootstrap("_construction_bootstrap_retained")) + "\n"
 
 
 def bootstrap(source_variable):
@@ -94,6 +96,18 @@ def bootstrap(source_variable):
         "    exec(compile(_construction_sources[_construction_name + '.py'], _construction_name, 'exec'), _construction_module.__dict__)\n")
 
 
+def seeded_bootstrap(source_variable):
+    """Replay readable bootstrap from its existing seed, with an independent hash."""
+    expected = hashlib.sha256(bootstrap("_construction_bootstrap_retained").encode()).hexdigest()
+    return ("import ast as _construction_seed_ast, hashlib as _construction_seed_hashlib\n"
+        f"_construction_bootstrap_retained = {source_variable}\n"
+        "_construction_seed_nodes = [n for n in _construction_seed_ast.parse(_construction_bootstrap_retained).body if isinstance(n, _construction_seed_ast.Assign) and len(n.targets) == 1 and isinstance(n.targets[0], _construction_seed_ast.Name) and n.targets[0].id == 'RETAINED_CONSTRUCTION_BOOTSTRAP']\n"
+        "if len(_construction_seed_nodes) != 1:\n    raise ValueError('Missing or duplicate constructor bootstrap')\n"
+        "_construction_seed_source = _construction_seed_ast.literal_eval(_construction_seed_nodes[0].value)\n"
+        f"if _construction_seed_hashlib.sha256(_construction_seed_source.encode()).hexdigest() != {expected!r}:\n    raise ValueError('Changed retained constructor bootstrap')\n"
+        "exec(compile(_construction_seed_source, 'retained_constructor_bootstrap.py', 'exec'), globals())\n")
+
+
 def bind_bootstrap(request, retained, policy, shared_capture_policy):
     if policy is None:
         return
@@ -106,11 +120,11 @@ def bind_bootstrap(request, retained, policy, shared_capture_policy):
                 or first.targets[0].id != "_shared_capture_retained_bundle"):
             raise ValueError("Shared capture seed boundary changed")
         lines = request["code"].splitlines(keepends=True)
-        lines[first.end_lineno:first.end_lineno] = [bootstrap("_shared_capture_retained_bundle")]
+        lines[first.end_lineno:first.end_lineno] = [seeded_bootstrap("_shared_capture_retained_bundle")]
         request["code"] = "".join(lines)
     else:
         request["code"] = ("_construction_retained_bundle = " + repr(retained["semantic_bundle.py"]) + "\n"
-                           + bootstrap("_construction_retained_bundle") + request["code"])
+                           + seeded_bootstrap("_construction_retained_bundle") + request["code"])
 
 
 def source_write(prefix, name, source, policy, shared_capture_policy):
