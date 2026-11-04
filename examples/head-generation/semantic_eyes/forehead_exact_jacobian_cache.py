@@ -6,24 +6,72 @@ import numpy as forehead_exact_np
 from scipy.sparse import csr_matrix as forehead_exact_csr
 
 def forehead_exact_epoch_digest(value):
-    """Only explicit owned state; callers must enumerate all derivative dependencies."""
+    """Canonical payload plus typed array paths, with no retained digest cache.
 
-    def pack(v):
+    JSON's C encoder avoids the second 400k-node tagged tree. A plain
+    container snapshot preserves traversal-time semantics. Arrays become null
+    only in the payload; their exact paths,
+    dtype, shape and byte hashes are recorded separately, so ordinary nulls
+    or crafted dictionaries cannot impersonate an array. Every dependency is
+    visited anew on every request. Graph/source validation is unchanged.
+    """
+    import math
+    arrays = []
+    path = []
+
+    def normalize(v):
         if isinstance(v, forehead_exact_np.ndarray):
-            if v.dtype.hasobject or v.dtype.fields is not None or v.dtype.kind not in 'biufc':
+            if (type(v) is not forehead_exact_np.ndarray or v.dtype.metadata is not None
+                    or v.dtype.hasobject or v.dtype.fields is not None
+                    or v.dtype.kind not in 'biufc'):
                 raise ValueError('Only plain numeric epoch arrays are supported')
+            # ascontiguousarray promotes 0-D arrays to shape (1,). Preserve the
+            # source shape separately so a scalar-to-vector change invalidates.
+            shape = list(v.shape)
             a = forehead_exact_np.ascontiguousarray(v)
-            return ['array', a.dtype.str, list(a.shape), forehead_exact_hashlib.sha256(a.tobytes()).hexdigest()]
+            arrays.append([list(path), a.dtype.str, shape,
+                           forehead_exact_hashlib.sha256(a.tobytes()).hexdigest()])
+            return None
         if isinstance(v, dict):
-            if not all((isinstance(k, str) for k in v)):
-                raise ValueError('Epoch keys must be strings')
-            return ['dict', [[k, pack(v[k])] for k in sorted(v)]]
+            if type(v) is not dict or not all(type(k) is str for k in v):
+                raise ValueError('Epoch mappings require plain dictionaries and string keys')
+            out = {}
+            keys = sorted(v)
+            for key in keys:
+                path.append(key)
+                child = v[key]
+                encoded = normalize(child)
+                path.pop()
+                out[key] = encoded
+            return out
         if isinstance(v, (list, tuple)):
-            return ['sequence', [pack(x) for x in v]]
-        if v is None or type(v) in (str, bool, int, float):
-            return [type(v).__name__, v]
+            if type(v) not in (list, tuple):
+                raise ValueError('Epoch sequences require plain lists or tuples')
+            out = []
+            for index, item in enumerate(v):
+                path.append(index)
+                encoded = normalize(item)
+                path.pop()
+                out.append(encoded)
+            return out
+        if v is None or type(v) in (str, bool, int):
+            return v
+        if type(v) is float:
+            if not math.isfinite(v):
+                raise ValueError('Nonfinite epoch scalar')
+            return v
         raise ValueError('Unsupported epoch state')
-    return forehead_exact_hashlib.sha256(forehead_exact_json.dumps(pack(value), separators=(',', ':'), allow_nan=False).encode()).hexdigest()
+
+    payload = forehead_exact_json.dumps(normalize(value),
+        separators=(',', ':'), allow_nan=False)
+    typed_arrays = forehead_exact_json.dumps(arrays, separators=(',', ':'), allow_nan=False)
+    # The version prefix distinguishes this in-memory epoch format. Existing
+    # fits never cross formats or share caches, so old persisted IDs are unused.
+    digest = forehead_exact_hashlib.sha256(b'forehead-epoch-v2\0')
+    digest.update(payload.encode())
+    digest.update(b'\0')
+    digest.update(typed_arrays.encode())
+    return digest.hexdigest()
 
 def forehead_exact_fit_cache(derivative, epoch, charge, rows, columns, capacity=2):
     if type(capacity) is not int or capacity != 2:

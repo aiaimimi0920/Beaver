@@ -5,6 +5,16 @@ import numpy as forehead_cache_np
 import scipy as forehead_cache_scipy
 from scipy.sparse import issparse as forehead_cache_issparse
 from forehead_cache_schema import FOREHEAD_CACHE_SCHEMAS, FOREHEAD_CACHE_IGNORED, FOREHEAD_CACHE_IGNORED_CLOSURES, FOREHEAD_CACHE_NAMES
+from scipy import sparse as forehead_cache_sparse
+FOREHEAD_CACHE_SPARSE_TYPES = (
+    forehead_cache_sparse.bsr_matrix, forehead_cache_sparse.bsr_array,
+    forehead_cache_sparse.coo_matrix, forehead_cache_sparse.coo_array,
+    forehead_cache_sparse.csc_matrix, forehead_cache_sparse.csc_array,
+    forehead_cache_sparse.csr_matrix, forehead_cache_sparse.csr_array,
+    forehead_cache_sparse.dia_matrix, forehead_cache_sparse.dia_array,
+    forehead_cache_sparse.dok_matrix, forehead_cache_sparse.dok_array,
+    forehead_cache_sparse.lil_matrix, forehead_cache_sparse.lil_array,
+)
 
 def forehead_cache_code_digest(code):
 
@@ -96,20 +106,33 @@ class ForeheadCacheGraph:
         if type(value) is object:
             return {'sentinel': id(value)}
         if isinstance(value, forehead_cache_np.generic):
-            return self.walk(value.item())
+            if type(value) is not forehead_cache_np.dtype(type(value)).type or value.dtype.metadata is not None:
+                raise ValueError('Unreviewed scalar subclass or dtype metadata')
+            if value.dtype.hasobject or value.dtype.fields is not None:
+                raise ValueError('Unreviewed object or structured scalar dtype')
+            return {'numpy_scalar_type': type(value).__module__ + '.' + type(value).__qualname__,
+                    'dtype': value.dtype.str, 'bytes': value.tobytes().hex()}
         if id(value) in self.seen:
             return {'ref': self.seen[id(value)]}
         ident = len(self.seen)
         self.seen[id(value)] = ident
         base = {'node': ident, 'identity': id(value)}
         if isinstance(value, forehead_cache_np.ndarray):
+            if type(value) is not forehead_cache_np.ndarray or value.dtype.metadata is not None:
+                raise ValueError('Unreviewed array subclass or dtype metadata')
             return {**base, 'array': value}
         if forehead_cache_issparse(value):
+            if type(value) not in FOREHEAD_CACHE_SPARSE_TYPES:
+                raise ValueError('Unreviewed sparse subclass')
             c = value.tocsr(copy=True)
             return {**base, 'shape': list(value.shape), 'format': value.format, 'data': c.data, 'indices': c.indices, 'indptr': c.indptr}
         if isinstance(value, dict):
+            if type(value) is not dict:
+                raise ValueError('Unreviewed dictionary subclass')
             return {**base, 'map': [[self.walk(k), self.walk(v)] for k, v in sorted(value.items(), key=lambda item: repr(item[0]))]}
         if isinstance(value, (tuple, list, set, frozenset)):
+            if type(value) not in (tuple, list, set, frozenset):
+                raise ValueError('Unreviewed sequence or set subclass')
             items = sorted(value, key=repr) if isinstance(value, (set, frozenset)) else value
             return {**base, 'kind': type(value).__name__, 'items': [self.walk(v) for v in items]}
         if isinstance(value, forehead_cache_types.MethodType):
