@@ -64,7 +64,11 @@ def forehead_cd_weighted_cv(values, weights):
         raise ValueError('Nonpositive mean')
     sd = np.sqrt(var)
     value = float(sd / mu)
-    if sd <= np.finfo(float).eps * max(abs(mu), 1e-300):
+    # A rounded positive variance can still be numerical zero. Keep an
+    # input-scale roundoff band for weighted sums and normalization; never
+    # manufacture an analytic CV gradient from that cancellation noise.
+    roundoff = 32 * x.size * np.finfo(float).eps * max(float(np.max(abs(x))), abs(mu))
+    if sd <= roundoff:
         return (value, None, None)
     gx = w / W * ((x - mu) / (sd * mu) - sd / (mu * mu))
     gw = ((x - mu) ** 2 - var) / (2 * W * sd * mu) - sd * (x - mu) / (W * mu * mu)
@@ -91,6 +95,41 @@ def forehead_cd_support_cv(points, quads):
         np.add.at(g, np.roll(q, -1), ge)
     return (value, g, flags)
 
+def forehead_cd_contact_gradient(a, b, c, d, s, t, vector, distance):
+    """Canonical derivative for the same endpoint/segment contact feature.
+
+    Adjacent rail segments can represent one shared endpoint as t=1 and t=0.
+    Recompute that feature from its actual endpoint, not r+s*e-t*f, so the
+    scattered derivatives are exactly equal without relaxing tie tolerances.
+    The candidate distance and parallel/degenerate branch checks stay unchanged.
+    """
+    if distance == 0:
+        return None
+    if s not in (0., 1.) and t not in (0., 1.):
+        return np.array([(1-s)*vector, s*vector, -(1-t)*vector, -t*vector])/distance
+    gradient = np.zeros((4, 3))
+    if s in (0., 1.) and t in (0., 1.):
+        vector = (a, b)[int(s)] - (c, d)[int(t)]
+    elif t in (0., 1.):
+        endpoint = (c, d)[int(t)]
+        edge = b-a
+        s = np.clip((endpoint-a) @ edge / (edge @ edge), 0, 1)
+        vector = (a-endpoint)+s*edge
+    else:
+        endpoint = (a, b)[int(s)]
+        edge = d-c
+        t = np.clip((endpoint-c) @ edge / (edge @ edge), 0, 1)
+        vector = (endpoint-c)-t*edge
+    length = np.linalg.norm(vector)
+    if not np.isfinite(length) or length == 0:
+        return None
+    unit = vector/length
+    gradient[0] = (1-s)*unit
+    gradient[1] = s*unit
+    gradient[2] = -(1-t)*unit
+    gradient[3] = -t*unit
+    return gradient
+
 def forehead_cd_pair_candidates(a, b, c, d):
     e = b - a
     f = d - c
@@ -114,7 +153,7 @@ def forehead_cd_pair_candidates(a, b, c, d):
     for s, t in pairs:
         v = r + s * e - t * f
         dist = np.linalg.norm(v)
-        grad = None if dist == 0 else np.array([(1 - s) * v, s * v, -(1 - t) * v, -t * v]) / dist
+        grad = forehead_cd_contact_gradient(a, b, c, d, s, t, v, dist)
         out.append((float(dist), grad, not safe))
     return out
 
@@ -153,8 +192,14 @@ def forehead_cd_rail_cv(first, second):
     lengths = np.linalg.norm(e, axis=1)
     value, dx, dw = forehead_cd_weighted_cv(distances, lengths)
     g = np.zeros_like(p)
-    if dx is None or any((f for _, _, f in rows)):
-        return (value, g, set(range(n)), {'ambiguous_minima': sum((f for _, _, f in rows)), 'zero_variance': dx is None})
+    # Equal scattered gradients of homogeneous distances imply equal geometric
+    # distances (Euler's identity). Scalar cancellation must not manufacture a
+    # nonzero CV derivative for this identical-contact, zero-variance branch.
+    same_contact = all(np.array_equal(gg, rows[0][1]) for _, gg, _ in rows)
+    if dx is None or same_contact or any((f for _, _, f in rows)):
+        return (value, g, set(range(n)), {'ambiguous_minima': sum((f for _, _, f in rows)),
+                'zero_variance': dx is None or same_contact,
+                'identical_minimum_gradients': same_contact})
     for coefficient, (_, gg, _) in zip(dx, rows):
         g += coefficient * gg
     ge = dw[:, None] * e / lengths[:, None]
