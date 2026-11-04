@@ -305,7 +305,8 @@ def fit_forehead_shared_constraints(vertices, old_open_delta, proposal, focus=Fa
 
         quantization_margins = forehead_make_quantization_margins(
             evaluate, constraint_jacobian, layout, scales, quads, signs,
-            chart_radius, accepted_cross, fairing_stage, flow_stage, complete_stage)
+            chart_radius, accepted_cross, fairing_stage, flow_stage, complete_stage,
+            variable_ids=ids)
 
         orientation_first, orientation_last = layout['orientation']
         orientation_floor = np.minimum(.5 * accepted_cross, .001) / scales[orientation_first:orientation_last]

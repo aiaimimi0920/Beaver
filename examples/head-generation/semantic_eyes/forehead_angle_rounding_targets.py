@@ -1,4 +1,4 @@
-"""Only strengthen existing saved-failing corner targets; never change hard gates."""
+"""Float32 working clearance for failed or explicitly movable corners; no hard-gate changes."""
 import numpy as np
 from orbital_support_rule import orbital_quad_quality
 from forehead_angle_rounding_bound import (ForeheadAngleFraction,
@@ -7,12 +7,15 @@ from forehead_angle_rounding_bound import (ForeheadAngleFraction,
 
 def forehead_float32_angle_targets(points, quads, scales, lower_rows, upper_rows,
         smooth_angles, saved_angles, lower_hard=25., upper_hard=150.,
-        lower_fit=25.003, upper_fit=149.997, safety_degrees=.001):
-    """Optional additional scaled targets for currently saved-failing corners.
+        lower_fit=25.003, upper_fit=149.997, safety_degrees=.001, variable_ids=None):
+    """Additional scaled targets; explicit variable IDs enable both-sided preflight.
 
     Same original evaluator, original corner ownership and fixed scales. Caller
     takes max with all existing policies and retains targets across iterations.
     Future candidates must be re-evaluated; this is not a replacement admission.
+    IDs describe original potential movement, not a nonzero local derivative or
+    freedom under temporary held columns. Do not weaken retained targets if a
+    held leg becomes incompatible. With no IDs, preserve the failure-only API.
     """
     p = np.asarray(points, float)
     faces = np.asarray(quads)
@@ -34,8 +37,19 @@ def forehead_float32_angle_targets(points, quads, scales, lower_rows, upper_rows
             or safety_degrees <= 0):
         raise ValueError('Invalid float32 angle target ownership or policy')
     failing = np.flatnonzero((saved.ravel() < lower_hard) | (saved.ravel() > upper_hard))
+    movable = np.zeros(smooth.size, dtype=bool)
+    if variable_ids is not None:
+        ids = np.asarray(variable_ids)
+        if (ids.ndim != 1 or ids.dtype.kind not in 'iu'
+                or len(set(ids.tolist())) != len(ids)
+                or np.any(ids < 0) or np.any(ids >= len(p))):
+            raise ValueError('Invalid original variable IDs for angle preflight')
+        membership = np.isin(faces, ids)
+        for corner in range(4):
+            movable[corner::4] = membership[:, [(corner-1) % 4, corner, (corner+1) % 4]].any(axis=1)
+    selected = np.union1d(failing, np.flatnonzero(movable))
     targets = np.zeros(len(scale))
-    if not len(failing):
+    if not len(selected):
         return targets, []
     # Fail closed if caller's reused measurements belong to another candidate.
     actual_smooth, _ = orbital_quad_quality(p, faces)
@@ -43,18 +57,21 @@ def forehead_float32_angle_targets(points, quads, scales, lower_rows, upper_rows
     if not np.array_equal(actual_smooth, smooth) or not np.array_equal(actual_saved, saved):
         raise ValueError('Float32 angle targets do not match original candidate measurements')
     evidence = []
-    for index in failing:
+    for index in selected:
         face, corner = divmod(int(index), 4)
         vertices = faces[face, [(corner-1) % 4, corner, (corner+1) % 4]]
         bound, detail = forehead_float32_angle_bound(p[vertices], smooth.ravel()[index], saved.ravel()[index])
-        upper = bool(saved.ravel()[index] > upper_hard)
-        row = int(high[index] if upper else low[index])
-        hard = ForeheadAngleFraction.from_float(float(upper_hard if upper else lower_hard))
-        fitted = ForeheadAngleFraction.from_float(float(upper_fit if upper else lower_fit))
-        present = hard-fitted if upper else fitted-hard
-        required = max(ForeheadAngleFraction(0), ForeheadAngleFraction.from_float(bound)+
-            ForeheadAngleFraction.from_float(float(safety_degrees))-present)
-        targets[row] = forehead_angle_fraction_up(required/ForeheadAngleFraction.from_float(float(scale[row])))
-        evidence.append({'row': row, 'bound_degrees': bound,
-            'additional_raw_target_degrees': forehead_angle_fraction_up(required), **detail})
+        sides = (False, True) if movable[index] else (bool(saved.ravel()[index] > upper_hard),)
+        for upper in sides:
+            row = int(high[index] if upper else low[index])
+            hard = ForeheadAngleFraction.from_float(float(upper_hard if upper else lower_hard))
+            fitted = ForeheadAngleFraction.from_float(float(upper_fit if upper else lower_fit))
+            present = hard-fitted if upper else fitted-hard
+            required = max(ForeheadAngleFraction(0), ForeheadAngleFraction.from_float(bound)+
+                ForeheadAngleFraction.from_float(float(safety_degrees))-present)
+            targets[row] = forehead_angle_fraction_up(required/ForeheadAngleFraction.from_float(float(scale[row])))
+            if required or index in failing:
+                evidence.append({'row': row, 'bound_degrees': bound,
+                    'additional_raw_target_degrees': forehead_angle_fraction_up(required),
+                    **detail, **({'proactive_original_variable_corner': True} if movable[index] else {})})
     return targets, evidence

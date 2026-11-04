@@ -50,7 +50,7 @@ def forehead_complete_margin_targets(smooth, saved, offset, scales, positive_sca
 
 def forehead_make_quantization_margins(evaluate, constraint_jacobian, layout, scales,
         quads, signs, chart_radius, accepted_cross, fairing_stage=None,
-        flow_stage=None, complete_stage=None):
+        flow_stage=None, complete_stage=None, variable_ids=None):
     """Retain existing target policies and include the complete-guide gate."""
     def quantization_margins(values, residuals):
         state = evaluate(values)
@@ -64,10 +64,11 @@ def forehead_make_quantization_margins(evaluate, constraint_jacobian, layout, sc
         targets, evidence = forehead_quantization_margin_targets(
             residuals, jacobian, scales, lower_rows, upper_rows, smooth, rounded)
         angle_clearance_evidence = []
-        if complete_stage and np.any((rounded < 25.) | (rounded > 150.)):
+        if complete_stage and (variable_ids is not None or np.any((rounded < 25.) | (rounded > 150.))):
             complete_stage.charge('float32_angle_clearance_request')
             angle_clearance, angle_clearance_evidence = forehead_float32_angle_targets(
-                state[0], quads, scales, lower_rows, upper_rows, smooth, rounded)
+                state[0], quads, scales, lower_rows, upper_rows, smooth, rounded,
+                variable_ids=variable_ids)
             targets = np.maximum(targets, angle_clearance)
         orientation_rows = np.arange(*layout['orientation'])
         rows = jacobian[orientation_rows]
