@@ -27,7 +27,7 @@ class ForeheadAnalyticShapeSamples:
             derivatives=world_jac if pose==0 else world_jac+open_jac
             for corner in range(4):
                 active=np.array([i in index for i in nodes[:,corner]])
-                rr=np.flatnonzero(active);local=np.array([index[i]for i in nodes[active,corner]])
+                rr=np.flatnonzero(active);local=np.array([index[i]for i in nodes[active,corner]],dtype=int)
                 g=np.einsum('ij,ijk->ik',grad[active],derivatives[local])*self.weights[active,corner,None]
                 for axis in range(2):rows.extend(rr+pose*n);cols.extend(2*local+axis);data.extend(g[:,axis])
         return coo_matrix((data,(rows,cols)),shape=(2*len(self.weights),2*len(ids))).tocsr()

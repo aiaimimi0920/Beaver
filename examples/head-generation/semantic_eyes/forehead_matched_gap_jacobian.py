@@ -2,6 +2,7 @@
 Coordinates in metres; solver variables in millimetres. Fallback rows must be FD.
 """
 from forehead_vertex_gap_jacobian import forehead_vertex_gap_row
+from target_boundary_dependency import target_has_boundary_dependency
 import numpy as np
 from scipy.sparse import csr_matrix as forehead_gap_csr_matrix
 
@@ -58,6 +59,7 @@ def forehead_matched_gap_jacobian(stage, points, params, ids, world_jac, world_n
                 if distance < 1e-09:
                     flags.append('zero_distance')
                 ties = np.flatnonzero(dsq <= dsq[l] + 1e-16)
+                boundary_dependency = target_has_boundary_dependency(targetpath, frac, ties, index, world_nonsmooth)
                 base = {int(targetpath[l]): 1 - f, int(targetpath[l + 1]): f}
                 base = {i: w for i, w in base.items() if w > 1e-09}
                 for ll in ties:
@@ -74,7 +76,7 @@ def forehead_matched_gap_jacobian(stage, points, params, ids, world_jac, world_n
                     col = index[node]
                     hitjac = weight * world_jac[col] - np.outer(worldedge, weight * normal / (1000 * den))
                     g[2 * col:2 * col + 2] += unit @ hitjac * 1000
-                    if world_nonsmooth[col] and weight > 1e-09:
+                    if world_nonsmooth[col] and weight != 0:
                         flags.append('author_boundary')
                 for node, weight in base.items():
                     if node not in index:
@@ -83,6 +85,8 @@ def forehead_matched_gap_jacobian(stage, points, params, ids, world_jac, world_n
                     g[2 * col:2 * col + 2] -= weight * (unit @ world_jac[col]) * 1000
                     if world_nonsmooth[col]:
                         flags.append('author_boundary')
+                if boundary_dependency and 'author_boundary' not in flags:
+                    flags.append('author_boundary')
                 gap = distance * 1000
                 error = gap / T - 1
                 if abs(error) < 1e-08 and np.linalg.norm(g) > 1e-12:

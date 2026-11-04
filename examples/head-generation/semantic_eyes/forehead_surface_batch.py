@@ -86,14 +86,20 @@ class ForeheadSurfaceBatch:
         if np.any(interior_counts > 1):
             return None
         order = np.argsort(margin)
+        selected = np.full(len(points), -1, dtype=int)
+        for index in order:
+            selected[sample_ids[index]] = index
+        if np.any(selected < 0):
+            return None
+        values = np.einsum('ij,ijk->ik', weights[order], self.vertices[quad_ids[order]])
+        inverse_order = np.empty(len(order), dtype=int)
+        inverse_order[order] = np.arange(len(order))
         out = np.full((len(points), 3), np.nan)
-        out[sample_ids[order]] = np.einsum('ij,ijk->ik', weights[order], self.vertices[quad_ids[order]])
+        out[:] = values[inverse_order[selected]]
         if not np.isfinite(out).all():
             return None
         if not with_differential:
             return out
-        selected = np.empty(len(points), dtype=int)
-        selected[sample_ids[order]] = order
         quad_ids, weights, margin = (quad_ids[selected], weights[selected], margin[selected])
         u, v = weights[:, 1]+weights[:, 2], weights[:, 2]+weights[:, 3]
         def derivative(quads):

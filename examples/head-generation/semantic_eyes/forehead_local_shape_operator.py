@@ -2,6 +2,7 @@
 import copy
 import time
 import numpy as np
+from local_shape_safe_derivative import local_shape_safe_derivative
 from scipy.optimize import minimize,Bounds
 from scipy.optimize._numdiff import approx_derivative
 from forehead_surface_batch import ForeheadSurfaceBatch
@@ -65,15 +66,8 @@ def forehead_condition_local_shape(source,proposal,witness,field_context,extra_a
         if z is None:return np.full(B+forward.count+reverse.count,-1000.)
         return np.r_[base(x),forward.constraints(*z),reverse.constraints(*z)]
     def jacobian(x):
-        z=evaluate(x)
-        if z is None:return approx_derivative(constraints,x,method='2-point',abs_step=1e-5)
-        xy=x.reshape(-1,2)/1000;_,J,flags=batch.sample_differential(xy);_,D,df=db.sample_differential(xy)
-        if J is None or D is None:return approx_derivative(constraints,x,method='2-point',abs_step=1e-5)
-        out=np.vstack((approx_derivative(base,x,method='2-point',abs_step=1e-5),forward.jacobian(*z,ids,J/1000,D/1000).toarray(),reverse.jacobian(*z,ids,J/1000,D/1000).toarray()))
-        for k in np.flatnonzero(flags|df):
-            for axis in(0,1):
-                c=2*k+axis;h=1e-4;plus=x.copy();minus=x.copy();plus[c]+=h;minus[c]-=h;out[:,c]=(constraints(plus)-constraints(minus))/(2*h)
-        return out
+        return local_shape_safe_derivative(x, evaluate, base, constraints, batch, db,
+            ids, forward, reverse, B, approx_derivative)
     def scalar_candidate(x):
         pp=copy.deepcopy(p);lin=forehead_support_rows(pp['lineage'])
         for i,xy in zip(ids,x.reshape(-1,2)/1000):

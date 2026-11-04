@@ -1,5 +1,6 @@
 """Differential of an explicitly collocated source vertex to a whole target rail."""
 import numpy as np
+from target_boundary_dependency import target_has_boundary_dependency
 
 def forehead_vertex_gap_row(record, stage, points, index, world_jac, world_nonsmooth):
     g = np.zeros(2 * len(index))
@@ -26,7 +27,9 @@ def forehead_vertex_gap_row(record, stage, points, index, world_jac, world_nonsm
         flags.append('zero_vertex_distance')
     base = {int(path[k]): 1 - f, int(path[k + 1]): f}
     base = {i: w for i, w in base.items() if w > 1e-09}
-    for q in np.flatnonzero(dsq <= dsq[k] + 1e-16):
+    ties = np.flatnonzero(dsq <= dsq[k] + 1e-16)
+    boundary_dependency = target_has_boundary_dependency(path, frac, ties, index, world_nonsmooth)
+    for q in ties:
         other = {int(path[q]): 1 - frac[q], int(path[q + 1]): frac[q]}
         other = {i: w for i, w in other.items() if w > 1e-09}
         if other.keys() != base.keys() or any((abs(other[i] - base[i]) > 1e-07 for i in base)):
@@ -44,6 +47,8 @@ def forehead_vertex_gap_row(record, stage, points, index, world_jac, world_nonsm
         g[2 * col:2 * col + 2] -= weight * (unit @ world_jac[col]) * 1000
         if world_nonsmooth[col]:
             flags.append('vertex_target_author_boundary')
+    if boundary_dependency and 'vertex_target_author_boundary' not in flags:
+        flags.append('vertex_target_author_boundary')
     gap = distance * 1000
     error = gap / T - 1
     if abs(error) < 1e-08 and np.linalg.norm(g) > 1e-12:
