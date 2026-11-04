@@ -1,3 +1,4 @@
+from forehead_quantization_targets import forehead_make_quantization_margins
 from forehead_cache_fit import forehead_install_jacobian_cache
 """Quality and posed-field fitting of quad supports and lower guide continuations."""
 from forehead_complete_guide_fit import (forehead_install_complete_stage, forehead_complete_objective,
@@ -25,13 +26,12 @@ from forehead_fairing_restore import forehead_restore_fairing_iterate, forehead_
 from forehead_guide_fairing import forehead_guides_fairing
 from forehead_lower_guard import forehead_build_lower_guard, forehead_update_lower_guard
 from forehead_seam_growth import forehead_restore_seam_growth, forehead_validate_seam_budget
-from forehead_arc_quantization import forehead_arc_quantization_targets
 from forehead_seam_support import forehead_select_seam_supports
 from forehead_failed_seam_support import forehead_select_failed_seam_supports
 from forehead_seam_hint import forehead_revalidate_seam_hint, forehead_seam_source_identity, forehead_next_stage_seam_hint
 from forehead_field_jacobian import forehead_field_parameter_jacobian
-from forehead_orientation_margin import forehead_signed_chart_cross_mm2, forehead_orientation_margin_targets
-from forehead_lp_restore import forehead_restore_linearized, forehead_quantization_margin_targets
+from forehead_orientation_margin import forehead_signed_chart_cross_mm2
+from forehead_lp_restore import forehead_restore_linearized
 from forehead_anchor_domain import ForeheadAnchorDomain
 from forehead_aspect_constraints import forehead_aspect_reference, forehead_pairwise_aspect
 
@@ -300,44 +300,9 @@ def fit_forehead_shared_constraints(vertices, old_open_delta, proposal, focus=Fa
             measured = gap_stage.fast.evaluate(state[0], author_parameters(values), details=True)
             return {'valid': measured['valid'], 'reason': measured['reason']}
 
-        def quantization_margins(values, residuals):
-            state = evaluate(values)
-            if state is None:
-                return None
-            smooth = state[1]
-            rounded, _ = orbital_quad_quality(state[0].astype(np.float32).astype(float), quads)
-            lower_rows = np.arange(*layout['angle_lower'])
-            upper_rows = np.arange(*layout['angle_upper'])
-            jacobian = constraint_jacobian(values)
-            targets, evidence = forehead_quantization_margin_targets(
-                residuals, jacobian, scales, lower_rows, upper_rows, smooth, rounded)
-            orientation_rows = np.arange(*layout['orientation'])
-            rows = jacobian[orientation_rows]
-            variable_rows = np.asarray(rows.multiply(rows).sum(axis=1)).ravel() > 1e-24
-            smooth_cross = forehead_signed_chart_cross_mm2(
-                state[0], quads, signs, chart_radius).ravel()
-            rounded_cross = forehead_signed_chart_cross_mm2(
-                state[0].astype(np.float32).astype(float), quads, signs, chart_radius).ravel()
-            targets, orientation_evidence = forehead_orientation_margin_targets(
-                targets, orientation_rows, scales, smooth_cross, rounded_cross,
-                variable_rows, accepted_mm2=accepted_cross, interior_cap_mm2=.001)
-            orientation_summary = {
-                'working_target_row_count': len(orientation_evidence),
-                'accepted_start_floor_cap_mm2': .001,
-                'rounding_repairs': [row for row in orientation_evidence if row['rounding_failed']],
-                'fixed_source_radius_m': chart_radius,
-                'original_accepted_reference_retained': True}
-            if fairing_stage:
-                targets = np.maximum(targets, fairing_stage.quantization_targets(
-                    state[0], layout['whole_guide_fairing'][0], scales))
-            arc_evidence = []
-            if flow_stage:
-                arc_targets, arc_evidence = forehead_arc_quantization_targets(
-                    state[0], flow_stage.spacing,
-                    layout['physical_flow'][0] + flow_stage.flow.count, scales)
-                targets = np.maximum(targets, arc_targets)
-            return targets, {'angles': evidence, 'orientation': orientation_summary,
-                             'arc_quantization': arc_evidence}
+        quantization_margins = forehead_make_quantization_margins(
+            evaluate, constraint_jacobian, layout, scales, quads, signs,
+            chart_radius, accepted_cross, fairing_stage, flow_stage, complete_stage)
 
         orientation_first, orientation_last = layout['orientation']
         orientation_floor = np.minimum(.5 * accepted_cross, .001) / scales[orientation_first:orientation_last]

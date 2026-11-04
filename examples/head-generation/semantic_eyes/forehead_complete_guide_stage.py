@@ -7,6 +7,7 @@ import copy as forehead_complete_copy
 import hashlib as forehead_complete_hashlib
 import json as forehead_complete_json
 import numpy as np
+from forehead_quantization_targets import forehead_complete_margin_targets
 from forehead_complete_curve_metrics import forehead_complete_side_curve
 from forehead_finite_rail_gap import forehead_finite_rail_profile
 
@@ -142,6 +143,13 @@ class ForeheadCompleteGuideFairingStage:
     def accepts(self, points):
         self.charge('saved_or_final_acceptance')
         return bool(np.all(self.constraints(points) >= 0))
+
+    def quantization_targets(self, points, offset, scales):
+        """Count both original residual measurements; retain every hard cap."""
+        self.charge('quantization_target_request')
+        smooth = self.constraints(points)
+        saved = self.constraints(np.asarray(points).astype(np.float32).astype(float))
+        return forehead_complete_margin_targets(smooth, saved, offset, scales)
 
     def parameter_gradient(self, values, evaluate):
         self.charge('objective_derivative')

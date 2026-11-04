@@ -73,6 +73,7 @@ SPACING_MODULES = ('nasal_spacing_rule', 'nasal_rear_rule', 'nasal_return_proven
     'forehead_seam_growth',
     'forehead_arc_quantization',
     'forehead_orientation_margin',
+    'forehead_quantization_targets',
     'forehead_field_jacobian',
     'forehead_paired_export',
     'forehead_paired_stage',
