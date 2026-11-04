@@ -1,5 +1,6 @@
 """Stronger working targets for the original float32 saved-state gates."""
 import numpy as np
+from forehead_angle_rounding_targets import forehead_float32_angle_targets
 from orbital_support_rule import orbital_quad_quality
 from forehead_lp_restore import forehead_quantization_margin_targets
 from forehead_orientation_margin import (forehead_signed_chart_cross_mm2,
@@ -62,6 +63,12 @@ def forehead_make_quantization_margins(evaluate, constraint_jacobian, layout, sc
         jacobian = constraint_jacobian(values)
         targets, evidence = forehead_quantization_margin_targets(
             residuals, jacobian, scales, lower_rows, upper_rows, smooth, rounded)
+        angle_clearance_evidence = []
+        if complete_stage and np.any((rounded < 25.) | (rounded > 150.)):
+            complete_stage.charge('float32_angle_clearance_request')
+            angle_clearance, angle_clearance_evidence = forehead_float32_angle_targets(
+                state[0], quads, scales, lower_rows, upper_rows, smooth, rounded)
+            targets = np.maximum(targets, angle_clearance)
         orientation_rows = np.arange(*layout['orientation'])
         rows = jacobian[orientation_rows]
         variable_rows = np.asarray(rows.multiply(rows).sum(axis=1)).ravel() > 1e-24
@@ -89,6 +96,8 @@ def forehead_make_quantization_margins(evaluate, constraint_jacobian, layout, sc
             targets = np.maximum(targets, arc_targets)
         evidence = {'angles': evidence, 'orientation': orientation_summary,
                     'arc_quantization': arc_evidence}
+        if angle_clearance_evidence:
+            evidence['float32_angle_clearance'] = angle_clearance_evidence
         if complete_stage:
             complete_targets = complete_stage.quantization_targets(
                 state[0], layout['complete_guide_fairing'][0], scales)
