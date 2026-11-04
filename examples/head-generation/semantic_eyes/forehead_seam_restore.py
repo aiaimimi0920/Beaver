@@ -8,7 +8,7 @@ from forehead_seam_support import forehead_intersect_held_bounds
 
 def forehead_restore_seam_stage(start,radii,constraints,jacobian,admit,
         orientation_rows,domain,selection,margin_callback,orientation_floor,
-        max_iterations=24,wall_seconds=120.,failed_selection=None):
+        max_iterations=24,wall_seconds=120.,failed_selection=None,linear_model=None):
     """At most TWO legs, ONE deadline, the SAME original problem closures.
 
     selection is the initial selector or already-revalidated hint result.
@@ -48,7 +48,8 @@ def forehead_restore_seam_stage(start,radii,constraints,jacobian,admit,
             constraints,jacobian,admit,orientation_rows,domain,
             margin_callback=margin,max_iterations=max_iterations,
             wall_seconds=budget,soc_source_domain=domain,
-            soc_orientation_floor=orientation_floor,temporary_held_columns=columns)
+            soc_orientation_floor=orientation_floor,temporary_held_columns=columns,
+            **({} if linear_model is None else {'linear_model': linear_model}))
         corrections=sum(len(trial.get('SOC',()))for step in metadata.get('steps',())for trial in step.get('trials',()))
         total_major+=int(solved.nit);total_soc+=corrections
         legs.append({'held_columns':columns,'selection':copy.deepcopy(current_selection),

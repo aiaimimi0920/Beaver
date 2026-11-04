@@ -57,7 +57,7 @@ def forehead_validate_seam_growth_selection(selection, start, context):
 def forehead_restore_seam_growth(start,radii,constraints,jacobian,admit,
         orientation_rows,domain,selection,margin_callback,orientation_floor,
         max_iterations=24,wall_seconds=120.,failed_selection=None,
-        *,active_set_growth=False,growth_context=None,max_holds=4,initial_held_seconds=None):
+        *,active_set_growth=False,growth_context=None,max_holds=4,initial_held_seconds=None,linear_model=None):
     """Legacy two-leg default, or <=3 legs/ONE deadline with evidence-only growth.
 
     growth_context contains ORIGINAL variable_ids, frozen_field_reference_m,
@@ -71,7 +71,8 @@ def forehead_restore_seam_growth(start,radii,constraints,jacobian,admit,
     if not active_set_growth:
         return forehead_restore_seam_stage(start,radii,constraints,jacobian,admit,
             orientation_rows,domain,selection,margin_callback,orientation_floor,
-            max_iterations,wall_seconds,failed_selection)
+            max_iterations,wall_seconds,failed_selection,
+            **({} if linear_model is None else {'linear_model': linear_model}))
     if type(max_iterations)is not int or not 1<=max_iterations<=30:raise ValueError('Invalid iteration budget')
     if type(max_holds)is not int or not 1<=max_holds<=4:raise ValueError('Invalid hold capacity')
     initial=np.asarray(start,float).copy();radius=np.asarray(radii,float).copy()
@@ -100,7 +101,8 @@ def forehead_restore_seam_growth(start,radii,constraints,jacobian,admit,
             budget=min(remaining, initial_held_seconds)
         solved,metadata=forehead_restore_linearized(initial.copy(),radius.copy(),constraints,jacobian,admit,orientation_rows,domain,
             margin_callback=None if margin_callback is None else margin,max_iterations=max_iterations,wall_seconds=budget,
-            soc_source_domain=domain,soc_orientation_floor=orientation_floor,temporary_held_columns=current['held_columns'])
+            soc_source_domain=domain,soc_orientation_floor=orientation_floor,temporary_held_columns=current['held_columns'],
+            **({} if linear_model is None else {'linear_model': linear_model}))
         count=sum(len(t.get('SOC',()))for s in metadata.get('steps',())for t in s.get('trials',()))
         major+=int(solved.nit);soc+=count
         legs.append({'selection':copy.deepcopy(current),'held_columns':list(current['held_columns']),'wall_budget_seconds':budget,'status':metadata.get('status'),'admitted_checkpoint':bool(solved.success),'major_iterations':int(solved.nit),'soc_corrections':count})

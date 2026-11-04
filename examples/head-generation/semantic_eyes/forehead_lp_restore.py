@@ -6,13 +6,14 @@ import numpy as np
 from scipy import sparse
 from scipy.optimize import linprog, OptimizeResult
 from forehead_seam_support import forehead_intersect_held_bounds
+from forehead_extrema_lp import forehead_extrema_rows, forehead_extrema_rhs, forehead_extrema_prediction
 
 
 def forehead_restore_linearized(start, radii, constraints, jacobian, admit,
         orientation_rows, domain, margin_callback=None, warm=None,
         max_iterations=12, wall_seconds=120., trust_mm=1., progress=None,
         soc_source_domain=None, soc_orientation_floor=None, reduction_fraction=1.,
-        temporary_held_columns=()):
+        temporary_held_columns=(), linear_model=None):
     """Restore one frozen problem; NEVER rebuild caps, fields or references.
 
     All parameters/bounds are chart millimetres. constraints returns the exact
@@ -31,6 +32,11 @@ def forehead_restore_linearized(start, radii, constraints, jacobian, admit,
     owns unit conversion, variable/fixed row ownership and quantization policy.
     Copies isolate callback inputs; closures/source baseline remain caller-owned.
     """
+    # Optional all-child rows affect only LP directions, never aggregate merit,
+    # working targets, derivative consumers, or saved admission. Unsupported
+    # owners keep the original Jacobian, including its finite-difference fallback.
+    if linear_model is not None and not callable(linear_model):
+        raise ValueError('Invalid all-child linear model callback')
     anchor=np.asarray(start,float).copy();radius=np.asarray(radii,float).copy()
     if (anchor.ndim!=1 or radius.shape!=anchor.shape or not len(anchor) or
             not np.isfinite(np.r_[anchor,radius]).all() or np.any(radius<=0)):
@@ -81,13 +87,16 @@ def forehead_restore_linearized(start, radii, constraints, jacobian, admit,
             cy=np.asarray(constraints(y),float);Jy=sparse.csr_matrix(jacobian(y))
             if cy.shape!=(row_count,) or not np.isfinite(cy).all() or Jy.shape!=(row_count,len(y)) or not np.isfinite(Jy.data).all():return None
             desired=goals.copy(); desired[a:b]=np.maximum(target[a:b],floor*(1. if correction==0 else 1.1))
-            nn=np.maximum(np.sqrt(np.asarray(Jy.multiply(Jy).sum(axis=1)).ravel()),1e-8);n=len(y)
-            matrix=sparse.vstack((sparse.hstack((-sparse.diags(1/nn)@Jy,sparse.csr_matrix((row_count,1)))),sparse.hstack((sparse.eye(n),-np.ones((n,1)))),sparse.hstack((-sparse.eye(n),-np.ones((n,1))))),format='csr')
+            values, rows, owners = forehead_extrema_rows(
+                cy, Jy, None if linear_model is None else linear_model(y.copy()))
+            nn=np.maximum(np.sqrt(np.asarray(rows.multiply(rows).sum(axis=1)).ravel()),1e-8);n=len(y)
+            rhs = forehead_extrema_rhs(cy, values, owners, cy-desired)
+            matrix=sparse.vstack((sparse.hstack((-sparse.diags(1/nn)@rows,sparse.csr_matrix((len(values),1)))),sparse.hstack((sparse.eye(n),-np.ones((n,1)))),sparse.hstack((-sparse.eye(n),-np.ones((n,1))))),format='csr')
             lo=np.maximum.reduce((lower-y,base-trust_mm-y,np.full(n,-trust_mm)));hi=np.minimum.reduce((upper-y,base+trust_mm-y,np.full(n,trust_mm)))
             if np.any(lo>hi):return None
             remaining=wall_seconds-(time.monotonic()-began)
             if remaining<=0:return None
-            sol=linprog(np.r_[np.zeros(n),1.],A_ub=matrix,b_ub=np.r_[(cy-desired)/nn,np.zeros(2*n)],bounds=list(zip(lo,hi))+[(0,trust_mm)],method='highs',options={'time_limit':min(10.,remaining),'primal_feasibility_tolerance':1e-9})
+            sol=linprog(np.r_[np.zeros(n),1.],A_ub=matrix,b_ub=np.r_[rhs/nn,np.zeros(2*n)],bounds=list(zip(lo,hi))+[(0,trust_mm)],method='highs',options={'time_limit':min(10.,remaining),'primal_feasibility_tolerance':1e-9})
             item={'correction':correction+1,'LP_success':bool(sol.success),'LP_message':str(sol.message)};logs.append(item)
             if not sol.success:return None
             y=y+sol.x[:-1];item['max_correction_mm']=float(abs(sol.x[:-1]).max())
@@ -104,15 +113,20 @@ def forehead_restore_linearized(start, radii, constraints, jacobian, admit,
         c,valid,d=inspect(x);residual=c-target
         J=sparse.csr_matrix(jacobian(x))
         if J.shape!=(row_count,len(x))or not np.isfinite(J.data).all():raise ValueError('Invalid exact constraint Jacobian')
-        norm=np.maximum(np.sqrt(np.asarray(J.multiply(J).sum(axis=1)).ravel()),1e-8);n=len(x)
-        A=sparse.vstack((sparse.hstack((-sparse.diags(1/norm)@J,sparse.csr_matrix((row_count,1)))),sparse.hstack((sparse.eye(n),-np.ones((n,1)))),sparse.hstack((-sparse.eye(n),-np.ones((n,1))))),format='csr')
+        values, rows, owners = forehead_extrema_rows(
+            c, J, None if linear_model is None else linear_model(x.copy()))
+        norm=np.maximum(np.sqrt(np.asarray(rows.multiply(rows).sum(axis=1)).ravel()),1e-8);n=len(x)
+        parent_rhs = np.where(residual<0,reduction_fraction*residual,residual)
+        rhs = forehead_extrema_rhs(c, values, owners, parent_rhs)
+        A=sparse.vstack((sparse.hstack((-sparse.diags(1/norm)@rows,sparse.csr_matrix((len(values),1)))),sparse.hstack((sparse.eye(n),-np.ones((n,1)))),sparse.hstack((-sparse.eye(n),-np.ones((n,1))))),format='csr')
         lo=np.maximum(lower-x,-trust_mm);hi=np.minimum(upper-x,trust_mm)
         remaining=wall_seconds-(time.monotonic()-began)
         if remaining<=0:status='wall_limit';break
-        lp=linprog(np.r_[np.zeros(n),1.],A_ub=A,b_ub=np.r_[np.where(residual<0,reduction_fraction*residual,residual)/norm,np.zeros(2*n)],bounds=list(zip(lo,hi))+[(0,trust_mm)],method='highs',options={'time_limit':min(10.,remaining),'primal_feasibility_tolerance':1e-9})
+        lp=linprog(np.r_[np.zeros(n),1.],A_ub=A,b_ub=np.r_[rhs/norm,np.zeros(2*n)],bounds=list(zip(lo,hi))+[(0,trust_mm)],method='highs',options={'time_limit':min(10.,remaining),'primal_feasibility_tolerance':1e-9})
         row={'iteration':len(records),'LP_success':bool(lp.success),'LP_message':str(lp.message),'minimum_original':float(c.min()),'merit_before':float(np.linalg.norm(np.minimum(residual,0))),'trials':[]};records.append(row)
         if not lp.success:
-            row['worst_scaled_rows']=[{'index':int(i),'residual':float(residual[i]),'gradient_norm':float(norm[i])}for i in np.argsort(residual)[:24]]
+            parent_norm=np.maximum(np.sqrt(np.asarray(J.multiply(J).sum(axis=1)).ravel()),1e-8)
+            row['worst_scaled_rows']=[{'index':int(i),'residual':float(residual[i]),'gradient_norm':float(parent_norm[i])}for i in np.argsort(residual)[:24]]
             status='linearized_infeasible_or_limit';break
         direction=lp.x[:-1];row['max_step_mm']=float(abs(direction).max());advanced=False
         for alpha in (1.,.5,.25,.125,.0625,.03125,.015625,.0078125,.00390625,.001,.0001,.00001,.000001):
@@ -126,7 +140,8 @@ def forehead_restore_linearized(start, radii, constraints, jacobian, admit,
             merit=float(np.linalg.norm(np.minimum(cc-target,0)));entry={'alpha':alpha,'merit':merit,'domain':d};row['trials'].append(entry)
             if floor is not None and (not valid or np.any(cc[a:b]<floor)) and alpha==.5 and source_valid(trial):
                 entry['major_merit']=row['merit_before']
-                corrected=second_order_trial(x,trial,c+alpha*(J@direction),entry)
+                corrected=second_order_trial(x,trial,forehead_extrema_prediction(
+                    row_count, values, rows, owners, alpha*direction),entry)
                 if corrected is not None:
                     x,cc=corrected;advanced=True;checkpoint(x,cc);entry['direction_accepted_not_model']=True;row['admitted_checkpoint']=selected;break
             if not valid or (floor is not None and np.any(cc[a:b]<floor)):

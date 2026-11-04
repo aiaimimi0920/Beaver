@@ -1,3 +1,4 @@
+from forehead_extrema_lp import forehead_make_extrema_model
 from forehead_quantization_targets import forehead_make_quantization_margins
 from forehead_cache_fit import forehead_install_jacobian_cache
 """Quality and posed-field fitting of quad supports and lower guide continuations."""
@@ -290,6 +291,8 @@ def fit_forehead_shared_constraints(vertices, old_open_delta, proposal, focus=Fa
     gradient_metadata = {}
     linearized_metadata = {}
     if solver_mode == 'linearized':
+        linear_model = forehead_make_extrema_model(complete_stage, evaluate, batch, ids,
+            layout.get('complete_guide_fairing'), scales)
         accepted_cross = forehead_signed_chart_cross_mm2(
             evaluate(start)[0], quads, signs, chart_radius).ravel()
 
@@ -343,7 +346,7 @@ def fit_forehead_shared_constraints(vertices, old_open_delta, proposal, focus=Fa
             remember_feasible, layout['orientation'], complete_domain,
             seam_selection, quantization_margins, orientation_floor,
             max_iterations=min(24, max_iterations), wall_seconds=seam_wall_seconds,
-            initial_held_seconds=seam_initial_held_seconds,
+            initial_held_seconds=seam_initial_held_seconds, linear_model=linear_model,
             failed_selection=failed_selection, active_set_growth=seam_active_set_growth,
             growth_context={'variable_ids': ids, 'frozen_field_reference_m': frozen_delta[ids],
                             'support_ids': proposal['support'], 'protected_ids': proposal['protected'],
