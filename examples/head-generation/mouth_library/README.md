@@ -93,3 +93,30 @@ including all six mouth-controller cases, with no skipped cases. See
 `native-gut-evidence.json` for run identity and evidence hashes. The log still
 reports nine deprecated `wait_frames` uses and five total orphan objects; this
 is not a zero-warning claim. Final flow/product acceptance is separate.
+
+## Optional middle-opening correction
+
+The manual controller recognizes an additional `MouthOvalMidCorrective` target
+by name. With `MouthOpen = w`, it writes `4*w*(1-w)` to that target before
+`display.sync_morphs()`, both for immediate state changes and every process frame.
+The original opening weight remains `w`; the other three mouth channels and
+both blink channels retain their existing behavior. Reset and both endpoints
+produce zero correction. Models without this target retain the six-target path.
+The correction is derived, not an additional public slider/input channel;
+`actual_mouth_corrective_state()` reports its actual value, or an empty dictionary
+when unavailable. The existing `actual_mouth_state()` contract is unchanged.
+
+This is support for the separately validated V15 candidate, not a new generator
+output or automatic selection of that asset. Install the updated controller in
+an existing project through its guarded Beaver file-write workflow and select a
+verified model carrying the named target. This repository does not bundle the
+candidate or third-party reference assets. The standalone validation harness in
+`controller_validation/` exercises the actual controller and explicitly supplied
+local GLBs with Godot; its minimal surrounding showcase is not the original
+complete NPR/MiDot project. Existing historical capture manifests do not prove
+this optional corrective, and the older 92-state capture verifier does not
+validate it. Use the new readback method when collecting new corrective evidence.
+
+These changes do not implement speech alignment, the separate performance-JSON
+path, or deployment into an already running Beaver project. Model collision
+coverage and visual acceptance remain separate from controller-weight checks.
