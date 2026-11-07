@@ -54,6 +54,7 @@ jobs:
       - run: python -m unittest discover -s examples/head-generation/brow_library -p 'test_*.py'
       - run: python -m unittest discover -s examples/head-generation/nose_library -p 'test_*.py'
       - run: python -m unittest discover -s examples/head-generation/mouth_library -p 'test_*.py'
+      - run: python -m unittest discover -s examples/head-generation/mouth_library/position_bridge -p 'test_*.py'
       - run: python -m unittest discover -s examples/head-generation/face_library -p 'test_*.py'
       - run: python -m unittest discover -s examples/head-generation/ear_library -p 'test_*.py'
       - run: python -m unittest discover -s examples/head-generation/source_layout -p 'test_*.py'
