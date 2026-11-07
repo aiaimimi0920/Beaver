@@ -12,7 +12,7 @@ STYLE = json.loads((ROOT / "face_style.json").read_text())
 
 
 def pure_function(module, name, extra):
-    if module == "eye_accents.py" and name in {"outline_sections", "accent_sections", "signed_volume", "closed_ribbon_mesh", "accent_mesh"}:
+    if module == "eye_accents.py" and name in {"outline_sections", "accent_sections", "signed_volume", "closed_ribbon_mesh", "accent_mesh", "tuft_rear_scoop", "tuft_free_bow"}:
         module = "thin_ribbon.py"
     if module == "eye_accents.py":
         contract = json.loads((ROOT / "accent-attachment-refactor-contract.json").read_text())

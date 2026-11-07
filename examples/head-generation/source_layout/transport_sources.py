@@ -97,3 +97,28 @@ def validate_native_frame(request):
     if size > 1024 * 1024:
         raise ValueError(f"Native serialized request frame limit exceeded: {size} bytes")
     return size
+
+
+def share_overflowing_native_sources(request):
+    """On overflow only, deduplicate shorter repeated source strings exactly.
+
+    Keep already-valid requests byte-identical. Failed repair leaves the caller's
+    request unchanged; the same full-envelope limit validates every result.
+    """
+    try:
+        validate_native_frame(request)
+        return request
+    except ValueError:
+        for minimum in (1024, 512):
+            candidate = dict(request, code=share_source_literals(request['code'], minimum=minimum))
+            try:
+                validate_native_frame(candidate)
+                return candidate
+            except ValueError:
+                if minimum == 512:
+                    from .lossless_transport import encode_sources
+                    try:
+                        return encode_sources(request, validate_native_frame)[0]
+                    except ValueError:
+                        validate_native_frame(candidate)
+                        raise

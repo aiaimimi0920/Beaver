@@ -1,0 +1,111 @@
+"""Vectorized frozen-quad samples for source-surface fitting.
+
+The independent dense bidirectional native shape guard remains authoritative.
+"""
+import numpy as np
+
+
+def make_forehead_surface_batch(chart, vertices, quads):
+    return ForeheadSurfaceBatch(chart, vertices, quads)
+
+
+class ForeheadSurfaceBatch:
+    """Batch inversion of current convex authoring quads, with no index hints."""
+    def __init__(self, chart, vertices, quads, cache_limit=4096):
+        if not isinstance(cache_limit, int) or cache_limit < 0:
+            raise ValueError('Invalid frozen surface candidate cache capacity')
+        self.cache_limit, self.candidate_cache = cache_limit, {}
+        self.xy = np.asarray(chart)[quads][:, :, [0, 2]]
+        self.vertices = np.asarray(vertices)[quads]
+        self.lower, self.upper = self.xy.min(axis=1), self.xy.max(axis=1)
+
+    def _fill_candidates(self, points, keys):
+        points = np.asarray(points)
+        sample_ids, quad_ids = np.where(
+            np.all(points[:, None, :] >= self.lower[None, :, :]-1e-8, axis=2)
+            & np.all(points[:, None, :] <= self.upper[None, :, :]+1e-8, axis=2))
+        q, target = self.xy[quad_ids], points[sample_ids]
+        u, v = np.full(len(sample_ids), .5), np.full(len(sample_ids), .5)
+        for _ in range(12):
+            weights = np.column_stack(((1-u)*(1-v), u*(1-v), u*v, (1-u)*v))
+            a = (1-v)[:, None]*(q[:, 1]-q[:, 0])+v[:, None]*(q[:, 2]-q[:, 3])
+            b = (1-u)[:, None]*(q[:, 3]-q[:, 0])+u[:, None]*(q[:, 2]-q[:, 1])
+            residual = np.einsum('ij,ijk->ik', weights, q)-target
+            det = a[:, 0]*b[:, 1]-a[:, 1]*b[:, 0]
+            valid = np.abs(det) > 1e-14
+            u -= np.divide(residual[:, 0]*b[:, 1]-residual[:, 1]*b[:, 0], det,
+                           out=np.zeros_like(det), where=valid)
+            v -= np.divide(a[:, 0]*residual[:, 1]-a[:, 1]*residual[:, 0], det,
+                           out=np.zeros_like(det), where=valid)
+        weights = np.column_stack(((1-u)*(1-v), u*(1-v), u*v, (1-u)*v))
+        error = np.linalg.norm(np.einsum('ij,ijk->ik', weights, q)-target, axis=1)
+        margin = np.minimum.reduce([u, v, 1-u, 1-v])
+        valid = (margin >= -1e-7) & (error < 1e-8)
+        sample_ids, quad_ids = sample_ids[valid], quad_ids[valid]
+        weights, margin = weights[valid], margin[valid]
+        for i, key in enumerate(keys):
+            chosen = sample_ids == i
+            self.candidate_cache[key] = (quad_ids[chosen], weights[chosen], margin[chosen])
+
+    def sample(self, points):
+        return self._sample_result(points, False)
+
+    def sample_differential(self, points):
+        """Return (positions, world/chart Jacobian, author-boundary flags).
+
+        Points are Nx2 frozen chart coordinates. The Jacobian is Nx3x2,
+        world metres per chart metre, BEFORE solver-unit conversion. Invalid or
+        ambiguous samples return None exactly as sample does. Boundary flags
+        request finite-difference fallback; selected one-sided derivatives there
+        are not claimed to equal a central derivative. Candidate eviction cannot
+        invalidate this result: metadata is consumed inside the same sampling call.
+        """
+        return self._sample_result(points, True)
+
+    def _sample_result(self, points, with_differential):
+        # Cache inversion candidates, NOT selected positions. Global unstable
+        # argsort tie ordering is retained exactly, including boundary queries
+        # reordered or repeated between finite-difference evaluations.
+        points = np.asarray(points)
+        keys = [(points.dtype.str, row.tobytes()) for row in points]
+        unknown = {key: i for i, key in enumerate(keys) if key not in self.candidate_cache}
+        if unknown:
+            self._fill_candidates(points[list(unknown.values())], list(unknown))
+        entries = [self.candidate_cache[key] for key in keys]
+        counts = np.asarray([len(row[0]) for row in entries], dtype=int)
+        sample_ids = np.repeat(np.arange(len(points)), counts)
+        if entries:
+            quad_ids = np.concatenate([row[0] for row in entries])
+            weights = np.concatenate([row[1] for row in entries])
+            margin = np.concatenate([row[2] for row in entries])
+        else:
+            quad_ids, weights, margin = np.empty(0,int), np.empty((0,4)), np.empty(0)
+        while len(self.candidate_cache) > self.cache_limit:
+            self.candidate_cache.pop(next(iter(self.candidate_cache)))
+        interior_counts = np.bincount(sample_ids[margin > 1e-7], minlength=len(points))
+        if np.any(interior_counts > 1):
+            return None
+        order = np.argsort(margin)
+        selected = np.full(len(points), -1, dtype=int)
+        for index in order:
+            selected[sample_ids[index]] = index
+        if np.any(selected < 0):
+            return None
+        values = np.einsum('ij,ijk->ik', weights[order], self.vertices[quad_ids[order]])
+        inverse_order = np.empty(len(order), dtype=int)
+        inverse_order[order] = np.arange(len(order))
+        out = np.full((len(points), 3), np.nan)
+        out[:] = values[inverse_order[selected]]
+        if not np.isfinite(out).all():
+            return None
+        if not with_differential:
+            return out
+        quad_ids, weights, margin = (quad_ids[selected], weights[selected], margin[selected])
+        u, v = weights[:, 1]+weights[:, 2], weights[:, 2]+weights[:, 3]
+        def derivative(quads):
+            return np.stack(((1-v)[:, None]*(quads[:, 1]-quads[:, 0])
+                             +v[:, None]*(quads[:, 2]-quads[:, 3]),
+                             (1-u)[:, None]*(quads[:, 3]-quads[:, 0])
+                             +u[:, None]*(quads[:, 2]-quads[:, 1])), axis=2)
+        jacobian = derivative(self.vertices[quad_ids]) @ np.linalg.inv(derivative(self.xy[quad_ids]))
+        return out, jacobian, margin <= 1e-7
