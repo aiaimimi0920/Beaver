@@ -2,12 +2,14 @@ extends "res://showcase_extensions/head_review.gd"
 ## Manual generated-GLB consumer. Not the separate NPR performance JSON speech path.
 
 const MOUTH_NAMES := ["MouthOpen", "MouthRound", "MouthSpread", "MouthPucker"]
+const MOUTH_CORRECTIVE := "MouthOvalMidCorrective"
 const MOUTH_LABELS := ["开口", "圆唇", "横展", "前噘"]
 var mouth_weights: Dictionary = {}
 var mouth_sliders: Dictionary = {}
 var mouth_indices: Dictionary = {}
 var mouth_face: MeshInstance3D
 var mouth_ready := false
+var mouth_corrective_index := -1
 
 
 func _ready() -> void:
@@ -23,6 +25,8 @@ func _ready() -> void:
 			return
 		mouth_indices[name] = index
 		mouth_weights[name] = 0.0
+	# Optional V15 target; older six-target models retain their existing behavior.
+	mouth_corrective_index = mouth_face.find_blend_shape_by_name(MOUTH_CORRECTIVE)
 	mouth_ready = true
 	var navigation := get_node_or_null("Navigation")
 	if navigation != null:
@@ -71,8 +75,7 @@ func _process(_delta: float) -> void:
 	# No hidden mapping from these visual channels to phonemes is performed.
 	if not mouth_ready or not is_instance_valid(mouth_face):
 		return
-	for name in MOUTH_NAMES:
-		mouth_face.set_blend_shape_value(mouth_indices[name], mouth_weights[name])
+	_apply_mouth_weights()
 	display.sync_morphs()
 
 
@@ -95,8 +98,8 @@ func set_mouth_state(values: Dictionary) -> bool:
 			return false
 	for name in MOUTH_NAMES:
 		mouth_weights[name] = float(values.get(name, 0.0))
-		mouth_face.set_blend_shape_value(mouth_indices[name], mouth_weights[name])
 		mouth_sliders[name].set_value_no_signal(mouth_weights[name])
+	_apply_mouth_weights()
 	display.sync_morphs()
 	return true
 
@@ -107,3 +110,18 @@ func actual_mouth_state() -> Dictionary:
 		for name in MOUTH_NAMES:
 			result[name] = mouth_face.get_blend_shape_value(mouth_indices[name])
 	return result
+
+
+func _apply_mouth_weights() -> void:
+	for name in MOUTH_NAMES:
+		mouth_face.set_blend_shape_value(mouth_indices[name], mouth_weights[name])
+	if mouth_corrective_index >= 0:
+		# The original opening channel remains w. Only the optional correction is derived.
+		var opening: float = mouth_weights["MouthOpen"]
+		mouth_face.set_blend_shape_value(mouth_corrective_index, 4.0 * opening * (1.0 - opening))
+
+
+func actual_mouth_corrective_state() -> Dictionary:
+	if not mouth_ready or not is_instance_valid(mouth_face) or mouth_corrective_index < 0:
+		return {}
+	return {MOUTH_CORRECTIVE: mouth_face.get_blend_shape_value(mouth_corrective_index)}
