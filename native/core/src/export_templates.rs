@@ -8,7 +8,7 @@ pub const REQUIRED: [&str; 2] = ["windows_release_x86_64.exe", "windows_debug_x8
 
 pub fn version(output: &str) -> Result<String> {
     let expression =
-        regex::Regex::new(r"^(4\.\d+(?:\.\d+)?)\.(stable|rc\d+|beta\d+|dev\d*)(?:\.|$)")?;
+        regex::Regex::new(r"^(4\.\d+(?:\.\d+)?)\.(stable|rc\d+|beta\d*|dev\d*)(?:\.|$)")?;
     let parts = expression
         .captures(output.trim())
         .context("无法识别 Godot 4 导出模板版本")?;
