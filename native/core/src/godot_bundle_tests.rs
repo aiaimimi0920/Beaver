@@ -98,3 +98,27 @@ fn conflicting_templates_architectures_and_ambiguous_presets_are_rejected() -> R
     );
     Ok(())
 }
+
+#[test]
+fn bare_beta_custom_build_requires_exact_template_version() -> Result<()> {
+    let editor = "4.8.beta.custom_build.aa99fb9b9";
+    assert_eq!(crate::export_templates::version(editor)?, "4.8.beta");
+    require_version(editor, editor)?;
+    for other in [
+        "4.8.beta.custom_build.other",
+        "4.8.beta1.custom_build.aa99fb9b9",
+        "4.8.stable.official.aa99fb9b9",
+    ] {
+        assert!(require_version(editor, other).is_err());
+    }
+    for value in [
+        editor,
+        "4.8.beta.official.aa99fb9b9",
+        "4.8.stable.custom_build.aa99fb9b9",
+    ] {
+        assert!(crate::export_templates::release(value).is_err());
+    }
+    assert!(crate::export_templates::version("4.8.betamax.custom_build.x").is_err());
+    assert!(crate::export_templates::release("4.8.stable.official.aa99fb9b9").is_ok());
+    Ok(())
+}
