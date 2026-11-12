@@ -42,7 +42,7 @@
     "react": "19.2.8",
     "react-dom": "19.2.8",
     "smol-toml": "1.8.0",
-    "three": "^0.180.0",
+    "three": "^0.186.1",
     "zod": "^4.1.12"
   },
   "devDependencies": {
