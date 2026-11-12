@@ -1,0 +1,162 @@
+{
+  "support_context.py": {
+    "sources": [
+      {
+        "name": "ave-audit.py",
+        "sha256": "f94779666c248c11d07d95b5133812ee57c089ce0ecacc93944444390d95ee1d"
+      },
+      {
+        "name": "avf-audit.py",
+        "sha256": "60fefebdc7bad8b8c80cd22d5944aa24312e3b411e9bcc1548f560cf291011ee"
+      },
+      {
+        "name": "avg-audit.py",
+        "sha256": "6016650019a31e19efc083eb02083dfa74c451008ff0965aafae3ee9c7487cdd"
+      },
+      {
+        "name": "avh-audit.py",
+        "sha256": "466c8ebbfd020cf74faa9266757cde63fe81377eca999f0608046befd22ff781"
+      },
+      {
+        "name": "avi-stations.py",
+        "sha256": "454b182967624b2c9179fc8f948dcd5fd48add1602ac27a71c348b8faca61853"
+      }
+    ]
+  },
+  "closest_surface.py": {
+    "sources": [
+      {
+        "name": "aqx-distance.py",
+        "sha256": "4e70588e61b9671923d1c4cc34db1b7416021a06fcfe373cf167b7ddf4f78b63"
+      }
+    ]
+  },
+  "build.py": {
+    "sources": [
+      {
+        "name": "avw-build.py",
+        "sha256": "e143bfbe6afc67bb1036066c52b667df14981a221293ea941bb5e6c1f2007698"
+      }
+    ]
+  },
+  "internal.py": {
+    "sources": [
+      {
+        "name": "avw-internal.py",
+        "sha256": "80c5b0fb43cef61dfe973a36e993fb1ae19a9c1c16f412a2e40d1ac91f1239ae"
+      }
+    ]
+  },
+  "interfacefix.py": {
+    "sources": [
+      {
+        "name": "avw-interfacefix.py",
+        "sha256": "a36cea2bd0ba210923a3d03ac37ff56ca206ecbbc0bb4eb429add7c6858be2f9"
+      }
+    ]
+  },
+  "eval.py": {
+    "sources": [
+      {
+        "name": "avw-eval.py",
+        "sha256": "751653b6410cab5defea1bf765e4a515d3a58d10e10fcf659958e05141b1602d"
+      }
+    ]
+  },
+  "interface.py": {
+    "sources": [
+      {
+        "name": "avw-interface.py",
+        "sha256": "3c808e609bb6a9a5876cf3462d3d131e476ccd717439ae9c67fd95c10d460ae8"
+      }
+    ]
+  },
+  "finalaudit.py": {
+    "sources": [
+      {
+        "name": "avw-finalaudit.py",
+        "sha256": "e800556b7c4f07e0cdb4a520f8261e7655c091a812babdd956d992548e772da3"
+      }
+    ]
+  },
+  "edges.py": {
+    "sources": [
+      {
+        "name": "avw-edges.py",
+        "sha256": "6ac447e11945999b47c474e0eebc8e8d046f95f8319a3d9bb63e34b8cb4f36be"
+      }
+    ]
+  },
+  "bounds.py": {
+    "sources": [
+      {
+        "name": "avw-bounds.py",
+        "sha256": "ab55713b129a155da13ed429d72706fb580310b40f5720d26fb49ee3cc6b11e6"
+      }
+    ]
+  },
+  "distance.py": {
+    "sources": [
+      {
+        "name": "avw-distance.py",
+        "sha256": "cc8048308aa5547a04e99b203e592b5d1b473136f288ba0c78b0601ca6ed0dd5"
+      }
+    ]
+  },
+  "fields_detail.py": {
+    "sources": [
+      {
+        "name": "avw-fields-detail.py",
+        "sha256": "cdb03cfef6d10670e9fe7afd64df8ca1fc9885cfa871982f74657e066dab243f"
+      }
+    ]
+  },
+  "target.py": {
+    "sources": [
+      {
+        "name": "avw-target.py",
+        "sha256": "b739e8b9740c03342e43692237c3d9ef613e933fa91542eaeca6b00f2fab5c52"
+      }
+    ]
+  },
+  "camera.py": {
+    "sources": [
+      {
+        "name": "avw-camera.py",
+        "sha256": "0c81826c3be1e52983202503ceedcc203dbe59b0dccedf07e08e5fcf27436e7b"
+      }
+    ]
+  },
+  "trace.py": {
+    "sources": [
+      {
+        "name": "avw-trace.py",
+        "sha256": "b1a695eebb2106c899ef043916f266f5ef390418db61eef964befc08b14a004a"
+      }
+    ]
+  },
+  "close.py": {
+    "sources": [
+      {
+        "name": "avw-close.py",
+        "sha256": "d5ce7f459d4b7ee080515108312e9d1242253921a7a936a5d24c0ca09f3cf96d"
+      }
+    ]
+  },
+  "render.py": {
+    "sources": [
+      {
+        "name": "avw-render.py",
+        "sha256": "0c9eb4c7b72cb33814880e0e247ef88792a334311bc87017205f962eedabac04"
+      }
+    ]
+  },
+  "check.py": {
+    "sources": [
+      {
+        "name": "avw-check.py",
+        "sha256": "7450584a98aba311ed82808b225dc5f2f25bde8ce8c4a116944ddefedda5172d"
+      }
+    ]
+  }
+}
