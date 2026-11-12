@@ -27,6 +27,11 @@ pub(super) fn workspace(root: &Path) -> Result<PathBuf> {
     let mut current = PathBuf::new();
     for part in root.components() {
         current.push(part);
+        // A Windows drive/UNC prefix alone is not an addressable directory.
+        // Inspect it together with RootDir, including canonical extended paths.
+        if matches!(part, std::path::Component::Prefix(_)) {
+            continue;
+        }
         let metadata = fs::symlink_metadata(&current)?;
         ensure!(
             !crate::files::linked(&metadata),
@@ -35,6 +40,16 @@ pub(super) fn workspace(root: &Path) -> Result<PathBuf> {
     }
     ensure!(root.is_dir(), "Task workspace does not exist");
     Ok(fs::canonicalize(root)?)
+}
+
+#[cfg(all(test, windows))]
+#[test]
+fn canonical_windows_workspace_accepts_complete_prefix_and_root() -> Result<()> {
+    let directory = tempfile::tempdir()?;
+    let canonical = fs::canonicalize(directory.path())?;
+    assert_eq!(workspace(&canonical)?, canonical);
+    assert!(workspace(Path::new("relative-workspace")).is_err());
+    Ok(())
 }
 
 pub(super) fn path(root: &Path, relative: &str) -> Result<PathBuf> {

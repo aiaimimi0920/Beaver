@@ -1,0 +1,18 @@
+{
+  "name": "beaver-dot-relay-test-20261023",
+  "main": "worker.mjs",
+  "compatibility_date": "2026-10-01",
+  "workers_dev": true,
+  "routes": [{ "pattern": "beaver-dot.aiaimimi.com", "custom_domain": true }],
+  "vars": {
+    "OAUTH_ISSUER": "https://beaver-dot.aiaimimi.com",
+    "OAUTH_CLIENTS_JSON": "{\"beaver-relay-proof\":{\"name\":\"Beaver OAuth verification\",\"redirect_uris\":[\"https://example.com/beaver-oauth-proof\"]},\"beaver-chatgpt\":{\"name\":\"ChatGPT\",\"redirect_uris\":[\"https://chatgpt.com/connector_platform_oauth_redirect\"]}}",
+  },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "beaver-dot-relay-test-20261023",
+      "database_id": "41455374-664e-43cb-8952-d471b90b3f96",
+    },
+  ],
+}
