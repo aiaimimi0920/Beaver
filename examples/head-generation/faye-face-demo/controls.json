@@ -1,0 +1,24 @@
+{
+  "brow_overrides": {
+    "width_scale": 0.55,
+    "arch_ratio": 0.07,
+    "peak": 0.63
+  },
+  "nose_overrides": {
+    "projection": 0.075,
+    "roundness": 0.35
+  },
+  "mouth_overrides": {
+    "half_width": 0.06,
+    "lip_band_width_m": 0.0018,
+    "lip_strength": 0.7
+  },
+  "face_overrides": {
+    "jaw_fullness": 0.001,
+    "chin_roundness": 0.35,
+    "chin_projection": 0.002
+  },
+  "ear_overrides": {
+    "fold_strength": 0.65
+  }
+}

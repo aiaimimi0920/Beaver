@@ -1,0 +1,10 @@
+__pycache__/
+baseline/
+inputs/
+outputs/
+proof/
+*.blend
+*.blend1
+*.glb
+*.npz
+*.log
