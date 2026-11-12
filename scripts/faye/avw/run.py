@@ -8,6 +8,8 @@ from pathlib import Path
 import subprocess
 import sys
 
+from band_connections import MODES
+
 INPUTS = [
     "avd-joint-obsolete-crosslinks-20261112/full-fields.npz",
     "avd-joint-obsolete-crosslinks-20261112/full-geometry.npz",
@@ -70,6 +72,7 @@ def main():
     parser.add_argument(
         "--blender", type=Path, help="Optional Blender executable for diagnostic images"
     )
+    parser.add_argument("--band-connections", choices=MODES, default="baseline")
     args = parser.parse_args()
     validation, output, hashes = prepare(args.validation_root, args.output)
     env = dict(
@@ -77,6 +80,7 @@ def main():
         FAYE_VALIDATION_ROOT=str(validation),
         FAYE_OUTPUT_ROOT=str(output),
         PYTHONIOENCODING="utf-8",
+        FAYE_BAND_CONNECTIONS=args.band_connections,
     )
     root = Path(__file__).resolve().parent
     commands = [(step, [sys.executable, str(root / (step + ".py"))]) for step in STEPS]
@@ -98,6 +102,7 @@ def main():
         ]
     report = {
         "inputs": hashes,
+        "band_connections": args.band_connections,
         "steps": [],
         "visual_accepted": False,
         "native_generated": False,

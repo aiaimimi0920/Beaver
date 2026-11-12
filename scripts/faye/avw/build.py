@@ -1,5 +1,7 @@
 from paths import candidate_root, validation_root
 from support_context import *
+from band_connections import middle_row_connections
+import os
 
 R = V / str(candidate_root())
 R.mkdir(exist_ok=True)
@@ -165,9 +167,10 @@ lines.append(LineString([grid[0][1], grid[1][1]]))
 lines.append(LineString([grid[0][2], U[7071], grid[1][2]]))
 lines.append(LineString([U[7071], U[7132]]))
 lines.append(LineString([U[7071], U[7130]]))
-lines.append(LineString([grid[1][1], grid[2][2]]))
-lines.append(LineString([grid[1][2], grid[2][3]]))
-lines.append(LineString([grid[1][4], grid[2][3]]))
+for connection in middle_row_connections(
+    grid, os.environ.get("FAYE_BAND_CONNECTIONS", "baseline")
+):
+    lines.append(LineString(connection))
 for j in [2, 3]:
     lines.append(LineString([grid[2][j], grid[3][j]]))
 protected = [5445, 5448, 5449, 5451, 5454, 5428, 5452, 5453, 5456, 5455, 5436]
