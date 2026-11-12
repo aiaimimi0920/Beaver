@@ -3,6 +3,7 @@ on:
   pull_request:
     paths:
       - "examples/head-generation/**"
+      - "tools/shared_facial_rails/**"
       - "resources/packages/npr-characters/addons/npr_character_frame/.ci_script/tools/sdf360/**"
       - "examples/head-review/**"
       - ".github/workflows/head-generation-example.yml"
@@ -20,6 +21,7 @@ on:
       ]
     paths:
       - "examples/head-generation/**"
+      - "tools/shared_facial_rails/**"
       - "examples/head-review/**"
       - "resources/packages/npr-characters/addons/npr_character_frame/.ci_script/tools/sdf360/**"
       - ".github/workflows/head-generation-example.yml"
@@ -39,6 +41,38 @@ jobs:
           python-version: "3.11"
       - run: python -m pip install numpy==2.3.5 scipy==1.17.0 Pillow==12.3.0
       - run: python -m compileall -q examples/head-generation
+      - run: PYTHONPATH=tools python -m unittest discover -s tools/shared_facial_rails/tests -t tools -v
+      - run: PYTHONPATH=tools python -m unittest discover -s tools/shared_facial_rails/numerical_tests -v
+      - name: Test shared source capture contracts (CPU only)
+        env:
+          PYTHONPATH: examples/head-generation/shared_source_capture
+        run: |
+          python - <<'PY'
+          import unittest
+          suite = unittest.defaultTestLoader.discover(
+              "examples/head-generation/shared_source_capture/tests",
+              pattern="test_*.py",
+          )
+          if suite.countTestCases() < 33:
+              raise RuntimeError("Expected at least 33 shared-source-capture tests")
+          result = unittest.TextTestRunner(verbosity=2).run(suite)
+          raise SystemExit(0 if result.wasSuccessful() else 1)
+          PY
+      - name: Test shared construction capture contracts (CPU only)
+        env:
+          PYTHONPATH: examples/head-generation/shared_construction_capture
+        run: |
+          python - <<'PYTHON'
+          import unittest
+          suite = unittest.defaultTestLoader.discover(
+              "examples/head-generation/shared_construction_capture/tests",
+              pattern="test_*.py",
+          )
+          if suite.countTestCases() < 176:
+              raise RuntimeError("Expected at least 176 shared-construction-capture tests")
+          result = unittest.TextTestRunner(verbosity=2).run(suite)
+          raise SystemExit(0 if result.wasSuccessful() else 1)
+          PYTHON
       - run: python -m unittest discover -s examples/head-generation -p 'test_*.py'
       - run: python examples/head-generation/bundle.py --output /tmp/head-recipe.json
       - run: python -m unittest discover -s examples/head-generation/checkpoints/current -p 'test_*.py'

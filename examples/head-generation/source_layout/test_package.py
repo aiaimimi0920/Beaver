@@ -96,6 +96,38 @@ class PackagingTests(unittest.TestCase):
     def request(self):
         return packaging_request(self.plan["source_packaging"], self.gen, self.root)
 
+    def test_two_original_seed_receipts_survive_complete_packaging_chain(self):
+        from source_layout.seed_evidence import verify_seed
+        semantic = PREFIX + 'source_seed_semantic_bundle.py'
+        runtime = PREFIX + 'source_seed_runtime.py'
+        retained = PREFIX + 'semantic_bundle.py'
+        (self.root/semantic).write_text('retained = 1\n')
+        (self.root/retained).write_text('retained = 1\n')
+        (self.root/runtime).write_text('runtime = 2\n')
+        a,b=self.root/'seed-one.json',self.root/'seed-two.json'
+        self.write_receipt(a,'seed-one',[semantic],'semantic-script')
+        self.write_receipt(b,'seed-two',[runtime],'runtime-script')
+        binding={'schema_version':3,'path':semantic,'sha256':digest(self.root/semantic),
+                 'native_seed_script_sha256':'semantic-script','runtime_path':runtime,
+                 'runtime_sha256':digest(self.root/runtime),'runtime_seed_script_sha256':'runtime-script'}
+        binding=verify_seed(binding,[a,b],self.root)
+        packing=self.plan['source_packaging'];packing['source_seed_binding']=binding
+        packing['source_seed_receipt_paths']=[str(a),str(b)]
+        packing['generation_outputs'].append(retained)
+        self.report['authored_source_seed']=binding
+        (self.root/PREFIX/'generation_report.json').write_text(json.dumps(self.report))
+        self.write_receipt(self.gen,'gen',packing['generation_outputs'],packing['generation_script_sha256'])
+        request=self.request()
+        self.assertEqual(len(request['outputs']),8)
+        exec(request['code'],{'beaver_input':lambda p:str(self.root/p),'beaver_output':lambda p:str(self.root/p)})
+        packed=self.root/'pack-receipt.json'
+        self.write_receipt(packed,'pack',[row['path'] for row in request['outputs']])
+        verify_packaging(self.report,self.root,PREFIX,self.gen,packed)
+        self.assertEqual((self.root/PREFIX/'source_seed_receipt.json').read_bytes(),a.read_bytes())
+        self.assertEqual((self.root/PREFIX/'source_seed_runtime_receipt.json').read_bytes(),b.read_bytes())
+        (self.root/PREFIX/'source_seed_runtime_receipt.json').write_bytes(b.read_bytes()+b'\n')
+        with self.assertRaises(ValueError):verify_packaging(self.report,self.root,PREFIX,self.gen,packed)
+
     def test_complete_chain_and_tampered_helper(self):
         request = self.request()
         self.assertEqual(len(request["outputs"]), 6)

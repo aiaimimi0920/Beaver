@@ -1,10 +1,8 @@
 """Package experimental fresh geometry; requires an explicitly reviewed bound."""
 
 import argparse
-import hashlib
-import importlib.util
+from functools import partial
 import json
-import math
 from pathlib import Path
 import sys
 import tempfile
@@ -14,12 +12,11 @@ from source_optional_bridges import adapt_bridge_pair_source, adapt_ear_boundary
 
 HERE = Path(__file__).resolve().parent
 EYES = HERE.parent / "semantic_eyes"
-
-
-def once(source, old, new):
-    if source.count(old) != 1:
-        raise ValueError("Inherited source contract changed: " + old[:60])
-    return source.replace(old, new, 1)
+sys.path.insert(0, str(HERE.parent / "shared_source_capture"))
+try:
+    from shared_capture_adapter import load_module, validate_support_bound, validate_output_count
+finally:
+    sys.path.pop(0)
 
 
 from source_styles import apply_style_profile
@@ -44,6 +41,8 @@ def build_request(
     mouth_design=None,
     face_design=None,
     ear_design=None,
+    shared_source_capture=None,
+    construction_identity_capture=None,
 ):
     if (
         silhouette_parameters
@@ -61,25 +60,14 @@ def build_request(
         "assets/aster/general_face_eyes_796/",
     }:
         raise ValueError("Silhouette experiments must use a fresh output prefix")
-    if (
-        isinstance(reviewed_support_bound_m, bool)
-        or not isinstance(reviewed_support_bound_m, (int, float))
-        or not math.isfinite(reviewed_support_bound_m)
-        or reviewed_support_bound_m <= 0
-    ):
-        raise ValueError(
-            "Supply the explicitly reviewed positive support bound in meters"
-        )
+    validate_support_bound(reviewed_support_bound_m)
     from source_normals import validate as validate_normals, adapt_pipeline
 
     normal_amount = validate_normals(normal_parameters)
     sys.path.insert(0, str(EYES))
     try:
-        spec = importlib.util.spec_from_file_location(
-            "facial_eye_builder", EYES / "bundle.py"
-        )
-        builder = importlib.util.module_from_spec(spec)
-        spec.loader.exec_module(builder)
+        builder = load_module(EYES / "bundle.py", "facial_eye_builder")
+        once = partial(builder.replace_once, preview=60)
         recipe = builder.RECIPE
         baseline_style = apply_style_profile(
             json.loads((recipe / "face_style.json").read_text()), style_profile
@@ -376,6 +364,8 @@ def depth(x, y):"""
                 blink=blink,
                 brow_design=brow_design,
                 mouth_design=mouth_design,
+                shared_source_capture=shared_source_capture,
+                construction_identity_capture=construction_identity_capture,
             )
     finally:
         sys.path.remove(str(EYES))
@@ -486,9 +476,7 @@ def depth(x, y):"""
             for name in ("ear_design.py", "ear_profile.py")
         },
     )
-    paths = [output["path"] for output in request["outputs"]]
-    if len(paths) > 64 or len(set(paths)) != len(paths):
-        raise ValueError("Native request requires at most 64 unique retained outputs")
+    validate_output_count(request)
     compile(request["code"], "<experimental facial surface>", "exec")
     return request
 

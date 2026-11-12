@@ -17,8 +17,9 @@ from accent_attachment import (
 from main_curve import refine_main_cross_sections
 from main_flank import shape_lower_flanks
 from tuft_fit import seat_tuft_roots_on_parent
-from lateral_fit import regularize_lateral_sections, seat_outer_wings
+from lateral_fit import regularize_lateral_sections, seat_outer_wings, companion_stations
 from thin_ribbon import outline_sections, accent_sections, signed_volume, closed_ribbon_mesh, accent_mesh
+from thin_ribbon import tuft_rear_scoop, tuft_free_bow
 
 
 def upper_band_bow(t):
@@ -82,17 +83,6 @@ def main_ridge_relief(t, rise):
     peak = STYLE["accent_fold_ridge_fraction"]
     triangle = u/peak if u <= peak else (1-u)/(1-peak)
     return triangle*main_band_roll(t)*min(1.0,(hi-lo)/.014)
-
-
-def tuft_rear_scoop(progress, maximum):
-    """A rooted leaf retreats behind its parent before its free tip curls forward."""
-    p=max(0.0,min(1.0,progress))
-    return maximum*sin(pi*p/.45)**2 if 0.0 < p < .45 else 0.0
-
-
-def tuft_free_bow(progress, maximum):
-    p=max(0.0,min(1.0,(progress-.25)/.75))
-    return maximum*sin(pi*p)**2
 
 
 def tuft_fold_relief(t):
@@ -210,7 +200,7 @@ def lateral_sections():
     controls = [p[0] for p in STYLE["lateral_accent_profile"]]
     stations=set(controls)
     for a,b in zip(controls,controls[1:]):
-        n=max(1,int((b-a)/.065+.999999))
+        n=max(1,int((b-a)/STYLE.get("sampling_lateral_gap", .065)+.999999))
         stations.update(a+(b-a)*i/n for i in range(1,n))
     stations=sorted(stations)
     return [(f, -C["outer_liner_width"] * curve(f,1,STYLE["accent_lateral_inner_width_profile"]),
@@ -266,8 +256,8 @@ def build_lateral_accent(side):
     accent_mesh("Outer lateral eye liner "+str(side),lateral_sections(),point,
                 tuple(STYLE["accent_outer_tint_rgb"]),STYLE["accent_lateral_thickness_m"],
                 STYLE["accent_lateral_roll_m"],True)
-    sections = [(i/16,0.0,STYLE["accent_lateral_branch_width_H"]*sin(pi*i/16)**.8)
-                for i in range(17)]
+    sections = [(f,0.0,STYLE["accent_lateral_branch_width_H"]*sin(pi*f)**.8)
+                for f in companion_stations(STYLE)]
     def branch(f,width,relief):
         along = STYLE["accent_lateral_branch_start"]+STYLE["accent_lateral_branch_span"]*f
         separation = STYLE["accent_lateral_branch_separation_H"]*sin(pi*f)**.85
@@ -389,7 +379,7 @@ def fit_evaluated_accent_roots(shell):
                 if obj.name.startswith('Outer lateral eye liner '):
                     counts=[1 if hi-lo<1e-9 else 6 for _,lo,hi in lateral_sections()]
                 else:
-                    counts=[1 if i in (0,16) else 6 for i in range(17)]
+                    counts=[1 if f in (0.0,1.0) else 6 for f in companion_stations(STYLE)]
                 groups={};offset=0
                 for count in counts:
                     group=list(obj.data.vertices)[offset:offset+count]
