@@ -7,6 +7,10 @@ use serde_json::{json, Value};
 use sha2::{Digest, Sha256};
 use std::{collections::BTreeMap, fs, path::Path};
 
+pub(super) const CLIP_PREVIOUS_COMMIT: &str = "c1efb92784a84b712192d0f19650347e5ce55db9";
+const CLIP_PREVIOUS_MANIFEST: &[u8] =
+    include_bytes!("../../../resources/workflows/npr-upgrade-from-c1efb927.json");
+
 pub(super) const OLD_COMMIT: &str = "05f3dceee965c9a5ec78ee8d159e962c133cfc57";
 pub(super) const EARLIER_COMMIT: &str = "48839ce137ce2749210a613c565b602c5a6bbc4a";
 const EARLIER_MANIFEST: &[u8] =
@@ -33,6 +37,7 @@ pub(super) fn identity(root: &Path) -> Result<(Value, String)> {
 
 pub(super) fn old_manifest(commit: &str) -> Result<&'static [u8]> {
     match commit {
+        CLIP_PREVIOUS_COMMIT => Ok(CLIP_PREVIOUS_MANIFEST),
         OLD_COMMIT => Ok(OLD_MANIFEST),
         HOLDOUT_COMMIT => Ok(HOLDOUT_MANIFEST),
         EARLIER_COMMIT => Ok(EARLIER_MANIFEST),
