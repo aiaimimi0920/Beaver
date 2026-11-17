@@ -40,8 +40,8 @@ upgrade, rollback and the separate dependency-review action.
 3. Inspect again. For a task with a frozen NPR binding, explicitly review the
    changed dependency and the existing acceptance scope.
 4. `project.npr.reviewUpgrade`: `{id, taskId, operationId,
-   expectedRuntimeSha256, expectedFrozenWorkflow, reviewedWorkflow,
-   reviewReason, acceptance}`. `reviewedWorkflow` must exactly equal the current
+expectedRuntimeSha256, expectedFrozenWorkflow, reviewedWorkflow,
+reviewReason, acceptance}`. `reviewedWorkflow` must exactly equal the current
    compiled workflow descriptor. The host requires the successful operation for
    that exact task workspace. It retains append-only review history and a current
    reviewed execution binding; original task and parent plans are never rewritten.
@@ -84,3 +84,23 @@ superseding dependency review becomes invalid.
 
 The upgrade tests use exact historical byte fixtures and temporary projects;
 they never launch Godot, Blender, or an agent.
+
+## Optional local nose domain (43b409d)
+
+The bundled NPR pin advances from ab3946a to upstream merge
+43b409d6b6775a8e50c0cb6b75d69e18fbfc3868. The new domain is disabled by default;
+existing models are not opted in or rewritten. The previous ab3946a manifest
+is a compiled trusted upgrade source with exact historical-byte rollback tests.
+Earlier supported revisions remain reconstructable after this update.
+
+Source verification used the GitHub connector's exact commit and complete Git
+tree (5ae50107615150576fc1051a75ca7648e9d915a9, not truncated), with each file
+checked against its upstream Git blob before the existing vendor script ran.
+The resulting package has 375 verified files. No model assets or research
+posterior-patch changes are included. This dependency update is not full-model,
+exported-package, skeletal-motion or dynamic visual acceptance.
+
+Validation: 13 focused JavaScript tests and 17 Rust workflow tests passed,
+including all five historical upgrade/rollback sources. TypeScript checking,
+native UI resource generation, Rust/Prettier formatting and the effective-line
+gate passed (zero violations). No full external-release acceptance was run.
