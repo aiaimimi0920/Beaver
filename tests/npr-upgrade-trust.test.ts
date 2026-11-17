@@ -15,6 +15,10 @@ const sha256 = (bytes: Uint8Array) =>
 
 for (const [pin, manifestHash] of [
   [
+    "ab3946a0",
+    "20ef4d53c5530b305642cf766c92d64e807c889929ac8497e6636829055bdc24",
+  ],
+  [
     "c1efb927",
     "d38889a0b62d389859eb43ecb6f07b6dc6d2e2bfcdd5c924c071fc95e4d0d920",
   ],
@@ -63,7 +67,7 @@ for (const [pin, manifestHash] of [
     assert.equal(changed, Object.keys(replacements).length);
     assert.equal(
       Object.keys(manifest.files).length,
-      pin === "c1efb927" ? 370 : 369,
+      pin === "ab3946a0" ? 373 : pin === "c1efb927" ? 370 : 369,
     );
   });
 }
