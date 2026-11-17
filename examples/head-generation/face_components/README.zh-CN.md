@@ -225,3 +225,16 @@ v3在既有限幅后的可选边界平滑上增加整个位移场回溯，两个
 新鼻形使用显式 `nose_design` 与源指纹，拒绝与旧鼻缩放或旧模板混用。`bundle.py` 和 `plan.py` 可接收 `--nose-controls controls.json`，只覆盖当前模式拥有的数值项，不能替换类型或其他部件。三个通用预设只登记为一个共享核心；特殊候选不是完整动物或机器人头部复原。
 
 原生结果见 [nose_library/native-evidence.json](../nose_library/native-evidence.json)。SDF 请求及最后验证同时检查鼻形快照、发出源码、校准、拓扑与附件贴合记录。新增选择可用不等于已完成原生验证，旧证据不能跳过新输出检查。
+
+
+## 自动化严格验证退出码
+
+默认 `coverage.py --batch BATCH.json` 保持报告模式：逐项报告不完整、失败与通过状态，不因某项未通过改变退出码。
+需要将技术验证作为脚本门槛时，使用：
+
+```sh
+python examples/head-generation/face_components/coverage.py --batch BATCH.json --require-verified
+```
+
+只有非空批次的每项都为 `technically_verified` 才返回 0；空批次、缺失回执、原生任务失败或完整性失败返回 1。JSON 报告与默认模式相同，仍可保存并排查。无法读取或解析输入等命令错误也不会成功退出。
+此标记不启动任务、不补造回执、不修改素材，也不将技术验证升级为审美或生产验收。未列出的组合仍未验证。CLI 回归使用合成状态，并不是新角色的原生证据。

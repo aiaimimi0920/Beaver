@@ -46,8 +46,22 @@ def verify_batch(specs, verifier=verify_run):
     }
 
 
-if __name__ == "__main__":
+def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--batch", type=Path, required=True)
-    args = parser.parse_args()
-    print(json.dumps(verify_batch(json.loads(args.batch.read_text())), indent=2))
+    parser.add_argument(
+        "--require-verified", action="store_true",
+        help="Exit 1 unless the nonempty batch is entirely technically verified",
+    )
+    args = parser.parse_args(argv)
+    report = verify_batch(json.loads(args.batch.read_text()))
+    print(json.dumps(report, indent=2))
+    if args.require_verified:
+        return 0 if report["runs"] and all(
+            row["status"] == "technically_verified" for row in report["runs"]
+        ) else 1
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())
