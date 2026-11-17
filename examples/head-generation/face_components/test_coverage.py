@@ -111,7 +111,7 @@ class CoverageTests(unittest.TestCase):
 
     def refresh_sdf(self):
         names = ["generation_report.json", "aster_definition.tres"] + [
-            str(p.relative_to(self.folder)) for p in (self.folder / "sdf").iterdir()
+            p.relative_to(self.folder).as_posix() for p in (self.folder / "sdf").iterdir()
         ]
         self.job(
             "sdf.json", "sdf", {self.prefix + n: sha(self.folder / n) for n in names}
