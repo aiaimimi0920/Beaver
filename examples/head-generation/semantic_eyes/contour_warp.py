@@ -77,3 +77,42 @@ def lower_shape(t, c):
     return (
         max(0.0, 1 - abs(q) ** c["eye_lower_horizontal_power"]) ** c["eye_lower_power"]
     )
+
+
+def upper_change(t, calibration, parameters):
+    arch = (
+        max(0.0, 1 - abs(t) ** calibration["eye_horizontal_power"])
+        ** calibration["eye_upper_power"]
+    )
+    taper = parameters["aperture_corner_taper"]
+    upper_power = calibration["eye_upper_power"] * parameters["upper_roundness"]
+    upper_power = ((1 - taper) * upper_power + taper) * (
+        1 - 0.3 * parameters["upper_corner_softness"]
+    )
+    new_arch = (
+        max(
+            0.0,
+            1
+            - abs(t)
+            ** (
+                calibration["eye_horizontal_power"]
+                * parameters["upper_horizontal_roundness"]
+            ),
+        )
+        ** upper_power
+    )
+    if parameters["upper_asymmetry"] or parameters["upper_angularity"]:
+        shaped = dict(
+            calibration,
+            eye_horizontal_power=calibration["eye_horizontal_power"]
+            * parameters["upper_horizontal_roundness"],
+            eye_upper_power=upper_power,
+            eye_upper_asymmetry=parameters["upper_asymmetry"],
+            eye_upper_angularity=parameters["upper_angularity"],
+        )
+        new_arch = upper_shape(t, shaped)
+    upper_height = calibration["eye_upper_arch"] * parameters["upper_arch"]
+    if parameters["aperture_upper_share"]:
+        total = upper_height + calibration["eye_lower_arch"] * parameters["lower_arch"]
+        upper_height = total * parameters["aperture_upper_share"]
+    return upper_height * new_arch - calibration["eye_upper_arch"] * arch

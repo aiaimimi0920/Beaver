@@ -105,6 +105,7 @@ def parameter_layout(source):
         if isinstance(n, ast.FunctionDef) and n.end_lineno < imports[0].lineno
     ]
     wanted = {
+        "upper_change",
         "angular_coordinate",
         "angular_derivative",
         "eye_warp",
@@ -122,6 +123,23 @@ def parameter_layout(source):
         raise ValueError("Unexpected curve-function boundary")
     lines = source.splitlines(keepends=True)
     cut = max(n.end_lineno for n in functions)
+    # First-pass sampling is part of the same pure coordinate/sampling API.
+    sampling = [n for n in tree.body if isinstance(n, ast.FunctionDef)
+                and n.name in {"validate_sampling", "lid_station_plan", "validate_feature_flow_contract"}]
+    if sampling:
+        if not {"validate_sampling", "lid_station_plan"} <= {n.name for n in sampling}:
+            raise ValueError("Incomplete sampling API")
+        cut = max(n.end_lineno for n in sampling)
+        assignments = [n for n in tree.body if isinstance(n, ast.Assign)
+                       and n.end_lineno <= cut]
+        constants = [t.id for n in assignments for t in n.targets if isinstance(t, ast.Name)]
+        if len(constants) != len(assignments) or set(constants) not in ({"SAMPLING_LIMITS"}, {"SAMPLING_LIMITS", "GAME_FACE_SAMPLING"}):
+            raise ValueError("Unexpected sampling constants")
+        allowed = set(names) | {n.name for n in sampling}
+        if any(isinstance(n, ast.FunctionDef) and n.name not in allowed
+               for n in tree.body if n.end_lineno <= cut):
+            raise ValueError("Unexpected sampling helper boundary")
+        names += constants + [n.name for n in sampling]
     curves = "".join(lines[:cut])
     suffix = "".join(lines[cut:])
     doc = ast.get_docstring(tree, clean=False)
@@ -160,6 +178,16 @@ def reconstructed(files, record):
                 raise ValueError("Changed pipeline stage")
             parts.append(part)
         original = "".join(parts)
+    elif record["kind"] == "ordered_module":
+        if digest(files[record["entry_name"]]) != record["entry_sha256"]:
+            raise ValueError("Changed ordered module entry")
+        parts = []
+        for item in record["stages"]:
+            part = files[item["path"]]
+            if digest(part) != item["sha256"]:
+                raise ValueError("Changed ordered module source")
+            parts.append(part)
+        original = "".join(parts)
     elif record["kind"] == "parameter_curves":
         entry = files["semantic_parameters.py"]
         helper = files["semantic_parameter_curves.py"]
@@ -173,6 +201,18 @@ def reconstructed(files, record):
         if hashlib.sha256(raw[:cut]).hexdigest() != record["entry_prefix_sha256"]:
             raise ValueError("Changed parameter import boundary")
         original = helper + raw[cut:].decode("utf-8")
+    elif record['kind']=='surface_rules':
+        entry=files['ear_surface.py'];helper=files['source_mesh_rules.py']
+        if digest(entry)!=record['entry_sha256'] or digest(helper)!=record['helper_sha256']:
+            raise ValueError('Changed surface source')
+        raw=entry.encode();cut=record['entry_cut_bytes'];size=record['entry_import_bytes']
+        if type(cut) is not int or type(size) is not int or not 0<=cut<=len(raw) or not 0<size<=len(raw)-cut:
+            raise ValueError('Invalid surface import boundary')
+        wanted=('polygon_diagonals','triangulate_valid_skin','verify_skin_triangles','sample_source_cage')
+        imports=('from source_mesh_rules import ('+', '.join(wanted)+')\n').encode()
+        if record['imported_functions']!=list(wanted) or raw[cut:cut+size]!=imports:
+            raise ValueError('Changed surface import boundary')
+        original=(raw[:cut]+helper.encode()+raw[cut+size:]).decode()
     else:
         raise ValueError("Unknown source layout")
     if digest(original) != record["original_sha256"]:

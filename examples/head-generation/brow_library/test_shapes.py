@@ -21,6 +21,34 @@ class BrowShapeTests(unittest.TestCase):
     def polygons(self, name, **changes):
         return brow_polygons(validate({**self.presets[name], **changes}), 0.046728, 0.0021063)
 
+    def test_zero_sampling_restores_legacy_angled_contour(self):
+        from brow_shapes import brow_sampling_divisions
+        design = validate(self.presets['angled'])
+        self.assertEqual(brow_sampling_divisions(design, {}), 0)
+        self.assertEqual(brow_sampling_divisions(design, {'sampling_first_pass': 1}), 32)
+        self.assertEqual(brow_sampling_divisions(design, {'sampling_brow_divisions': 16}), 16)
+        self.assertEqual(brow_polygons(design, .04, .002), brow_polygons(design, .04, .002, 64))
+
+    def test_explicit_lower_sampling_keeps_angled_peak_and_valid_outline(self):
+        design = validate({**self.presets["angled"], "peak": .63})
+        original = brow_polygons(design, .04, .002)
+        coarse = brow_polygons(design, .04, .002, 16)
+        self.assertLess(len(coarse[0]), len(original[0]))
+        brow_validate_polygon(coarse[0])
+        length = .04 * design['length_scale']
+        offset = (.04 - length) * .5
+        self.assertTrue(any(abs(x-(offset+length*.63)) < 1e-10 for x,y in coarse[0]))
+        with self.assertRaises(ValueError):
+            brow_polygons(design, .04, .002, 15)
+
+    def test_sampling_preflight_rejects_unsupported_or_missing_design(self):
+        style = copy.deepcopy(self.style)
+        style['sampling_brow_divisions'] = 16
+        for design in (None, validate(self.presets['curl']), validate(self.presets['symbols'])):
+            with self.subTest(design=design), self.assertRaises(ValueError):
+                validate_geometry_style(design, style)
+        self.assertGreater(validate_geometry_style(validate(self.presets['angled']), style)['local_area_m2'], 0)
+
     def test_every_researched_preset_has_real_positive_geometry(self):
         self.assertEqual(len(self.presets), 11)
         signatures = set()

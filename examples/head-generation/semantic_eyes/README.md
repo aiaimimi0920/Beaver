@@ -397,3 +397,10 @@ native posed geometry and matched renders before claiming visual improvement.
 `brow_angularity` (0–1, default 0) blends the smooth arch toward a two-segment peak; `brow_peak_position` (.3–.75, default .5) locates that peak along the brow. The existing 24 segments approximate an off-grid peak. `brow_band_fullness` (0–1, default 0) retains more width toward both ends and removes the pointed-ribbon width bias, closing both endpoint lanes exactly. It does not move the original width midline.
 
 These controls modify only eyebrow construction. Eye aperture, lashes, facial surface and retained preset files are unchanged by the source adapter. Default zero profile changes preserve source bytes exactly. Native clearance, morphology and aesthetic review are still required; a new parameter or family label is not an acceptance certificate.
+
+## Current-source forehead flows
+
+The opt-in raw13 source-flow recipe now distinguishes an explicit bounded author
+surface adjustment from the following surface-preserving retile. See the
+[forehead-flow contract](forehead-flow-contract.md) for baseline provenance,
+fitted-ear attachment, point-spacing checks and native acceptance requirements.

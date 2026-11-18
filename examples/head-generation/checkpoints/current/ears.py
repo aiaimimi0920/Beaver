@@ -93,10 +93,18 @@ def fit_ear_roots(shell):
             low, high = root_points[0].z, root_points[-1].z
             vs, fs, rows, uvpoints = [], [], [], []
             root_indices = []
+            angular_source_fan = False
+            budget_stations = source_budget_fan_stations(root_points,low,high,side) if STYLE.get("sampling_ear_budget",0) else None
             for j, root in enumerate(root_points):
                 t = (root.z - low) / (high - low)
                 row = []
                 values = [0] if j in [0, len(root_points) - 1] else [0, 0.22, 0.5, 0.70, 0.88, 1]
+                if budget_stations is not None and j in (1,2):
+                    values = budget_stations
+                    angular_source_fan = True
+                elif j == 1 and STYLE.get("sampling_first_pass", 0):
+                    values = lower_fan_stations(root, root_points[0], t, low, high, side)
+                    angular_source_fan = True
                 for u in values:
                     outward, posterior = membrane_offset(t, u, C, (-root.y - Z0) / H)
                     row.append(len(vs))
@@ -110,6 +118,10 @@ def fit_ear_roots(shell):
                     fs.extend((a[0], b[k + 1], b[k]) for k in range(len(b) - 1))
                 elif len(b) == 1:
                     fs.extend((a[k], a[k + 1], b[0]) for k in range(len(a) - 1))
+                elif len(a) != len(b):
+                    fs.extend(source_row_transition(a,b,vs))
+                elif budget_stations is not None and len(a)==4:
+                    for k in range(len(a)-1): fs.extend(source_quad_split(a[k:k+2],b[k:k+2],vs))
                 else:
                     fs.extend((a[k], a[k + 1], b[k + 1], b[k]) for k in range(len(a) - 1))
             main_face_count = len(fs)
@@ -220,6 +232,7 @@ def fit_ear_roots(shell):
             reports.append(
                 {
                     "name": obj.name,
+                    "source_fan_policy": "quality-budget-source-fan-v2" if budget_stations is not None else "angular-source-fan-v1" if angular_source_fan else None,
                     "root_vertices": len(roots),
                     "return_side_normal_measure": reverse_measure,
                     "max_root_position_error_m": error,
@@ -271,3 +284,104 @@ def return_crown_point(outer,inner,t,amplitude):
     from math import sin,pi
     fade=sin(pi*max(0,min(1,t)))**2
     return tuple((outer[k]+inner[k])/2+(amplitude*fade if k==1 else 0) for k in range(3))
+
+
+"""Bounded source-stage angular sampling of the lower ear endpoint fan."""
+
+def lower_fan_stations(root, endpoint, t, low, high, side):
+    """Place five sectors by angular arc length on the unchanged membrane curve."""
+    from math import acos, isfinite
+    def point(u):
+        outward, posterior = membrane_offset(t, u, C, (-root.y-Z0)/H)
+        lift = (ear_arc_height(t, low, high)-root.z)*sqrt(max(0, sin(pi*u/2)))
+        if 'researched_ear_kind' in C:
+            lift += H*researched_ear_tip_lift(t, u, C)
+        return (root.x+side*H*outward, root.y+H*posterior, root.z+lift)
+    directions = []
+    for i in range(65):
+        p = point(i/64)
+        if not all(isfinite(value) for value in p):
+            raise ValueError("Nonfinite source ear fan point")
+        v = [p[k]-endpoint[k] for k in range(3)]
+        length = sqrt(sum(x*x for x in v))
+        if length < 1e-8:
+            raise ValueError('Degenerate source ear fan ray')
+        directions.append([x/length for x in v])
+    cumulative = [0.]
+    for a,b in zip(directions,directions[1:]):
+        cumulative.append(cumulative[-1]+acos(max(-1.,min(1.,sum(x*y for x,y in zip(a,b))))))
+    if cumulative[-1] < .05:
+        raise ValueError('Insufficient source ear fan angular span')
+    stations = [0.]
+    for fraction in (.2,.4,.6,.8):
+        target = cumulative[-1]*fraction
+        for i,(a,b) in enumerate(zip(cumulative,cumulative[1:])):
+            if a <= target <= b and b-a > 1e-12:
+                stations.append((i+(target-a)/(b-a))/64)
+                break
+    stations.append(1.)
+    if len(stations)!=6 or any(b-a < 1e-4 for a,b in zip(stations,stations[1:])):
+        raise ValueError('Collapsed source ear fan sampling')
+    return stations
+
+
+def source_triangle_score(points):
+    from math import acos, degrees, sqrt, isfinite
+    if len(points)!=3 or any(len(p)!=3 or any(not isfinite(c) for c in p) for p in points): return 0.0
+    edges = [[points[(i+1)%3][k]-points[i][k] for k in range(3)] for i in range(3)]
+    lengths = [sqrt(sum(x*x for x in edge)) for edge in edges]
+    if min(lengths) < 1e-9: return 0.0
+    angles = [degrees(acos(max(-1., min(1., (lengths[i]**2+lengths[(i+2)%3]**2-lengths[(i+1)%3]**2)/(2*lengths[i]*lengths[(i+2)%3]))))) for i in range(3)]
+    if min(angles) < 12 or max(angles) > 145: return 0.0
+    a,b=edges[:2];cross=[a[1]*b[2]-a[2]*b[1],a[2]*b[0]-a[0]*b[2],a[0]*b[1]-a[1]*b[0]]
+    return 2*sqrt(3)*sqrt(sum(x*x for x in cross))/sum(x*x for x in lengths)
+
+
+def source_quad_split(a, b, vertices):
+    options=[[(a[0],a[1],b[1]),(a[0],b[1],b[0])],[(a[0],a[1],b[0]),(a[1],b[1],b[0])]]
+    return max(options,key=lambda faces:min(source_triangle_score([vertices[i] for i in f]) for f in faces))
+
+
+def source_budget_fan_stations(roots, low, high, side):
+    def point(j,u):
+        root=roots[j];t=(root.z-low)/(high-low)
+        outward,posterior=membrane_offset(t,u,C,(-root.y-Z0)/H)
+        lift=(ear_arc_height(t,low,high)-root.z)*sqrt(max(0,sin(pi*u/2)))
+        if 'researched_ear_kind' in C: lift += H*researched_ear_tip_lift(t,u,C)
+        return (root.x+side*H*outward,root.y+H*posterior,root.z+lift)
+    count=129;grid=[i/(count-1) for i in range(count)]
+    first=[point(1,u) for u in grid];second=[point(2,u) for u in grid]
+    score=[[0.]*count for _ in grid]
+    for i in range(count):
+        for j in range(i+1,count):
+            fan=source_triangle_score([roots[0],first[i],first[j]])
+            if not fan: continue
+            vertices=[first[i],first[j],second[i],second[j]]
+            faces=source_quad_split([0,1],[2,3],vertices)
+            score[i][j]=min(fan,*(source_triangle_score([vertices[k] for k in f]) for f in faces))
+    dp=[[0.]*count for _ in range(4)];back=[[0]*count for _ in range(4)];dp[0][0]=1.
+    for k in range(1,4):
+        for j in range(k,count):
+            choices=[min(dp[k-1][i],score[i][j]) for i in range(j)]
+            best=max(range(j),key=lambda i:choices[i]);dp[k][j]=choices[best];back[k][j]=best
+    if dp[3][-1] < .35: raise ValueError('No source three-sector fan meets quality budget')
+    ids=[count-1]
+    for k in range(3,0,-1):ids.append(back[k][ids[-1]])
+    return [grid[i] for i in reversed(ids)]
+
+
+def source_row_transition(a, b, vertices):
+    dp={(0,0):1.};back={}
+    for i in range(len(a)):
+        for j in range(len(b)):
+            for di,dj in ((1,0),(0,1)):
+                ni,nj=i+di,j+dj
+                if ni>=len(a) or nj>=len(b):continue
+                face=(a[i],a[ni],b[j]) if di else (a[i],b[nj],b[j])
+                quality=min(dp.get((i,j),0.),source_triangle_score([vertices[k] for k in face]))
+                if quality>dp.get((ni,nj),0.):dp[ni,nj]=quality;back[ni,nj]=(i,j,face)
+    end=(len(a)-1,len(b)-1)
+    if dp.get(end,0.)<.35:raise ValueError('No conforming ear transition meets quality budget')
+    faces=[]
+    while end!=(0,0):i,j,face=back[end];faces.append(face);end=(i,j)
+    return list(reversed(faces))

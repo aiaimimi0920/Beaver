@@ -4,19 +4,21 @@ import ast
 import hashlib
 from pathlib import Path
 from brow_design import validate
-from brow_shapes import brow_polygons, brow_area
+from brow_shapes import brow_polygons, brow_area, brow_sampling_divisions
 
 HERE = Path(__file__).resolve().parent
 
 
 def validate_geometry_style(design, style):
     if design is None:
+        if style.get("sampling_brow_divisions", 0):
+            raise ValueError("Brow sampling requires a researched brow design")
         return None
     c = style["calibration"]
     span = c["height_m"] * (c["brow_outer_x"] - c["brow_inner_x"])
     if span <= 0:
         raise ValueError("Brow local span must be positive")
-    polygons = brow_polygons(design, span, c["height_m"] * c["brow_thickness"])
+    polygons = brow_polygons(design, span, c["height_m"] * c["brow_thickness"], brow_sampling_divisions(design, style))
     if any(
         not -0.05 * span <= x <= 1.05 * span or abs(y) > 0.5 * span
         for polygon in polygons for x, y in polygon

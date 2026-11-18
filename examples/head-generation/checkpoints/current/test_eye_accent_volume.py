@@ -1,3 +1,4 @@
+from sampling_legacy_contract import legacy_ear_source
 import ast
 import hashlib
 import json
@@ -66,6 +67,9 @@ class AccentVolumeTests(unittest.TestCase):
         frozen=json.loads((ROOT/'frozen177-contract.json').read_text())
         for name,sha in frozen['files'].items():
             raw = (ROOT/name).read_text()
+            if name == 'shell.py':
+                from sampling_legacy_contract import legacy_shell_source
+                raw = legacy_shell_source(raw)
             if name == 'textures.py':
                 # The only permitted addition is the isolated lash strip. Removing
                 # that exact addition must recover the entire frozen texture source.
@@ -76,6 +80,7 @@ class AccentVolumeTests(unittest.TestCase):
                 self.assertEqual(raw.count(branch),1)
                 raw = raw.replace(branch,'')
             if name == 'ears.py':
+                raw=legacy_ear_source(raw)
                 from test_upper_ear_bridge519 import EXPECTED_UPPER_BRIDGE
                 self.assertEqual(raw.count(EXPECTED_UPPER_BRIDGE),1)
                 raw=raw.replace(EXPECTED_UPPER_BRIDGE,'')

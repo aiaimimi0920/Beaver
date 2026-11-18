@@ -1,6 +1,13 @@
 """Final lateral-lash guide and section fit on the original generated skin."""
 import math
 
+def companion_stations(style):
+    count = style.get("sampling_companion_stations", 17)
+    if isinstance(count, bool) or int(count) != count or not 5 <= count <= 17 or int(count) % 2 != 1:
+        raise ValueError("Invalid companion station count")
+    return tuple(i / (int(count) - 1) for i in range(int(count)))
+
+
 def depth_shifts(stations, centers):
     assert len(stations) == len(centers) and len(stations) > 1
     assert stations[0] == 0 and stations[-1] == 1
@@ -100,9 +107,9 @@ def regularize_lateral_sections(parts, sections, style, face_tree):
         obj.data.update()
         companion=next(o for o in parts if o.name == "Outer companion lash "+str(side))
         offset=0
-        for i in range(17):
-            count=1 if i in (0,16) else 6
-            f=style["accent_lateral_branch_start"]+style["accent_lateral_branch_span"]*i/16
+        for phase in companion_stations(style):
+            count=1 if phase in (0.0, 1.0) else 6
+            f=style["accent_lateral_branch_start"]+style["accent_lateral_branch_span"]*phase
             shift=interpolate_shift(f,stations,shifts)
             for vertex in list(companion.data.vertices)[offset:offset+count]:
                 vertex.co.y+=shift
@@ -121,9 +128,9 @@ def regularize_lateral_sections(parts, sections, style, face_tree):
             fraction=max(0.0,min(1.0,-lo/max(1e-9,hi-lo)))
             parent_bases.append(tuple(ring[0].co if len(ring)==1 else ring[1].co.lerp(ring[3].co,fraction)))
         paired_shifts=[];offset=0
-        for i in range(17):
-            count=1 if i in (0,16) else 6
-            f=style["accent_lateral_branch_start"]+style["accent_lateral_branch_span"]*i/16
+        for phase in companion_stations(style):
+            count=1 if phase in (0.0, 1.0) else 6
+            f=style["accent_lateral_branch_start"]+style["accent_lateral_branch_span"]*phase
             ring=list(companion.data.vertices)[offset:offset+count]
             edge=ring[0].co if count==1 else ring[1].co
             target=tuple(interpolate_shift(f,stations,[b[k] for b in parent_bases]) for k in range(3))
@@ -133,7 +140,6 @@ def regularize_lateral_sections(parts, sections, style, face_tree):
                 for axis in (0,1,2):vertex.co[axis]+=delta[axis]
             # Independent slim companion curve: endpoint-guided, not a copy
             # of the eye rim. Both ends converge while the middle opens gently.
-            phase=i/16
             start=style["accent_lateral_branch_start"]
             end=start+style["accent_lateral_branch_span"]
             ends=[tuple(interpolate_shift(g,stations,[b[k] for b in parent_bases]) for k in range(3)) for g in (start,end)]

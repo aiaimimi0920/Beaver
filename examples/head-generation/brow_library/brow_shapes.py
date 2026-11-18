@@ -77,8 +77,19 @@ def brow_curl(length, width, turns):
     return brow_sweep(path, widths)
 
 
-def brow_polygons(design, span, base_width):
+def brow_sampling_divisions(design, style):
+    explicit = style.get("sampling_brow_divisions", 0)
+    if explicit:
+        return explicit
+    return 32 if style.get("sampling_first_pass", 0) and design["kind"] == "angled" else 0
+
+
+def brow_polygons(design, span, base_width, sampling_divisions=0):
     kind = design["kind"]
+    if isinstance(sampling_divisions, bool) or sampling_divisions not in (0, 12, 16, 24, 32, 40, 48, 56, 64):
+        raise ValueError("Invalid brow sampling divisions")
+    if sampling_divisions and kind in ("symbols", "curl"):
+        raise ValueError("This brow family requires its own sampling plan")
     length = span * design["length_scale"]
     width = base_width * design["width_scale"]
     offset = (span - length) * 0.5
@@ -89,7 +100,8 @@ def brow_polygons(design, span, base_width):
     elif kind == "curl":
         polygons = [brow_curl(length, width, design["curl_turns"])]
     else:
-        samples = {i / 64 for i in range(65)} | {design["peak"]}
+        divisions = int(sampling_divisions) if sampling_divisions else 64
+        samples = {i / divisions for i in range(divisions + 1)} | {design["peak"]}
         count = design["detail_count"]
         if kind in ("multipoint", "fringe"):
             samples |= {i / (count * 2) for i in range(count * 2 + 1)}

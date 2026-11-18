@@ -5,6 +5,7 @@ from pathlib import Path
 HERE = Path(__file__).resolve().parent
 HELPERS = (HERE / "contour_warp.py").read_text()
 HELPER_NAMES = {
+    "upper_change",
     "angular_coordinate",
     "angular_derivative",
     "lower_coordinate",

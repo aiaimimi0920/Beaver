@@ -21,7 +21,7 @@ def instrument_outline(source):
     source = replace_once(
         source,
         "            verts.append(\n                (\n                    half_width * q,",
-        "            if i == cols - 1:\n"
+        "            if i == len(base) - 1:\n"
         "                outline_trace['underside'].append({'lift': lift, 'spread': spread, 'base_limit': base[-1][0]*spread, 'layer_limit': width(Y0+H*lift)*C['chin_return_boundary_inset'], 'selected_width': half_width})\n"
         "            verts.append(\n                (\n                    half_width * q,",
     )

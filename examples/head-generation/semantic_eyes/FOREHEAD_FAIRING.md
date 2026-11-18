@@ -1,0 +1,44 @@
+# Whole-guide fairing stages
+
+`fit_forehead_shared_constraints(..., objective_mode='fairing', solver_mode='linearized', fairing_reduction=.001)` adds an actual energy-reduction inequality and a constraint for **every consecutive guide triple**. This is not merely the existing ±10 mm chord measurement. Legacy `fairing_reduction=None` retains the prior objective/constraint contract.
+
+The energy is the positive weighted mean of dimensionless bending / frozen bending and curvature variation / frozen variation. `whole_guide_fairing_reference` stores original coefficients and whole-path lengths once; repeated stages retain these exact coefficients. Role weights default equally; explicit positive caller weights must cover all paths and cannot silently change mid-phase. A topology/path change requires explicit reference migration, not automatic renormalization.
+
+In the default `pointwise-v1` mode, individual local turns cannot increase. Optional `fairing_turn_goals`, `fairing_turn_roles`, and `fairing_turn_reduction` tighten only selected above-goal triples. Goals are caller-owned semantic targets, not a universal prohibition on inflections. `continue_forehead_fairing` selects the role with the largest above-goal local peak, tries bounded 1/.5/.25 reductions, and preserves the last admitted state on rejection. If one role blocks at all bounded fractions, it tries the remaining violating roles; per-role successful-fraction hints avoid repeatedly retrying slow full steps. It does not schedule or loosen station/gap/physical caps.
+
+The energy row uses an exact world gradient and source sampler differential, with explicit donor-boundary central-FD fallback. Other local-turn rows retain sparse FD. Initial row scaling is fixed. Quantized working margins may strengthen targets, never relax saved-geometry acceptance. Callback success means the **current** coordinates were admitted; the existence of a historical best is insufficient.
+
+A stage must pass existing author-domain, original frozen-field, quad, lower-guide, physical/front/station/arc, and dense matched-gap gates, plus scalar/float32 energy and local-turn checks. Per-role bending, variation, and local peaks are reported before and after. Component success does **not** establish independent bidirectional dense 1 mm/full-pose, native transport, or visual acceptance. Those remain mandatory and separate. The default full generation recipe is not automatically wired to run this optional fairing continuation; registering these helpers is not an end-to-end pipeline success claim.
+
+## Cross-phase composition
+
+In default `pointwise-v1` mode, `whole_guide_fairing_guard` stores the achieved saved energy and every achieved local turn, bound to actual topology and the immutable normalization. Explicit v2 instead retains role-max and separate per-role B/V caps, as described below. Ordinary shared flow/gap fitting retains these rows even with `fairing_reduction=None`; it keeps its original movement/fairing objective. Removing the guard while retaining the reference fails closed. `forehead_capture_fairing_guard` is the explicit, evidence-checked upgrade for older admitted fairing checkpoints.
+
+For support-only topology transactions, call `forehead_migrate_support_fairing_guard(before, after)` explicitly. It requires identical guide paths/coordinates, unchanged normalization, and identical existing frozen donor rows. It only rebinds the topology identity; it does not certify new quality, field, UV or shape correctness. Guide-path changes remain rejected pending a separate coverage/migration proof.
+
+Continuation output has `component_admitted=True`, `checkpoint_status='admitted_component'` and `fit_complete=True` only after a successfully admitted component. `full_model_success` remains false. With no admitted step the original input is returned with `component_admitted=False` and `checkpoint_status='unchanged_input'`. These flags are not permission to bypass independent model gates.
+
+## Explicit role-max/B/V mode (v2)
+
+The default/legacy guard is `pointwise-v1`. `forehead_migrate_fairing_guard_v2(proposal)` returns an explicitly versioned replacement only if the actual input still passes **all old v1 rows**, reference and topology identity. It changes no coordinates or phase normalizers, and records the old guard hash, old semantics and complete retired guard. Unknown versions fail closed.
+
+V2 caps every local triple by its role's achieved maximum and separately caps each role's dimensionless bending and curvature variation. It retains the achieved aggregate energy cap. Neighboring small turns may increase as a bend redistributes; such results must not be called pointwise-v1 passes. The existing lower20°, physical/front/station/arc/gap, field, protected-coordinate, quad and independent shape gates are unchanged.
+
+Shared-fit `fairing_guard_mode` and fairing-driver `guard_mode` may explicitly assert `pointwise-v1` or `role-max-bv-v2`; a mismatched existing guard requires the separate migration, never automatic retirement. Both modes are retained through ordinary flow/gap fits. V2's additional B/V rows use exact world/source gradients with boundary fallback, fixed scaling, and no dense FD-coloring row. Scalar/float32 admission checks every B/V bound.
+
+## Complete projected guide and support supplement
+
+The active shared consumer accepts an explicit `complete_guide_fairing` configuration when `fairing_stages` is positive. The configuration has `version: 1`, `reduction` strictly between0 and1, `max_evaluations` from1 through10000, and orthonormal2×3 `frames` for `front`, `right45`, and `right90`. It is forwarded through `continue_forehead_fairing` into the existing source-owned shared fit. There are no fixture vertex IDs, prerecorded displacement vectors, or coordinate-based identity transfers.
+
+This supplement consumes all five actual post-retile producer paths, validates their source edges and protected endpoints, and adds signed projected arc-curvature variation,3D curvature variation, physical station spacing, finite-segment blue/purple separation, and incident-support quad spacing obligations. Every original quality, field, gap, physical-flow, whole-guide and final shared-acceptance gate remains active. In particular, working nonregression does not replace the final absolute station/gap deviation or frozen-length limits. Producer-owned positive paths are not evidence of opposite-side native acceptance.
+
+The source evaluator, objective/constraint evaluations, derivatives and their finite-difference samples share the explicit evaluation limit. Exhaustion fails closed. Final admission compares saved/scalar geometry with the original saved stage reference, not a continuous predictor reference. Later flow/gap phases retain the supplemental constraints; guard loss, source changes, topology migration or relaxed caps are rejected. The immutable reference is retained separately from tightening caps. A no-op cannot satisfy a newly requested positive reduction.
+
+This is an opt-in production mechanism, not a claim that an example character is finished. Independent original AUTHOR shape/pose checks, own-side field transport, native save/reopen and GLB evidence, actual normal comparisons, and visual review remain required. Existing unresolved first-admission records are not upgraded by these metrics.
+
+
+The complete supplement differentiates smooth source-owned branches analytically. Source-chart metres are converted to solver millimetres exactly once. Nonsmooth extrema, zero variation and source-boundary cases retain explicit numerical fallback, not relaxed acceptance tolerances. Other constraint rows are colored separately. Supplemental fallback perturbs only its flagged-column union, colors full semantic dependencies within that union, and inserts numerical values only at flagged entries. Masks and groups are rebuilt at each derivative state; a partial fallback mask is never used as the full dependency pattern.
+
+Actual geometry/field sampling, differential sampling, production-primal checks, derivative wrappers (including cached initial Jacobian requests) and fallback probes share the unchanged caller budget. Invalid probes and exhausted budgets fail closed. Analytic integration is not evidence that a complete solver iteration fits that budget or converges. The legacy path remains unchanged when the complete supplement is absent.
+
+Complete-guide fits use a two-entry exact-parameter Jacobian cache after fixed row scaling. Every public derivative request remains charged, including hits and failures. Actual copied closure state, source fields, caps, layout, scaled references and verified source/code manifests are bound per fit; any dependency change invalidates the fit. This does not relax saved geometry, shape, field, pose or visual checks. Cache hit/miss counts appear under `complete_jacobian_cache` only when a fit succeeds.
