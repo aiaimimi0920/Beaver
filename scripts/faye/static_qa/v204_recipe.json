@@ -1,0 +1,58 @@
+{
+  "input_sha256": "deb4bb2ee5a87ae119fdb1cbf0592e795239bece4f3e0b21fd89fc50670a4167",
+  "geometry_sha256": "17ba15787203a33764dad0a7059364a89b26b51411d7e086b175b87bc773a4ac",
+  "blender": [
+    4,
+    3,
+    2
+  ],
+  "station": 303,
+  "carrier_triangle_index": 1868,
+  "carrier_triangle": [
+    407,
+    303,
+    284
+  ],
+  "weights": [
+    0.25,
+    0.7,
+    0.05
+  ],
+  "removed_authored_faces": [
+    1096,
+    1098,
+    1099,
+    1102
+  ],
+  "replacement_faces": [
+    [
+      283,
+      302,
+      284
+    ],
+    [
+      284,
+      302,
+      320,
+      321,
+      303
+    ],
+    [
+      301,
+      319,
+      320,
+      302
+    ]
+  ],
+  "replacement_donors": [
+    1098,
+    1098,
+    1099
+  ],
+  "expected_counts": {
+    "vertices": 1095,
+    "author_edges": 2149,
+    "author_faces": 1121,
+    "native_triangles": 1920
+  }
+}
