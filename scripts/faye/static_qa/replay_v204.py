@@ -3,6 +3,7 @@
 import argparse
 import hashlib
 import json
+import os
 import shutil
 import sys
 import tempfile
@@ -66,9 +67,20 @@ def verify_geometry(mesh, recipe):
 
 
 def write_new(staged, output):
-    # Exclusive creation also protects a destination created during the Blender run.
-    with staged.open("rb") as src, output.open("xb") as dst:
-        shutil.copyfileobj(src, dst)
+    # Stage on the destination filesystem; a failed copy must not reserve output.
+    with tempfile.TemporaryDirectory(prefix=".faye-v204-", dir=output.parent) as directory:
+        pending = Path(directory) / "verified.blend"
+        with staged.open("rb") as src, pending.open("xb") as dst:
+            shutil.copyfileobj(src, dst)
+        if sha256_file(staged) != sha256_file(pending):
+            raise OSError("staged V204 output does not match the verified file")
+        try:
+            os.link(pending, output)
+        except FileExistsError:
+            raise
+        except OSError as exc:
+            raise OSError("cannot publish V204 without overwriting; use a directory "
+                          "on a filesystem that supports hard links") from exc
 
 
 def static_object(bpy):
