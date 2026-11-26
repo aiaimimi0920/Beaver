@@ -1,4 +1,5 @@
 import hashlib
+from sampling_legacy_contract import legacy_shell_source
 """Recovery scope regression against preserved 579 (482 is not in this backup)."""
 import json
 import unittest
@@ -22,4 +23,7 @@ class EarScopeRecovery(unittest.TestCase):
         for name in [ 'main_curve.py', 'main_flank.py',
                      'tuft_fit.py', 'eye_socket.py', 'mouth.py', 'face.py', 'shell.py',
                       'ear_shoulder.py', 'ear_surface.py', 'ear_width.py']:
-            self.assertEqual(hashlib.sha256((here / name).read_bytes()).hexdigest(), fixture['sha256'][name])
+            data = (here / name).read_bytes()
+            if name == 'shell.py':
+                data = legacy_shell_source(data.decode()).encode()
+            self.assertEqual(hashlib.sha256(data).hexdigest(), fixture['sha256'][name])

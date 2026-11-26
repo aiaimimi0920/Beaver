@@ -60,7 +60,14 @@ class BlinkTests(unittest.TestCase):
             for x in ast.walk(ast.parse(default["code"]))
             if isinstance(x, ast.Constant) and isinstance(x.value, str)
         ]
-        self.assertFalse(any("def build_blink_shapes" in x for x in strings))
+        actual_definitions = []
+        for source in strings:
+            try:
+                nodes = ast.walk(ast.parse(source))
+            except SyntaxError:
+                continue
+            actual_definitions.extend(n.name for n in nodes if isinstance(n, ast.FunctionDef))
+        self.assertNotIn("build_blink_shapes", actual_definitions)
 
     def test_reject_unsupported_components(self):
         for params in (

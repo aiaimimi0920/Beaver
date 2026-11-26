@@ -54,6 +54,7 @@ def build_plan(
     face_overrides=None,
     ear_overrides=None,
     brow_overrides=None,
+    sampling_overrides=None,
 ):
     snapshot = resolve(
         selection,
@@ -63,6 +64,7 @@ def build_plan(
         mouth_overrides=mouth_overrides,
         face_overrides=face_overrides,
         ear_overrides=ear_overrides,
+        sampling_overrides=sampling_overrides,
     )
     matches = []
     for record in evidence_records() if records is None else records:
@@ -111,6 +113,13 @@ def build_plan(
         "recorded_evidence": matches,
         "compatibility_warnings": warnings,
         "current_output_status": "not_generated",
+        "topology_policy": {
+            "stage": "shared source sampling, never per-character GLB repair",
+            "default": "graded mouth/chin/subnasal layout with shared boundary transitions",
+            "preserve": ["feature boundary rays", "eye and mouth motion", "silhouette"],
+            "measure": ["region triangles per surface area", "adjacent area ratios", "triangle quality"],
+            "review": "Compare matched wireframe and white views; exceptions need local shape/deformation evidence, not uniform density everywhere",
+        },
         "steps": [
             {
                 "stage": "generate",
@@ -122,13 +131,13 @@ def build_plan(
                 "stage": "source_packaging",
                 "status": "pending",
                 "entry": "../source_layout/pack_request.py",
-                "required": "Use the companion source plan and successful generation receipt; execute the packaging request through Beaver and retain its separate successful native receipt",
+                "required": "Use the companion source plan and successful generation receipt; use --batch when needed and prepare all requests before the first write; execute each through Beaver and retain every separate original successful native receipt",
             },
             {
                 "stage": "sdf",
                 "status": "pending",
                 "entry": "sdf_request.py",
-                "required": "Successful generation and source-packaging receipts bound to exact report and sources; pass --source-packaging-receipt and retain successful SDF receipt",
+                "required": "Successful generation and source-packaging receipts bound to exact report and sources; repeat --source-packaging-receipt for multiple original packaging receipts and retain successful SDF receipt",
             },
             {
                 "stage": "capture",
@@ -165,12 +174,14 @@ if __name__ == "__main__":
     parser.add_argument("--brow-controls", type=Path)
     parser.add_argument("--face-controls", type=Path)
     parser.add_argument("--ear-controls", type=Path)
+    parser.add_argument("--sampling-controls", type=Path, help="Explicit first-pass lash sampling JSON")
     args = parser.parse_args()
     print(
         json.dumps(
             build_plan(
                 json.loads(args.selection.read_text()),
                 args.fit_policy,
+                sampling_overrides=(json.loads(args.sampling_controls.read_text()) if args.sampling_controls else None),
                 brow_overrides=(json.loads(args.brow_controls.read_text()) if args.brow_controls else None),
                 face_overrides=(json.loads(args.face_controls.read_text()) if args.face_controls else None),
                 ear_overrides=(json.loads(args.ear_controls.read_text()) if args.ear_controls else None),

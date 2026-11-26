@@ -8,7 +8,7 @@ from unittest.mock import patch
 
 import brow_mesh
 from brow_design import validate
-from brow_shapes import brow_polygons, brow_area, brow_cross
+from brow_shapes import brow_polygons, brow_area, brow_cross, brow_sampling_divisions
 
 
 class Vector(tuple):
@@ -47,7 +47,7 @@ class NativeContractTests(unittest.TestCase):
         self.patch = patch.dict(sys.modules, {"face": self.face, "mathutils": types.SimpleNamespace(Vector=Vector), "mathutils.geometry": types.SimpleNamespace(tessellate_polygon=lambda polygons: [(0, 1, 2)])})
         self.patch.start()
         self.addCleanup(self.patch.stop)
-        self.helpers = patch.multiple(brow_mesh, brow_polygons=brow_polygons, brow_area=brow_area, brow_cross=brow_cross, create=True)
+        self.helpers = patch.multiple(brow_mesh, brow_polygons=brow_polygons, brow_area=brow_area, brow_cross=brow_cross, brow_sampling_divisions=brow_sampling_divisions, create=True)
         self.helpers.start()
         self.addCleanup(self.helpers.stop)
         brow_mesh.BROW_GEOMETRY_REPORT.clear()
